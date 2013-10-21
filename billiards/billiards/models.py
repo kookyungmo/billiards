@@ -7,6 +7,7 @@ Created on 2013年10月21日
 '''
 
 from django.db import models
+from django.utils.timezone import localtime
 
 class Poolroom(models.Model):
     id = models.AutoField(primary_key=True)
@@ -23,3 +24,18 @@ class Poolroom(models.Model):
 
     def __unicode__(self):
         return self.name
+
+class Match(models.Model):
+    id = models.AutoField(primary_key=True)
+    poolroom = models.ForeignKey(Poolroom, verbose_name='比赛组织者')
+    bonus = models.FloatField(null=False,verbose_name='最高奖金(元)')
+    description = models.TextField(null=True,verbose_name='比赛详情')
+    starttime = models.DateTimeField(verbose_name='比赛开始时间')
+
+    class Meta:
+        db_table = 'match'
+        verbose_name = '比赛'
+        verbose_name_plural = '比赛'
+
+    def __unicode__(self):
+        return '[' + localtime(self.starttime).strftime("%Y-%m-%d %H:%M:%S") + '] ' + self.poolroom.name
