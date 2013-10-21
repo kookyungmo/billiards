@@ -16,7 +16,7 @@ try:
     DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'cluster11db3',
+        'NAME': 'vhSKvRlxvhpdsYdDAvJP',
         'USER': const.MYSQL_USER,
         'PASSWORD': const.MYSQL_PASS,
         'HOST': const.MYSQL_HOST,
@@ -24,10 +24,15 @@ try:
         }
     }
 except ImportError:
-    # local mysql config
+    # here config your local mysql
     DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'billiards',
+        'USER': 'root',
+        'PASSWORD': 'passw0rd',
+        'HOST': '127.0.0.1',
+        'PORT': '',
         }
     }
 
@@ -123,13 +128,14 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.sites',
+    # 'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
+    'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'billiards',
 )
 
 # A sample logging configuration. The only tangible logging
