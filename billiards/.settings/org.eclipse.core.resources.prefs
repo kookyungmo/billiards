@@ -2,5 +2,7 @@ eclipse.preferences.version=1
 encoding//billiards/admin.py=utf-8
 encoding//billiards/models.py=utf-8
 encoding//billiards/settings.py=utf-8
+encoding//billiards/templates/foundation4/games.html=UTF-8
+encoding//billiards/views/games.py=utf-8
 encoding//billiards/views/poolroom.py=utf-8
 encoding/<project>=UTF-8

@@ -1,0 +1,112 @@
+ <!DOCTYPE html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+{% load staticfiles %}
+<head>
+  <meta charset="utf-8" />
+
+  <!-- Set the viewport width to device width for mobile -->
+  <meta name="viewport" content="width=device-width" />
+
+  <title>我为台球狂</title>
+
+  <!-- Included CSS Files -->
+
+  <link rel="stylesheet" href="{% static "foundation4/css/normalize.css" %}">
+  <link rel="stylesheet" href="{% static "foundation4/css/foundation.min.css" %}">
+
+  <script src="{% static "foundation4/js/vendor/custom.modernizr.js" %}"></script>
+
+</head>
+
+<body>
+
+ <!-- Header and Nav -->
+
+  <div class="row">
+    <div class="large-12 columns">
+      <div class="panel">
+        <h1>我为台球狂</h1>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Header and Nav -->
+
+
+  <div class="row">
+
+
+
+ <!-- Nav Sidebar -->
+    <!-- This is source ordered to be pulled to the left on larger screens -->
+    <div class="large-3 columns ">
+      <div class="panel">
+        <a href="#"><img src="http://placehold.it/300x240&text=[img]" /></a>
+        <h5><a href="#">Your Name</a></h5>
+          <div class="section-container vertical-nav" data-section data-options="deep_linking: false; one_up: true">
+          <section class="section">
+            <h5 class="title"><a href="#">Section 1</a></h5>
+          </section>
+          <section class="section">
+            <h5 class="title"><a href="#">Section 2</a></h5>
+          </section>
+          <section class="section">
+            <h5 class="title"><a href="#">Section 3</a></h5>
+          </section>
+          <section class="section">
+            <h5 class="title"><a href="#">Section 4</a></h5>
+          </section>
+          <section class="section">
+            <h5 class="title"><a href="#">Section 5</a></h5>
+          </section>
+          <section class="section">
+            <h5 class="title"><a href="#">Section 6</a></h5>
+          </section>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Main Feed -->
+	{% block content %}{% endblock %}
+
+    <!-- Right Sidebar -->
+    <!-- On small devices this column is hidden -->
+    <aside class="large-3 columns hide-for-small">
+      <p><img src="http://placehold.it/300x440&text=[ad]" /></p>
+      <p><img src="http://placehold.it/300x440&text=[ad]" /></p>
+    </aside>
+
+  </div>
+
+
+  <!-- Footer -->
+
+  <footer class="row">
+    <div class="large-12 columns">
+      <hr />
+      <div class="row">
+        <div class="large-5 columns">
+          <p>&copy; Copyright 2013 我为台球狂.	</p>
+        </div>
+        <div class="large-7 columns">
+
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  document.write('<script src={% static "foundation4/js/vendor/" %}' +
+  ('__proto__' in {} ? 'zepto' : 'jquery') +
+  '.js><\/script>')
+  </script>
+  <script src="{% static "foundation4/js/foundation.min.js" %}"></script>
+  <script>
+    $(document).foundation();
+  </script>
+
+</body>
+</html>
