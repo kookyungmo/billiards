@@ -17,7 +17,7 @@ try:
     DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'vhSKvRlxvhpdsYdDAvJP',
+        'NAME': 'sRCwEcHbYjeJkwmqnDVh',
         'USER': const.MYSQL_USER,
         'PASSWORD': const.MYSQL_PASS,
         'HOST': const.MYSQL_HOST,
