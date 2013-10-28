@@ -14,8 +14,8 @@ class Poolroom(models.Model):
     name = models.CharField(max_length=200,null=False,verbose_name='名字')
     address = models.TextField(null=True,verbose_name='地址')
     tel = models.CharField(max_length=20,null=True,verbose_name='电话')
-    lat = models.DecimalField(max_digits=10,decimal_places=6,null=True,verbose_name='纬度')
-    lng = models.DecimalField(max_digits=10,decimal_places=6,null=True,verbose_name='经度')
+    lat = models.DecimalField(max_digits=11,decimal_places=7,null=True,verbose_name='纬度')
+    lng = models.DecimalField(max_digits=11,decimal_places=7,null=True,verbose_name='经度')
 
     class Meta:
         db_table = 'poolroom'
@@ -24,6 +24,9 @@ class Poolroom(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def natural_key(self):
+        return {'id': self.id, 'name': self.name, 'lat': self.lat, 'lng': self.lng}
 
 class Match(models.Model):
     id = models.AutoField(primary_key=True)

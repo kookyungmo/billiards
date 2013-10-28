@@ -7,8 +7,10 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^$', 'billiards.views.games.index', name="games"),
-    url(r'^games', 'billiards.views.games.index', name="games"),
+    url(r'^$', 'billiards.views.match.index', name="index"),
+    url(r'^match/(?P<matchid>[\d]+)', 'billiards.views.match.detail', name="match_detail"),
+    url(r'^match$', 'billiards.views.match.index', name="match"),
+    url(r'^match/?(?P<view>[\w]*)', 'billiards.views.match.index', name="match_map"),
     url(r'^admin/', include(admin.site.urls)),
 )
 

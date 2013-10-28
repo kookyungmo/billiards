@@ -1,0 +1,75 @@
+{% extends "foundation4/base.html" %}
+{% block header %}
+<script type="text/javascript"
+	src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>
+<script type="text/javascript" src="http://developer.baidu.com/map/jsdemo/demo/convertor.js"></script>
+{% endblock %}
+{% block content %}
+	<div class="row">
+		<div class="large-12 columns">
+			<div id="baidumap"
+				style="overflow: hidden; margin: 0;"></div>
+		</div>
+	</div>
+{% endblock %}
+{% block footer %}
+	<script>
+		$(document).ready(
+				function() {
+					var width = $("#banner").attr("width");
+				    $("#baidumap").css("width", width);
+				    $("#baidumap").css("height", $(window).height() - 50 - $("#banner").attr("height") - $("#footer").attr("height"));
+					$.ajax({
+						url : "{% url match_map map %}",
+						data : 'f=json',
+						dataType : 'json', // Choosing a JSON datatype
+						success : function(data) // Variable data contains the data we get from serverside
+						{
+							var map = new BMap.Map("baidumap"); // 创建Map实例
+							map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_RIGHT, type: BMAP_NAVIGATION_CONTROL_SMALL}));  //右上角，仅包含平移和缩放按钮
+							map.enableScrollWheelZoom(true);
+							map.centerAndZoom(new BMap.Point(116.404, 39.915), 11);
+							// 编写自定义函数,创建标注
+							function addMarker(point, poolroom, matches) {
+								var marker = new BMap.Marker(point);
+								marker.setLabel(poolroom.name);
+								marker.addEventListener("click", function(){
+									var eventcallback = this;
+									var content = poolroom.name;
+									for (var idx in matches) {
+										content += "<p><p/><strong>奖金: "
+										+ matches[idx].fields.bonus + "</strong><br/><strong>比赛时间: " +
+										matches[idx].fields.starttime + "</strong></p>";
+									}
+									var infoWindow = new BMap.InfoWindow(content);
+									eventcallback.openInfoWindow(infoWindow);
+								});
+								map.addOverlay(marker);
+							}
+
+							var newdata = {};
+							for (var idx in data) {
+								if (data[idx].fields.poolroom.id in newdata) {
+									newdata[data[idx].fields.poolroom.id].push(data[idx]);
+								} else {
+									var array = [data[idx]];
+									newdata[data[idx].fields.poolroom.id] = array;
+								}
+							}
+
+							for (var key in newdata) {
+								callback = function(poolroom, matcharray) {
+									return function() {
+										ggPoint = new BMap.Point(poolroom.lng, poolroom.lat);
+									    BMap.Convertor.translate(ggPoint,2,function (point){
+										    addMarker(point, poolroom, matcharray);
+										});
+									}
+								}
+								setTimeout(callback(newdata[key][0].fields.poolroom, newdata[key]), 2000);
+							}
+						}
+					});
+				});
+	</script>
+{% endblock %}

@@ -17,14 +17,14 @@
   <link rel="stylesheet" href="{% static "foundation4/css/foundation.min.css" %}">
 
   <script src="{% static "foundation4/js/vendor/custom.modernizr.js" %}"></script>
-
+  {% block header %}{% endblock %}
 </head>
 
 <body>
 
  <!-- Header and Nav -->
 
-  <div class="row">
+  <div id="banner" class="row">
     <div class="large-12 columns">
       <div class="panel">
         <h1>我为台球狂</h1>
@@ -34,57 +34,12 @@
 
   <!-- End Header and Nav -->
 
-
-  <div class="row">
-
-
-
- <!-- Nav Sidebar -->
-    <!-- This is source ordered to be pulled to the left on larger screens -->
-    <div class="large-3 columns ">
-      <div class="panel">
-        <a href="#"><img src="http://placehold.it/300x240&text=[img]" /></a>
-        <h5><a href="#">Your Name</a></h5>
-          <div class="section-container vertical-nav" data-section data-options="deep_linking: false; one_up: true">
-          <section class="section">
-            <h5 class="title"><a href="#">Section 1</a></h5>
-          </section>
-          <section class="section">
-            <h5 class="title"><a href="#">Section 2</a></h5>
-          </section>
-          <section class="section">
-            <h5 class="title"><a href="#">Section 3</a></h5>
-          </section>
-          <section class="section">
-            <h5 class="title"><a href="#">Section 4</a></h5>
-          </section>
-          <section class="section">
-            <h5 class="title"><a href="#">Section 5</a></h5>
-          </section>
-          <section class="section">
-            <h5 class="title"><a href="#">Section 6</a></h5>
-          </section>
-        </div>
-
-      </div>
-    </div>
-
     <!-- Main Feed -->
 	{% block content %}{% endblock %}
 
-    <!-- Right Sidebar -->
-    <!-- On small devices this column is hidden -->
-    <aside class="large-3 columns hide-for-small">
-      <p><img src="http://placehold.it/300x440&text=[ad]" /></p>
-      <p><img src="http://placehold.it/300x440&text=[ad]" /></p>
-    </aside>
-
-  </div>
-
-
   <!-- Footer -->
 
-  <footer class="row">
+  <footer id="footer" class="row">
     <div class="large-12 columns">
       <hr />
       <div class="row">
@@ -107,6 +62,6 @@
   <script>
     $(document).foundation();
   </script>
-
+  {% block footer %}{% endblock %}
 </body>
 </html>

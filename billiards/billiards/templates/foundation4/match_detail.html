@@ -1,0 +1,58 @@
+{% extends "foundation4/base.html" %}
+{% block content %}
+  <div class="row">
+    <div class="large-12 columns">
+      <div class="row">
+ 
+    <!-- Content -->
+ 
+        <div class="large-8 columns">
+          <div class="panel radius">
+ 
+          <div class="row">
+          <div class="large-6 small-6 columns">
+ 
+            <h4>{{ match.poolroom.name }}</h4><hr/>
+            <h5 class="subheader">
+              <p>比赛奖金: <strong>{{ match.bonus }}元</strong>
+              <p>比赛日期: <strong>{{ match.starttime }}</strong>
+            </h5>
+ 
+          <div class="show-for-small" align="center">
+            <a href="#" class="small radius button">我要参加!</a><br>
+ 
+            <a href="#" class="small radius button">我想参加!</a>
+          </div>
+ 
+          </div>
+          <div class="large-6 small-6 columns">
+ 
+            <p>{{ match.description }}
+          </p>
+        </div>
+ 
+        </div>
+        </div>
+        </div>
+ 
+          <div class="large-4 columns hide-for-small">
+ 
+          <h4>Get In Touch!</h4><hr/>
+ 
+          <a class="large button expand" href="#">
+            我要参加!
+          </a>
+ 
+          <a class="large button expand" href="#">
+            我想参加!
+          </a>
+ 
+ 
+        </div>
+ 
+    <!-- End Content -->
+ 
+      </div>
+    </div>
+  </div>
+{% endblock %}
