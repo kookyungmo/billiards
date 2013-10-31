@@ -6,19 +6,27 @@
 {% endblock %}
 {% block content %}
 	<div class="row">
-		<div class="large-12 columns">
+		<div id="matchlist" class="large-3 columns">
+			{% for match in matches %}
+			<div class="panel">
+                <h5><a><strong>{{ match.poolroom.name }}</strong></a></h5>
+                <h6 class="subheader">￥{{ match.bonus }}</h6>
+                <h6 class="subheader">{{ match.starttime }}</h6>			                
+           	</div>
+			{% endfor %}
+		</div>
+		<div class="large-9 columns">
 			<div id="baidumap"
 				style="overflow: hidden; margin: 0;"></div>
 		</div>
 	</div>
 {% endblock %}
 {% block footer %}
+{% load staticfiles %}
 	<script>
 		$(document).ready(
 				function() {
-					var width = $("#banner").attr("width");
-				    $("#baidumap").css("width", width);
-				    $("#baidumap").css("height", $(window).height() - 50 - $("#banner").attr("height") - $("#footer").attr("height"));
+				    $("#baidumap").css("height", $(window).height() - $("#banner").outerHeight(true) - $("#footer").outerHeight(true));
 					$.ajax({
 						url : "{% url match_map map %}",
 						data : 'f=json',
@@ -31,18 +39,41 @@
 							map.centerAndZoom(new BMap.Point(116.404, 39.915), 11);
 							// 编写自定义函数,创建标注
 							function addMarker(point, poolroom, matches) {
-								var marker = new BMap.Marker(point);
+								var icon = new BMap.Icon('{% static "images/marker.png" %}', 
+									new BMap.Size(39, 55), {
+								    anchor: new BMap.Size(15, 53),
+								    infoWindowAnchor: new BMap.Size(15, 0)
+								});
+								var marker = new BMap.Marker(point,{
+								    icon: icon
+								});
 								marker.setLabel(poolroom.name);
 								marker.addEventListener("click", function(){
 									var eventcallback = this;
-									var content = poolroom.name;
-									for (var idx in matches) {
-										content += "<p><p/><strong>奖金: "
-										+ matches[idx].fields.bonus + "</strong><br/><strong>比赛时间: " +
-										matches[idx].fields.starttime + "</strong></p>";
-									}
-									var infoWindow = new BMap.InfoWindow(content);
-									eventcallback.openInfoWindow(infoWindow);
+									(function(){
+										var openInfo = function(){
+											var content = poolroom.name;
+											for (var idx in matches) {
+												content += "<p><p/><strong>奖金: "
+												+ matches[idx].fields.bonus + "</strong><br/><strong>比赛时间: " +
+												matches[idx].fields.starttime + "</strong></p>";
+											}
+											var infoWindow = new BMap.InfoWindow(content);
+											eventcallback.openInfoWindow(infoWindow);
+											infoWindow.redraw();
+										};
+										map.addEventListener("moveend", function(){
+											map.removeEventListener("moveend", this);
+											map.removeEventListener("tilesloaded", this);
+											openInfo();
+										});
+										map.addEventListener("tilesloaded", function(e) {
+											map.removeEventListener("tilesloaded", this);
+											map.removeEventListener("moveend", this);
+											openInfo();	
+										});
+									})();
+									map.centerAndZoom(point, 16);
 								});
 								map.addOverlay(marker);
 							}
