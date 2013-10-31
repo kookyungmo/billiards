@@ -11,8 +11,10 @@ import datetime
 from dateutil.relativedelta import relativedelta
 from django.core import serializers
 from django.http import HttpResponse
+import json
+from django import template
 
-template = 'foundation4/'
+templatepath = 'foundation4/'
 def index(request, view = None):
     date_after_week = datetime.datetime.today() + relativedelta(weeks=2)
     matches = Match.objects.filter(starttime__gte=datetime.datetime.now().strftime("%Y-%m-%d %H:%m")) \
@@ -28,7 +30,7 @@ def index(request, view = None):
     else:
         page = 'match_list.html'
 
-    return render_to_response(template + page, {'matches': matches})
+    return render_to_response(templatepath + page, {'matches': matches})
 
 def detail(request, matchid):
     match = Match.objects.get(pk=matchid)
@@ -39,4 +41,4 @@ def detail(request, matchid):
         json_serializer.serialize([match], fields=('id', 'poolroom', 'bonus', 'starttime', 'description'), ensure_ascii=False, stream=response, indent=2, use_natural_keys=True)
         return response
 
-    return render_to_response(template + 'match_detail.html', {'match': match})
+    return render_to_response(templatepath + 'match_detail.html', {'match': match})
