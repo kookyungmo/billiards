@@ -3,11 +3,32 @@
 <script type="text/javascript"
 	src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>
 <script type="text/javascript" src="http://developer.baidu.com/map/jsdemo/demo/convertor.js"></script>
+<!-- foundation datepicker start -->
+<script src="http://foundation-datepicker.peterbeno.com/example/js/foundation-datepicker.js"></script>
+<link rel="stylesheet" href="http://foundation-datepicker.peterbeno.com/example/stylesheets/foundation-datepicker.css">
+<!-- foundation end -->
 {% endblock %}
 {% load extras %}
 {% block content %}
 	<div class="row">
 		<div id="matchlist" class="large-3 columns">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>比赛日历: </th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><input type="text" class="span2" value="{% now "Y-m-d" %}" id="dp1">-
+						</td>
+					</tr>
+					<tr>
+						<td><input type="text" class="span2" value="{{ enddate|date:"Y-m-d" }}" id="dp2"></td>
+					</tr>
+				</tbody>
+			</table>
+			<hr>
 			{% for match in matches %}
 			<div class="panel">
                 <h5><a name="match" point="{{ match.poolroom.lng }},{{ match.poolroom.lat }}" match="{{ match|tojson }}" ><strong>{{ match.poolroom.name }}</strong></a></h5>
@@ -130,5 +151,76 @@
 				})();
 			}
 		);
+
+		$(function () {
+			// implementation of disabled form fields
+			var nowTemp = new Date();
+			var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+			var dp1 = $('#dp1').fdatepicker({
+				format: 'yyyy-mm-dd',
+				onRender: function (date) {
+					return date.valueOf() < now.valueOf() ? 'disabled' : '';
+				}
+			}).on('changeDate', function (ev) {
+				if (ev.date.valueOf() > dp2.date.valueOf()) {
+					var newDate = new Date(ev.date)
+					newDate.setDate(newDate.getDate() + 14);
+					dp2.setValue(newDate);
+				}
+				dp1.hide();
+				$('#dp2')[0].focus();
+			}).data('datepicker');
+			var dp2 = $('#dp2').fdatepicker({
+				format: 'yyyy-mm-dd',
+				onRender: function (date) {
+					return date.valueOf() <= dp1.date.valueOf() ? 'disabled' : '';
+				}
+			}).on('changeDate', function (ev) {
+				dp2.hide();
+				$.ajax({
+					url : "{% url match_map map %}",
+					data : {'f':'json', 'starttime':dp1.date.valueOf(), 'endtime': dp2.date.valueOf()},
+					dataType : 'json',
+					success : function(data)
+					{
+						if (data.length == 0) {
+							if($("#nomatch").length == 0) {
+								$("#matchlist").children(".panel").remove();
+								jQuery('<div/>', {
+								    id: 'nomatch',
+								    class: 'panel'
+								}).appendTo('#matchlist');
+								jQuery('<h5/>', {
+								    text: '您选择的时间段没有比赛。请重新选择。'
+								}).appendTo('#nomatch');
+							}
+						} else {
+							$("#matchlist").children(".panel").remove();
+							var newdata = {};
+							for (var idx in data) {
+								callback = function(poolroom, match) {
+									return function() {
+										ggPoint = new BMap.Point(poolroom.lng, poolroom.lat);
+									    BMap.Convertor.translate(ggPoint,2,function (point){
+									    	var matchobj = jQuery('<div/>', {
+											    class: 'panel'
+											});
+									    	matchobj.append("<h5><a name=\"match\" point=\"" + match.fields.poolroom.lng
+									    			+ "," + match.fields.poolroom.lat + "\" match=\"" + JSON.stringify(match)
+									    			+ "\"><strong>" + match.fields.poolroom.name + "</strong></a></h5>");
+									    	matchobj.append("<h6 class=\"subheader\">￥" + match.fields.bonus + "</h6>");
+									    	matchobj.append("<h6 class=\"subheader\">" + match.fields.starttime + "</h6>");
+									    	matchobj.appendTo('#matchlist');
+										});
+									}
+								}
+								setTimeout(callback(data[idx].fields.poolroom, data[idx]), 2000);
+							}
+						}
+					}
+				});
+			}).data('datepicker');
+		});
 	</script>
+	<div class="datepicker datepicker-dropdown dropdown-menu" style="display: none; top: 336.1875px; left: 496.5px; z-index: 10;"><div class="datepicker-days" style="display: block;"><table class=" table-condensed"><thead><tr><th class="prev" style="visibility: visible;"><i class="icon-chevron-left"></i></th><th colspan="5" class="date-switch">February 2012</th><th class="next" style="visibility: visible;"><i class="icon-chevron-right"></i></th></tr><tr><th class="dow">Su</th><th class="dow">Mo</th><th class="dow">Tu</th><th class="dow">We</th><th class="dow">Th</th><th class="dow">Fr</th><th class="dow">Sa</th></tr></thead><tbody><tr><td class="day   old">29</td><td class="day   old">30</td><td class="day   old">31</td><td class="day  ">1</td><td class="day  ">2</td><td class="day  ">3</td><td class="day  ">4</td></tr><tr><td class="day  ">5</td><td class="day  ">6</td><td class="day  ">7</td><td class="day  ">8</td><td class="day  ">9</td><td class="day  ">10</td><td class="day  ">11</td></tr><tr><td class="day  ">12</td><td class="day  ">13</td><td class="day  ">14</td><td class="day  ">15</td><td class="day   active">16</td><td class="day  ">17</td><td class="day  ">18</td></tr><tr><td class="day  ">19</td><td class="day  ">20</td><td class="day  ">21</td><td class="day  ">22</td><td class="day  ">23</td><td class="day  ">24</td><td class="day  ">25</td></tr><tr><td class="day  ">26</td><td class="day  ">27</td><td class="day  ">28</td><td class="day  ">29</td><td class="day   new">1</td><td class="day   new">2</td><td class="day   new">3</td></tr><tr><td class="day   new">4</td><td class="day   new">5</td><td class="day   new">6</td><td class="day   new">7</td><td class="day   new">8</td><td class="day   new">9</td><td class="day   new">10</td></tr></tbody><tfoot><tr><th colspan="7" class="today" style="display: none;">Today</th></tr></tfoot></table></div><div class="datepicker-months" style="display: none;"><table class="table-condensed"><thead><tr><th class="prev" style="visibility: visible;"><i class="icon-chevron-left"></i></th><th colspan="5" class="date-switch">2012</th><th class="next" style="visibility: visible;"><i class="icon-chevron-right"></i></th></tr></thead><tbody><tr><td colspan="7"><span class="month">Jan</span><span class="month active">Feb</span><span class="month">Mar</span><span class="month">Apr</span><span class="month">May</span><span class="month">Jun</span><span class="month">Jul</span><span class="month">Aug</span><span class="month">Sep</span><span class="month">Oct</span><span class="month">Nov</span><span class="month">Dec</span></td></tr></tbody><tfoot><tr><th colspan="7" class="today" style="display: none;">Today</th></tr></tfoot></table></div><div class="datepicker-years" style="display: none;"><table class="table-condensed"><thead><tr><th class="prev" style="visibility: visible;"><i class="icon-chevron-left"></i></th><th colspan="5" class="date-switch">2010-2019</th><th class="next" style="visibility: visible;"><i class="icon-chevron-right"></i></th></tr></thead><tbody><tr><td colspan="7"><span class="year old">2009</span><span class="year">2010</span><span class="year">2011</span><span class="year active">2012</span><span class="year">2013</span><span class="year">2014</span><span class="year">2015</span><span class="year">2016</span><span class="year">2017</span><span class="year">2018</span><span class="year">2019</span><span class="year old">2020</span></td></tr></tbody><tfoot><tr><th colspan="7" class="today" style="display: none;">Today</th></tr></tfoot></table></div><a class="button datepicker-close small alert right" style="width:auto;"><i class="icon-remove"></i></a></div>
 {% endblock %}

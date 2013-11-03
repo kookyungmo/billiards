@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="{% static "foundation4/css/foundation.min.css" %}">
 
   <script src="{% static "foundation4/js/vendor/custom.modernizr.js" %}"></script>
+  <script src="{% static "foundation4/js/vendor/jquery.js" %}"></script>
   {% block header %}{% endblock %}
 </head>
 
@@ -53,11 +54,6 @@
     </div>
   </footer>
 
-  <script>
-  document.write('<script src={% static "foundation4/js/vendor/" %}' +
-  ('__proto__' in {} ? 'zepto' : 'jquery') +
-  '.js><\/script>')
-  </script>
   <script src="{% static "foundation4/js/foundation.min.js" %}"></script>
   <script>
     $(document).foundation();

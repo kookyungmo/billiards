@@ -11,14 +11,24 @@ import datetime
 from dateutil.relativedelta import relativedelta
 from django.core import serializers
 from django.http import HttpResponse
-import json
-from django import template
 
 templatepath = 'foundation4/'
 def index(request, view = None):
-    date_after_week = datetime.datetime.today() + relativedelta(weeks=2)
-    matches = Match.objects.filter(starttime__gte=datetime.datetime.now().strftime("%Y-%m-%d %H:%m")) \
-        .exclude(starttime__gte=date_after_week.strftime("%Y-%m-%d %H:%m")).order_by('starttime')
+    starttime = datetime.datetime.today()
+    try:
+        if request.GET.get('starttime') is not None:
+            starttime = datetime.datetime.utcfromtimestamp(float(request.GET.get('starttime'))/1000)
+    except Exception:
+        pass
+    endtime = starttime + relativedelta(weeks=2)
+    try:
+        if request.GET.get('endtime') is not None:
+            endtime = datetime.datetime.utcfromtimestamp(float(request.GET.get('endtime'))/1000)
+    except Exception:
+        pass
+
+    matches = Match.objects.filter(starttime__gte=starttime.strftime("%Y-%m-%d")) \
+        .exclude(starttime__gt=endtime.strftime("%Y-%m-%d")).order_by('starttime')
 
     if request.GET.get('f') == 'json':
         json_serializer = serializers.get_serializer("json")()
@@ -30,7 +40,7 @@ def index(request, view = None):
     else:
         page = 'match_list.html'
 
-    return render_to_response(templatepath + page, {'matches': matches})
+    return render_to_response(templatepath + page, {'matches': matches, 'starttime': starttime, 'enddate': endtime})
 
 def detail(request, matchid):
     match = Match.objects.get(pk=matchid)
