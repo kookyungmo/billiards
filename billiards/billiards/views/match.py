@@ -5,7 +5,7 @@ Created on 2013年10月22日
 
 @author: kane
 '''
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from billiards.models import Match
 import datetime
 from dateutil.relativedelta import relativedelta
@@ -43,7 +43,7 @@ def index(request, view = None):
     return render_to_response(templatepath + page, {'matches': matches, 'starttime': starttime, 'enddate': endtime})
 
 def detail(request, matchid):
-    match = Match.objects.get(pk=matchid)
+    match = get_object_or_404(Match, pk=matchid)
 
     if request.GET.get('f') == 'json':
         json_serializer = serializers.get_serializer("json")()
