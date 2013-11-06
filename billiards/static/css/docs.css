@@ -1,0 +1,15 @@
+.docs.header {
+  margin-bottom: 10px; }
+
+.docs.subheader {
+  float: left; }
+
+.docs.section-container a.active {
+  font-weight: bold; }
+
+  .subheader {
+  line-height: 1.4;
+  color: #6f6f6f;
+  font-weight: 300;
+  margin-top: 0.2em;
+  margin-bottom: 0.5em; }

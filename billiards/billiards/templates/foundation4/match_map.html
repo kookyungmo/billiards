@@ -157,7 +157,7 @@
 
 		$(document).ready(
 				function() {
-				    $("#baidumap").css("height", $(window).height() - $("#banner").outerHeight(true) - $("#footer").outerHeight(true));
+				    $("#baidumap").css("height", $(window).height() - $("#nav").outerHeight(true) - $("#banner").outerHeight(true) - $("#footer").outerHeight(true));
 				    map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_RIGHT, type: BMAP_NAVIGATION_CONTROL_SMALL}));
 					map.enableScrollWheelZoom(true);
 				    map.centerAndZoom('北京');
