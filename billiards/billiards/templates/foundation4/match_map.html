@@ -6,13 +6,16 @@
 <script type="text/javascript" src="http://developer.baidu.com/map/jsdemo/demo/changeMore.js"></script>
 <!-- foundation datepicker start -->
 <script src="{% static "js/foundation-datepicker.js" %}"></script>
+<script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}";</script>
+<script src="{% static "js/map.js" %}"></script>
 <link rel="stylesheet" href="{% static "css/foundation-datepicker.css" %}">
 <!-- foundation end -->
 {% endblock %}
 {% load extras %}
 {% block content %}
 	<div class="row">
-		<div id="matchlist" class="large-3 columns">
+		<div id="matchlist" class="large-6 columns">
+		  <div class="row">
 			<table class="table">
 				<thead>
 					<tr>
@@ -30,15 +33,17 @@
 				</tbody>
 			</table>
 			<hr>
-			{% for match in matches %}
-			<div class="panel">
-                <h5><a name="match" point="{{ match.poolroom.lng }},{{ match.poolroom.lat }}" match="{{ match|tojson }}" ><strong>{{ match.poolroom.name }}</strong></a></h5>
-                <h6 class="subheader">￥{{ match.bonus }}</h6>
-                <h6 class="subheader">{{ match.starttime }}</h6>
-           	</div>
-			{% endfor %}
+		  </div>
+		  	<script>
+			{% if matches|length > 0 %}
+				matches = eval('{{ matches|tojson|safe }}');
+				addMatchItems(matches);
+			{% else %}
+	           	createNoMatch();
+			{% endif %}
+			</script>
 		</div>
-		<div class="large-9 columns">
+		<div class="large-6 columns">
 			<div id="baidumap"
 				style="overflow: hidden; margin: 0;"></div>
 		</div>
@@ -47,114 +52,7 @@
 {% block footer %}
 {% load staticfiles %}
 	<script>
-		var map = new BMap.Map("baidumap"); // 创建Map实例
-		var matchInfo = function(marker, name, matches){			
-			(function(){
-				var info = {
-					open: function(type, target){
-						map.removeEventListener("moveend", info.open);
-						map.removeEventListener("tilesloaded", info.open);
-						var content = name;
-						for (var idx in matches) {
-							content += "<p><p/><strong>奖金: "
-							+ matches[idx].fields.bonus + "</strong><br/><strong>比赛时间: " +
-							matches[idx].fields.starttime + "</strong></p>";
-						}
-						var infoWindow = new BMap.InfoWindow(content);
-						marker.openInfoWindow(infoWindow);
-						infoWindow.redraw();
-					}
-				}
-				map.addEventListener("moveend", info.open);
-				map.addEventListener("tilesloaded", info.open);
-			})();
-			map.centerAndZoom(marker.getPosition(), 16);
-		};
-
-		function addMarker(point, iconpath) {
-			var icon = new BMap.Icon(iconpath,
-					new BMap.Size(39, 55), {
-				    anchor: new BMap.Size(15, 53),
-				    infoWindowAnchor: new BMap.Size(15, 0)
-			});
-			var marker = new BMap.Marker(point,{
-				icon: icon
-			});
-			map.addOverlay(marker);
-			return marker;
-		}
-
-		function addMatchMarker(i, obj) {
-			var points = $(obj).attr("point").split(",");
-	    	var match = eval($(obj).attr("match"));
-			point = new BMap.Point(points[0], points[1]);
-			var mk = addMarker(point, '{% static "images/marker.png" %}');
-			mk.addEventListener("click", function() {
-				matchInfo(mk, match[0].fields.poolroom.name, match);
-			});
-		}
-
-		var convertCallback;
-		var callback = function(xyResults) {
-				var convertedPoints = [];
-				var xyResult = null;
-				for(var index in xyResults){
-					xyResult = xyResults[index];
-				  	if(xyResult.error != 0){continue;}//TODO
-				  	var point = new BMap.Point(xyResult.x, xyResult.y);
-				  	convertedPoints.push(point);
-				}
-				if (convertCallback != null)
-					convertCallback(convertedPoints);
-		}
-		function convertPoints(points, myConvertcallback) {
-			(function() {
-				setTimeout(function(){
-					convertCallback = myConvertcallback;
-		    		BMap.Convertor.transMore(points,2, callback);
-				}, 100);
-			})();
-		}
-		
-		function createMatchMarker(i, obj) {
-			addMatchMarker(i, obj);
-			$(obj).mouseover(function() {
-				markerDo($(this).attr("point"), function(marker){
-					marker.setAnimation(BMAP_ANIMATION_BOUNCE);
-					  (function(){
-						  setTimeout(function() {
-							  marker.setAnimation(null);
-							}, 2000);
-					  })();
-				});
-			}, function() {});
-			$(obj).click(function(){
-				var link = $(this);
-				(function() {
-					markerDo(link.attr("point"), function(marker){
-						matchInfo(marker, link.find("strong").text(), eval(link.attr("match")));
-					});
-				})();
-			});
-		}
-
-		function updatePoint() {
-			var ggpoints = [];
-			$("a[name=match]").each(function(i, obj) {
-				var points = $(obj).attr("point").split(",");
-				point = new BMap.Point(points[0], points[1]);
-				ggpoints.push(point);
-		    });
-			convertPoints(ggpoints, function(convertedPoints){
-				(function() {
-					$("a[name=match]").each(function(i, obj) {
-						$(obj).attr("point", convertedPoints[i].lng + "," + convertedPoints[i].lat);
-						createMatchMarker(i, obj);
-					});
-				})();
-			});
-		}
-
+		var map = new BMap.Map("baidumap");
 		$(document).ready(
 				function() {
 				    $("#baidumap").css("height", $(window).height() - $("#nav").outerHeight(true) - $("#banner").outerHeight(true) - $("#footer").outerHeight(true));
@@ -173,32 +71,7 @@
 				            //TODO
 				        }
 				    },{enableHighAccuracy: true});
-
-				    //initial map markers
-				    updatePoint();
 				});
-
-		function markerDo(pointstr, callback) {
-			var points = pointstr.split(',');
-			var point = new BMap.Point(points[0], points[1]);
-			var overlays = map.getOverlays();
-			for (var m in overlays) {
-				if (overlays[m] instanceof BMap.Marker && overlays[m].getPosition().equals(point)) {
-					callback(overlays[m]);
-					break;
-				}
-			}
-		}
-		
-		function objectToJsonString(obj) {
-			var jsonstring = JSON.stringify(obj);
-			return jsonstring
-				.replace(/[\&]/g, '&amp;')
-				.replace(/[\<]/g, '&lt;')
-				.replace(/[\>]/g, '&gt;')
-				.replace(/[\"]/g, '&quot;')
-				.replace(/[\']/g, '&#39;');
-		}
 
 		$(function () {
 			// implementation of disabled form fields
@@ -231,52 +104,7 @@
 					dataType : 'json',
 					success : function(data)
 					{
-						function cleanMatchMarkers() {
-							var overlays = map.getOverlays();
-							for (var m in overlays) {
-								if (overlays[m] instanceof BMap.Marker && overlays[m].getTitle() != '我的位置') {
-									map.removeOverlay(overlays[m]);
-								}
-							}
-						}
-
-						if (data.length == 0) {
-							if($("#nomatch").length == 0) {
-								$("#matchlist").children(".panel").remove();
-								jQuery('<div/>', {
-								    id: 'nomatch',
-								    class: 'panel'
-								}).appendTo('#matchlist');
-								jQuery('<h5/>', {
-								    text: '您选择的时间段没有比赛。请重新选择。'
-								}).appendTo('#nomatch');
-								cleanMatchMarkers();
-							}
-						} else {
-							$("#matchlist").children(".panel").remove();
-							var ggpoints = [];
-							for (var idx in data) {
-								ggPoint = new BMap.Point(data[idx].fields.poolroom.lng, data[idx].fields.poolroom.lat);
-								ggpoints.push(ggPoint);
-							}
-							convertPoints(ggpoints, function(convertedPoints){
-								cleanMatchMarkers();
-								for (var idx in data) {
-									match = data[idx];
-									var matchobj = jQuery('<div/>', {
-									    class: 'panel'
-									});
-							    	matchobj.append("<h5><a name=\"match\" point=\"" + convertedPoints[idx].lng
-							    			+ "," + convertedPoints[idx].lat + "\" match=\"" + objectToJsonString([match])
-							    			+ "\"><strong>" + match.fields.poolroom.name + "</strong></a></h5>");
-							    	matchobj.append("<h6 class=\"subheader\">￥" + match.fields.bonus + "</h6>");
-							    	matchobj.append("<h6 class=\"subheader\">" + match.fields.starttime + "</h6>");
-							    	matchobj.appendTo('#matchlist');
-							    	
-							    	createMatchMarker(idx, matchobj.find("a"));
-								}
-							});
-						}
+						addMatchItems(data);
 					}
 				});
 			}).data('datepicker');

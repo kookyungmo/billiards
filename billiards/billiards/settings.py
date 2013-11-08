@@ -135,6 +135,10 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_PATH, 'billiards', 'templates'),
 )
 
+COMPRESS_JS_FILTERS = [
+    'compressor.filters.template.TemplateFilter',
+]
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
