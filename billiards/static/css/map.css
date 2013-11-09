@@ -1,0 +1,16 @@
+.icon_list .ico_wifi {
+	background-position: 0 0;
+}
+.icon_list .ico_restaurant{background-position:0 -234px;}
+.icon_list .ico_parking { background-position:0 -52px; }
+.icon_list .ico_bus{background-position:0 -286px;}
+.icon_list .ico_free_wifi {
+	background-position: 0 -312px;
+}
+.icon_list span {
+	float: left;
+	width: 24px;
+	height: 24px;
+	margin-right: 5px;
+	background: url('../images/ico_services2.png') no-repeat;
+}

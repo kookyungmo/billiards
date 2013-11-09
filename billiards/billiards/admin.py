@@ -7,6 +7,18 @@ Created on 2013年10月21日
 '''
 from billiards.models import Poolroom, Match
 from django.contrib import admin
+from bitfield import BitField
+from bitfield.forms import BitFieldCheckboxSelectMultiple
+from bitfield.admin import BitFieldListFilter
 
-admin.site.register(Poolroom)
+class PoolroomAdmin(admin.ModelAdmin):
+    formfield_overrides = {
+            BitField: {'widget': BitFieldCheckboxSelectMultiple},
+    }
+
+    list_filter = (
+            ('flags', BitFieldListFilter),
+            )
+
+admin.site.register(Poolroom, PoolroomAdmin)
 admin.site.register(Match)

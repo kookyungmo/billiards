@@ -93,27 +93,6 @@ function createMatchMarker(i, obj) {
 			});
 }
 
-function updatePoint() {
-	var ggpoints = [];
-	$("a[name=match]").each(function(i, obj) {
-		var points = $(obj).attr("point").split(",");
-		point = new BMap.Point(points[0], points[1]);
-		ggpoints.push(point);
-	});
-	convertPoints(ggpoints, function(convertedPoints) {
-		(function() {
-			$("a[name=match]").each(
-					function(i, obj) {
-						$(obj).attr(
-								"point",
-								convertedPoints[i].lng + ","
-										+ convertedPoints[i].lat);
-						createMatchMarker(i, obj);
-					});
-		})();
-	});
-}
-
 function markerDo(pointstr, callback) {
 	var points = pointstr.split(',');
 	var point = new BMap.Point(points[0], points[1]);
@@ -141,10 +120,23 @@ function addMatchToList(match, point) {
 	});
 	contentTemplate = "<div class=\"panel radius\">"
 			+ "<div class=\"row\">"
-			+ "<div class=\"large-8 columns\">"
-			+ "<div class=\"row\">"
-			+ "<h5><a name=\"match\" point=\"$point\" match=\"$matchjsonstr\">$poolroomname</a></h5>"
-			+ "<h6 class=\"subheader\">$starttime</h6>" + "</div>" + "</div>"
+			+ "<div class=\"large-2 columns\">"
+			+ "<a class=\"th\" href=\"#\"><img src=\"http://foundation.zurb.com/docs/img/demos/demo1-th.jpg\"></a>"
+			+ "</div>" + "<div class=\"large-6 columns\">"
+			+ "<h5><a name=\"match\" point=\"$point\" match=\"$matchjsonstr\">$poolroomname</a><br/>$starttime</h5>"
+			+ "<h6 class=\"subheader\">$address</h6>"
+			+ "<span class=\"icon_list\">";
+	if (match.fields.poolroom.flags.wifi)
+		contentTemplate += "<span class=\"ico_wifi\" title=\"公共区域WIFI\"></span>";
+	if (match.fields.poolroom.flags.wifi_free)
+		contentTemplate += "<span class=\"ico_free_wifi\" title=\"公共区域WIFI\"></span>";
+	if (match.fields.poolroom.flags.parking || match.fields.poolroom.flags.parking_free)
+		contentTemplate += "<span class=\"ico_parking\" title=\"停车场\"></span>";
+	if (match.fields.poolroom.flags.cafeteria)
+		contentTemplate += "<span class=\"ico_restaurant\" title=\"餐饮服务\"></span>";
+	if (match.fields.poolroom.flags.subway)
+		contentTemplate += "<span class=\"ico_bus\" title=\"地铁周边\"></span>";
+	contentTemplate += "</span></div>"
 			+ "<div class=\"large-4 columns\">" + "<div class=\"row right\">"
 			+ "<h4 class=\"subheader\">￥<strong>$bonus</strong></h4>"
 			+ "</div>" + "</div>" + "</div>";
@@ -152,7 +144,8 @@ function addMatchToList(match, point) {
 			point.lng + "," + point.lat).replace(/\$matchjsonstr/g,
 			objectToJsonString([ match ])).replace(/\$poolroomname/g,
 			match.fields.poolroom.name).replace(/\$starttime/g,
-			match.fields.starttime).replace(/\$bonus/g, match.fields.bonus);
+			moment(match.fields.starttime).lang('zh_CN').format('MMMM Do, h:mm a')).replace(/\$bonus/g, match.fields.bonus)
+			.replace(/\$address/g, match.fields.poolroom.address);
 	matchobj.append(contentTemplate);
 	matchobj.appendTo('#matchlist');
 	return matchobj;
@@ -201,7 +194,7 @@ function addMatchItems(data) {
 			cleanMatchMarkers();
 			for ( var idx in data) {
 				matchobj = addMatchToList(data[idx], convertedPoints[idx]);
-				createMatchMarker(idx, matchobj.find("a"));
+				createMatchMarker(idx, matchobj.find("a[name=match]"));
 			}
 		});
 	}

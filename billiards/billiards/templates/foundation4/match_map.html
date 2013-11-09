@@ -7,8 +7,10 @@
 <!-- foundation datepicker start -->
 <script src="{% static "js/foundation-datepicker.js" %}"></script>
 <script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}";</script>
+<script src="{% static "js/moment-with-langs.min.js" %}"></script>
 <script src="{% static "js/map.js" %}"></script>
 <link rel="stylesheet" href="{% static "css/foundation-datepicker.css" %}">
+<link rel="stylesheet" href="{% static "css/map.css" %}">
 <!-- foundation end -->
 {% endblock %}
 {% load extras %}
