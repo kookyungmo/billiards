@@ -6,12 +6,13 @@
 <script type="text/javascript" src="http://developer.baidu.com/map/jsdemo/demo/changeMore.js"></script>
 <!-- foundation datepicker start -->
 <script src="{% static "js/foundation-datepicker.js" %}"></script>
-<script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}";</script>
-<script src="{% static "js/moment-with-langs.min.js" %}"></script>
-<script src="{% static "js/map.js" %}"></script>
 <link rel="stylesheet" href="{% static "css/foundation-datepicker.css" %}">
-<link rel="stylesheet" href="{% static "css/map.css" %}">
 <!-- foundation end -->
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.4.0/moment.min.js"></script>
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.4.0/lang/zh-cn.js"></script>
+<script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}";</script>
+<script src="{% static "js/map.js" %}"></script>
+<link rel="stylesheet" href="{% static "css/map.css" %}">
 {% endblock %}
 {% load extras %}
 {% block content %}
