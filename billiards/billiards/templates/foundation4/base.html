@@ -38,12 +38,13 @@
       <li class="toggle-topbar menu-icon"><a href="#"><span>站点导航</span></a></li>
     </ul>
 
-    
+
    <section class="top-bar-section">
       <!-- Left Nav Section -->
       <ul class="left">
         <li class="divider"></li>
-        <li><a href="#">赛事活动</a></li>
+        {% url match_map 'map' as mapurl %}
+        <li {% if request.path == mapurl %} class="active" {% endif %}><a href="{{ mapurl }}">赛事活动</a></li>
       </ul>
 
       <!-- Right Nav Section -->

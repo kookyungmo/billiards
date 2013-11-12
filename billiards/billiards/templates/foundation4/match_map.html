@@ -101,7 +101,7 @@
 			}).on('changeDate', function (ev) {
 				dp2.hide();
 				$.ajax({
-					url : "{% url match_map map %}",
+					url : "{% url match_map 'map' %}",
 					data : {'f':'json', 'starttime':dp1.date.valueOf(), 'endtime': dp2.date.valueOf()},
 					dataType : 'json',
 					success : function(data)

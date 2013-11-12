@@ -12,6 +12,7 @@ from dateutil.relativedelta import relativedelta
 from django.core import serializers
 from django.http import HttpResponse
 from billiards.settings import STATIC_URL
+from django.template.context import RequestContext
 
 templatepath = 'foundation4/'
 def index(request, view = None):
@@ -41,7 +42,9 @@ def index(request, view = None):
     else:
         page = 'match_list.html'
 
-    return render_to_response(templatepath + page, {'matches': matches, 'starttime': starttime, 'enddate': endtime, 'STATIC_URL': STATIC_URL})
+    return render_to_response(templatepath + page,
+                              {'matches': matches, 'starttime': starttime, 'enddate': endtime, 'STATIC_URL': STATIC_URL},
+                              context_instance=RequestContext(request))
 
 def detail(request, matchid):
     match = get_object_or_404(Match, pk=matchid)

@@ -1,3 +1,7 @@
+function getFormattedTime(timestr) {
+	return moment(timestr).lang('zh_CN').format('MMMM Do, h:mm a')
+}
+
 var matchInfo = function(marker, name, matches) {
 	(function() {
 		var info = {
@@ -9,7 +13,7 @@ var matchInfo = function(marker, name, matches) {
 					content += "<p><p/><strong>奖金: "
 							+ matches[idx].fields.bonus
 							+ "</strong><br/><strong>比赛时间: "
-							+ matches[idx].fields.starttime + "</strong></p>";
+							+ getFormattedTime(matches[idx].fields.starttime) + "</strong></p>";
 				}
 				var infoWindow = new BMap.InfoWindow(content);
 				marker.openInfoWindow(infoWindow);
@@ -144,7 +148,7 @@ function addMatchToList(match, point) {
 			point.lng + "," + point.lat).replace(/\$matchjsonstr/g,
 			objectToJsonString([ match ])).replace(/\$poolroomname/g,
 			match.fields.poolroom.name).replace(/\$starttime/g,
-			moment(match.fields.starttime).lang('zh_CN').format('MMMM Do, h:mm a')).replace(/\$bonus/g, match.fields.bonus)
+			getFormattedTime(match.fields.starttime)).replace(/\$bonus/g, match.fields.bonus)
 			.replace(/\$address/g, match.fields.poolroom.address);
 	matchobj.append(contentTemplate);
 	matchobj.appendTo('#matchlist');
