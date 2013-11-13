@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="{% static "css/foundation-datepicker.css" %}">
 <!-- foundation end -->
 <script src="{% static "js/moment-with-langs.min.js" %}"></script>
-<script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}";</script>
+<script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}"; var MOREINFO_URL = "{% url poolroom_moreinfo '000' %}"</script>
 <script src="{% static "js/map.js" %}"></script>
 <link rel="stylesheet" href="{% static "css/map.css" %}">
 {% endblock %}

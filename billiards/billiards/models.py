@@ -9,6 +9,7 @@ Created on 2013年10月21日
 from django.db import models
 from django.utils.timezone import localtime
 from bitfield import BitField
+from django.utils.encoding import force_unicode
 
 def toDict(bitfield):
     flag_dict = {}
@@ -47,17 +48,22 @@ class Poolroom(models.Model):
         return {'id': self.id, 'name': self.name, 'lat': self.lat, 'lng': self.lng,
                 'businesshours': self.businesshours, 'size': self.size,
                 'address': self.address, 'flags': toDict(self.flags)}
+        
+class TableTypeField(models.CharField):
+    def value_to_string(self, obj):
+        value = self._get_val_from_obj(obj)
+        return force_unicode(dict(self.flatchoices).get(value, value), strings_only=True) 
 
 class PoolroomEquipment(models.Model):
     id = models.AutoField(primary_key=True)
     poolroom = models.ForeignKey(Poolroom, verbose_name='台球厅')
-    tabletype = models.CharField(max_length=10, choices=(
+    tabletype = TableTypeField(max_length=10, choices=(
             ('snooker', u'斯诺克 snooker'),
             ('pocket', u'十六彩(美式落袋)'),
             ('nine-ball', u'花式九球'),
         ), verbose_name='球台类型')
     producer = models.CharField(max_length=20,null=True,verbose_name='球台品牌')
-    number = models.IntegerField(max_length=8,null=True,verbose_name='数量')
+    quantity = models.IntegerField(max_length=8,null=True,verbose_name='数量')
     cue = models.CharField(max_length=20,null=True,verbose_name='球杆品牌')
     price = models.IntegerField(max_length=8,null=True,verbose_name='价格(元/小时)')
 
@@ -70,8 +76,8 @@ class PoolroomEquipment(models.Model):
         return u'%s - %s - %s - %s' %(self.poolroom.name, self.get_tabletype_display(), self.producer, self.cue)
 
     def natural_key(self):
-        return {'id': self.id, 'poolroom': self.poolroom, 'tabletype': self.tabletype,
-                'producer': self.producer, 'number': self.number, 'cue': self.cue,
+        return {'id': self.id, 'poolroom': self.poolroom, 'tabletype': self.get_tabletype_display(),
+                'producer': self.producer, 'quantity': self.quantity, 'cue': self.cue,
                 'price': self.price}
 
 class Match(models.Model):

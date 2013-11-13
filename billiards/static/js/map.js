@@ -55,8 +55,8 @@ var callback = function(xyResults) {
 	for ( var index in xyResults) {
 		xyResult = xyResults[index];
 		if (xyResult.error != 0) {
-			continue;
-		}//TODO
+			continue; //TODO better error handling
+		}
 		var point = new BMap.Point(xyResult.x, xyResult.y);
 		convertedPoints.push(point);
 	}
@@ -85,16 +85,82 @@ function createMatchMarker(i, obj) {
 		});
 	}, function() {
 	});
-	$(obj).click(
+	$(obj).parents(".match-summary").click(
 			function() {
-				var link = $(this);
+				var link = $(obj);
 				(function() {
 					markerDo(link.attr("point"), function(marker) {
-						matchInfo(marker, link.find("strong").text(), eval(link
+						matchInfo(marker, link.text(), eval(link
 								.attr("match")));
 					});
 				})();
+				// show more info
+				showMoreInfo(link);
 			});
+}
+
+function showMoreInfo(obj) {
+	parent = obj.parents(".panel");
+	moreinfo = parent.find("#moreinfo");
+	$("#matchlist").find("#moreinfo:visible").each(function(index, value){
+		if (!$(this).is(moreinfo))
+			$(this).hide();
+	});
+	if (moreinfo.length == 0) {
+		match = eval(obj.attr('match'));
+		url = MOREINFO_URL.replace(/000/g, match[0].pk);
+		$.ajax({
+			url : url,
+			dataType : 'json',
+			success : function(data)
+			{
+				var infoobj = jQuery('<div/>', {
+					class : 'row',
+					id : 'moreinfo'
+				});
+				contentTemplate = "<hr>"
+					+ "<div class=\"large-8 columns\">"
+					+ "<div class=\"orbit-container\">"
+					+ "<ul data-orbit style=\"height: 170px\">"
+		            + "<li>"
+		            + "<img src=\"http://foundation.zurb.com/docs/img/demos/orbit/demo1.jpg\">"
+		            + "</li>"
+		            + "<li class=\"active\">"
+		            + "<img src=\"http://foundation.zurb.com/docs/img/demos/orbit/demo2.jpg\">"
+		            + "</li>"
+		            + "</ul></div></div>"
+		            + "<div class=\"large-4 columns\">"
+		            + "<div class=\"row\">$equipments"
+		            + "</div></div>";
+				contentEquipment = "";
+				for (var idx in data) {
+					equipment = data[idx];
+		            contentEquipment += "<ul class=\"pricing-table\">"
+			            + "<li class=\"title\">" + equipment.fields.tabletype + "</li>"
+			            + "<li class=\"price\">" + equipment.fields.price + "元/小时</li>";
+		            if (equipment.fields.quantity != 'null')
+		            	contentEquipment += "<li class=\"bullet-item\">数量: " + equipment.fields.quantity + "张</li>";
+		            if (equipment.fields.producer != 'null')
+		            	contentEquipment += "<li class=\"bullet-item\">球桌品牌: " + equipment.fields.producer + "</li>";
+		            if (equipment.fields.cue != 'null')
+		            	contentEquipment += "<li class=\"bullet-item\">球杆品牌: " + equipment.fields.cue + "</li>";
+		            contentEquipment += "</ul>";
+				}
+				contentTemplate = contentTemplate.replace(/\$equipments/g, contentEquipment);
+				infoobj.append(contentTemplate);
+				infoobj.appendTo(parent);
+				$(document).foundation('orbit');
+				$('html, body').animate({
+		            scrollTop: obj.offset().top
+		        }, 2000);
+			}
+		});
+	} else {
+		moreinfo.show();
+		$('html, body').animate({
+            scrollTop: obj.offset().top
+        }, 2000);
+	}
 }
 
 function markerDo(pointstr, callback) {
@@ -123,11 +189,11 @@ function addMatchToList(match, point) {
 		id : 'match'
 	});
 	contentTemplate = "<div class=\"panel radius\">"
-			+ "<div class=\"row\">"
+			+ "<div class=\"row match-summary\">"
 			+ "<div class=\"large-2 columns\">"
 			+ "<a class=\"th\" href=\"#\"><img src=\"http://foundation.zurb.com/docs/img/demos/demo1-th.jpg\"></a>"
 			+ "</div>" + "<div class=\"large-6 columns\">"
-			+ "<h5><a name=\"match\" point=\"$point\" match=\"$matchjsonstr\">$poolroomname</a><br/>$starttime</h5>"
+			+ "<h5><span name=\"title\" point=\"$point\" match=\"$matchjsonstr\">$poolroomname</span><br/>$starttime</h5>"
 			+ "<h6 class=\"subheader\">$address</h6>"
 			+ "<span class=\"icon_list\">";
 	if (match.fields.poolroom.flags.wifi)
@@ -198,7 +264,7 @@ function addMatchItems(data) {
 			cleanMatchMarkers();
 			for ( var idx in data) {
 				matchobj = addMatchToList(data[idx], convertedPoints[idx]);
-				createMatchMarker(idx, matchobj.find("a[name=match]"));
+				createMatchMarker(idx, matchobj.find("span[name=title]"));
 			}
 		});
 	}
