@@ -22,7 +22,7 @@ def index(request, view = None):
             starttime = datetime.datetime.utcfromtimestamp(float(request.GET.get('starttime'))/1000)
     except Exception:
         pass
-    endtime = starttime + relativedelta(weeks=2)
+    endtime = starttime + relativedelta(days=1)
     try:
         if request.GET.get('endtime') is not None:
             endtime = datetime.datetime.utcfromtimestamp(float(request.GET.get('endtime'))/1000)
@@ -43,7 +43,7 @@ def index(request, view = None):
         page = 'match_list.html'
 
     return render_to_response(templatepath + page,
-                              {'matches': matches, 'starttime': starttime, 'enddate': endtime, 'STATIC_URL': STATIC_URL},
+                              {'matches': matches, 'startdate': starttime, 'enddate': endtime, 'STATIC_URL': STATIC_URL},
                               context_instance=RequestContext(request))
 
 def detail(request, matchid):
