@@ -18,15 +18,20 @@
 	<div id="calendar" class="row">
 		<dl id="calendar-per-day" class="sub-nav">
 			<script>
+				function addMonth(monthstr) {
+					var monthItem = jQuery('<dt/>', {});
+					monthItem.append("<strong><sup>" + monthstr + "</sup></strong>");
+					monthItem.appendTo($(".sub-nav"));
+				}
+
 				var starttime = moment("{{ startdate|date:"D d M Y" }}");
 				var endtime = moment("{{ enddate|date:"D d M Y" }}");
 				var m = moment();
 				var thismonth = m.month();
+				addMonth(m.lang('zh_CN').format('MMM'));
 				for (var i = 0; i < 30; i++) {
 					if (m.month() != thismonth) {
-						var monthItem = jQuery('<dt/>', {});
-						monthItem.append(m.lang('zh_CN').format('MMM'));
-						monthItem.appendTo($(".sub-nav"));
+						addMonth(m.lang('zh_CN').format('MMM'));
 						thismonth = m.month();
 					}
 					var dayItem = jQuery('<dd/>', {});
