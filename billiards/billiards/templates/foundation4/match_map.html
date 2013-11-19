@@ -26,10 +26,19 @@
 
 				var starttime = moment("{{ startdate|date:"D d M Y" }}");
 				var endtime = moment("{{ enddate|date:"D d M Y" }}");
+				var bonussummary = {};
+				var bonusobj = eval('{{ bonussummary|safe }}');
+				for (var idx in bonusobj) {
+					bonussummary[bonusobj[idx].starttime] = bonusobj[idx].bonus;
+				}
+				var summary = {};
+				{% for k,v in matchsummary.items %}
+				summary['{{ k }}'] = {{ v }};
+				{% endfor %}
 				var m = moment();
 				var thismonth = m.month();
 				addMonth(m.lang('zh_CN').format('MMM'));
-				for (var i = 0; i < 30; i++) {
+				for (var i = 0; i < {{ intervals }}; i++) {
 					if (m.month() != thismonth) {
 						addMonth(m.lang('zh_CN').format('MMM'));
 						thismonth = m.month();
@@ -37,7 +46,16 @@
 					var dayItem = jQuery('<dd/>', {});
 					if (m.date() == starttime.date() && m.month() == starttime.month())
 						dayItem.attr('class', 'active');
-					contentTemplate = "<a href=\"javascript:();\" timestamp=\"" + m.valueOf() + "\">" + m.date() + "</a>";
+					contentTemplate = "<h5><a href=\"javascript:();\" timestamp=\"" + m.valueOf() + "\">" + m.date() + "</a>";
+ 					var formattedday = m.format("YYYY-M-D");
+					if (formattedday in summary) {
+						contentTemplate += "<sub><span data-tooltip=\"\" class=\"has-tip tip-top noradius\" title=\"当日比赛场数\">" + summary[formattedday] + "</span></sub>";
+					}
+					if (formattedday in bonussummary) {
+						contentTemplate += "<span data-tooltip=\"\" class=\"has-tip tip-top noradius\" title=\"最高的奖金\"><sup>\
+							<img src=\"{% static "images/bonus.jpeg" %}\"><sup></span>";
+					}
+					contentTemplate += "</h5>";
 					dayItem.append(contentTemplate);
 					dayItem.appendTo($(".sub-nav"));
 					m.add('days', 1);
@@ -50,7 +68,7 @@
 		<div id="matchlist" class="large-6 columns">
 		  	<script>
 			{% if matches|length > 0 %}
-				matches = eval('{{ matches|tojson|safe }}');
+				matches = eval('{{ matches|matchtojson|safe }}');
 				addMatchItems(matches);
 			{% else %}
 	           	createNoMatch();

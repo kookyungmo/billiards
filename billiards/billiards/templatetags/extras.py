@@ -7,16 +7,20 @@ Created on 2013年10月31日
 '''
 from django import template
 from django.core import serializers
-from django.db.models.query import QuerySet
+from django.db.models.query import QuerySet, ValuesQuerySet
 
-def tojson(data):
+def tojson(data, fields = None):
     json_serializer = serializers.get_serializer("json")()
     newdata = data
-    if not isinstance(newdata, (QuerySet)):
+    if not isinstance(newdata, (QuerySet, ValuesQuerySet)):
         newdata = [data]
-    jsonstring = json_serializer.serialize(newdata, fields=('id', 'poolroom', 'bonus', 'starttime', 'description'),
+    jsonstring = json_serializer.serialize(newdata, fields=fields,
                                                ensure_ascii=False, use_natural_keys=True)
     return jsonstring
 
+def matchtojson(data):
+    return tojson(data, ('id', 'poolroom', 'bonus', 'starttime', 'description'))
+
 register = template.Library()
+register.filter('matchtojson', matchtojson)
 register.filter('tojson', tojson)
