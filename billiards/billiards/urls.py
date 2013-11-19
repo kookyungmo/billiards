@@ -7,11 +7,18 @@ from django.views.generic.base import RedirectView
 # from django.contrib import admin
 admin.autodiscover()
 
-urlpatterns = patterns('',
+urlpatterns = patterns('billiards.views.match',
+    url(r'^match/(?P<matchid>\d+)/$', 'detail', name="match_detail"),
+#     url(r'^match$', 'index', name="match"),
+    url(r'^match/(?P<view>\w+)/$', 'index', name="match_map"),
+)
+
+urlpatterns += patterns('billiards.views.poolroom',
+    url(r'^poolroom/(?P<poolroomid>\d+)/more$', 'more', name="poolroom_moreinfo"),
+)
+
+urlpatterns += patterns('',
     url(r'^$', RedirectView.as_view(url='match/map', permanent=False), name="home"),
-    url(r'^match/(?P<matchid>[\d]+)', 'billiards.views.match.detail', name="match_detail"),
-    url(r'^match$', 'billiards.views.match.index', name="match"),
-    url(r'^match/?(?P<view>[\w]*)', 'billiards.views.match.index', name="match_map"),
     url(r'^admin/', include(admin.site.urls)),
 )
 

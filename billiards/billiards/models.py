@@ -9,7 +9,13 @@ Created on 2013年10月21日
 from django.db import models
 from django.utils.timezone import localtime
 from bitfield import BitField
-from django.db.models.fields import Field
+from django.utils.encoding import force_unicode
+
+def toDict(bitfield):
+    flag_dict = {}
+    for f in bitfield:
+        flag_dict[f[0]] = f[1]
+    return flag_dict
 
 class Poolroom(models.Model):
     id = models.AutoField(primary_key=True)
@@ -20,13 +26,15 @@ class Poolroom(models.Model):
     lng = models.DecimalField(max_digits=11,decimal_places=7,null=True,verbose_name='经度')
     #TODO try composite bit field
     flags = BitField(flags=(
-            ('wifi', 'Wifi'),
-            ('wifi_free', '免费Wifi'),
-            ('parking', '停车位'),
-            ('parking_free', ' 免费停车位'),
-            ('cafeteria', '餐厅'),
-            ('subway', ' 地铁周边'),
-        ), verbose_name='特色属性', default=0)
+            ('wifi', u'Wifi'),
+            ('wifi_free', u'免费Wifi'),
+            ('parking', u'停车位'),
+            ('parking_free', u'免费停车位'),
+            ('cafeteria', u'餐厅'),
+            ('subway', u'地铁周边'),
+        ), verbose_name='特色属性')
+    businesshours = models.CharField(max_length=60,null=True,verbose_name='营业时间')
+    size = models.IntegerField(max_length=8,null=True,verbose_name='球馆面积(平米)')
 
     class Meta:
         db_table = 'poolroom'
@@ -37,11 +45,40 @@ class Poolroom(models.Model):
         return self.name
 
     def natural_key(self):
-        flag_dict = {}
-        for f in self.flags:
-            flag_dict[f[0]] = f[1]
         return {'id': self.id, 'name': self.name, 'lat': self.lat, 'lng': self.lng,
-                'address': self.address, 'flags': flag_dict}
+                'businesshours': self.businesshours, 'size': self.size,
+                'address': self.address, 'flags': toDict(self.flags)}
+        
+class TableTypeField(models.CharField):
+    def value_to_string(self, obj):
+        value = self._get_val_from_obj(obj)
+        return force_unicode(dict(self.flatchoices).get(value, value), strings_only=True) 
+
+class PoolroomEquipment(models.Model):
+    id = models.AutoField(primary_key=True)
+    poolroom = models.ForeignKey(Poolroom, verbose_name='台球厅')
+    tabletype = TableTypeField(max_length=10, choices=(
+            ('snooker', u'斯诺克 snooker'),
+            ('pocket', u'十六彩(美式落袋)'),
+            ('nine-ball', u'花式九球'),
+        ), verbose_name='球台类型')
+    producer = models.CharField(max_length=20,null=True,verbose_name='球台品牌')
+    quantity = models.IntegerField(max_length=8,null=True,verbose_name='数量')
+    cue = models.CharField(max_length=20,null=True,verbose_name='球杆品牌')
+    price = models.IntegerField(max_length=8,null=True,verbose_name='价格(元/小时)')
+
+    class Meta:
+        db_table = 'poolroomequipment'
+        verbose_name = '台球厅硬件'
+        verbose_name_plural = '台球厅硬件'
+
+    def __unicode__(self):
+        return u'%s - %s - %s - %s' %(self.poolroom.name, self.get_tabletype_display(), self.producer, self.cue)
+
+    def natural_key(self):
+        return {'id': self.id, 'poolroom': self.poolroom, 'tabletype': self.get_tabletype_display(),
+                'producer': self.producer, 'quantity': self.quantity, 'cue': self.cue,
+                'price': self.price}
 
 class Match(models.Model):
     id = models.AutoField(primary_key=True)

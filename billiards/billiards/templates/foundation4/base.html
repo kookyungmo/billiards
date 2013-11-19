@@ -43,23 +43,24 @@
       <!-- Left Nav Section -->
       <ul class="left">
         <li class="divider"></li>
-        <li><a href="#">赛事活动</a></li>
+        {% url match_map 'map' as mapurl %}
+        <li {% if request.path == mapurl %} class="active" {% endif %}><a href="{{ mapurl }}">赛事活动</a></li>
       </ul>
 
       <!-- Right Nav Section -->
       <ul class="right">
         <li class="divider"></li>
-        <li><a href="#">登录</a></li>
+        <li><a href="#">微博登录</a></li>
         <li class="divider"></li>
-        <li><a href="#">注册</a></li>
+        <li><a href="#">腾讯登录</a></li>
       </ul>
     </section>
   </nav>
     <div id="banner" class="row">
         <div class="large-12 columns">
           <h1 class="docs header"><a href="#">我为台球狂 for Billiards fans</a></h1>
-          <hr>
         </div>
+		<hr>
     </div>
 
   <!-- End Header and Nav -->
