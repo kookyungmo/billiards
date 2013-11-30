@@ -108,7 +108,7 @@ function showMoreInfo(obj) {
 	});
 	if (moreinfo.length == 0) {
 		match = eval(obj.attr('match'));
-		url = MOREINFO_URL.replace(/000/g, match[0].pk);
+		url = MOREINFO_URL.replace(/000/g, match[0].fields.poolroom.id);
 		$.ajax({
 			url : url,
 			dataType : 'json',
