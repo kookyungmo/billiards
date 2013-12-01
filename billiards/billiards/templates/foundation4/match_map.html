@@ -48,7 +48,7 @@
 					if (m.date() == starttime.date() && m.month() == starttime.month())
 						dayItem.attr('class', 'active');
 					contentTemplate = "<h5><a href=\"javascript:();\" timestamp=\"" + m.valueOf() + "\">" + m.date() + "</a>";
- 					var formattedday = m.format("YYYY-M-D");
+ 					var formattedday = m.format("YYYY-MM-DD");
 					if (formattedday in summary) {
 						contentTemplate += "<sub><span data-tooltip=\"\" class=\"has-tip tip-top noradius\" title=\"当日比赛场数\">" + summary[formattedday] + "</span></sub>";
 					}

@@ -108,7 +108,7 @@ function showMoreInfo(obj) {
 	});
 	if (moreinfo.length == 0) {
 		match = eval(obj.attr('match'));
-		url = MOREINFO_URL.replace(/000/g, match[0].pk);
+		url = MOREINFO_URL.replace(/000/g, match[0].fields.poolroom.id);
 		$.ajax({
 			url : url,
 			dataType : 'json',
@@ -156,10 +156,13 @@ function showMoreInfo(obj) {
 			}
 		});
 	} else {
-		moreinfo.show();
-		$('html, body').animate({
-            scrollTop: obj.offset().top
-        }, 2000);
+		if ($("#matchlist").find("#moreinfo:visible").length == 0) {
+			moreinfo.show();
+			$('html, body').animate({
+	            scrollTop: obj.offset().top
+	        }, 2000);
+		} else
+			moreinfo.hide();
 	}
 }
 

@@ -31,8 +31,9 @@ def index(request, view = None):
     except Exception:
         pass
 
-    matches = Match.objects.filter(starttime__gte=starttime.strftime("%Y-%m-%d")) \
-        .exclude(starttime__gt=endtime.strftime("%Y-%m-%d")).order_by('starttime')
+    datefmt = "%Y-%m-%d"
+    matches = Match.objects.filter(starttime__gte=starttime.strftime(datefmt)) \
+        .exclude(starttime__gt=endtime.strftime(datefmt)).order_by('starttime')
 
     if request.GET.get('f') == 'json':
         json_serializer = serializers.get_serializer("json")()
@@ -48,19 +49,19 @@ def index(request, view = None):
     starttime2 = datetime.datetime.today()
     endtime2 = starttime2 + relativedelta(days=intervals)
     matchCountSummary = dict()
-    rt = Match.objects.filter(starttime__gte=starttime2.strftime("%Y-%m-%d")) \
-         .exclude(starttime__gt=endtime2.strftime("%Y-%m-%d"))
+    rt = Match.objects.filter(starttime__gte=starttime2.strftime(datefmt)) \
+         .exclude(starttime__gt=endtime2.strftime(datefmt))
     for match in rt:
-        if match.starttime.strftime("%Y-%m-%d") in matchCountSummary:
-            matchCountSummary[match.starttime.strftime("%Y-%m-%d")] += 1
+        if match.starttime.strftime(datefmt) in matchCountSummary:
+            matchCountSummary[match.starttime.strftime(datefmt)] += 1
         else:
-            matchCountSummary[match.starttime.strftime("%Y-%m-%d")] = 1
-    topOneBonusSummary = Match.objects.values('starttime','bonus').filter(starttime__gte=starttime2.strftime("%Y-%m-%d")) \
-         .exclude(starttime__gt=endtime2.strftime("%Y-%m-%d")).filter(bonus=Match.objects.filter(starttime__gte=starttime2.strftime("%Y-%m-%d")) \
-         .exclude(starttime__gt=endtime2.strftime("%Y-%m-%d")).aggregate(Max('bonus'))['bonus__max'])
+            matchCountSummary[match.starttime.strftime(datefmt)] = 1
+    topOneBonusSummary = Match.objects.values('starttime','bonus').filter(starttime__gte=starttime2.strftime(datefmt)) \
+         .exclude(starttime__gt=endtime2.strftime(datefmt)).filter(bonus=Match.objects.filter(starttime__gte=starttime2.strftime(datefmt)) \
+         .exclude(starttime__gt=endtime2.strftime(datefmt)).aggregate(Max('bonus'))['bonus__max'])
 
     def ValuesQuerySetToDict(vqs):
-        return [{'bonus': item['bonus'], 'starttime': item['starttime'].strftime("%Y-%m-%d")} for item in vqs]
+        return [{'bonus': item['bonus'], 'starttime': item['starttime'].strftime(datefmt)} for item in vqs]
 
     return render_to_response(templatepath + page,
                               {'matches': matches, 'startdate': starttime, 'enddate': endtime, 'STATIC_URL': STATIC_URL,
