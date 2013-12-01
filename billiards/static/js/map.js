@@ -156,10 +156,13 @@ function showMoreInfo(obj) {
 			}
 		});
 	} else {
-		moreinfo.show();
-		$('html, body').animate({
-            scrollTop: obj.offset().top
-        }, 2000);
+		if ($("#matchlist").find("#moreinfo:visible").length == 0) {
+			moreinfo.show();
+			$('html, body').animate({
+	            scrollTop: obj.offset().top
+	        }, 2000);
+		} else
+			moreinfo.hide();
 	}
 }
 
