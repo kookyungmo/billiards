@@ -16,6 +16,11 @@ class ModelWithFlagsAdmin(admin.ModelAdmin):
         BitField: {'widget': BitFieldCheckboxSelectMultiple},
     }
 
+class MatchAdmin(ModelWithFlagsAdmin):
+    list_filter = (
+            ('flags', BitFieldListFilter),
+            )
+
 class PoolroomAdmin(ModelWithFlagsAdmin):
     list_filter = (
             ('flags', BitFieldListFilter),
@@ -23,4 +28,4 @@ class PoolroomAdmin(ModelWithFlagsAdmin):
 
 admin.site.register(Poolroom, PoolroomAdmin)
 admin.site.register(PoolroomEquipment)
-admin.site.register(Match)
+admin.site.register(Match, MatchAdmin)

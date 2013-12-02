@@ -46,7 +46,7 @@
 					var dayItem = jQuery('<dd/>', {});
 					if (m.date() == starttime.date() && m.month() == starttime.month())
 						dayItem.attr('class', 'active');
-					contentTemplate = "<h5><a href=\"javascript:();\" timestamp=\"" + m.valueOf() + "\">" + m.date() + "</a>";
+					contentTemplate = "<h5><a href=\"javascript:void(0);\" timestamp=\"" + m.valueOf() + "\">" + m.date() + "</a>";
  					var formattedday = m.format("YYYY-MM-DD");
 					if (formattedday in summary) {
 						contentTemplate += "<sub><span data-tooltip=\"\" class=\"has-tip tip-top noradius\" title=\"当日比赛场数\">" + summary[formattedday] + "</span></sub>";
@@ -65,7 +65,7 @@
         <hr>
 	</div>
 	<div class="row">
-		<div id="matchlist" class="large-6 columns">
+		<div id="matchlist" class="large-7 columns">
 		  	<script>
 			{% if matches|length > 0 %}
 				matches = eval('{{ matches|matchtojson|safe }}');
@@ -75,7 +75,7 @@
 			{% endif %}
 			</script>
 		</div>
-		<div class="large-6 columns">
+		<div class="large-5 columns">
 			<div id="baidumap"
 				style="overflow: hidden; margin: 0;"></div>
 		</div>

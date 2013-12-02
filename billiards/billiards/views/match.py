@@ -38,7 +38,7 @@ def index(request, view = None):
     if request.GET.get('f') == 'json':
         json_serializer = serializers.get_serializer("json")()
         response = HttpResponse()
-        json_serializer.serialize(matches, fields=('id', 'poolroom', 'bonus', 'starttime'), ensure_ascii=False, stream=response, indent=2, use_natural_keys=True)
+        json_serializer.serialize(matches, fields=('id', 'poolroom', 'bonus', 'starttime', 'enrollfee', 'enrollfocal', 'rule', 'bonusdetail'), ensure_ascii=False, stream=response, indent=2, use_natural_keys=True)
         return response
     if view == 'map':
         page = 'match_map.html'

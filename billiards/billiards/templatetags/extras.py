@@ -19,7 +19,7 @@ def tojson(data, fields = None):
     return jsonstring
 
 def matchtojson(data):
-    return tojson(data, ('id', 'poolroom', 'bonus', 'starttime', 'description'))
+    return tojson(data, ('id', 'poolroom', 'bonus', 'bonusdetail', 'rule', 'starttime', 'description'))
 
 register = template.Library()
 register.filter('matchtojson', matchtojson)
