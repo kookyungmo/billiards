@@ -41,7 +41,7 @@ def index(request, view = None):
         json_serializer.serialize(matches, fields=('id', 'poolroom', 'bonus', 'starttime', 'enrollfee', 'enrollfocal', 'rule', 'bonusdetail'), ensure_ascii=False, stream=response, indent=2, use_natural_keys=True)
         return response
     if view == 'map':
-        page = 'match_map.html'
+        page = 'match_map_v2.html'
     else:
         page = 'match_list.html'
 

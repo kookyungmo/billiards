@@ -1,0 +1,149 @@
+{% extends "foundation4/base.html" %}
+{% block header %}
+{% load staticfiles %}
+<script type="text/javascript"
+	src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>
+<script type="text/javascript" src="http://developer.baidu.com/map/jsdemo/demo/changeMore.js"></script>
+<script src="{% static "js/moment-with-langs.min.js" %}"></script>
+<script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}";</script>
+<script src="{% static "js/map.js" %}"></script>
+<script src="{% static "js/map_v2.js" %}"></script>
+<link rel="stylesheet" href="{% static "css/map.css" %}">
+{% endblock %}
+{% load extras %}
+{% block content %}
+	<div data-magellan-expedition="fixed">
+		<div id="calendar" class="row">
+			<dl id="calendar-per-day" class="sub-nav">
+				<script>
+					function addMonth(monthstr) {
+						var monthItem = jQuery('<dt/>', {});
+						monthItem.append("<strong><sup>" + monthstr + "</sup></strong>");
+						monthItem.appendTo($(".sub-nav"));
+					}
+
+					var starttime = moment("{{ startdate|date:"D d M Y" }}");
+					var endtime = moment("{{ enddate|date:"D d M Y" }}");
+					var bonussummary = {};
+					var bonusobj = eval('{{ bonussummary|safe }}');
+					for (var idx in bonusobj) {
+						bonussummary[bonusobj[idx].starttime] = bonusobj[idx].bonus;
+					}
+					var summary = {};
+					{% for k,v in matchsummary.items %}
+					summary['{{ k }}'] = {{ v }};
+					{% endfor %}
+					var m = moment();
+					var thismonth = m.month();
+					addMonth(m.lang('zh_CN').format('MMM'));
+					for (var i = 0; i < {{ intervals }}; i++) {
+						if (m.month() != thismonth) {
+							addMonth(m.lang('zh_CN').format('MMM'));
+							thismonth = m.month();
+						}
+						var dayItem = jQuery('<dd/>', {});
+						if (m.date() == starttime.date() && m.month() == starttime.month())
+							dayItem.attr('class', 'active');
+						contentTemplate = "<h5><a href=\"javascript:void(0);\" timestamp=\"" + m.valueOf() + "\">" + m.date() + "</a>";
+	 					var formattedday = m.format("YYYY-MM-DD");
+						if (formattedday in summary) {
+							contentTemplate += "<sub><span data-tooltip=\"\" class=\"has-tip tip-top noradius\" title=\"当日比赛场数\">" + summary[formattedday] + "</span></sub>";
+						}
+						if (formattedday in bonussummary) {
+							contentTemplate += "<span data-tooltip=\"\" class=\"has-tip tip-top noradius\" title=\"最高的奖金\"><sup>\
+								<img src=\"{% static "images/bonus.jpeg" %}\"><sup></span>";
+						}
+						contentTemplate += "</h5>";
+						dayItem.append(contentTemplate);
+						dayItem.appendTo($(".sub-nav"));
+						m.add('days', 1);
+					}
+				</script>
+	        </dl>
+	        <hr>
+		</div>
+		<div class="row">
+			<div class="large-12 columns">
+				<div id="baidumap"
+					style="overflow: hidden; margin: 0;"></div>
+			</div>
+		</div>
+    </div>
+
+	<div class="row">
+		<div class="large-9 columns">
+			<div class="row">
+				<div class="large-12 columns"><h4>俱乐部赛事</h4></div>
+			</div>
+			<div class="row">
+				<div id="matchlist" class="large-12 columns">
+				  	<script>
+					{% if matches|length > 0 %}
+						matches = eval('{{ matches|matchtojson|safe }}');
+						addMatchItems_v2(matches);
+					{% else %}
+			           	createNoMatch();
+					{% endif %}
+					</script>
+				</div>
+			</div>
+		</div>
+		<div class="large-3 columns">
+			<div class="row">
+				<div class="large-11 large-centered columns">
+					<div class="row"><h4>最新动态</h4></div>
+					<div class="row"><hr></div>
+					<div class="row">云渡台球俱乐部圣诞节派对火热报名中</div>
+					<div class="row right">>>详情</div>
+					<div class="row"><br/><br/></div>
+					<div class="row">卓凡台球俱乐部三周年店庆，会员即日起止2013年12月31日，全天免费畅打</div>
+					<div class="row right">>>详情</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+{% block footer %}
+	<script>
+		var map = new BMap.Map("baidumap");
+		$(document).ready(
+				function() {
+				    $("#baidumap").css("height", 300);
+				    map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_RIGHT, type: BMAP_NAVIGATION_CONTROL_SMALL}));
+					map.enableScrollWheelZoom(true);
+				    map.centerAndZoom('北京');
+
+				    var geolocation = new BMap.Geolocation();
+				    geolocation.getCurrentPosition(function(r){
+				        if(this.getStatus() == BMAP_STATUS_SUCCESS){
+				            var marker = addMarker(r.point, '{% static "images/location.png" %}');
+				            marker.setTitle('我的位置');
+				            map.panTo(r.point);
+				        }
+				        else {
+				            //TODO
+				        }
+				    },{enableHighAccuracy: true});
+				});
+
+		$("dl dd a").click(function() {
+			selectedItem = $(this);
+			timestamp = selectedItem.attr('timestamp');
+			selecteddate = moment(timestamp);
+			$.ajax({
+				url : "{% url match_map 'map' %}",
+				data : {'f':'json', 'starttime':timestamp, 'endtime': selecteddate.add('days', 1).valueOf()},
+				dataType : 'json',
+				success : function(data)
+				{
+					$("dl dd.active").each(function() {
+						$(this).removeClass("active");
+					});
+					selectedItem.parents("dd").attr('class', 'active');
+					addMatchItems_v2(data);
+				}
+			});
+		});
+	</script>
+{% endblock %}
