@@ -14,13 +14,12 @@
 
   <!-- Included CSS Files -->
 
-  <link rel="stylesheet" href="{% static "foundation4/css/normalize.css" %}">
-  <link rel="stylesheet" href="{% static "foundation4/css/foundation.min.css" %}">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/css/normalize.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/css/foundation.min.css" %}">
   <link rel="stylesheet" href="{% static "css/docs.css" %}">
   <script type="text/javascript" src="http://qzonestyle.gtimg.cn/qzone/openapi/qc_loader.js" data-appid="100568693" data-redirecturi="http://2.ibilliards.duapp.com/" charset="utf-8">
   </script>
-  <script src="{% static "foundation4/js/vendor/custom.modernizr.js" %}"></script>
-  <script src="{% static "foundation4/js/vendor/jquery.js" %}"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/js/vendor/jquery.min.js"></script>
   <!-- script type="text/javascript" src="{% static "js/qc_loader.js" %}" data-appid="100568693" data-redirecturi="http://2.ibilliards.duapp.com/" charset="utf-8"></script -->
 {% block header %}{% endblock %}
 </head>
@@ -115,7 +114,10 @@
   <!-- End Header and Nav -->
 
     <!-- Main Feed -->
-	{% block content %}{% endblock %}
+<section role="main">
+  	<div class="row">
+  		{% block content %}{% endblock %}
+  	</div>
 
   <!-- Footer -->
 
@@ -137,13 +139,15 @@
       </div>
     </div>
   </footer>
-
-  <script src="{% static "foundation4/js/foundation.min.js" %}"></script>
+</section>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/js/foundation/foundation.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/js/vendor/custom.modernizr.min.js"></script>
+  {% block foundationscript %}{% endblock %}
   <script>
     $(document).foundation();
   </script>
 
-  {% block footer %}{% endblock %}
+  {% block script %}{% endblock %}
 </body>
 </html>
 

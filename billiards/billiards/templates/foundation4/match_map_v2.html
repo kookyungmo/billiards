@@ -12,70 +12,66 @@
 {% endblock %}
 {% load extras %}
 {% block content %}
-	<div data-magellan-expedition="fixed">
-		<div id="calendar" class="row">
-			<dl id="calendar-per-day" class="sub-nav">
-				<script>
-					function addMonth(monthstr) {
-						var monthItem = jQuery('<dt/>', {});
-						monthItem.append("<strong><sup>" + monthstr + "</sup></strong>");
-						monthItem.appendTo($(".sub-nav"));
-					}
+	<div id="calendar" class="large-1 columns">
+					<script>
+						function addMonth(monthstr) {
+							var monthItem = jQuery('<div/>', {class : 'row'});
+							monthItem.append("<h5><strong>" + monthstr + "</strong></h5>");
+							monthItem.appendTo($("#calendar"));
+						}
 
-					var starttime = moment("{{ startdate|date:"D d M Y" }}");
-					var endtime = moment("{{ enddate|date:"D d M Y" }}");
-					var bonussummary = {};
-					var bonusobj = eval('{{ bonussummary|safe }}');
-					for (var idx in bonusobj) {
-						bonussummary[bonusobj[idx].starttime] = bonusobj[idx].bonus;
-					}
-					var summary = {};
-					{% for k,v in matchsummary.items %}
-					summary['{{ k }}'] = {{ v }};
-					{% endfor %}
-					var m = moment();
-					var thismonth = m.month();
-					addMonth(m.lang('zh_CN').format('MMM'));
-					for (var i = 0; i < {{ intervals }}; i++) {
-						if (m.month() != thismonth) {
-							addMonth(m.lang('zh_CN').format('MMM'));
-							thismonth = m.month();
+						var starttime = moment("{{ startdate|date:"D d M Y" }}");
+						var endtime = moment("{{ enddate|date:"D d M Y" }}");
+						var bonussummary = {};
+						var bonusobj = eval('{{ bonussummary|safe }}');
+						for (var idx in bonusobj) {
+							bonussummary[bonusobj[idx].starttime] = bonusobj[idx].bonus;
 						}
-						var dayItem = jQuery('<dd/>', {});
-						if (m.date() == starttime.date() && m.month() == starttime.month())
-							dayItem.attr('class', 'active');
-						contentTemplate = "<h5><a href=\"javascript:void(0);\" timestamp=\"" + m.valueOf() + "\">" + m.date() + "</a>";
-	 					var formattedday = m.format("YYYY-MM-DD");
-						if (formattedday in summary) {
-							contentTemplate += "<sub><span data-tooltip=\"\" class=\"has-tip tip-top noradius\" title=\"当日比赛场数\">" + summary[formattedday] + "</span></sub>";
+						var summary = {};
+						{% for k,v in matchsummary.items %}
+						summary['{{ k }}'] = {{ v }};
+						{% endfor %}
+						var m = moment();
+						var thismonth = m.month();
+						addMonth(m.lang('zh_CN').format('MMM'));
+						daysItem = jQuery('<dl/>', {class : 'sub-nav'});
+						for (var i = 0; i < {{ intervals }}; i++) {
+							if (m.month() != thismonth) {
+								daysItem.appendTo($("#calendar"));
+								addMonth(m.lang('zh_CN').format('MMM'));
+								thismonth = m.month();
+								daysItem = jQuery('<dl/>', {class : 'sub-nav'});
+							}
+							var dayItem = jQuery('<dd/>', {});
+							if (m.date() == starttime.date() && m.month() == starttime.month())
+								dayItem.attr('class', 'active');
+							contentTemplate = "<h5><a href=\"javascript:void(0);\" timestamp=\"" + m.valueOf() + "\">" + m.format('DD') + "</a>";
+		 					var formattedday = m.format("YYYY-MM-DD");
+							if (formattedday in summary) {
+								contentTemplate += "<sub><span data-tooltip=\"\" class=\"has-tip tip-top noradius\" title=\"当日比赛场数\">" + summary[formattedday] + "</span></sub>";
+							}
+							if (formattedday in bonussummary) {
+								contentTemplate += "<span data-tooltip=\"\" class=\"has-tip tip-top noradius\" title=\"最高的奖金\"><sup>\
+									<img src=\"{% static "images/bonus.jpeg" %}\"><sup></span>";
+							}
+							contentTemplate += "</h5>";
+							dayItem.append(contentTemplate);
+							dayItem.appendTo(daysItem);
+							m.add('days', 1);
 						}
-						if (formattedday in bonussummary) {
-							contentTemplate += "<span data-tooltip=\"\" class=\"has-tip tip-top noradius\" title=\"最高的奖金\"><sup>\
-								<img src=\"{% static "images/bonus.jpeg" %}\"><sup></span>";
-						}
-						contentTemplate += "</h5>";
-						dayItem.append(contentTemplate);
-						dayItem.appendTo($(".sub-nav"));
-						m.add('days', 1);
-					}
-				</script>
-	        </dl>
-	        <hr>
+						daysItem.appendTo($("#calendar"));
+					</script>
+	</div>
+	<div id="map_matches" class="large-9 columns">
+		<hr>
+		<div class="row" data-magellan-expedition="fixed">
+			<div data-magellan-arrival="matches">
+					<div id="baidumap"
+						style="overflow: hidden; margin: 0;"></div>
+			</div>
 		</div>
+		<div class="row"><h3 data-magellan-destination="matches">俱乐部赛事</h3></div>
 		<div class="row">
-			<div class="large-12 columns">
-				<div id="baidumap"
-					style="overflow: hidden; margin: 0;"></div>
-			</div>
-		</div>
-    </div>
-
-	<div class="row">
-		<div class="large-9 columns">
-			<div class="row">
-				<div class="large-12 columns"><h4>俱乐部赛事</h4></div>
-			</div>
-			<div class="row">
 				<div id="matchlist" class="large-12 columns">
 				  	<script>
 					{% if matches|length > 0 %}
@@ -86,9 +82,9 @@
 					{% endif %}
 					</script>
 				</div>
-			</div>
 		</div>
-		<div class="large-3 columns">
+	</div>
+	<div id="newsfeed" class="large-2 columns">
 			<div class="row">
 				<div class="large-11 large-centered columns">
 					<div class="row"><h4>最新动态</h4></div>
@@ -100,11 +96,12 @@
 					<div class="row right">>>详情</div>
 				</div>
 			</div>
-		</div>
 	</div>
-
 {% endblock %}
-{% block footer %}
+{% block foundationscript %}
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/js/foundation/foundation.magellan.min.js"></script>
+{% endblock %}
+{% block script %}
 	<script>
 		var map = new BMap.Map("baidumap");
 		$(document).ready(
