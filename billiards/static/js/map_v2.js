@@ -28,7 +28,14 @@ function addMatchItems_v2(data) {
 			cleanMatchMarkers();
 			for ( var idx in data) {
 				matchobj = addMatchToList_v2(data[idx], convertedPoints[idx]);
-				createMatchMarker(idx, matchobj.find("span[name=title]"));
+				var titleobj = matchobj.find("span[name=title]");
+				if (idx == 0 && data.length == 1) {
+					// only one point
+					var points = $(titleobj).attr("point").split(",");
+					var point = new BMap.Point(points[0], points[1]);
+					map.centerAndZoom(point,15);
+				}
+				createMatchMarker(idx, titleobj);
 			}
 			$(document).foundation();
 		});
