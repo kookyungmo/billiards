@@ -8,6 +8,7 @@ Created on 2013年10月31日
 from django import template
 from django.core import serializers
 from django.db.models.query import QuerySet, ValuesQuerySet
+from billiards.models import match_fields
 
 def tojson(data, fields = None):
     json_serializer = serializers.get_serializer("json")()
@@ -19,7 +20,7 @@ def tojson(data, fields = None):
     return jsonstring
 
 def matchtojson(data):
-    return tojson(data, ('id', 'poolroom', 'bonus', 'bonusdetail', 'rule', 'starttime', 'description'))
+    return tojson(data, match_fields)
 
 register = template.Library()
 register.filter('matchtojson', matchtojson)

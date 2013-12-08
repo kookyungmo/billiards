@@ -6,7 +6,7 @@ Created on 2013年10月22日
 @author: kane
 '''
 from django.shortcuts import render_to_response, get_object_or_404
-from billiards.models import Match
+from billiards.models import Match, match_fields
 import datetime
 from dateutil.relativedelta import relativedelta
 from django.core import serializers
@@ -38,7 +38,7 @@ def index(request, view = None):
     if request.GET.get('f') == 'json':
         json_serializer = serializers.get_serializer("json")()
         response = HttpResponse()
-        json_serializer.serialize(matches, fields=('id', 'poolroom', 'bonus', 'starttime', 'enrollfee', 'enrollfocal', 'rule', 'bonusdetail'), ensure_ascii=False, stream=response, indent=2, use_natural_keys=True)
+        json_serializer.serialize(matches, fields=match_fields, ensure_ascii=False, stream=response, indent=2, use_natural_keys=True)
         return response
     if view == 'map':
         page = 'match_map_v2.html'

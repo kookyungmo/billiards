@@ -84,15 +84,22 @@ function addMatchToList_v2(match, point) {
 			+ "</div>"
 			+ "</div>"
 			+ "<div class=\"large-3 columns panel\">"
-			+ "<div class=\"row\">冠军:</div>"
-			+ "<div class=\"row\">现金: $bonus元</div>"
-			+ "<div class=\"row\">比赛规则  奖金设置</div>"
+			+ "<div class=\"row\"><h4>冠军奖励:</h4></div>";
+	if (match.fields.bonus > 0)
+		contentTemplate += "<div class=\"row\">现金: $bonus元</div>";
+	if (match.fields.rechargeablecard > 0)
+		contentTemplate += "<div class=\"row\">俱乐部充值卡: $rechargeablecard元</div>";
+	if (match.fields.otherprize != null)
+		contentTemplate += "<div class=\"row\">$otherprize</div>";
+	contentTemplate += "<div class=\"row\">比赛规则&nbsp;&nbsp;&nbsp;&nbsp;奖金设置</div>"
 			+ "</div>";
 	contentTemplate = contentTemplate.replace(/\$point/g,
 			point.lng + "," + point.lat).replace(/\$matchjsonstr/g,
 			objectToJsonString([ match ])).replace(/\$poolroomname/g,
 			match.fields.poolroom.name).replace(/\$starttime/g,
 			getFormattedTime2(match.fields.starttime)).replace(/\$bonus/g, match.fields.bonus)
+			.replace(/\$rechargeablecard/g, match.fields.rechargeablecard)
+			.replace(/\$otherprize/g, match.fields.otherprize)
 			.replace(/\$address/g, match.fields.poolroom.address).replace(/\$enrollfee/g, match.fields.enrollfee)
 			.replace(/\$enrollfocalpoint/g, match.fields.enrollfocal);
 	matchobj.append(contentTemplate);
