@@ -13,3 +13,51 @@
   font-weight: 300;
   margin-top: 0.2em;
   margin-bottom: 0.5em; }
+
+  .row {
+  max-width: 80rem; }
+  .row.display {
+    background: #eeeeee;
+    font-size: 11px;
+    margin-bottom: 10px;
+    line-height: 2rem;
+    border: solid 1px #c6c6c6;
+    margin-left: 0 !important;
+    margin-right: 0 !important; }
+    .row.display .columns:nth-child(2), .row.display .columns.small-centered, .row.display .columns.large-centered {
+      background: #e1e1e1; }
+
+ .sidebar.fixed, [data-magellan-expedition] {
+  left: auto !important;
+  right: auto;}
+
+.fixed {
+  width: 100%;
+  left: 0;
+  position: fixed;
+  top: 0;
+  z-index: 99; }
+  .fixed.expanded:not(.top-bar) {
+    overflow-y: auto;
+    height: auto;
+    width: 100%;
+    max-height: 100%; }
+    .fixed.expanded:not(.top-bar) .title-area {
+      position: fixed;
+      width: 100%;
+      z-index: 99; }
+    .fixed.expanded:not(.top-bar) .top-bar-section {
+      z-index: 98;
+      margin-top: 45px; }
+
+[data-magellan-expedition] {
+  background: white;
+  z-index: 50;
+  /* min-width: 100%; */
+  padding: 10px; }
+  [data-magellan-expedition] .sub-nav {
+    margin-bottom: 0; }
+    [data-magellan-expedition] .sub-nav dd {
+      margin-bottom: 0; }
+    [data-magellan-expedition] .sub-nav .active {
+      line-height: 1.8em; }

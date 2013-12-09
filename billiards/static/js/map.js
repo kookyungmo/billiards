@@ -2,6 +2,10 @@ function getFormattedTime(timestr) {
 	return moment(timestr).lang('zh_CN').format('MMMM Do, h:mm a')
 }
 
+function getFormattedTime2(timestr) {
+	return moment(timestr).lang('zh_CN').format('h:mm a')
+}
+
 var matchInfo = function(marker, name, matches) {
 	(function() {
 		var info = {
@@ -86,26 +90,63 @@ function createMatchMarker(i, obj) {
 	}, function() {
 	});
 	$(obj).parents(".match-summary").click(
-			function() {
+			function(event) {
 				var link = $(obj);
-				(function() {
-					markerDo(link.attr("point"), function(marker) {
-						matchInfo(marker, link.text(), eval(link
-								.attr("match")));
-					});
-				})();
-				// show more info
-				showMoreInfo(link);
+				var clickingobj = $(event.target);
+				if (clickingobj[0].tagName == 'A') {
+					showDetailInfo(link);
+				} else {
+					(function() {
+						markerDo(link.attr("point"), function(marker) {
+							matchInfo(marker, link.text(), eval(link
+									.attr("match")));
+						});
+					})();
+					// show more info
+					showMoreInfo(link);
+				}
 			});
 }
 
-function showMoreInfo(obj) {
+function hideOthersInfo(obj, infoid) {
 	parent = obj.parents(".panel");
-	moreinfo = parent.find("#moreinfo");
-	$("#matchlist").find("#moreinfo:visible").each(function(index, value){
-		if (!$(this).is(moreinfo))
+	info = parent.find("#" + infoid);
+	$("#matchlist").find(".info:visible").each(function(index, value){
+		if (!$(this).is(info))
 			$(this).hide();
 	});
+	return info;
+}
+
+function showDetailInfo(obj) {
+	infoid = 'detailinfo';
+	detailinfo = hideOthersInfo(obj, infoid);
+	if (detailinfo.length == 0) {
+		var infoobj = jQuery('<div/>', {
+			class : 'row display info',
+			id : infoid
+		});
+		match = eval(obj.attr('match'))[0];
+		contentTemplate = "<hr>"
+			+ "<div class=\"large-6 columns\">"
+			+ "<h3>规则:</h3><br/><h4><pre>$rule</pre></h4></div></div>"
+            + "<div class=\"large-6 columns\">"
+            + "<h3>奖金:</h3><br/><h4><pre>$bonusdetail</h4></pre>"
+            + "</div></div>";
+		contentTemplate = contentTemplate.replace(/\$rule/g, match.fields.rule)
+			.replace(/\$bonusdetail/g, match.fields.bonusdetail);
+		infoobj.append(contentTemplate);
+		infoobj.appendTo(parent);
+		$('html, body').animate({
+            scrollTop: obj.offset().top
+        }, 2000);
+	} else {
+		detailinfo.show();
+	}
+}
+function showMoreInfo(obj) {
+	infoid = "moreinfo";
+	moreinfo = hideOthersInfo(obj, infoid);
 	if (moreinfo.length == 0) {
 		match = eval(obj.attr('match'));
 		url = MOREINFO_URL.replace(/000/g, match[0].fields.poolroom.id);
@@ -115,18 +156,18 @@ function showMoreInfo(obj) {
 			success : function(data)
 			{
 				var infoobj = jQuery('<div/>', {
-					class : 'row',
-					id : 'moreinfo'
+					class : 'row info',
+					id : infoid
 				});
 				contentTemplate = "<hr>"
 					+ "<div class=\"large-8 columns\">"
 					+ "<div class=\"orbit-container\">"
 					+ "<ul data-orbit style=\"height: 170px\">"
 		            + "<li>"
-		            + "<img src=\"http://foundation.zurb.com/docs/img/demos/orbit/demo1.jpg\">"
+		            + "<img src=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/orbit/demo1.jpg\">"
 		            + "</li>"
 		            + "<li class=\"active\">"
-		            + "<img src=\"http://foundation.zurb.com/docs/img/demos/orbit/demo2.jpg\">"
+		            + "<img src=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/orbit/demo2.jpg\">"
 		            + "</li>"
 		            + "</ul></div></div>"
 		            + "<div class=\"large-4 columns\">"
@@ -193,32 +234,58 @@ function addMatchToList(match, point) {
 	});
 	contentTemplate = "<div class=\"panel radius\">"
 			+ "<div class=\"row match-summary\">"
-			+ "<div class=\"large-2 columns\">"
-			+ "<a class=\"th\" href=\"#\"><img src=\"http://foundation.zurb.com/docs/img/demos/demo1-th.jpg\"></a>"
-			+ "</div>" + "<div class=\"large-6 columns\">"
-			+ "<h5><span name=\"title\" point=\"$point\" match=\"$matchjsonstr\">$poolroomname</span><br/>$starttime</h5>"
+			+ "<div class=\"large-8 columns\">"
+			+ "<div class=\"row\">"
+			+ "<div class=\"large-3 columns\">"
+			+ "<a class=\"th\" href=\"#\"><img src=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/demo1-th.jpg\"></a>"
+			+ "</div>"
+			+ "<div class=\"large-9 columns\">"
+			+ "<h5><span name=\"title\" point=\"$point\" match=\"$matchjsonstr\"><u>$poolroomname</u></span></h5>地图"
 			+ "<h6 class=\"subheader\">$address</h6>"
-			+ "<span class=\"icon_list\">";
+			+ "<h6 class=\"subheader\"><b>报名费</b>: $enrollfee</h6>"
+			+ "<h6 class=\"subheader\"><b>报名电话</b>: $enrollfocalpoint</h6>"
+			+ "</div></div>"
+			+ "<div class=\"row\">"
+			+ "<div class=\"large-8 columns\">";
+	equipment = "";
 	if (match.fields.poolroom.flags.wifi)
-		contentTemplate += "<span class=\"ico_wifi\" title=\"公共区域WIFI\"></span>";
+		equipment += "<span class=\"ico_wifi\" title=\"公共区域WIFI\"></span>";
 	if (match.fields.poolroom.flags.wifi_free)
-		contentTemplate += "<span class=\"ico_free_wifi\" title=\"公共区域WIFI\"></span>";
+		equipment += "<span class=\"ico_free_wifi\" title=\"公共区域WIFI\"></span>";
 	if (match.fields.poolroom.flags.parking || match.fields.poolroom.flags.parking_free)
-		contentTemplate += "<span class=\"ico_parking\" title=\"停车场\"></span>";
+		equipment += "<span class=\"ico_parking\" title=\"停车场\"></span>";
 	if (match.fields.poolroom.flags.cafeteria)
-		contentTemplate += "<span class=\"ico_restaurant\" title=\"餐饮服务\"></span>";
+		equipment += "<span class=\"ico_restaurant\" title=\"餐饮服务\"></span>";
 	if (match.fields.poolroom.flags.subway)
-		contentTemplate += "<span class=\"ico_bus\" title=\"地铁周边\"></span>";
-	contentTemplate += "</span></div>"
-			+ "<div class=\"large-4 columns\">" + "<div class=\"row right\">"
-			+ "<h4 class=\"subheader\">￥<strong>$bonus</strong></h4>"
-			+ "</div>" + "</div>" + "</div>";
+		equipment += "<span class=\"ico_bus\" title=\"地铁周边\"></span>";
+	if (equipment != "") {
+		contentTemplate += "<span class=\"icon_list\">";
+		contentTemplate += "<div class=\"ico_none\">球房设施: </div>";
+		contentTemplate += equipment;
+		contentTemplate += "</span>";
+	}
+	contentTemplate += "</div><div class=\"large-4 columns\"><a href=\"javascript:void(0);\">比赛详情>></a></div>"
+			+ "</div></div>"
+			+ "<div class=\"large-4 columns\">"
+			+ "<div class=\"row display\">"
+			+ "<div class=\"large-6 columns\">"
+			+ "<div class=\"row\"><div class=\"large-12 columns\"><h2 class=\"subheader\">冠军奖金: <br/><strong>$bonus</strong></h2></div></div>"
+			+ "<div class=\"row\"><div class=\"large-12 columns\"><h3>距离: 4.3公里</h3></div></div>"
+			+ "</div>"
+			+ "<div class=\"large-6 columns\">"
+			+ "<div class=\"row\"><div class=\"large-12 columns\"><h3>周赛</h3></div></div>"
+			+ "<div class=\"row\"><div class=\"large-12 columns\">"
+			+ "<h2>$starttime</h2>"
+			+ "</div></div>"
+			+ "</div></div>"
+			+ "</div>";
 	contentTemplate = contentTemplate.replace(/\$point/g,
 			point.lng + "," + point.lat).replace(/\$matchjsonstr/g,
 			objectToJsonString([ match ])).replace(/\$poolroomname/g,
 			match.fields.poolroom.name).replace(/\$starttime/g,
-			getFormattedTime(match.fields.starttime)).replace(/\$bonus/g, match.fields.bonus)
-			.replace(/\$address/g, match.fields.poolroom.address);
+			getFormattedTime2(match.fields.starttime)).replace(/\$bonus/g, match.fields.bonus)
+			.replace(/\$address/g, match.fields.poolroom.address).replace(/\$enrollfee/g, match.fields.enrollfee)
+			.replace(/\$enrollfocalpoint/g, match.fields.enrollfocal);
 	matchobj.append(contentTemplate);
 	matchobj.appendTo('#matchlist');
 	return matchobj;

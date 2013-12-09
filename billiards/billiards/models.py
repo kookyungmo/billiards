@@ -48,11 +48,11 @@ class Poolroom(models.Model):
         return {'id': self.id, 'name': self.name, 'lat': self.lat, 'lng': self.lng,
                 'businesshours': self.businesshours, 'size': self.size,
                 'address': self.address, 'flags': toDict(self.flags)}
-        
+
 class TableTypeField(models.CharField):
     def value_to_string(self, obj):
         value = self._get_val_from_obj(obj)
-        return force_unicode(dict(self.flatchoices).get(value, value), strings_only=True) 
+        return force_unicode(dict(self.flatchoices).get(value, value), strings_only=True)
 
 class PoolroomEquipment(models.Model):
     id = models.AutoField(primary_key=True)
@@ -84,8 +84,16 @@ class Match(models.Model):
     id = models.AutoField(primary_key=True)
     poolroom = models.ForeignKey(Poolroom, verbose_name='比赛组织者')
     bonus = models.FloatField(null=False,verbose_name='最高奖金(元)')
+    bonusdetail = models.TextField(null=False,verbose_name='奖金细则')
+    rule = models.TextField(null=False,verbose_name='比赛规则')
     description = models.TextField(null=True,verbose_name='比赛详情')
     starttime = models.DateTimeField(verbose_name='比赛开始时间')
+    enrollfee = models.CharField(max_length=100,null=True,verbose_name='报名费')
+    enrollfocal = models.CharField(max_length=100,null=True,verbose_name='报名联系人')
+    flags = BitField(flags=(
+            ('groupon', u'支持团购'),
+            ('coupon', u'支持用券'),
+        ), verbose_name='特色属性')
 
     class Meta:
         db_table = 'match'
@@ -94,3 +102,9 @@ class Match(models.Model):
 
     def __unicode__(self):
         return '[' + localtime(self.starttime).strftime("%Y-%m-%d %H:%M:%S") + '] ' + self.poolroom.name
+
+    def natural_key(self):
+        return {'id': self.id, 'poolroom': self.poolroom.natural_key(), 'bonus': self.bonus, 'description': self.description,
+                'bonusdetail': self.bonusdetail, 'rule': self.rule,
+                'starttime': self.starttime, 'enrollfee': self.enrollfee,
+                'enrollfocal': self.enrollfocal, 'flags': toDict(self.flags)}
