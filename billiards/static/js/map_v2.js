@@ -106,3 +106,14 @@ function addMatchToList_v2(match, point) {
 	matchobj.appendTo('#matchlist');
 	return matchobj;
 }
+
+function jsonescape(str) {
+	return str
+    .replace(/[\\]/g, '\\\\')
+    .replace(/[\/]/g, '\\/')
+    .replace(/[\b]/g, '\\b')
+    .replace(/[\f]/g, '\\f')
+    .replace(/[\n]/g, '\\n')
+    .replace(/[\r]/g, '\\r')
+    .replace(/[\t]/g, '\\t');
+}

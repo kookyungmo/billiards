@@ -73,7 +73,7 @@
 				<div id="matchlist" class="large-12 columns">
 				  	<script>
 					{% if matches|length > 0 %}
-						matches = eval('{{ matches|matchtojson|safe }}');
+						matches = eval(jsonescape('{{ matches|matchtojson|safe }}'));
 						addMatchItems_v2(matches);
 					{% else %}
 			           	createNoMatch();
