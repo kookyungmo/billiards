@@ -8,7 +8,7 @@
 <script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}";</script>
 <script src="{% static "js/map.js" %}?{{buildid}}"></script>
 <script src="{% static "js/map_v2.js" %}?{{buildid}}"></script>
-<link rel="stylesheet" href="{% static "css/map.css" %}">
+<link rel="stylesheet" href="{% static "css/map.css" %}?{{buildid}}">
 {% endblock %}
 {% load extras %}
 {% block content %}
@@ -60,6 +60,8 @@
 							m.add('days', 1);
 						}
 						daysItem.appendTo($("#calendar"));
+						
+						var map = new BMap.Map("baidumap");
 					</script>
 	</div>
 	<div id="map_matches" class="large-9 columns">
@@ -96,10 +98,10 @@
 {% block foundationscript %}
 	<!--script src="http://cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/js/foundation/foundation.magellan.min.js"></script-->
     <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.magellan.min.js"></script>
+    <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.tooltips.min.js"></script>
 {% endblock %}
 {% block script %}
 	<script>
-		var map = new BMap.Map("baidumap");
 		$(document).ready(
 				function() {
 				    $("#baidumap").css("height", 350);

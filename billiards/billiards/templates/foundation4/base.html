@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/css/foundation.min.css"-->
   <link rel="stylesheet" href="//cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/css/normalize.min.css">
   <link rel="stylesheet" href="//cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/css/foundation.min.css">
-  <link rel="stylesheet" href="{% static 'css/docs.css' %}">
+  <link rel="stylesheet" href="{% static 'css/docs.css?{{buildid}}' %}">
   <!--script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/js/vendor/jquery.min.js"></script-->
   <script src="//cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/vendor/jquery.min.js"></script>
 {% block header %}{% endblock %}
@@ -100,5 +100,3 @@
   {% block script %}{% endblock %}
 </body>
 </html>
-
-<script type="text/javascript" src="http://qzonestyle.gtimg.cn/qzone/openapi/qc_loader.js" charset="utf-8" data-callback="true"></script>
