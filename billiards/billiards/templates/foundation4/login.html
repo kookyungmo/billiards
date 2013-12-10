@@ -1,0 +1,59 @@
+{% extends "homepage/base.html" %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+
+{% block title %}登录{% endblock %}
+
+{% block content %}
+<div id="main">
+  <div class="container">
+    <section id="login">
+      <div class="hgroup">
+        <h1>登录</h1>
+        <ul class="breadcrumb pull-right">
+          <li><a href="{% url 'justfruit.homepage.views.index' %}">首页</a> <span class="divider">/</span></li>
+          <li class="active">登录</li>
+        </ul>
+      </div>
+      <div class="row">
+        <div class="signin offset3 span6">
+
+            <h3>使用您的用户名密码登录</h3>
+            <!--
+          <div class="social_sign">
+            <a class="fb" href="#facebook"><i class="icon icon-facebook"></i></a> <a class="tw" href="#twitter"><i class="icon icon-twitter"></i></a> <a class="gp" href="#googleplus"><i class="icon icon-google-plus"></i></a>
+          </div>
+          <div class="or">
+            <div class="or_l"></div><span>or</span><div class="or_r"></div>
+          </div>
+          -->
+          <p class="sign_title"><img src="{% static 'homepage/images/sprite/head5-150x150.png' %}" /></p>
+
+          <div class="form">
+            <form action="{% url 'log_in' %}" method="POST">{% csrf_token %}
+              <div class="control-group{% if form.errors %} error{% endif %}">
+                <div class="controls">
+                  {% render_field form.username class="input-xlarge" placeholder="用户名" %}
+                </div>
+              </div>
+              <div class="control-group{% if form.errors %} error{% endif %}">
+                <div class="controls">
+                  {% render_field form.password class="input-xlarge" placeholder="密码" %}
+                  {% if form.errors %}
+                  <span class="help-inline">用户名或密码错误，请检查后重试。</span>
+                  {% endif %}
+                </div>
+              </div>
+              <input type="hidden" name="next" value="{{ next }}" />
+              <div class="forgot">
+                <a href="{% url 'password_reset' %}">忘记密码?</a>
+                <a href="{% url 'justfruit.homepage.views.register' %}">还没有账号?</a>
+              </div>
+              <button type="submit" class="btn btn-primary btn-large">登录</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  {% endblock content %}
