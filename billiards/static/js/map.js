@@ -10,8 +10,6 @@ var matchInfo = function(marker, name, matches) {
 	(function() {
 		var info = {
 			open : function(type, target) {
-				map.removeEventListener("moveend", info.open);
-				map.removeEventListener("tilesloaded", info.open);
 				var content = name;
 				for ( var idx in matches) {
 					content += "<p><p/><strong>奖金: "
@@ -24,10 +22,8 @@ var matchInfo = function(marker, name, matches) {
 				infoWindow.redraw();
 			}
 		}
-		map.addEventListener("moveend", info.open);
-		map.addEventListener("tilesloaded", info.open);
+		info.open();
 	})();
-	map.centerAndZoom(marker.getPosition(), 16);
 };
 
 function addMarker(point, iconpath) {

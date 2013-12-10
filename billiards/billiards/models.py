@@ -80,10 +80,13 @@ class PoolroomEquipment(models.Model):
                 'producer': self.producer, 'quantity': self.quantity, 'cue': self.cue,
                 'price': self.price}
 
+match_fields = ('id', 'poolroom', 'bonus', 'rechargeablecard', 'otherprize', 'bonusdetail', 'rule', 'starttime', 'description')
 class Match(models.Model):
     id = models.AutoField(primary_key=True)
     poolroom = models.ForeignKey(Poolroom, verbose_name='比赛组织者')
-    bonus = models.FloatField(null=False,verbose_name='最高奖金(元)')
+    bonus = models.FloatField(null=False,verbose_name='最高现金奖金金额(元)')
+    rechargeablecard = models.FloatField(null=False, verbose_name='最高充值卡奖金金额(元)')
+    otherprize = models.CharField(max_length=100,null=True,blank=True,verbose_name='最高其它类别奖励')
     bonusdetail = models.TextField(null=False,verbose_name='奖金细则')
     rule = models.TextField(null=False,verbose_name='比赛规则')
     description = models.TextField(null=True,verbose_name='比赛详情')
@@ -104,7 +107,9 @@ class Match(models.Model):
         return '[' + localtime(self.starttime).strftime("%Y-%m-%d %H:%M:%S") + '] ' + self.poolroom.name
 
     def natural_key(self):
-        return {'id': self.id, 'poolroom': self.poolroom.natural_key(), 'bonus': self.bonus, 'description': self.description,
+        return {'id': self.id, 'poolroom': self.poolroom.natural_key(), 'bonus': self.bonus,
+                'rechargeablecard': self.rechargeablecard, 'description': self.description,
+                'otherprize': self.otherprize,
                 'bonusdetail': self.bonusdetail, 'rule': self.rule,
                 'starttime': self.starttime, 'enrollfee': self.enrollfee,
                 'enrollfocal': self.enrollfocal, 'flags': toDict(self.flags)}
