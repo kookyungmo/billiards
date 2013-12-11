@@ -1,4 +1,4 @@
-{% extends "foundation4/base.html" %}
+{% extends "foundation/base.html" %}
 {% block header %}
 {% load staticfiles %}
 <script type="text/javascript"
@@ -72,7 +72,8 @@
 		<div class="row">
 				<div id="matchlist" class="large-12 columns">
 				  	<script>
-				    var map = new BMap.Map("baidumap");
+				  	var map = new BMap.Map("baidumap");
+				  	MATCH_URL = "{% url match_detail '000' %}";
 					{% if matches|length > 0 %}
 						matches = eval(jsonescape('{{ matches|matchtojson|safe }}'));
 						addMatchItems_v2(matches);
@@ -107,7 +108,7 @@
 				    map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_RIGHT, type: BMAP_NAVIGATION_CONTROL_SMALL}));
 					// map.enableScrollWheelZoom(true);
 				    // map.centerAndZoom('北京');
-                        
+
 				    var geolocation = new BMap.Geolocation();
 				    geolocation.getCurrentPosition(function(r){
 				        if(this.getStatus() == BMAP_STATUS_SUCCESS){
@@ -119,7 +120,7 @@
                             marker.addEventListener("mouseout",function(){
                                 marker.setAnimation(null); //停止跳动的动画
                                                                            });
-                                                   
+
                             // 通过JavaScript的prototype属性继承于BMap.Control
                             MyLocaiton.prototype = new BMap.Control();
 
@@ -148,7 +149,6 @@
                             var myCtrl = new MyLocaiton();
                             // 添加到地图当中
                             map.addControl(myCtrl);
-                                                   
 				            marker.setTitle('我的位置');
 				            if ($("#nomatch").length == 1 && map.getBounds().containsPoint(r.point)) {
 				            	map.panTo(r.point);

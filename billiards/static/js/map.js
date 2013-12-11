@@ -90,7 +90,7 @@ function createMatchMarker(i, obj) {
 				var link = $(obj);
 				var clickingobj = $(event.target);
 				if (clickingobj[0].tagName == 'A') {
-					showDetailInfo(link);
+					//TODO catch click event on link
 				} else {
 					(function() {
 						markerDo(link.attr("point"), function(marker) {
@@ -98,8 +98,6 @@ function createMatchMarker(i, obj) {
 									.attr("match")));
 						});
 					})();
-					// show more info
-					showMoreInfo(link);
 				}
 			});
 }

@@ -16,7 +16,7 @@ from django.template.context import RequestContext
 from django.db.models.aggregates import Max
 from django.utils import simplejson
 
-templatepath = 'foundation4/'
+templatepath = 'foundation/'
 def index(request, view = None):
     starttime = datetime.datetime.today()
     try:
