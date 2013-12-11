@@ -60,9 +60,7 @@
 							m.add('days', 1);
 						}
 						daysItem.appendTo($("#calendar"));
-						
-						var map = new BMap.Map("baidumap");
-					</script>
+						</script>
 	</div>
 	<div id="map_matches" class="large-9 columns">
 		<br>
@@ -74,6 +72,7 @@
 		<div class="row">
 				<div id="matchlist" class="large-12 columns">
 				  	<script>
+				  	var map = new BMap.Map("baidumap");
 					{% if matches|length > 0 %}
 						matches = eval(jsonescape('{{ matches|matchtojson|safe }}'));
 						addMatchItems_v2(matches);
@@ -98,7 +97,7 @@
 {% block foundationscript %}
 	<!--script src="http://cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/js/foundation/foundation.magellan.min.js"></script-->
     <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.magellan.min.js"></script>
-    <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.tooltips.min.js"></script>
+    <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.tooltip.min.js"></script>
 {% endblock %}
 {% block script %}
 	<script>
