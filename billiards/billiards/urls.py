@@ -17,6 +17,10 @@ urlpatterns += patterns('billiards.views.poolroom',
     url(r'^poolroom/(?P<poolroomid>\d+)/more$', 'more', name="poolroom_moreinfo"),
 )
 
+urlpatterns += patterns('billiards.views.user.login',
+    url(r'^user/login/(?P<site_name>\w+)/$','login', name='user_login'),
+)
+
 urlpatterns += patterns('',
     url(r'^$', RedirectView.as_view(url='match/map', permanent=False), name="home"),
     url(r'^admin/', include(admin.site.urls)),
