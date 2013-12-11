@@ -178,3 +178,22 @@ LOGGING = {
         },
     }
 }
+
+SOCIALOAUTH_SITES = (
+        
+    ('weibo', 'socialoauth.sites.weibo.Weibo', '新浪微博',
+              {
+                'redirect_uri': 'http://www.pktaiqiu.com/user/oauth/weibo',
+                'client_id': '1649586031',
+                'client_secret': 'a05aa4c80a4e866bb51f4b4927530f39',
+              }
+    ),
+    
+    ('qq', 'socialoauth.sites.qq.QQ', 'QQ',
+              {
+                'redirect_uri': 'http://www.pktaiqiu.com/user/oauth/qq',
+                'client_id': '100568693',
+                'client_secret': '8c21be52fe3edf9fa9b75d55fe4abf64',
+              }
+    ),  
+)
