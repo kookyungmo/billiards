@@ -111,6 +111,12 @@ function addMatchToList_v2(match, point) {
 	return matchobj;
 }
 
+function MyLocaiton(){
+    // 默认停靠位置和偏移量
+    this.defaultAnchor = BMAP_ANCHOR_TOP_LEFT;
+    this.defaultOffset = new BMap.Size(10, 10);
+}
+
 function jsonescape(str) {
 	return str
     .replace(/[\\]/g, '\\\\')
