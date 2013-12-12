@@ -27,6 +27,7 @@ main(){
 	git pull
 	rm -rf $TARGET/*
 
+	pecho "Clean unnecessary files..."
 	cp -Rfp $SHELLHOME/* .
 	find . -name "*.pyc" -exec rm -f {} \;
 	rm deploy.sh
@@ -34,6 +35,14 @@ main(){
 	rm bitfield
 	mv django-bitfield/bitfield .
 	rm -rf django-bitfield/
+	pecho "Updating release version..."
+        DATE=`date '+%Y%m%d'`
+        HOUR=`date '+%H'`
+        MINUTE=`date '+%M'`	
+	sed -e "s/BUILDID = [1-9][0-9]*/BUILDID = $DATE$HOUR$MINUTE/g" billiards/context_processors.py > billiards/context_processors.py.new
+	cp -f billiards/context_processors.py.new billiards/context_processors.py
+	rm -f billiards/context_processors.py.new
+	pecho "Commit new version to BAE..."
 	git add .
 	git commit -m"Deploy new release of ibilliards"
 	git push
