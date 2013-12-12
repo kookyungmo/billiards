@@ -91,7 +91,10 @@ function addMatchToList_v2(match, point) {
 		contentTemplate += "<div class=\"row\">俱乐部充值卡: $rechargeablecard元</div>";
 	if (match.fields.otherprize != null)
 		contentTemplate += "<div class=\"row\">$otherprize</div>";
-	contentTemplate += "<div class=\"row\">比赛规则&nbsp;&nbsp;&nbsp;&nbsp;奖金设置</div>"
+	contentTemplate += "<div class=\"row\">"
+			+ "<span data-tooltip class=\"has-tip\" title=\"$rule\">比赛规则</span>"
+			+ "&nbsp;&nbsp;&nbsp;&nbsp;"
+			+ "<span data-tooltip class=\"has-tip\" title=\"$bonusdetail\">奖金设置</span></div>"
 			+ "</div>";
 	contentTemplate = contentTemplate.replace(/\$point/g,
 			point.lng + "," + point.lat).replace(/\$matchjsonstr/g,
@@ -99,7 +102,8 @@ function addMatchToList_v2(match, point) {
 			match.fields.poolroom.name).replace(/\$starttime/g,
 			getFormattedTime2(match.fields.starttime)).replace(/\$bonus/g, match.fields.bonus)
 			.replace(/\$rechargeablecard/g, match.fields.rechargeablecard)
-			.replace(/\$otherprize/g, match.fields.otherprize)
+			.replace(/\$otherprize/g, match.fields.otherprize).replace(/\$rule/g, match.fields.rule)
+			.replace(/\$bonusdetail/g, match.fields.bonusdetail)
 			.replace(/\$address/g, match.fields.poolroom.address).replace(/\$enrollfee/g, match.fields.enrollfee)
 			.replace(/\$enrollfocalpoint/g, match.fields.enrollfocal);
 	matchobj.append(contentTemplate);

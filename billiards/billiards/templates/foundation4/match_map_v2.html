@@ -8,7 +8,7 @@
 <script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}";</script>
 <script src="{% static "js/map.js" %}?{{buildid}}"></script>
 <script src="{% static "js/map_v2.js" %}?{{buildid}}"></script>
-<link rel="stylesheet" href="{% static "css/map.css" %}">
+<link rel="stylesheet" href="{% static "css/map.css" %}?{{buildid}}">
 {% endblock %}
 {% load extras %}
 {% block content %}
@@ -60,7 +60,7 @@
 							m.add('days', 1);
 						}
 						daysItem.appendTo($("#calendar"));
-					</script>
+						</script>
 	</div>
 	<div id="map_matches" class="large-9 columns">
 		<br>
@@ -72,6 +72,7 @@
 		<div class="row">
 				<div id="matchlist" class="large-12 columns">
 				  	<script>
+				  	var map = new BMap.Map("baidumap");
 					{% if matches|length > 0 %}
 						matches = eval(jsonescape('{{ matches|matchtojson|safe }}'));
 						addMatchItems_v2(matches);
@@ -94,22 +95,31 @@
 	</div>
 {% endblock %}
 {% block foundationscript %}
-	<script src="http://cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/js/foundation/foundation.magellan.min.js"></script>
+	<!--script src="http://cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/js/foundation/foundation.magellan.min.js"></script-->
+    <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.magellan.min.js"></script>
+    <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.tooltip.min.js"></script>
 {% endblock %}
 {% block script %}
 	<script>
-		var map = new BMap.Map("baidumap");
 		$(document).ready(
 				function() {
 				    $("#baidumap").css("height", 350);
 				    map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_RIGHT, type: BMAP_NAVIGATION_CONTROL_SMALL}));
-					map.enableScrollWheelZoom(true);
-				    map.centerAndZoom('北京');
+					// map.enableScrollWheelZoom(true);
+				    // map.centerAndZoom('北京');
 
 				    var geolocation = new BMap.Geolocation();
 				    geolocation.getCurrentPosition(function(r){
 				        if(this.getStatus() == BMAP_STATUS_SUCCESS){
+                            map.centerAndZoom(r.point,12);  //设置自己的位置为地图中心
 				            var marker = addMarker(r.point, '{% static "images/location.png" %}');
+                            marker.addEventListener("mouseover",function(){
+                                marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
+                                                                            });
+                            marker.addEventListener("mouseout",function(){
+                                marker.setAnimation(null); //停止跳动的动画
+                                                                           });
+                                                   
 				            marker.setTitle('我的位置');
 				            if ($("#nomatch").length == 1 && map.getBounds().containsPoint(r.point)) {
 				            	map.panTo(r.point);

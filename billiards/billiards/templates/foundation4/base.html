@@ -15,10 +15,13 @@
 
   <!-- Included CSS Files -->
 
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/css/normalize.min.css">
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/css/foundation.min.css">
-  <link rel="stylesheet" href="{% static 'css/docs.css' %}">
-  <script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/js/vendor/jquery.min.js"></script>
+  <!--link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/css/normalize.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/css/foundation.min.css"-->
+  <link rel="stylesheet" href="//cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/css/normalize.min.css">
+  <link rel="stylesheet" href="//cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/css/foundation.min.css">
+  <link rel="stylesheet" href="{% static 'css/docs.css' %}?{{buildid}}">
+  <!--script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/js/vendor/jquery.min.js"></script-->
+  <script src="//cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/vendor/jquery.min.js"></script>
 {% block header %}{% endblock %}
 </head>
 
@@ -50,9 +53,9 @@
       <!-- Right Nav Section -->
       <ul class="right">
         <li class="divider"></li>
-        <li><a href="/qq_login">腾讯登录</a></li>
+        <li><a href="javascript:void(0);">腾讯登录</a></li>
         <li class="divider"></li>
-        <li><a href="/weibo_login/">微博登录</a></li>
+        <li><a href="javascript:void(0);">微博登录</a></li>
       </ul>
     </section>
   </nav>
@@ -85,8 +88,10 @@
     </div>
   </footer>
 </section>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/js/foundation/foundation.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/js/vendor/custom.modernizr.min.js"></script>
+  <!--script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/js/foundation/foundation.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/js/vendor/custom.modernizr.min.js"></script-->
+  <script src="//cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.min.js"></script>
+   <script src="//cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/vendor/custom.modernizr.min.js"></script>
   {% block foundationscript %}{% endblock %}
   <script>
     $(document).foundation();
@@ -105,5 +110,3 @@
   </script>
 </body>
 </html>
-
-<script type="text/javascript" src="http://qzonestyle.gtimg.cn/qzone/openapi/qc_loader.js" charset="utf-8" data-callback="true"></script>
