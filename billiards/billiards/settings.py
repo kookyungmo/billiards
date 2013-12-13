@@ -181,8 +181,9 @@ LOGGING = {
 
 SOCIALOAUTH_SITES = (
         
-    ('weibo', 'billards.support.socialoauth.sites.weibo.Weibo', '新浪微博',
+    ('weibo', 'billiards.support.socialoauth.sites.weibo.Weibo', '新浪微博',
               {
+                #'redirect_uri': 'http://127.0.0.1:8000/user/oauth/weibo',
                 'redirect_uri': 'http://www.pktaiqiu.com/user/oauth/weibo',
                 'client_id': '3411485647',
                 'client_secret': 'fc136b2c89723779eddc359ef5eaa3ac',
@@ -191,6 +192,7 @@ SOCIALOAUTH_SITES = (
     
     ('qq', 'billiards.support.socialoauth.sites.qq.QQ', 'QQ',
               {
+                #'redirect_uri': 'http://127.0.0.1:8000/user/oauth/qq',
                 'redirect_uri': 'http://www.pktaiqiu.com/user/oauth/qq',
                 'client_id': '100568693',
                 'client_secret': '8c21be52fe3edf9fa9b75d55fe4abf64',
