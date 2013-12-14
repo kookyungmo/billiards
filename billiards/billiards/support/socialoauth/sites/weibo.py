@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from billiards.support.ocialoauth.sites.base import OAuth2
+from billiards.support.socialoauth.sites.base import OAuth2
 
 
 class Weibo(OAuth2):

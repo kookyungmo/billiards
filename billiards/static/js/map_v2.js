@@ -47,14 +47,16 @@ function addMatchToList_v2(match, point) {
 		class : 'row',
 		id : 'match'
 	});
+	detail_url = MATCH_URL.replace(/000/g, match.pk);
 	contentTemplate = "<div class=\"large-2 columns\">"
 			+ "<div class=\"row panel\">$starttime</div></div>"
 			+ "<div class=\"large-7 columns\">"
-			+ "<div class=\"row panel\">"
+			+ "<div class=\"row panel match-summary\">"
 			+ "<div class=\"large-2 columns\"><img src=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/demo1-th.jpg\"></div>"
 			+ "<div class=\"large-7 columns\">"
 			+ "<div class=\"row\">"
-			+ "<h5><span name=\"title\" point=\"$point\" match=\"$matchjsonstr\"><u>$poolroomname</u></span></h5> 详情"
+			+ "<h5><span name=\"title\" point=\"$point\" match=\"$matchjsonstr\"><u>$poolroomname</u></span></h5>"
+			+ "<a target=\"_blank\" href=\"" + detail_url + "\">详情</a>"
 			+ "</div>"
 			+ "<div class=\"row\">"
 	equipment = "";
@@ -109,6 +111,12 @@ function addMatchToList_v2(match, point) {
 	matchobj.append(contentTemplate);
 	matchobj.appendTo('#matchlist');
 	return matchobj;
+}
+
+function MyLocaiton(){
+    // 默认停靠位置和偏移量
+    this.defaultAnchor = BMAP_ANCHOR_TOP_LEFT;
+    this.defaultOffset = new BMap.Size(10, 10);
 }
 
 function jsonescape(str) {
