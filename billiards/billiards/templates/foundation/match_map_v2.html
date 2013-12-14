@@ -106,8 +106,8 @@
 				function mylocation() {
 				    $("#baidumap").css("height", 350);
 				    map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_RIGHT, type: BMAP_NAVIGATION_CONTROL_SMALL}));
-					// map.enableScrollWheelZoom(true);
-				    // map.centerAndZoom('北京');
+				    map.enableScrollWheelZoom(true);
+				    map.centerAndZoom('北京');
 
 				    var geolocation = new BMap.Geolocation();
 				    geolocation.getCurrentPosition(function(r){
