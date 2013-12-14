@@ -112,42 +112,42 @@
 				    var geolocation = new BMap.Geolocation();
 				    geolocation.getCurrentPosition(function(r){
 				        if(this.getStatus() == BMAP_STATUS_SUCCESS){
-                           // map.centerAndZoom(r.point,12);  //设置自己的位置为地图中心
+                           // map.centerAndZoom(r.point,12);  
 				            var marker = addMarker(r.point, '{% static "images/location.png" %}');
                             marker.addEventListener("mouseover",function(){
-                                marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
+                                marker.setAnimation(BMAP_ANIMATION_BOUNCE); 
                                                                             });
                             marker.addEventListener("mouseout",function(){
-                                marker.setAnimation(null); //停止跳动的动画
+                                marker.setAnimation(null); 
                                                                            });
 
-                            // 通过JavaScript的prototype属性继承于BMap.Control
+                           
                             MyLocaiton.prototype = new BMap.Control();
 
-                            // 自定义控件必须实现自己的initialize方法,并且将控件的DOM元素返回
-                            // 在本方法中创建个div元素作为控件的容器,并将其添加到地图容器中
+                        
+                       
                             MyLocaiton.prototype.initialize = function(map){
-                            // 创建一个DOM元素
+                      
                             var div = document.createElement("div");
-                            // 添加文字说明
+                     
                             div.appendChild(document.createTextNode("我的位置"));
-                            // 设置样式
+                   
                             div.style.cursor = "pointer";
                             div.style.border = "1px solid gray";
                             div.style.backgroundColor = "white";
-                            // 绑定事件,点击一次定位自己的位置
+                  
                             div.onclick = function(e){
                             map.centerAndZoom(r.point,12);
                             //map.panTo(r.point);
                             }
-                            // 添加DOM元素到地图中
+                 
                             map.getContainer().appendChild(div);
-                            // 将DOM元素返回
+               
                             return div;
                             }
-                            // 创建控件
+             
                             var myCtrl = new MyLocaiton();
-                            // 添加到地图当中
+           
                             map.addControl(myCtrl);
 				            marker.setTitle('我的位置');
 				            if ($("#nomatch").length == 1 && map.getBounds().containsPoint(r.point)) {
