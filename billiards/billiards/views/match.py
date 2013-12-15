@@ -77,4 +77,5 @@ def detail(request, matchid):
         json_serializer.serialize([match], fields=('id', 'poolroom', 'bonus', 'starttime', 'description'), ensure_ascii=False, stream=response, indent=2, use_natural_keys=True)
         return response
 
-    return render_to_response(templatepath + 'match_detail.html', {'match': match})
+    return render_to_response(templatepath + 'match_detail.html', {'match': match, 'STATIC_URL': STATIC_URL},
+                              context_instance=RequestContext(request))

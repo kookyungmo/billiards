@@ -38,14 +38,12 @@ function addMarker(point, iconpath) {
 	return marker;
 }
 
-function addMatchMarker(i, obj) {
-	var points = $(obj).attr("point").split(",");
-	var match = eval($(obj).attr("match"));
-	point = new BMap.Point(points[0], points[1]);
+function addMatchMarker(i, point, match) {
 	var mk = addMarker(point, STATIC_URL + "/images/marker.png");
 	mk.addEventListener("click", function() {
 		matchInfo(mk, match[0].fields.poolroom.name, match);
 	});
+	return mk;
 }
 
 var convertCallback;
@@ -73,7 +71,10 @@ function convertPoints(points, myConvertcallback) {
 }
 
 function createMatchMarker(i, obj) {
-	addMatchMarker(i, obj);
+	var pointstr = $(obj).attr("point").split(",");
+	var point = new BMap.Point(pointstr[0], pointstr[1]);
+	var match = eval($(obj).attr("match"));
+	addMatchMarker(i, point, match);
 	$(obj).mouseover(function() {
 		markerDo($(this).attr("point"), function(marker) {
 			marker.setAnimation(BMAP_ANIMATION_BOUNCE);
