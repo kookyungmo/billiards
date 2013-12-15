@@ -37,6 +37,8 @@ function addMatchItems_v2(data) {
 				}
 				createMatchMarker(idx, titleobj);
 			}
+			if (mypoint != null)
+				updateDistance(mypoint);
 			$(document).foundation();
 		});
 	}
@@ -76,7 +78,8 @@ function addMatchToList_v2(match, point) {
 		contentTemplate += equipment;
 		contentTemplate += "</span>";
 	}
-	contentTemplate += "</dvi></div></div><div class=\"large-3 columns\">"
+	contentTemplate += "</div><div class=\"row\" id=\"distance\"></div>" 
+			+ "</div><div class=\"large-3 columns\">"
 			+ "<div class=\"row\">已报名人数:</div>"
 			+ "<div class=\"row\">76人</div>"
 			+ "<div class=\"row\">"
@@ -128,4 +131,31 @@ function jsonescape(str) {
     .replace(/[\n]/g, '\\n')
     .replace(/[\r]/g, '\\r')
     .replace(/[\t]/g, '\\t');
+}
+
+R=6370996.81;//地球半径
+function pi() {
+	return Math.PI;
+}
+function distance(point1, point2) {
+	return R*Math.acos(Math.cos(point1.lat*pi()/180 )*Math.cos(point2.lat*pi()/180)*Math.cos(point1.lng*pi()/180 -point2.lng*pi()/180)+
+			Math.sin(point1.lat*pi()/180 )*Math.sin(point2.lat*pi()/180))
+}
+
+function formatDistance(distance) {
+	if (distance < 1000) {
+		return Math.floor(distance/100) * 100 + "米";
+	} else {
+		return Math.round(distance/100)/10 + "公里";	
+	}
+}
+
+function updateDistance(mypoint) {
+	$("#matchlist").children("#match").each(function() {
+		var pointstr = $(this).find("span[name=title]").attr("point").split(",");
+		var point = new BMap.Point(pointstr[0], pointstr[1]);
+		var distanceobj = $(this).find("#distance");
+		var html = "<h5>距离我: <strong>" + formatDistance(distance(mypoint, point)) + "</strong></h5>";
+		distanceobj.append(html);
+	});
 }

@@ -102,6 +102,7 @@
 {% endblock %}
 {% block script %}
 	<script>
+		var mypoint = null;
 		$(document).ready(
 				function mylocation() {
 				    $("#baidumap").css("height", 350);
@@ -114,6 +115,8 @@
 				        if(this.getStatus() == BMAP_STATUS_SUCCESS){
                            // map.centerAndZoom(r.point,12);  
 				            var marker = addMarker(r.point, '{% static "images/location.png" %}');
+                           	mypoint = r.point;
+				            updateDistance(mypoint);
                             marker.addEventListener("mouseover",function(){
                                 marker.setAnimation(BMAP_ANIMATION_BOUNCE); 
                                                                             });
