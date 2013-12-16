@@ -1,10 +1,16 @@
 {% extends "foundation/base.html" %}
 {% block header %}
 {% load staticfiles %}
+<script type="text/javascript"
+	src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>
+<script type="text/javascript" src="http://developer.baidu.com/map/jsdemo/demo/changeMore.js"></script>
 <script src="{% static "js/moment-with-langs.min.js" %}"></script>
+<script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}";</script>
 <script src="{% static "js/map.js" %}?{{buildid}}"></script>
+<script src="{% static "js/map_v2.js" %}?{{buildid}}"></script>
 <link rel="stylesheet" href="{% static "css/map.css" %}?{{buildid}}">
 {% endblock %}
+{% load extras %}
 {% block content %}
 
     <div class="large-12 columns">
@@ -79,9 +85,15 @@
 
           </div>
           <div class="large-6 small-6 columns">
-
-            <pre>{{ match.description }}
-          </pre>
+			<div class="row">
+				<div id="baidumap"
+						style="overflow: hidden; margin: 0;"></div>
+			</div>
+			<hr>
+			<div class="row">
+				<pre>{{ match.description }}
+          		</pre>
+			</div>
         </div>
 
         </div>
@@ -99,12 +111,38 @@
           <a class="large button expand" href="#">
             我想参加!
           </a>
-
-
         </div>
-
     <!-- End Content -->
-
       </div>
     </div>
 {% endblock %}
+{% block script %}
+	<script>
+	var map = new BMap.Map("baidumap");
+		$(document).ready(
+			function() {
+				$("#baidumap").css("height", 350);
+			    map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_RIGHT, type: BMAP_NAVIGATION_CONTROL_SMALL}));
+			    map.enableScrollWheelZoom(true);
+			    
+			    data = eval(jsonescape('{{ match|matchtojson|safe }}'));
+			    var ggpoints = [];
+				for ( var idx in data) {
+					ggPoint = new BMap.Point(data[idx].fields.poolroom.lng,
+							data[idx].fields.poolroom.lat);
+					ggpoints.push(ggPoint);
+				}
+				convertPoints(ggpoints, function(convertedPoints) {
+					for ( var idx in data) {
+						map.centerAndZoom(convertedPoints[idx], 15);
+						marker = addMatchMarker(idx, convertedPoints[idx], [data[idx]]);
+						marker.setAnimation(BMAP_ANIMATION_BOUNCE);
+						setTimeout(function(){
+							marker.setAnimation(null);
+						}, 3000);
+					}
+				});
+				$(document).foundation();
+			});
+	</script>
+{% endblock %}	

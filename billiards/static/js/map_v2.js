@@ -105,10 +105,11 @@ function addMatchToList_v2(match, point) {
 			point.lng + "," + point.lat).replace(/\$matchjsonstr/g,
 			objectToJsonString([ match ])).replace(/\$poolroomname/g,
 			match.fields.poolroom.name).replace(/\$starttime/g,
-			getFormattedTime2(match.fields.starttime)).replace(/\$bonus/g, match.fields.bonus)
+			getFormattedTime2(match.fields.starttime))
+			.replace(/\$bonusdetail/g, match.fields.bonusdetail)
+			.replace(/\$bonus/g, match.fields.bonus)
 			.replace(/\$rechargeablecard/g, match.fields.rechargeablecard)
 			.replace(/\$otherprize/g, match.fields.otherprize).replace(/\$rule/g, match.fields.rule)
-			.replace(/\$bonusdetail/g, match.fields.bonusdetail)
 			.replace(/\$address/g, match.fields.poolroom.address).replace(/\$enrollfee/g, match.fields.enrollfee)
 			.replace(/\$enrollfocalpoint/g, match.fields.enrollfocal);
 	matchobj.append(contentTemplate);
