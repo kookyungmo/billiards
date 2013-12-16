@@ -10,6 +10,7 @@ from django.db import models
 from django.utils.timezone import localtime
 from bitfield import BitField
 from django.utils.encoding import force_unicode
+from django.contrib.auth.models import User
 
 def toDict(bitfield):
     flag_dict = {}
@@ -113,3 +114,18 @@ class Match(models.Model):
                 'bonusdetail': self.bonusdetail, 'rule': self.rule,
                 'starttime': self.starttime, 'enrollfee': self.enrollfee,
                 'enrollfocal': self.enrollfocal, 'flags': toDict(self.flags)}
+        
+class Profile(models.Model):
+    '''
+    Additional information for User
+    '''
+    user = models.ForeignKey(User, unique=True)  #User
+    nickname = models.TextField(max_length=200, null=False, verbose_name="昵称") # nickname
+    avatar = models.CharField(max_length=250, null=True, default='', verbose_name="头像") # address of the user logo
+    site_name = models.CharField(max_length=20, null=True, default='', verbose_name="来源") # site name 
+    gender = models.BooleanField(default=True, verbose_name="性别")
+    
+    def __unicode__(self):
+        return self.user.username
+    class Meta:
+        db_table = 'account_profile'
