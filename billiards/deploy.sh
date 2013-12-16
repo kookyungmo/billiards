@@ -43,7 +43,7 @@ main(){
 	DATE2=`date '+%Y.%m.%d'`
         HOUR=`date '+%H'`
         MINUTE=`date '+%M'`	
-	sed -e "s/BUILDID = [1-9][0-9]*/BUILDID = $DATE$HOUR$MINUTE/g" billiards/context_processors.py | rev=`git log -1 --pretty=format:%h --no-merges` > billiards/context_processors.py.new
+	sed -e "s/BUILDID = [1-9][0-9]*/BUILDID = $DATE$HOUR$MINUTE/g" billiards/context_processors.py | sed -e "s/REV = '[0-9]\{4\}.[0-9]\{2\}.[0-9]\{2\}.[[:alnum:]]\{6\}'/REV = '$DATE2.$commit'/g" > billiards/context_processors.py.new
 	cp -f billiards/context_processors.py.new billiards/context_processors.py
 	rm -f billiards/context_processors.py.new
 	pecho "Commit and push new version to BAE..."
