@@ -51,12 +51,21 @@
       </ul>
 
       <!-- Right Nav Section -->
+      {% if user.is_authenticated %}
       <ul class="right">
         <li class="divider"></li>
-        <li><a href="/user/login/qq"><img src="http://qzonestyle.gtimg.cn/qzone/vas/opensns/res/img/Connect_logo_1.png" >QQ登录</a></li>
+        <li><a href="#"><img src="{{ user_profile.avatar}}" >{{ user_profile.nickname }}</a></li>
         <li class="divider"></li>
-        <li><a href="/user/login/weibo">微博登录</a></li>
+        <li><a href="{% url user_logout %}">登出</a></li>
       </ul>
+      {% else %}
+      <ul class="right">
+        <li class="divider"></li>
+        <li><a href="{% url login_3rd 'qq' %}"><img src="{% static 'images/logo_qq.png' %}" >QQ登录</a></li>
+        <li class="divider"></li>
+        <li><a href="{% url login_3rd 'weibo' %}"><img src="{% static 'images/logo_weibo.png' %}" >weibo登录</a></li>
+      </ul>
+      {% endif %}
     </section>
   </nav>
   <!-- End Header and Nav -->
