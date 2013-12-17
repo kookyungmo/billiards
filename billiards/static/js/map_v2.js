@@ -26,6 +26,8 @@ function addMatchItems_v2(data) {
 		}
 		convertPoints(ggpoints, function(convertedPoints) {
 			cleanMatchMarkers();
+			if (data.length > 1)
+				map.centerAndZoom('北京');
 			for ( var idx in data) {
 				matchobj = addMatchToList_v2(data[idx], convertedPoints[idx]);
 				var titleobj = matchobj.find("span[name=title]");

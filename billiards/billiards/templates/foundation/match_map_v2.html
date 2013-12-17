@@ -73,6 +73,8 @@
 				<div id="matchlist" class="large-12 columns">
 				  	<script>
 				  	var map = new BMap.Map("baidumap");
+					map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_RIGHT, type: BMAP_NAVIGATION_CONTROL_SMALL}));
+				    map.enableScrollWheelZoom(true);
 				  	MATCH_URL = "{% url match_detail '000' %}";
 					{% if matches|length > 0 %}
 						matches = eval(jsonescape('{{ matches|matchtojson|safe }}'));
@@ -105,10 +107,6 @@
 		$(document).ready(
 				function mylocation() {
 				    $("#baidumap").css("height", 350);
-				    map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_RIGHT, type: BMAP_NAVIGATION_CONTROL_SMALL}));
-				    map.enableScrollWheelZoom(true);
-				    map.centerAndZoom('北京');
-
 				    var geolocation = new BMap.Geolocation();
 				    geolocation.getCurrentPosition(function(r){
 				        if(this.getStatus() == BMAP_STATUS_SUCCESS){
