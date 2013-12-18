@@ -16,6 +16,7 @@
 					<script>
 						function addMonth(monthstr) {
 							var monthItem = jQuery('<div/>', {class : 'row'});
+							monthItem.append("<h5 style=color:#696969;><strong>赛事日程表</strong></h5>")
 							monthItem.append("<h5><strong>" + monthstr + "</strong></h5>");
 							monthItem.appendTo($("#calendar"));
 						}
