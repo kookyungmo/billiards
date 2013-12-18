@@ -290,6 +290,7 @@ function addMatchToList(match, point) {
 }
 
 function createNoMatch() {
+	map.centerAndZoom('北京');
 	var nomatchobj = jQuery('<div/>', {
 		id : 'nomatch',
 		class : 'row'

@@ -9,14 +9,8 @@ Created on 2013年12月11日
 from django.http import HttpResponseRedirect, Http404
 from billiards.settings import SOCIALOAUTH_SITES
 from billiards.support.socialoauth import SocialSites, SocialAPIError
-from billiards.support.helper import UserStorage
 from django.contrib.auth.models import User
 from django.contrib import auth
-from billiards.models import Profile
-import random
-import hashlib
-
-
 
 def login_3rd(request, site_name):
     socialsites = SocialSites(SOCIALOAUTH_SITES)
@@ -48,21 +42,26 @@ def callback(request, site_name):
         print e.error_msg   # the error log returned from the site
         raise
     
-    user = auth.authenticate(username=_s.uid[0:29], password=_s.site_name)
+    username = _s.uid[0:29]
+    password = _s.site_name + _s.uid[30:]
     
-    if user is not None and user.is_active:
-        auth.login(request, user)
-        profile=request.user.get_profile()
-    else:
-        user = User.objects.create_user(username=_s.uid[0:29], password=_s.site_name)
-        user.save()    
-        profile = Profile(user = user)
+    user = auth.authenticate(username=username, password=password)
+   
+    if user is None:
+        user = User.objects.create_user(username=username, password=password)
+        user.save()
+        user = auth.authenticate(username=_s.uid[0:29], password=(_s.site_name+_s.uid[30:]))        
+    
+    if user.is_active == 0:
+        return HttpResponseRedirect('/')
+
+    user.nickname = _s.name
+    user.gender = (lambda x: 'm' if x else 'f')(_s.gender)
+    user.avatar = _s.avatar
+    user.site_name = _s.site_name
+    user.save()
         
-    profile.nickname = _s.name
-    profile.gender = _s.gender
-    profile.avatar = _s.avatar
-    profile.site_name = _s.site_name
-    profile.save()
+    auth.login(request, user)      
     
     return HttpResponseRedirect('/')
     
@@ -77,19 +76,5 @@ def oautherror():
     print "OAuth Error"
     return HttpResponseRedirect('/')    #should have some ERROR info here, TBD
     
-    
-def gen_session_id():
-    key = '%0.10f' % random.random()
-    return hashlib.sha1(key).hexdigest()
-
-def user_info(request):
-    UID = request.session['uid']
-    storage = UserStorage()
-    if not UID:
-        user = {'uid': None}
-    else:
-        user = storage.get_user(UID)
-        
-    return user
     
     

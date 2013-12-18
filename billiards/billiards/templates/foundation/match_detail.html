@@ -12,98 +12,90 @@
 {% endblock %}
 {% load extras %}
 {% block content %}
-
-    <div class="large-12 columns">
-      <hr>
-      <div class="row">
-
-    <!-- Content -->
-
-        <div class="large-8 columns">
+    <hr>
+    <div class="row">
+        <div class="medium-9 columns">
           <div class="panel radius">
-
-          <div class="row">
-          <div class="large-6 small-6 columns">
-            <h4>{{ match.poolroom.name }}</h4>
-            <span class="icon_list">
-            	{% if match.poolroom.flags.wifi %}
-				    <span class="ico_wifi" title="公共区域WIFI"></span>
-				{% endif %}
-				{% if match.poolroom.flags.wifi_free %}
-				    <span class="ico_free_wifi" title="公共区域WIFI"></span>
-				{% endif %}
-	            {% if match.poolroom.flags.parking or match.poolroom.flags.parking_free %}
-				    <span class="ico_parking" title="停车场"></span>
-	            {% endif %}
-	            {% if match.poolroom.flags.cafeteria %}
-				    <span class="ico_restaurant" title="餐饮服务"></span>
-	            {% endif %}
-	            {% if match.poolroom.flags.subway %}
-				    <span class="ico_bus" title="地铁周边"></span>
-				{% endif %}
-			</span>
-            <hr>
-            <h5 class="subheader">
-              <p>比赛日期: <strong><script>document.write(getFormattedTime('{{ match.starttime|date:"D d M Y, H:i" }}'));</script></strong></p>
-            </h5>
-            <hr>
-            <h4 class="subheader"><strong>冠军奖金</strong></h4>
-			<h5 class="subheader">
-				{% if match.bonus > 0 %}
-				    <p>现金: <strong>{{ match.bonus }}元</strong></p>
-				{% elif match.rechargeablecard > 0 %}
-				    <p>俱乐部充值卡: <strong>{{ match.rechargeablecard }}元</strong></p>
-	            {% elif match.otherprize != None %}
-				    <p>其它奖励: <strong>{{ match.otherprize }}</strong></p>
-				{% endif %}
-			</h5>
-			<hr>
-			<h4 class="subheader"><strong>报名费</strong></h4>
-			<h5 class="subheader">
-				<p>{{ match.enrollfee }}</p>
-			</h5>
-			<hr>
-			<h4 class="subheader"><strong>报名联系人</strong></h4>
-			<h5 class="subheader">
-				<p>{{ match.enrollfocal }}</p>
-			</h5>
-			<hr>
-			<h4 class="subheader"><strong>奖金细则</strong></h4>
-			<h5 class="subheader">
-				<pre>{{ match.bonusdetail }}</pre>
-			</h5>
-			<hr>
-			<h4 class="subheader"><strong>比赛规则</strong></h4>
-			<h5 class="subheader">
-				<pre>{{ match.rule }}</pre>
-			</h5>
-          <div class="show-for-small" align="center">
-            <a href="#" class="small radius button">我要参加!</a><br>
-
-            <a href="#" class="small radius button">我想参加!</a>
-          </div>
-
-          </div>
-          <div class="large-6 small-6 columns">
-			<div class="row">
-				<div id="baidumap"
-						style="overflow: hidden; margin: 0;"></div>
+	          <div class="row">
+		          <div class="medium-7 medium-push-5 columns">
+					<div class="row">
+						<div id="baidumap"
+								style="overflow: hidden; margin: 0;"></div>
+					</div>
+		          </div>
+		          <div class="medium-5 medium-pull-7 columns">
+		          	<div class="show-for-small" align="center">
+		          		<hr>
+			            <a href="#" class="small radius button">我要参加!</a>
+			
+			            <a href="#" class="small radius button">我想参加!</a>
+			            <hr>
+		          	</div>
+		            <h3>{{ match.poolroom.name }}</h3>
+		            <h3 class="subheader">{{ match.poolroom.address }}</h3>
+		            <span class="icon_list">
+		            	{% if match.poolroom.flags.wifi %}
+						    <span class="ico_wifi" title="公共区域WIFI"></span>
+						{% endif %}
+						{% if match.poolroom.flags.wifi_free %}
+						    <span class="ico_free_wifi" title="公共区域WIFI"></span>
+						{% endif %}
+			            {% if match.poolroom.flags.parking or match.poolroom.flags.parking_free %}
+						    <span class="ico_parking" title="停车场"></span>
+			            {% endif %}
+			            {% if match.poolroom.flags.cafeteria %}
+						    <span class="ico_restaurant" title="餐饮服务"></span>
+			            {% endif %}
+			            {% if match.poolroom.flags.subway %}
+						    <span class="ico_bus" title="地铁周边"></span>
+						{% endif %}
+					</span>
+		            <hr>
+		            <h3 class="subheader"><strong>比赛日期</strong></h3>
+		            <h5 class="subheader">
+		              <p><strong><script>document.write(getFormattedTime('{{ match.starttime|date:"D d M Y, H:i" }}'));</script></strong></p>
+		            </h5>
+		            <hr>
+		            <h3 class="subheader"><strong>冠军奖金</strong></h3>
+					<h5 class="subheader">
+						{% if match.bonus > 0 %}
+						    <p>现金: <strong>{{ match.bonus }}元</strong></p>
+						{% elif match.rechargeablecard > 0 %}
+						    <p>俱乐部充值卡: <strong>{{ match.rechargeablecard }}元</strong></p>
+			            {% elif match.otherprize != None %}
+						    <p>其它奖励: <strong>{{ match.otherprize }}</strong></p>
+						{% endif %}
+					</h5>
+					<hr>
+					<h3 class="subheader"><strong>报名费</strong></h3>
+					<h5 class="subheader">
+						<p>{{ match.enrollfee }}</p>
+					</h5>
+					<hr>
+					<h3 class="subheader"><strong>报名联系人</strong></h3>
+					<h5 class="subheader">
+						<p>{{ match.enrollfocal }}</p>
+					</h5>
+				</div>
 			</div>
-			<hr>
 			<div class="row">
-				<pre>{{ match.description }}
-          		</pre>
-			</div>
+					<hr>
+					<h3 class="subheader"><strong>奖金细则</strong></h3>
+					<h5 class="subheader">
+						<p>{{ match.bonusdetail }}</p>
+					</h5>
+					<hr>
+					<h3 class="subheader"><strong>比赛规则</strong></h3>
+					<h5 class="subheader">
+						<p>{{ match.rule }}</p>
+					</h5>
+					<p>{{ match.description }}
+		          	</p>
+		     </div>
         </div>
-
         </div>
-        </div>
-        </div>
-
-          <div class="large-4 columns hide-for-small">
-
-          <h4>行动起来!</h4><hr/>
-
+      	<div class="medium-3 columns hide-for-small">
+          <h2>行动起来!</h2><hr/>
           <a class="large button expand" href="#">
             我要参加!
           </a>
@@ -112,8 +104,6 @@
             我想参加!
           </a>
         </div>
-    <!-- End Content -->
-      </div>
     </div>
 {% endblock %}
 {% block script %}
