@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
 <!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
 <!--[if gt IE 8]><!--> <html lang="en"> <!--<![endif]-->
 {% load staticfiles %}
@@ -12,89 +11,119 @@
   <meta name="viewport" content="width=device-width" />
 
   <title>我为台球狂</title>
-
-  <!-- Included CSS Files -->
-
-  <!--link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/css/normalize.min.css">
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/css/foundation.min.css"-->
-  <link rel="stylesheet" href="//cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/css/normalize.min.css">
-  <link rel="stylesheet" href="//cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/css/foundation.min.css">
-  <link rel="stylesheet" href="{% static 'css/docs.css' %}?{{buildid}}">
-  <!--script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/js/vendor/jquery.min.js"></script-->
-  <script src="//cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/vendor/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,700" />
+  <!-- <link rel="stylesheet" href="//cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/css/normalize.min.css">
+  <link rel="stylesheet" href="//cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/css/foundation.min.css"> -->
+  <link rel="stylesheet" href="{% static 'css/docs.css' %}">
+  <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/vendor/jquery.min.js"></script>
 {% block header %}{% endblock %}
 </head>
 
 <body>
-
- <!-- Header and Nav -->
- <nav id="nav" class="top-bar">
-    <ul class="title-area">
-      <!-- Title Area -->
-      <li class="name">
-        <h1>
-          <a href="#">
-            我为台球狂
-          </a>
-        </h1>
-      </li>
-      <li class="toggle-topbar menu-icon"><a href="#"><span>站点导航</span></a></li>
-    </ul>
-
-
-   <section class="top-bar-section">
-      <!-- Left Nav Section -->
-      <ul class="left">
-        <li class="divider"></li>
-        {% url match_map 'map' as mapurl %}
-        <li {% if request.path == mapurl %} class="active" {% endif %}><a href="{{ mapurl }}">赛事活动</a></li>
-      </ul>
-
-      <!-- Right Nav Section -->
-      <ul class="right">
-        <li class="divider"></li>
-        <li><a href="/user/login/qq"><img src="http://qzonestyle.gtimg.cn/qzone/vas/opensns/res/img/Connect_logo_1.png" >QQ登录</a></li>
-        <li class="divider"></li>
-        <li><a href="/user/login/weibo">微博登录</a></li>
-      </ul>
-    </section>
-  </nav>
-  <!-- End Header and Nav -->
-
-    <!-- Main Feed -->
-<section role="main">
-  	<div class="row">
-  		{% block content %}{% endblock %}
-  	</div>
-
-  <!-- Footer -->
-
-  <footer id="footer" class="row">
-    <div class="large-12 columns">
-      <hr />
-      <div class="row">
-        <div class="large-5 columns">
-          <ul class="inline-list right">
-          		<li>&copy; 2013 我为台球狂 - All Rights Reserved</li>
-				<li>rev {{rev}}</li>
-            </ul>
-        </div>
-        <div class="large-7 columns">
-			<ul class="inline-list right">
-                <li><a href="#">关于我们</a></li>
-                <li><a href="#">加入我们</a></li>
-                <li><a href="#">联系我们</a></li>
-                <li><a href="#">商业合作</a></li>
-            </ul>
-        </div>
-      </div>
-    </div>
-  </footer>
-</section>
-  <!--script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/js/foundation/foundation.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/js/vendor/custom.modernizr.min.js"></script-->
-  <script src="//cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.min.js"></script>
-   <script src="//cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/vendor/custom.modernizr.min.js"></script>
+<div class="off-canvas-wrap doc-wrap">
+   <div class="inner-wrap">
+	 <!-- Header and Nav -->
+	<nav class="top-bar hide-for-small">
+	    <ul class="title-area">
+	      <!-- Title Area -->
+	      <li class="name">
+	        <h1>
+	          <a href="{{ request.get_host }}">
+	            我为台球狂
+	          </a>
+	        </h1>
+	      </li>
+	    </ul>
+	
+	   <section class="top-bar-section">
+	      <!-- Left Nav Section -->
+	      <ul class="left">
+	        <li class="divider"></li>
+	        {% url match_map 'map' as mapurl %}
+	        <li {% if request.path == mapurl %} class="active" {% endif %}><a href="{{ mapurl }}">赛事活动</a></li>
+	      </ul>
+	
+	      <!-- Right Nav Section -->
+	      <ul class="right">
+	        <li class="divider"></li>
+	        {% url login_3rd 'qq' as qq %}
+	        {% url login_3rd 'weibo' as weibo %}
+	        {% if user.is_authenticated %}
+	        <li><a href="#"><img src="{{ user.avatar}}" >{{ user.nickname }}</a></li>
+	        <li class="divider"></li>
+	        <li><a href="{% url user_logout %}">登出</a></li>
+	        {% else %}
+	        <li><a href="{{ qq }}"><img src="{% static 'images/logo_qq.png' %}" >QQ登录</a></li>
+	        <li class="divider"></li>
+	        <li><a href="{{ weibo }}"><img src="{% static 'images/logo_weibo.png' %}" >weibo登录</a></li>
+	        {% endif %}
+	      </ul>
+	    </section>
+	</nav>
+	<nav class="tab-bar show-for-small">
+	  <section class="left-small">
+        <a class="left-off-canvas-toggle menu-icon" ><span></span></a>
+      </section>
+	  <section class="middle tab-bar-section">
+        <h1 class="title">我为台球狂</h1>
+      </section>
+	</nav>
+	<aside class="left-off-canvas-menu">
+	  <ul class="off-canvas-list">
+	    <li><label class="first">我为台球狂</label></li>
+	    <li><a href="{{ request.get_host }}">Home</a></li>
+	  </ul>
+	  <ul class="off-canvas-list">
+	    <li><a href="{{ mapurl }}">赛事活动</a></li>
+	    {% if user.is_authenticated %}
+	    <li><label>用户中心</label></li>
+	    <li><a href="#"><img src="{{ user_profile.avatar}}" >{{ user_profile.nickname }}</a></li>
+	    <li><a href="{% url user_logout %}">登出</a></li>
+	    {% else %}
+	    <li><label>用户登录</label></li>
+	    <li><a href="{{ qq }}">QQ登录</a></li>
+		<li><a href="{{ weibo }}">微博登录</a></li>
+	    {% endif %}
+	  </ul>
+	</aside>
+	<a class="exit-off-canvas" href="#"></a>
+	  <!-- End Header and Nav -->
+	
+	    <!-- Main Feed -->
+		<section role="main">
+		  	<div class="row">
+		  		{% block content %}{% endblock %}
+		  	</div>
+		
+		  <!-- Footer -->
+		
+		  <footer id="footer" class="row">
+		    <div class="large-12 columns">
+		      <hr />
+		      <div class="row">
+		        <div class="medium-7 medium-push-5 columns">
+					<ul class="inline-list right">
+		                <li><a href="#">关于我们</a></li>
+		                <li><a href="#">加入我们</a></li>
+		                <li><a href="#">联系我们</a></li>
+		                <li><a href="#">商业合作</a></li>
+		            </ul>
+		        </div>		      
+		        <div class="medium-5 medium-pull-7 columns">
+		          <ul class="inline-list right">
+		          		<li>&copy; 2013 我为台球狂 - All Rights Reserved</li>
+						<li>rev {{rev}}</li>
+		            </ul>
+		        </div>
+		      </div>
+		    </div>
+		  </footer>
+		</section>
+	</div>
+</div>
+  <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.min.js"></script>
+  <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/vendor/custom.modernizr.min.js"></script>
+  <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.offcanvas.min.js"></script>
   {% block foundationscript %}{% endblock %}
   <script>
     $(document).foundation();

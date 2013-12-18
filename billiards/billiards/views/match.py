@@ -14,6 +14,7 @@ from django.http import HttpResponse
 from billiards.settings import STATIC_URL
 from django.template.context import RequestContext
 from django.db.models.aggregates import Max
+from billiards.models import Profile
 from django.utils import simplejson
 
 templatepath = 'foundation/'
@@ -62,10 +63,17 @@ def index(request, view = None):
 
     def ValuesQuerySetToDict(vqs):
         return [{'bonus': item['bonus'], 'starttime': item['starttime'].strftime(datefmt)} for item in vqs]
-
+    
+#     if request.user.is_authenticated():
+#         user_profile = request.user.get_profile()
+#     else:
+#         user_profile = None
+    
     return render_to_response(templatepath + page,
                               {'matches': matches, 'startdate': starttime, 'enddate': endtime, 'STATIC_URL': STATIC_URL,
-                               'intervals': intervals, 'matchsummary': matchCountSummary, 'bonussummary': simplejson.dumps(ValuesQuerySetToDict(topOneBonusSummary))},
+                               'intervals': intervals, 'matchsummary': matchCountSummary, 'bonussummary': simplejson.dumps(ValuesQuerySetToDict(topOneBonusSummary)),
+#                                'user_profile': user_profile},
+                              },
                               context_instance=RequestContext(request))
 
 def detail(request, matchid):

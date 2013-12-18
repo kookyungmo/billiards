@@ -10,10 +10,13 @@ var matchInfo = function(marker, name, matches) {
 	(function() {
 		var info = {
 			open : function(type, target) {
-				var content = name;
+				var content = "<h3 style = color:#EB6100><strong>" + name + "</strong></h3>";
 				for ( var idx in matches) {
-					content += "<p><p/><strong>奖金: "
+					content += "<p><p/>地址: "
+							+ matches[idx].fields.poolroom.address
+							+ "<p><p/><strong>奖金: "
 							+ matches[idx].fields.bonus
+							+ "<br/>"
 							+ "</strong><br/><strong>比赛时间: "
 							+ getFormattedTime(matches[idx].fields.starttime) + "</strong></p>";
 				}
@@ -287,6 +290,7 @@ function addMatchToList(match, point) {
 }
 
 function createNoMatch() {
+	map.centerAndZoom('北京');
 	var nomatchobj = jQuery('<div/>', {
 		id : 'nomatch',
 		class : 'row'

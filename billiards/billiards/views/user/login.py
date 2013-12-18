@@ -6,14 +6,13 @@ Created on 2013年12月11日
 @author: baron
 '''
 
-from django.http import HttpResponseRedirect, Http404, HttpResponse
+from django.http import HttpResponseRedirect, Http404
 from billiards.settings import SOCIALOAUTH_SITES
 from billiards.support.socialoauth import SocialSites, SocialAPIError
-from billiards.support.helper import Session, UserStorage
+from django.contrib.auth.models import User
+from django.contrib import auth
 
-
-
-def login(request, site_name):
+def login_3rd(request, site_name):
     socialsites = SocialSites(SOCIALOAUTH_SITES)
     if site_name in socialsites._sites_name_list:
         _s = socialsites.get_site_object_by_name(site_name)
@@ -24,7 +23,9 @@ def login(request, site_name):
 
 # not finished yet, to be continued...    
 def callback(request, site_name):
-    
+    '''
+    user store and manage should be replaced by django.contib.auth (TBD)
+    '''
     code = request.GET.get('code')
     if not code:
         #error occurred
@@ -41,44 +42,33 @@ def callback(request, site_name):
         print e.error_msg   # the error log returned from the site
         raise
     
-    storage = UserStorage()
-    UID = storage.get_uid(_s.site_name, _s.uid)
-    if not UID:
-        # bind a UID in local for the user login for the first time
-        UID = storage.bind_new_user(_s.site_name, _s.uid)
-        
-    storage.set_user(
-        UID,
-        site_name = _s.site_name,
-        uid = _s.uid,
-        name = _s.name,
-        avatar = _s.avatar
-    )
+    username = _s.uid[0:29]
+    password = _s.site_name + _s.uid[30:]
     
-    session_id = request.COOKIES.get('session_id')
-    if not session_id:
-        session_id = Session.make_session_id(UID)
-    session = Session()
-    session.set(session_id, uid = UID)
-    HttpResponse.set_cookie('session_id', session_id)
+    user = auth.authenticate(username=username, password=password)
+   
+    if user is None:
+        user = User.objects.create_user(username=username, password=password)
+        user.save()
+        user = auth.authenticate(username=_s.uid[0:29], password=(_s.site_name+_s.uid[30:]))        
     
-    return HttpResponseRedirect('/')
-
-
-def logout(request):
-    session_id = request.COOKIES.get('session_id')
-    if not session_id:
+    if user.is_active == 0:
         return HttpResponseRedirect('/')
 
-    session = Session()
-    data = session.get(session_id)
-    session.rem(session_id)
-    uid = data.get('uid', None)
-    if uid:
-        # reset session_id
-        Session.refresh_session_id(uid)
+    user.nickname = _s.name
+    user.gender = (lambda x: 'm' if x else 'f')(_s.gender)
+    user.avatar = _s.avatar
+    user.site_name = _s.site_name
+    user.save()
+        
+    auth.login(request, user)      
+    
+    return HttpResponseRedirect('/')
+    
 
-    HttpResponse.set_cookie('session_id', '')
+def logout(request):
+
+    auth.logout(request)
     return HttpResponseRedirect('/')
     
     
@@ -87,5 +77,4 @@ def oautherror():
     return HttpResponseRedirect('/')    #should have some ERROR info here, TBD
     
     
-
     

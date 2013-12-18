@@ -12,10 +12,11 @@
 {% endblock %}
 {% load extras %}
 {% block content %}
-	<div id="calendar" class="large-1 columns">
+	<div id="calendar" class="medium-1 columns">
 					<script>
 						function addMonth(monthstr) {
 							var monthItem = jQuery('<div/>', {class : 'row'});
+							monthItem.append("<h5 style=color:#696969;><strong>赛事日程表</strong></h5>")
 							monthItem.append("<h5><strong>" + monthstr + "</strong></h5>");
 							monthItem.appendTo($("#calendar"));
 						}
@@ -62,17 +63,19 @@
 						daysItem.appendTo($("#calendar"));
 						</script>
 	</div>
-	<div id="map_matches" class="large-9 columns">
+	<div id="map_matches" class="medium-9 columns">
 		<br>
-		<div class="row">
+		<div class="row show-for-medium-up">
 					<div id="baidumap"
 						style="overflow: hidden; margin: 0;"></div>
 		</div>
-		<div class="row"><h4>俱乐部赛事</h4></div>
+		<div class="row"><h3>俱乐部赛事</h3></div>
 		<div class="row">
 				<div id="matchlist" class="large-12 columns">
 				  	<script>
 				  	var map = new BMap.Map("baidumap");
+					map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_RIGHT, type: BMAP_NAVIGATION_CONTROL_SMALL}));
+				    map.enableScrollWheelZoom(true);
 				  	MATCH_URL = "{% url match_detail '000' %}";
 					{% if matches|length > 0 %}
 						matches = eval(jsonescape('{{ matches|matchtojson|safe }}'));
@@ -87,7 +90,7 @@
 	<div id="newsfeed" class="large-2 columns">
 			<div class="row">
 				<div class="large-11 large-centered columns">
-					<div class="row"><h4>最新动态</h4></div>
+					<div class="row"><h3>最新动态</h3></div>
 					<div class="row"><hr></div>
 					<div class="row">2013年12月9日，网站第一次内部测试</div>
 					<div class="row"><br/><br/></div>
@@ -96,7 +99,6 @@
 	</div>
 {% endblock %}
 {% block foundationscript %}
-	<!--script src="http://cdnjs.cloudflare.com/ajax/libs/foundation/5.0.2/js/foundation/foundation.magellan.min.js"></script-->
     <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.magellan.min.js"></script>
     <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.tooltip.min.js"></script>
 {% endblock %}
@@ -106,10 +108,6 @@
 		$(document).ready(
 				function mylocation() {
 				    $("#baidumap").css("height", 350);
-				    map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_RIGHT, type: BMAP_NAVIGATION_CONTROL_SMALL}));
-				    map.enableScrollWheelZoom(true);
-				    map.centerAndZoom('北京');
-
 				    var geolocation = new BMap.Geolocation();
 				    geolocation.getCurrentPosition(function(r){
 				        if(this.getStatus() == BMAP_STATUS_SUCCESS){
