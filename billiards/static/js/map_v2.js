@@ -60,7 +60,8 @@ function addMatchToList_v2(match, point) {
 			+ "<div class=\"small-8 medium-7 columns\">"
 			+ "<div class=\"row\">"
 			+ "<h5><span name=\"title\" point=\"$point\" match=\"$matchjsonstr\"><u>$poolroomname</u></span></h5>"
-			+ "<a target=\"_blank\" href=\"" + detail_url + "\">详情</a>"
+			+ "<p><a target=\"_blank\" href=\"" + detail_url + "\">详情</a>"
+			+ "<div class=\"show-for-small-only\"><a href=\"\" data-reveal-id=\"mapModal\">地图</a></div></p>"
 			+ "</div>"
 			+ "<div class=\"row\">"
 	equipment = "";
@@ -99,10 +100,8 @@ function addMatchToList_v2(match, point) {
 	if (match.fields.otherprize != null)
 		contentTemplate += "<div class=\"row\">$otherprize</div>";
 	contentTemplate += "<div class=\"row\">"
-			+ "<span data-tooltip class=\"has-tip\" title=\"$rule\">比赛规则</span>"
-			+ "&nbsp;&nbsp;&nbsp;&nbsp;"
-			+ "<span data-tooltip class=\"has-tip\" title=\"$bonusdetail\">奖金设置</span></div>"
-			+ "</div>";
+			+ "<span data-tooltip class=\"has-tip\" title=\"$rule\">比赛规则</span></div>"
+			+ "<div class=\"row\"><span data-tooltip class=\"has-tip\" title=\"$bonusdetail\">奖金设置</span></div>";
 	contentTemplate = contentTemplate.replace(/\$point/g,
 			point.lng + "," + point.lat).replace(/\$matchjsonstr/g,
 			objectToJsonString([ match ])).replace(/\$poolroomname/g,
