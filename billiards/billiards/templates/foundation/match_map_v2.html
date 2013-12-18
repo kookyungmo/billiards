@@ -12,7 +12,7 @@
 {% endblock %}
 {% load extras %}
 {% block content %}
-	<div id="calendar" class="large-1 columns">
+	<div id="calendar" class="medium-1 columns">
 					<script>
 						function addMonth(monthstr) {
 							var monthItem = jQuery('<div/>', {class : 'row'});
@@ -62,13 +62,13 @@
 						daysItem.appendTo($("#calendar"));
 						</script>
 	</div>
-	<div id="map_matches" class="large-9 columns">
+	<div id="map_matches" class="medium-9 columns">
 		<br>
-		<div class="row">
+		<div class="row show-for-medium-up">
 					<div id="baidumap"
 						style="overflow: hidden; margin: 0;"></div>
 		</div>
-		<div class="row"><h4>俱乐部赛事</h4></div>
+		<div class="row"><h3>俱乐部赛事</h3></div>
 		<div class="row">
 				<div id="matchlist" class="large-12 columns">
 				  	<script>
@@ -89,7 +89,7 @@
 	<div id="newsfeed" class="large-2 columns">
 			<div class="row">
 				<div class="large-11 large-centered columns">
-					<div class="row"><h2>最新动态</h4></div>
+					<div class="row"><h3>最新动态</h3></div>
 					<div class="row"><hr></div>
 					<div class="row">2013年12月9日，网站第一次内部测试</div>
 					<div class="row"><br/><br/></div>

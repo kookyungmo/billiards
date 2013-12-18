@@ -52,12 +52,12 @@ function addMatchToList_v2(match, point) {
 		id : 'match'
 	});
 	detail_url = MATCH_URL.replace(/000/g, match.pk);
-	contentTemplate = "<div class=\"large-2 columns\">"
+	contentTemplate = "<div class=\"small-2 columns\">"
 			+ "<div class=\"row panel\">$starttime</div></div>"
-			+ "<div class=\"large-7 columns\">"
+			+ "<div class=\"small-7 columns\">"
 			+ "<div class=\"row panel match-summary\">"
-			+ "<div class=\"large-2 columns\"><img src=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/demo1-th.jpg\"></div>"
-			+ "<div class=\"large-7 columns\">"
+			+ "<div class=\"small-4 medium-2 columns\"><img src=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/demo1-th.jpg\"></div>"
+			+ "<div class=\"small-8 medium-7 columns\">"
 			+ "<div class=\"row\">"
 			+ "<h5><span name=\"title\" point=\"$point\" match=\"$matchjsonstr\"><u>$poolroomname</u></span></h5>"
 			+ "<a target=\"_blank\" href=\"" + detail_url + "\">详情</a>"
@@ -81,7 +81,7 @@ function addMatchToList_v2(match, point) {
 		contentTemplate += "</span>";
 	}
 	contentTemplate += "</div><div class=\"row\" id=\"distance\"></div>" 
-			+ "</div><div class=\"large-3 columns\">"
+			+ "</div><div class=\"small-12 medium-3 columns\">"
 			+ "<div class=\"row\">已报名人数:</div>"
 			+ "<div class=\"row\">76人</div>"
 			+ "<div class=\"row\">"
@@ -90,8 +90,8 @@ function addMatchToList_v2(match, point) {
 			+ "</div>"
 			+ "</div>"
 			+ "</div>"
-			+ "<div class=\"large-3 columns panel\">"
-			+ "<div class=\"row\"><h4>冠军奖励:</h4></div>";
+			+ "<div class=\"small-3 columns panel\">"
+			+ "<div class=\"row\"><strong>冠军奖励:</strong></div>";
 	if (match.fields.bonus > 0)
 		contentTemplate += "<div class=\"row\">现金: $bonus元</div>";
 	if (match.fields.rechargeablecard > 0)
