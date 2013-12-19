@@ -185,19 +185,19 @@ SOCIALOAUTH_SITES = (
               {
 #               'redirect_uri': 'http://127.0.0.1:8000/user/oauth/weibo',
                 'redirect_uri': 'http://www.pktaiqiu.com/user/oauth/weibo',
-                'client_id': '3411485647',
-                'client_secret': 'fc136b2c89723779eddc359ef5eaa3ac',
+                'client_id': '1201635266',
+                'client_secret': '88c57d2325e59ec8d3871ab3d65741f6',
               }
     ),
     
     ('qq', 'billiards.support.socialoauth.sites.qq.QQ', 'QQ',
               {
-#               'redirect_uri': 'http://127.0.0.1:8000/user/oauth/qq',
-                'redirect_uri': 'http://www.pktaiqiu.com/user/oauth/qq',
+            'redirect_uri': 'http://127.0.0.1:8000/user/oauth/qq',
+#                 'redirect_uri': 'http://www.pktaiqiu.com/user/oauth/qq',
                 'client_id': '100568693',
                 'client_secret': '8c21be52fe3edf9fa9b75d55fe4abf64',
               }
     ),  
 )
 
-AUTH_PROFILE_MODULE = 'billiards.Profile' 
+# AUTH_PROFILE_MODULE = 'billiards.Profile' 
