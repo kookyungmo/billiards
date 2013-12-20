@@ -15,6 +15,9 @@ urlpatterns = patterns('billiards.views.match',
 
 urlpatterns += patterns('billiards.views.poolroom',
     url(r'^poolroom/(?P<poolroomid>\d+)/more$', 'more', name="poolroom_moreinfo"),
+    url(r'^poolroom/(?P<poolroomid>\d+)$', 'detail', name="poolroom_detail"),
+    url(r'^poolroom/nearby$', 'nearby', name="poolroom_nearby"),
+    url(r'^poolroom/nearby/(?P<lat>\d+.\d+),(?P<lng>\d+.\d+)', 'nearby', name="poolroom_nearby_point"),
 )
 
 urlpatterns += patterns('billiards.views.user.login',

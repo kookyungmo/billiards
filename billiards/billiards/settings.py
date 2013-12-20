@@ -200,4 +200,5 @@ SOCIALOAUTH_SITES = (
     ),  
 )
 
+TEMPLATE_ROOT = 'foundation/'
 # AUTH_PROFILE_MODULE = 'billiards.Profile' 

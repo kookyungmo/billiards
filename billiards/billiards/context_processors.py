@@ -4,6 +4,7 @@
 '''
 from billiards import settings
 import time
+from billiards.settings import STATIC_URL
 
 BUILDID = 20131210
 REV = '2013.12.15.abcdef'
@@ -14,5 +15,6 @@ def siteconf(request):
     """
     return {
             'buildid': int(time.time()) if settings.DEBUG else BUILDID,
-            'rev': REV
+            'rev': REV,
+            'STATIC_URL': STATIC_URL
     }
