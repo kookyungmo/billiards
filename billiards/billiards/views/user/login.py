@@ -72,7 +72,7 @@ def logout(request):
     return HttpResponseRedirect('/')
     
     
-def oautherror():
+def oautherror(request):
     print "OAuth Error"
     return HttpResponseRedirect('/')    #should have some ERROR info here, TBD
     
