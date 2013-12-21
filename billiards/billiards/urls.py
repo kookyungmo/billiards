@@ -32,4 +32,10 @@ urlpatterns += patterns('',
     url(r'^admin/', include(admin.site.urls)),
 )
 
+urlpatterns += patterns('billiards.views.us',
+    url(r'^aboutus','aboutus', name='aboutus'),
+    url(r'^joinus','joinus', name='joinus'),
+    url(r'^contactus','contactus',name='contactus'),
+    url(r'^cooperation','cooperation',name='cooperation'),
+)
 urlpatterns += staticfiles_urlpatterns()

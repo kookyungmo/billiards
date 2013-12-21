@@ -85,3 +85,4 @@ def detail(request, matchid):
 
     return render_to_response(TEMPLATE_ROOT + 'match_detail.html', {'match': match},
                               context_instance=RequestContext(request))
+

@@ -31,7 +31,7 @@ except ImportError:
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'billiards',
         'USER': 'root',
-        'PASSWORD': 'passw0rd',
+        'PASSWORD': '26102610',
         'HOST': '127.0.0.1',
         'PORT': '',
         }
