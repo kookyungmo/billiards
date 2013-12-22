@@ -33,9 +33,9 @@ urlpatterns += patterns('',
 )
 
 urlpatterns += patterns('billiards.views.us',
-    url(r'^aboutus','aboutus', name='aboutus'),
-    url(r'^joinus','joinus', name='joinus'),
-    url(r'^contactus','contactus',name='contactus'),
-    url(r'^cooperation','cooperation',name='cooperation'),
+    url(r'^about','about', name='about'),
+    url(r'^join','join', name='join'),
+    url(r'^contact','contact',name='contact'),
+    url(r'^partner','partner',name='partner'),
 )
 urlpatterns += staticfiles_urlpatterns()
