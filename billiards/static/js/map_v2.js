@@ -55,7 +55,7 @@ function addMatchToList_v2(match, point) {
 	contentTemplate = "<div class=\"small-2 columns\">"
 			+ "<div class=\"row panel\">$starttime</div></div>"
 			+ "<div class=\"small-7 columns\">"
-			+ "<div class=\"row panel match-summary\">"
+			+ "<div class=\"row panel clickable\">"
 			+ "<div class=\"small-4 medium-2 columns\"><img src=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/demo1-th.jpg\"></div>"
 			+ "<div class=\"small-8 medium-7 columns\">"
 			+ "<div class=\"row\">"
@@ -161,4 +161,154 @@ function updateDistance(mypoint) {
 		var html = "<h5>距离我: <strong>" + formatDistance(distance(mypoint, point)) + "</strong></h5>";
 		distanceobj.append(html);
 	});
+}
+
+function initialMap(id) {
+	var map = new BMap.Map(id);
+	map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_RIGHT, type: BMAP_NAVIGATION_CONTROL_SMALL}));
+    map.enableScrollWheelZoom(true);
+    return map;
+}
+
+function addMyLocation(point) {
+	var marker = addMarker(point, STATIC_URL + "/images/location.png");
+    marker.addEventListener("mouseover",function(){
+        marker.setAnimation(BMAP_ANIMATION_BOUNCE);
+    });
+    marker.addEventListener("mouseout",function(){
+        marker.setAnimation(null); 
+    });
+    marker.setTitle('我的位置');
+    return marker;
+}
+
+function addCustomToolbar(map, point) {
+	MyLocaiton.prototype = new BMap.Control();
+    MyLocaiton.prototype.initialize = function(map){
+
+	    var div = document.createElement("div");
+	    div.appendChild(document.createTextNode("我的位置"));
+	
+	    div.style.cursor = "pointer";
+	    div.style.border = "1px solid gray";
+	    div.style.backgroundColor = "white";
+	
+	    div.onclick = function(e){
+	    	map.centerAndZoom(point,12);
+	    }
+	    map.getContainer().appendChild(div);
+	    return div;
+    }
+
+    var myCtrl = new MyLocaiton();
+    map.addControl(myCtrl);
+}
+
+function addPoolroom(data, mypoint) {
+	var ggpoints = [];
+	for ( var idx in data) {
+		ggPoint = new BMap.Point(data[idx].fields.lng,
+				data[idx].fields.lat);
+		ggpoints.push(ggPoint);
+	}
+	convertPoints(ggpoints, function(convertedPoints) {
+		if (data.length > 1)
+			map.panTo(mypoint);
+		for ( var idx in data) {
+			poolroomobj = addPoolroomToList(data[idx], convertedPoints[idx]);
+			createPoolroomMarker(idx, poolroomobj, data[idx], convertedPoints[idx]);
+		}
+	});
+}
+
+function addPoolroomToList(poolroom, point) {
+	var poolroomobj = jQuery('<div/>', {
+		class : 'row',
+		id : 'poolroom'
+	});
+	detail_url = POOLROOM_URL.replace(/000/g, poolroom.pk);
+	contentTemplate = "<div class=\"small-12 columns clickable\">"
+			+ "<div class=\"row panel poolroom-detail\">"
+			+ "<div class=\"small-4 columns\"><img src=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/demo1-th.jpg\"></div>"
+			+ "<div class=\"small-8 columns\">"
+			+ "<div class=\"row\">"
+			+ "<h3><span name=\"title\" point=\"$point\"><u>$poolroomname</u></span></h3>"
+			+ "</div>"
+			+ "<div class=\"row\">"
+	equipment = "";
+	if (poolroom.fields.flags.wifi)
+		equipment += "<span class=\"ico_wifi\" title=\"公共区域WIFI\"></span>";
+	if (poolroom.fields.flags.wifi_free)
+		equipment += "<span class=\"ico_free_wifi\" title=\"公共区域WIFI\"></span>";
+	if (poolroom.fields.flags.parking || poolroom.fields.flags.parking_free)
+		equipment += "<span class=\"ico_parking\" title=\"停车场\"></span>";
+	if (poolroom.fields.flags.cafeteria)
+		equipment += "<span class=\"ico_restaurant\" title=\"餐饮服务\"></span>";
+	if (poolroom.fields.flags.subway)
+		equipment += "<span class=\"ico_bus\" title=\"地铁周边\"></span>";
+	if (equipment != "") {
+		contentTemplate += "<span class=\"icon_list\">";
+		contentTemplate += "<div class=\"ico_none\">球房设施: </div>";
+		contentTemplate += equipment;
+		contentTemplate += "</span>";
+	}
+	contentTemplate += "</div><div class=\"row\"><h3 class=\"subheader\">地址: $address</h3></div>";
+	contentTemplate += "<div class=\"row\"><h3 class=\"subheader\">电话: $tel</h3></div>";
+	contentTemplate += "<div class=\"row\"><h3 class=\"subheader\">营业时间: $hour</h3></div>";
+	contentTemplate += "<div class=\"row\"><h3 class=\"subheader\">距离我: <strong>$distance</strong></h3></div>";
+	contentTemplate += "</div>";
+	contentTemplate = contentTemplate.replace(/\$point/g,
+			point.lng + "," + point.lat)
+			.replace(/\$poolroomname/g, poolroom.fields.name)
+			.replace(/\$address/g, poolroom.fields.address)
+			.replace(/\$tel/g, poolroom.fields.tel)
+			.replace(/\$hour/g, poolroom.fields.businesshours)
+			.replace(/\$distance/g, formatDistance(poolroom.fields.distance * 1000));
+	poolroomobj.append(contentTemplate);
+	poolroomobj.appendTo('#poolroomlist');
+	return poolroomobj;	
+}
+
+var poolroomInfo = function(marker, poolroom) {
+	(function() {
+		var info = {
+			open : function(type, target) {
+				var content = "<h3 style = color:#EB6100><strong>" + poolroom.fields.name + "</strong></h3>";
+				content += "<p>地址: <strong>"
+					+ poolroom.fields.address
+					+ "</strong></p><p>营业时间: <strong>"
+					+ poolroom.fields.businesshours
+					+ "</strong></p><p>距离我: <strong>"
+					+ formatDistance(poolroom.fields.distance * 1000) + "</strong></p>";
+				var infoWindow = new BMap.InfoWindow(content);
+				marker.openInfoWindow(infoWindow);
+				infoWindow.redraw();
+			}
+		}
+		info.open();
+	})();
+};
+
+function addPoolroomMarker(i, point, poolroom) {
+	var mk = addMarker(point, STATIC_URL + "/images/marker.png");
+	mk.addEventListener("click", function() {
+		poolroomInfo(mk, poolroom);
+	});
+	return mk;
+}
+
+function createPoolroomMarker(i, obj, poolroom, point) {
+	var marker = addPoolroomMarker(i, point, poolroom);
+	(function(){
+		$(obj).click(
+			function(event) {
+				var link = $(obj);
+				var clickingobj = $(event.target);
+				if (clickingobj[0].tagName == 'A') {
+					//TODO catch click event on link
+				} else {
+					poolroomInfo(marker, poolroom);
+				}
+			});
+	})();
 }

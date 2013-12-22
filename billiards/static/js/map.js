@@ -77,7 +77,7 @@ function createMatchMarker(i, obj) {
 	var pointstr = $(obj).attr("point").split(",");
 	var point = new BMap.Point(pointstr[0], pointstr[1]);
 	var match = eval($(obj).attr("match"));
-	addMatchMarker(i, point, match);
+	marker = addMatchMarker(i, point, match);
 	$(obj).mouseover(function() {
 		markerDo($(this).attr("point"), function(marker) {
 			marker.setAnimation(BMAP_ANIMATION_BOUNCE);
@@ -89,7 +89,7 @@ function createMatchMarker(i, obj) {
 		});
 	}, function() {
 	});
-	$(obj).parents(".match-summary").click(
+	$(obj).parents(".clickable").click(
 			function(event) {
 				var link = $(obj);
 				var clickingobj = $(event.target);
@@ -231,7 +231,7 @@ function addMatchToList(match, point) {
 		id : 'match'
 	});
 	contentTemplate = "<div class=\"panel radius\">"
-			+ "<div class=\"row match-summary\">"
+			+ "<div class=\"row clickable\">"
 			+ "<div class=\"large-8 columns\">"
 			+ "<div class=\"row\">"
 			+ "<div class=\"large-3 columns\">"

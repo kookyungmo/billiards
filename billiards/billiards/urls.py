@@ -15,6 +15,9 @@ urlpatterns = patterns('billiards.views.match',
 
 urlpatterns += patterns('billiards.views.poolroom',
     url(r'^poolroom/(?P<poolroomid>\d+)/more$', 'more', name="poolroom_moreinfo"),
+    url(r'^poolroom/(?P<poolroomid>\d+)$', 'detail', name="poolroom_detail"),
+    url(r'^poolroom/nearby$', 'nearby', name="poolroom_nearby"),
+    url(r'^poolroom/nearby/(?P<lat>\d+.\d+),(?P<lng>\d+.\d+)', 'nearby', name="poolroom_nearby_point"),
 )
 
 urlpatterns += patterns('billiards.views.user.login',
@@ -29,4 +32,10 @@ urlpatterns += patterns('',
     url(r'^admin/', include(admin.site.urls)),
 )
 
+urlpatterns += patterns('billiards.views.us',
+    url(r'^about','about', name='about'),
+    url(r'^join','join', name='join'),
+    url(r'^contact','contact',name='contact'),
+    url(r'^partner','partner',name='partner'),
+)
 urlpatterns += staticfiles_urlpatterns()

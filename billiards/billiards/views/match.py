@@ -11,13 +11,11 @@ import datetime
 from dateutil.relativedelta import relativedelta
 from django.core import serializers
 from django.http import HttpResponse
-from billiards.settings import STATIC_URL
 from django.template.context import RequestContext
 from django.db.models.aggregates import Max
-from billiards.models import Profile
 from django.utils import simplejson
+from billiards.settings import TEMPLATE_ROOT
 
-templatepath = 'foundation/'
 def index(request, view = None):
     starttime = datetime.datetime.today()
     try:
@@ -46,7 +44,7 @@ def index(request, view = None):
     else:
         page = 'match_list.html'
 
-    intervals = 30
+    intervals = 14
     starttime2 = datetime.datetime.today()
     endtime2 = starttime2 + relativedelta(days=intervals)
     matchCountSummary = dict()
@@ -69,8 +67,8 @@ def index(request, view = None):
 #     else:
 #         user_profile = None
     
-    return render_to_response(templatepath + page,
-                              {'matches': matches, 'startdate': starttime, 'enddate': endtime, 'STATIC_URL': STATIC_URL,
+    return render_to_response(TEMPLATE_ROOT + page,
+                              {'matches': matches, 'startdate': starttime, 'enddate': endtime,
                                'intervals': intervals, 'matchsummary': matchCountSummary, 'bonussummary': simplejson.dumps(ValuesQuerySetToDict(topOneBonusSummary)),
 #                                'user_profile': user_profile},
                               },
@@ -85,5 +83,6 @@ def detail(request, matchid):
         json_serializer.serialize([match], fields=('id', 'poolroom', 'bonus', 'starttime', 'description'), ensure_ascii=False, stream=response, indent=2, use_natural_keys=True)
         return response
 
-    return render_to_response(templatepath + 'match_detail.html', {'match': match, 'STATIC_URL': STATIC_URL},
+    return render_to_response(TEMPLATE_ROOT + 'match_detail.html', {'match': match},
                               context_instance=RequestContext(request))
+
