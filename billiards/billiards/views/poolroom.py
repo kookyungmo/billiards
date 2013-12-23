@@ -31,7 +31,7 @@ def nearby(request, lat = None, lng = None):
         '''
         haversine = '6371 * acos( cos( radians(%s) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(%s) ) + sin( radians(%s) ) * sin( radians( lat ) ) )' %(lat, lng, lat)
         nearby_poolrooms = Poolroom.objects.extra(select={'distance' : haversine}).extra(order_by=['distance'])\
-            .extra(where=["1 having distance <= 10"])#[:5]
+            .extra(where=["1 having distance <= 3"])#[:5]
         # hacking
         concrete_model = nearby_poolrooms[0]._meta.concrete_model
         distance = models.DecimalField(name='distance', max_digits=11,decimal_places=7,null=True)
