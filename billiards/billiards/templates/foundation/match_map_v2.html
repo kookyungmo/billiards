@@ -17,7 +17,7 @@
 						function addMonth(monthstr) {
 							var monthItem = jQuery('<div/>', {class : 'row'});
 							monthItem.append("<h5 style=color:#696969;><strong>赛事日程表</strong></h5>")
-							monthItem.append("<h5><strong>" + monthstr + "</strong></h5>");
+							monthItem.append("<h3><strong>" + monthstr + "</strong></h3>");
 							monthItem.appendTo($("#calendar"));
 						}
 
@@ -46,7 +46,7 @@
 							var dayItem = jQuery('<dd/>', {});
 							if (m.date() == starttime.date() && m.month() == starttime.month())
 								dayItem.attr('class', 'active');
-							contentTemplate = "<h5><a href=\"javascript:void(0);\" timestamp=\"" + m.valueOf() + "\">" + m.format('DD') + "</a>";
+							contentTemplate = "<h2><a href=\"javascript:void(0);\" timestamp=\"" + m.valueOf() + "\">" + m.format('DD') + "</a>";
 		 					var formattedday = m.format("YYYY-MM-DD");
 							if (formattedday in summary) {
 								contentTemplate += "<sub><span data-tooltip=\"\" class=\"has-tip tip-top noradius\" title=\"当日比赛场数\">" + summary[formattedday] + "</span></sub>";
@@ -55,7 +55,7 @@
 								contentTemplate += "<span data-tooltip=\"\" class=\"has-tip tip-top noradius\" title=\"奖金最高的比赛\"><sup>\
 									<img src=\"{% static "images/bonus.jpeg" %}\"><sup></span>";
 							}
-							contentTemplate += "</h5>";
+							contentTemplate += "</h2>";
 							dayItem.append(contentTemplate);
 							dayItem.appendTo(daysItem);
 							m.add('days', 1);

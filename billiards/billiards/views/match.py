@@ -44,7 +44,7 @@ def index(request, view = None):
     else:
         page = 'match_list.html'
 
-    intervals = 14
+    intervals = 7
     starttime2 = datetime.datetime.today()
     endtime2 = starttime2 + relativedelta(days=intervals)
     matchCountSummary = dict()
