@@ -7,7 +7,7 @@
 <script src="{% static "js/moment-with-langs.min.js" %}"></script>
 <script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}";</script>
 <script src="{% static "js/map.js" %}?{{buildid}}"></script>
-<script src="{% static "js/map_v2.js" %}?{{buildid}}"></script>
+<script src="{% static "js/map_v2.js" %}"></script>
 <link rel="stylesheet" href="{% static "css/map.css" %}?{{buildid}}">
 {% endblock %}
 {% load extras %}
@@ -64,7 +64,7 @@
 			            	map.panTo(mypoint);
                        	}
 			            $("#info .subheader").text("正在加载附近的球房...");
-			            url = "{% url poolroom_nearby_point '00.00' '11.11' %}";
+	            		url = "{% url poolroom_nearby_point '00.00' '11.11' %}";
 			            $.ajax({
 							url : url.replace(/00\.00/g, mypoint.lat).replace(/11\.11/g, mypoint.lng),
 							data : {'f':'json'},
