@@ -45,13 +45,22 @@ function addMatchToList_v2(match, point) {
 	});
 	detail_url = MATCH_URL.replace(/000/g, match.pk);
 	contentTemplate ="<div class=\"row\">"// "<div class=\"small-2 columns\">"
-			+ "<div class=\"row panel\" style=\"position:relative;left:25px;width:150px;\">$starttime</div></div>"
+			+ "<div class=\"row panel\" style=\"position:relative;left:25px;width:90%;\">$starttime &nbsp; &nbsp; 冠军奖励 &nbsp;"
+        if (match.fields.bonus > 0)
+                contentTemplate += "现金: $bonus元 &nbsp;&nbsp;";
+        if (match.fields.rechargeablecard > 0)
+                contentTemplate += "俱乐部充值卡: $rechargeablecard元 &nbsp;&nbsp;";
+        if (match.fields.otherprize != null)
+                contentTemplate += "$otherprize";
+		contentTemplate += "<span data-tooltip class=\"has-tip\" title=\"$bonusdetail\">奖金设置</span>"
+        contentTemplate += "</div></div>"
 			+ "<div class=\"small-8 columns\">"
 			+ "<div class=\"row panel clickable\" style=\"height:150px;overflow:auto;\">"
 //			+ "<div class=\"small-4 medium-2 columns\"><img src=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/demo1-th.jpg\"></div>"
 			+ "<div class=\"small-8 medium-8 columns\">"
 			+ "<div class=\"row\">"
 			+ "<h5><span name=\"title\" point=\"$point\" match=\"$matchjsonstr\" style=\"color:#EB6100\"><strong>$poolroomname</strong></span>"
+			+"<span data-tooltip class=\"has-tip\" title=\"$rule\">&nbsp;比赛规则</span>"
 			+ "&nbsp; &nbsp; <a href=\"" + detail_url + "\">比赛详情</a></h5>"
 			+ "</div>"
 			+ "<br>"
