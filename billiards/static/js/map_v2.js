@@ -53,9 +53,9 @@ function addMatchToList_v2(match, point) {
 	});
 	detail_url = MATCH_URL.replace(/000/g, match.pk);
 	contentTemplate = "<div class=\"small-2 columns\">"
-			+ "<div class=\"row panel\">$starttime</div></div>"
+			+ "<div class=\"row panel\" style=\"height:150px;\">$starttime</div></div>"
 			+ "<div class=\"small-7 columns\">"
-			+ "<div class=\"row panel clickable\">"
+			+ "<div class=\"row panel clickable\" style=\"height:150px;overflow:auto;\">"
 			+ "<div class=\"small-4 medium-2 columns\"><img src=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/demo1-th.jpg\"></div>"
 			+ "<div class=\"small-8 medium-7 columns\">"
 			+ "<div class=\"row\">"
@@ -90,7 +90,7 @@ function addMatchToList_v2(match, point) {
 			+ "</div>"
 			+ "</div>"
 			+ "</div>"
-			+ "<div class=\"small-3 columns panel\">"
+			+ "<div class=\"small-3 columns panel\" style=\"height:150px;\">"
 			+ "<div class=\"row\"><strong>冠军奖励:</strong></div>";
 	if (match.fields.bonus > 0)
 		contentTemplate += "<div class=\"row\">现金: $bonus元</div>";
