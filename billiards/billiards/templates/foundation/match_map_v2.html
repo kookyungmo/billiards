@@ -66,7 +66,8 @@
 	<div id="map_matches" class="medium-9 columns">
 		<br>
 		<div class="row show-for-medium-up">
-		<div id="baidumap" style="overflow: hidden; margin: 0; display:;"></div>
+			<div id="baidumap" 
+				style="overflow: hidden; margin: 0;display:none"></div>
 		</div>
 		<div class="row"><h3>俱乐部赛事</h3></div>
 		<div class="row">
@@ -142,4 +143,10 @@
 			});
 		});
 	</script>
+<script>
+function test()
+{
+if(document.getElementById('baidumap').style.display==""){document.getElementById('baidumap').style.display="none";}else{document.getElementById('baidumap').style.display="";}
+}
+</script>
 {% endblock %}

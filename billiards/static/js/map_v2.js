@@ -45,7 +45,7 @@ function addMatchToList_v2(match, point) {
 	});
 	detail_url = MATCH_URL.replace(/000/g, match.pk);
 	contentTemplate ="<div class=\"row\">"// "<div class=\"small-2 columns\">"
-			+ "<div class=\"row panel\" style=\"position:relative;left:25px;width:97.5%;\">$starttime &nbsp; &nbsp; 冠军奖励 &nbsp;"
+			+ "<div class=\"row panel\" style=\"position:relative;left:38.5px;width:95%;\">$starttime &nbsp; &nbsp; 冠军奖励 &nbsp;"
         if (match.fields.bonus > 0)
                 contentTemplate += "现金: $bonus元 &nbsp;&nbsp;";
         if (match.fields.rechargeablecard > 0)
@@ -53,15 +53,16 @@ function addMatchToList_v2(match, point) {
         if (match.fields.otherprize != null)
                 contentTemplate += "$otherprize";
 		contentTemplate += "<span data-tooltip class=\"has-tip\" title=\"$bonusdetail\">奖金设置</span>"
-        contentTemplate += "</div></div>"
+        	contentTemplate += "</div></div>"
 			+ "<div class=\"small-14 columns\">"
-			+ "<div class=\"row panel clickable\" style=\"overflow:auto;\">"
+			+ "<div class=\"columns panel clickable\" style=\"overflow:auto;\">"
 //			+ "<div class=\"small-4 medium-2 columns\"><img src=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/demo1-th.jpg\"></div>"
 			+ "<div class=\"small-8 medium-8 columns\">"
 			+ "<div class=\"row\">"
 			+ "<h5><span name=\"title\" point=\"$point\" match=\"$matchjsonstr\" style=\"color:#EB6100\"><strong>$poolroomname&nbsp;&nbsp;&nbsp;</strong></span>"
 			+"<span data-tooltip class=\"has-tip\" title=\"$rule\">比赛规则</span>"
 			+ "&nbsp; &nbsp; <a href=\"" + detail_url + "\">比赛详情</a></h5>"
+			+ "<a href=#  onClick=test('baidumap')>地图</a>"
 			+ "</div>"
 			+ "<br>"
 			+ "<div class=\"row\">"
@@ -92,7 +93,6 @@ function addMatchToList_v2(match, point) {
 			+ "</div>"
 			+ "</div>"
 			+ "</div>"
-			+ "<div class=\"columns panel\">"
 //			+ "<div class=\"small-4 columns panel\" style=\"height:0px;overflow:auto;\">"
 		//	+ "<div class=\"row\"><strong>冠军奖励:</strong></div>";
 //	if (match.fields.bonus > 0)
@@ -105,7 +105,7 @@ function addMatchToList_v2(match, point) {
 //			+ "<span data-tooltip class=\"has-tip\" title=\"$rule\">比赛规则</span>"
 //			+ "&nbsp;&nbsp;&nbsp;&nbsp;"
 //			+ "<span data-tooltip class=\"has-tip\" title=\"$bonusdetail\">奖金设置</span></div>"
-			+ "</div>";
+//			+ "</div>";
 	contentTemplate = contentTemplate.replace(/\$point/g,
 			point.lng + "," + point.lat).replace(/\$matchjsonstr/g,
 			objectToJsonString([ match ])).replace(/\$poolroomname/g,
