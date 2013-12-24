@@ -18,31 +18,23 @@ function addMatchItems_v2(data) {
 	} else {
 		$("#matchlist").children("#nomatch").remove();
 		$("#matchlist").children("#match").remove();
-		var ggpoints = [];
+		cleanMatchMarkers();
+		if (data.length > 1)
+			map.centerAndZoom('北京');
 		for ( var idx in data) {
-			ggPoint = new BMap.Point(data[idx].fields.poolroom.lng,
+			point = new BMap.Point(data[idx].fields.poolroom.lng,
 					data[idx].fields.poolroom.lat);
-			ggpoints.push(ggPoint);
-		}
-		convertPoints(ggpoints, function(convertedPoints) {
-			cleanMatchMarkers();
-			if (data.length > 1)
-				map.centerAndZoom('北京');
-			for ( var idx in data) {
-				matchobj = addMatchToList_v2(data[idx], convertedPoints[idx]);
-				var titleobj = matchobj.find("span[name=title]");
-				if (idx == 0 && data.length == 1) {
-					// only one point
-					var points = $(titleobj).attr("point").split(",");
-					var point = new BMap.Point(points[0], points[1]);
-					map.centerAndZoom(point,15);
-				}
-				createMatchMarker(idx, titleobj);
+			matchobj = addMatchToList_v2(data[idx], point);
+			var titleobj = matchobj.find("span[name=title]");
+			if (idx == 0 && data.length == 1) {
+				// only one point
+				map.centerAndZoom(point,15);
 			}
-			if (mypoint != null)
-				updateDistance(mypoint);
-			$(document).foundation();
-		});
+			createMatchMarker(idx, titleobj);
+		}
+		if (mypoint != null)
+			updateDistance(mypoint);
+		$(document).foundation();
 	}
 }
 
@@ -205,21 +197,15 @@ function addCustomToolbar(map, point) {
     map.addControl(myCtrl);
 }
 
-function addPoolroom(data, mypoint) {
-	var ggpoints = [];
+function addPoolroom(data, mypoint) {	
+	if (data.length > 1)
+		map.panTo(mypoint);
 	for ( var idx in data) {
-		ggPoint = new BMap.Point(data[idx].fields.lng,
-				data[idx].fields.lat);
-		ggpoints.push(ggPoint);
+		point = new BMap.Point(data[idx].fields.lng_baidu,
+				data[idx].fields.lat_baidu);
+		poolroomobj = addPoolroomToList(data[idx], point);
+		createPoolroomMarker(idx, poolroomobj, data[idx], point);
 	}
-	convertPoints(ggpoints, function(convertedPoints) {
-		if (data.length > 1)
-			map.panTo(mypoint);
-		for ( var idx in data) {
-			poolroomobj = addPoolroomToList(data[idx], convertedPoints[idx]);
-			createPoolroomMarker(idx, poolroomobj, data[idx], convertedPoints[idx]);
-		}
-	});
 }
 
 function addPoolroomToList(poolroom, point) {

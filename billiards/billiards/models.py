@@ -19,13 +19,16 @@ def toDict(bitfield):
         flag_dict[f[0]] = f[1]
     return flag_dict
 
+poolroom_fields = ('id', 'name', 'address', 'tel', 'lat_baidu', 'lng_baidu', 'flags', 'businesshours', 'size', 'rating')
 class Poolroom(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200,null=False,verbose_name='名字')
     address = models.TextField(null=True,verbose_name='地址')
     tel = models.CharField(max_length=20,null=True,verbose_name='电话')
-    lat = models.DecimalField(max_digits=11,decimal_places=7,null=True,verbose_name='纬度')
-    lng = models.DecimalField(max_digits=11,decimal_places=7,null=True,verbose_name='经度')
+    lat = models.DecimalField(max_digits=11,decimal_places=7,null=True,verbose_name='纬度_google地图')
+    lng = models.DecimalField(max_digits=11,decimal_places=7,null=True,verbose_name='经度_google地图')
+    lat_baidu = models.DecimalField(max_digits=11,decimal_places=7,null=True,verbose_name='纬度_百度地图')
+    lng_baidu = models.DecimalField(max_digits=11,decimal_places=7,null=True,verbose_name='经度_百度地图')
     #TODO try composite bit field
     flags = BitField(flags=(
             ('wifi', u'Wifi'),
@@ -37,6 +40,7 @@ class Poolroom(models.Model):
         ), verbose_name='特色属性')
     businesshours = models.CharField(max_length=60,null=True,verbose_name='营业时间')
     size = models.IntegerField(max_length=8,null=True,verbose_name='球馆面积(平米)')
+    rating = models.IntegerField(max_length=2,null=True,verbose_name='球房总评分')
 
     class Meta:
         db_table = 'poolroom'
@@ -47,9 +51,9 @@ class Poolroom(models.Model):
         return self.name
 
     def natural_key(self):
-        return {'id': self.id, 'name': self.name, 'lat': self.lat, 'lng': self.lng,
+        return {'id': self.id, 'name': self.name, 'lat': self.lat_baidu, 'lng': self.lng_baidu,
                 'businesshours': self.businesshours, 'size': self.size,
-                'address': self.address, 'flags': toDict(self.flags)}
+                'address': self.address, 'flags': toDict(self.flags), 'rating': self.rating}
 
 class TableTypeField(models.CharField):
     def value_to_string(self, obj):
