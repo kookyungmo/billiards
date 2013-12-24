@@ -18,6 +18,7 @@ urlpatterns += patterns('billiards.views.poolroom',
     url(r'^poolroom/(?P<poolroomid>\d+)$', 'detail', name="poolroom_detail"),
     url(r'^poolroom/nearby$', 'nearby', name="poolroom_nearby"),
     url(r'^poolroom/nearby/(?P<lat>\d+.\d+),(?P<lng>\d+.\d+)', 'nearby', name="poolroom_nearby_point"),
+    url(r'^poolroom/update_baidu_location', 'updateBaiduLocation', name="poolroom_internal_update_baidu_location"),
 )
 
 urlpatterns += patterns('billiards.views.user.login',

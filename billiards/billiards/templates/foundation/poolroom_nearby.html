@@ -7,7 +7,7 @@
 <script src="{% static "js/moment-with-langs.min.js" %}"></script>
 <script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}";</script>
 <script src="{% static "js/map.js" %}?{{buildid}}"></script>
-<script src="{% static "js/map_v2.js" %}?{{buildid}}"></script>
+<script src="{% static "js/map_v2.js" %}"></script>
 <link rel="stylesheet" href="{% static "css/map.css" %}?{{buildid}}">
 {% endblock %}
 {% load extras %}
@@ -19,7 +19,7 @@
 
 	<div id="poolroomlist" class="medium-9 columns">
 		<div class="row">
-			<h2>附近<font size = +5>3公里</font>内的球房</h2>
+			<h2>附近<font size = +5>10公里</font>内的球房</h2>
 		</div>
 		<div class="row">
 			<div id="baidumap"
@@ -64,7 +64,7 @@
 			            	map.panTo(mypoint);
                        	}
 			            $("#info .subheader").text("正在加载附近的球房...");
-			            url = "{% url poolroom_nearby_point '00.00' '11.11' %}";
+	            		url = "{% url poolroom_nearby_point '00.00' '11.11' %}";
 			            $.ajax({
 							url : url.replace(/00\.00/g, mypoint.lat).replace(/11\.11/g, mypoint.lng),
 							data : {'f':'json'},
