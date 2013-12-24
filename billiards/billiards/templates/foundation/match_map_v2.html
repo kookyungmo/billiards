@@ -12,7 +12,7 @@
 {% endblock %}
 {% load extras %}
 {% block content %}
-	<div id="calendar" class="medium-1 columns" style="width:85px;">
+	<div id="calendar" class="medium-1 columns">
 					<script>
 						function addMonth(monthstr) {
 							var monthItem = jQuery('<div/>', {class : 'row'});
@@ -63,7 +63,7 @@
 						daysItem.appendTo($("#calendar"));
 						</script>
 	</div>
-	<div id="map_matches" class="medium-9 columns" style="position:relative;left: 20px">
+	<div id="map_matches" class="medium-9 columns">
 		<br>
 		<div class="row show-for-medium-up">
 					<div id="baidumap"
