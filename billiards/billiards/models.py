@@ -37,10 +37,13 @@ class Poolroom(models.Model):
             ('parking_free', u'免费停车位'),
             ('cafeteria', u'餐厅'),
             ('subway', u'地铁周边'),
+            ('nosmoking', u'禁烟'),
+            ('nosmokingarea', u'无烟区'),
         ), verbose_name='特色属性')
     businesshours = models.CharField(max_length=60,null=True,verbose_name='营业时间')
     size = models.IntegerField(max_length=8,null=True,verbose_name='球馆面积(平米)')
     rating = models.IntegerField(max_length=2,null=True,verbose_name='球房总评分')
+    review = models.CharField(max_length=255,null=True,blank=True,verbose_name='球房点评')
 
     class Meta:
         db_table = 'poolroom'
