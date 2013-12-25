@@ -214,13 +214,14 @@ function addPoolroomToList(poolroom, point) {
 		class : 'row',
 		id : 'poolroom'
 	});
-	detail_url = POOLROOM_URL.replace(/000/g, poolroom.pk);
+	url = POOLROOM_URL;
+	detail_url = url.replace(/000/g, poolroom.pk);
 	contentTemplate = "<div class=\"small-12 columns clickable\">"
 			+ "<div class=\"row panel poolroom-detail\">"
 			+ "<div class=\"small-4 columns\"><img src=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/demo1-th.jpg\"></div>"
 			+ "<div class=\"small-8 columns\">"
 			+ "<div class=\"row\">"
-			+ "<h3><span name=\"title\" point=\"$point\"><u>$poolroomname</u></span></h3>"
+			+ "<h3><span name=\"title\" point=\"$point\"><u><a href=\"" + detail_url + "\">$poolroomname</a></u></span></h3>"
 			+ "</div>"
 			+ "<div class=\"row\">"
 	equipment = "";
@@ -266,8 +267,11 @@ var poolroomInfo = function(marker, poolroom) {
 					+ poolroom.fields.address
 					+ "</strong></p><p>营业时间: <strong>"
 					+ poolroom.fields.businesshours
-					+ "</strong></p><p>距离我: <strong>"
-					+ formatDistance(poolroom.fields.distance * 1000) + "</strong></p>";
+					+ "</strong></p>";
+				if (poolroom.fields.distance != null) {
+					content += "<p>距离我: <strong>"
+						+ formatDistance(poolroom.fields.distance * 1000) + "</strong></p>";
+				}
 				var infoWindow = new BMap.InfoWindow(content);
 				marker.openInfoWindow(infoWindow);
 				infoWindow.redraw();
@@ -327,7 +331,6 @@ function loadingPoolroom(distance, mypoint) {
 			if (data.length == 0) {
 				$("#info .subheader").text("真遗憾，您附近没有我们收录的球房。");
 			} else {
-				POOLROOM_URL = "{% url poolroom_detail '000' %}";
 				$("#info").remove();
 				addPoolroom(data, mypoint);
 			}
