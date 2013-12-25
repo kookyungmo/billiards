@@ -303,22 +303,22 @@ function createNoMatch() {
 	nomatchobj.appendTo('#matchlist');
 }
 
-function addMatchItems(data) {
-	function cleanMatchMarkers() {
-		var overlays = map.getOverlays();
-		for ( var m in overlays) {
-			if (overlays[m] instanceof BMap.Marker
-					&& overlays[m].getTitle() != '我的位置') {
-				map.removeOverlay(overlays[m]);
-			}
+function cleanNonLocationMarkers() {
+	var overlays = map.getOverlays();
+	for ( var m in overlays) {
+		if (overlays[m] instanceof BMap.Marker
+				&& overlays[m].getTitle() != '我的位置') {
+			map.removeOverlay(overlays[m]);
 		}
 	}
+}
 
+function addMatchItems(data) {
 	if (data.length == 0) {
 		if ($("#nomatch").length == 0) {
 			$("#matchlist").children("#match").remove();
 			createNoMatch();
-			cleanMatchMarkers();
+			cleanNonLocationMarkers();
 		}
 	} else {
 		$("#matchlist").children("#nomatch").remove();
@@ -330,7 +330,7 @@ function addMatchItems(data) {
 			ggpoints.push(ggPoint);
 		}
 		convertPoints(ggpoints, function(convertedPoints) {
-			cleanMatchMarkers();
+			cleanNonLocationMarkers();
 			for ( var idx in data) {
 				matchobj = addMatchToList(data[idx], convertedPoints[idx]);
 				createMatchMarker(idx, matchobj.find("span[name=title]"));

@@ -3,7 +3,6 @@
 {% load staticfiles %}
 <script type="text/javascript"
 	src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>
-<script type="text/javascript" src="http://developer.baidu.com/map/jsdemo/demo/changeMore.js"></script>
 <script src="{% static "js/moment-with-langs.min.js" %}"></script>
 <script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}";</script>
 <script src="{% static "js/map.js" %}?{{buildid}}"></script>
@@ -88,8 +87,6 @@
 	<div id="newsfeed" class="large-2 columns">
 			<div class="row">
 				<div class="large-11 large-centered columns">
-					<br>
-					<iframe scrolling="no" frameborder="0" style="overflow:hidden;border:0;margin:0;padding:0;width:120px;height:40px;" src="http://www.clocklink.com/html5embed.php?clock=004&timezone=CCT&color=black&size=120"></iframe>
 					<br>
 					<div class="row"><h3><font size =+1><strong>最新俱乐部赛事动态</strong></font></h3></div>
 					<div class="row"><br></div>

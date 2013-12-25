@@ -17,7 +17,7 @@ urlpatterns += patterns('billiards.views.poolroom',
     url(r'^poolroom/(?P<poolroomid>\d+)/more$', 'more', name="poolroom_moreinfo"),
     url(r'^poolroom/(?P<poolroomid>\d+)$', 'detail', name="poolroom_detail"),
     url(r'^poolroom/nearby$', 'nearby', name="poolroom_nearby"),
-    url(r'^poolroom/nearby/(?P<lat>\d+.\d+),(?P<lng>\d+.\d+)', 'nearby', name="poolroom_nearby_point"),
+    url(r'^poolroom/nearby/(?P<lat>\d+.\d+),(?P<lng>\d+.\d+)/(?P<distance>\d+)', 'nearby', name="poolroom_nearby_point_distance"),
     url(r'^poolroom/update_baidu_location', 'updateBaiduLocation', name="poolroom_internal_update_baidu_location"),
 )
 
@@ -29,7 +29,8 @@ urlpatterns += patterns('billiards.views.user.login',
 )
 
 urlpatterns += patterns('',
-    url(r'^$', RedirectView.as_view(url='match/map', permanent=False), name="home"),
+#    url(r'^$', RedirectView.as_view(url='match/map', permanent=False), name="home"),
+    url(r'^$', RedirectView.as_view(url='home',permanent=False), name="home"),
     url(r'^admin/', include(admin.site.urls)),
 )
 
@@ -39,4 +40,9 @@ urlpatterns += patterns('billiards.views.us',
     url(r'^contact','contact',name='contact'),
     url(r'^partner','partner',name='partner'),
 )
+
+urlpatterns += patterns('billiards.views.us',
+    url(r'^home','home', name='home'),
+)
+
 urlpatterns += staticfiles_urlpatterns()

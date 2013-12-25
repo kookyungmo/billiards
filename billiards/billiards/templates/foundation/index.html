@@ -1,26 +1,66 @@
 {% extends "foundation/base.html" %}
 {% block content %}
-  <div class="row">
-<div class="medium-1 columns"><img style = "position:relative;top:50px;left:50px;"src="http://billiardsalbum.bcs.duapp.com/2013/12/muqiu.png"><p style="position:relative;top:50px;left:60px;">测试图片</p><img style = "position:relative;top:70px;left:50px;" src="http://billiardsalbum.bcs.duapp.com/2013/12/muqiu.png"><p style="position:relative;top:70px;left:60px;">测试图片</p><img style = "position:relative;top:90px;left:50px;" src="http://billiardsalbum.bcs.duapp.com/2013/12/muqiu.png"><p style="position:relative;top:90px;left:60px;">测试图片</p></div>
-<div id="about" class="medium-8 columns">
+        <section role="main">
 
+          <div class="row">
+<ul class="example-orbit-content" data-orbit>
+  <li data-orbit-slide="headline-1">
+    <div>
+      <h2>我们, 是一群痴迷台球运动的草根</h2>
+      <h3>我们, 是骨灰级台球爱好者的联盟</h3>
+    </div>
+  </li>
+  <li data-orbit-slide="headline-2">
+    <div>
+      <h2>我们, 是台球赛事发布的专业平台</h2>
+      <h3>我们, 是你拿起球杆走天涯的小伙伴</h3>
+    </div>
+  </li>
+  <li data-orbit-slide="headline-3">
+    <div>
+      <h2>我们, 是连接你我和俱乐部的纽带</h2>
+      <h3>我们, 是大众台球运动的拥护者</h3>
+    </div>
+  </li>
+</ul>
+            <div class="large-3 medium-4 columns">
+              <div class="hide-for-small">
+              <div class="sidebar">
+  <h5>球房俱乐部快捷搜索</h5>
+  <form>
+    <!--  <label>Search Documentation</label> -->
+    <input tabindex="1" id="autocomplete" type="search" placeholder="云川台球俱乐部">
+  </form>
 
-	<br>
-	<h3>关于我们</h3>
-        <br>
-	<br>
-        <p>我们, 是一群痴迷台球运动的草根</p>
-	<p>我们, 是骨灰级台球爱好者的联盟</p>
-	<p>我们, 是台球赛事发布的专业平台</p>
-	<p>我们, 是你拿起球杆走天涯的小伙伴</p>
-	<br>
-	<br>
-	<p>我们, 是连接你我和俱乐部的纽带</p>
-	<p>我们, 是大众台球运动的拥护者</p>
-	<p>我们, 是你身边的台球高手</p>
-	<p>我们, 在你台球生活的每一天里</p>
-</div>
-</div>
-</div>
+  <nav>
+    <ul class="side-nav">
+    </ul>
+  </nav>
+</div>  
+              </div>
+            </div>
+<div class="large-9 medium-8 columns">
 
+<ul class="example-orbit" data-orbit>
+  <li>
+    <img src="http://billiardsalbum.bcs.duapp.com/2013/12/51345aebcd5f2.jpg" alt="slide 1" style="width:1024px;height:620px;align:center;"/>
+    <div class="orbit-caption">
+      <h5 style="color: white">生活如此多娇！</h5>
+    </div>
+  </li>
+  <li>
+    <img src="http://billiardsalbum.bcs.duapp.com/2013/12/20110613104917b5.jpg" alt="slide 2" style="width:1024px;height:620px;"/>
+    <div class="orbit-caption">
+      <h5 style="color: white">广州璟点台球俱乐部恭贺大家新年快乐！</h5>
+    </div>
+  </li>
+  <li>
+    <img src="http://billiardsalbum.bcs.duapp.com/2013/12/11112588_773.jpg" alt="slide 3" style="width:1024px;height:620px;"/>
+    <div class="orbit-caption">
+      <h5 style="color: white">云渡台球俱乐部恭贺大家新年快乐！</h5>
+    </div>
+  </li>
+</ul>
+
+  </div>
 {% endblock %}

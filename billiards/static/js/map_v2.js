@@ -1,24 +1,14 @@
 function addMatchItems_v2(data) {
-	function cleanMatchMarkers() {
-		var overlays = map.getOverlays();
-		for ( var m in overlays) {
-			if (overlays[m] instanceof BMap.Marker
-					&& overlays[m].getTitle() != '我的位置') {
-				map.removeOverlay(overlays[m]);
-			}
-		}
-	}
-
 	if (data.length == 0) {
 		if ($("#nomatch").length == 0) {
 			$("#matchlist").children("#match").remove();
 			createNoMatch();
-			cleanMatchMarkers();
+			cleanNonLocationMarkers();
 		}
 	} else {
 		$("#matchlist").children("#nomatch").remove();
 		$("#matchlist").children("#match").remove();
-		cleanMatchMarkers();
+		cleanNonLocationMarkers();
 		if (data.length > 1)
 			map.centerAndZoom('北京');
 		for ( var idx in data) {
@@ -45,9 +35,10 @@ function addMatchToList_v2(match, point) {
 	});
 	detail_url = MATCH_URL.replace(/000/g, match.pk);
 	contentTemplate ="<div class=\"row\">"// "<div class=\"small-2 columns\">"
-			+ "<div class=\"row panel\" style=\"position:relative;left:38.5px;width:95%;\">$starttime &nbsp; &nbsp; 冠军奖励 &nbsp;"
+			+ "<div class=\"small-2 columns\">$starttime</div>"
+			+ "<div class=\"small-10 columns\">&nbsp; &nbsp; 冠军奖励 &nbsp;"
         if (match.fields.bonus > 0)
-                contentTemplate += "现金: $bonus元 &nbsp;&nbsp;";
+                contentTemplate += "现金: $bonus元 &nbsp;&nbsp;&nbsp;";
         if (match.fields.rechargeablecard > 0)
                 contentTemplate += "俱乐部充值卡: $rechargeablecard元 &nbsp;&nbsp;";
         if (match.fields.otherprize != null)
@@ -308,4 +299,41 @@ function createPoolroomMarker(i, obj, poolroom, point) {
 				}
 			});
 	})();
+}
+
+function createInfo(text) {
+	if ($("#info .subheader").length == 0) {
+		var infoobj = jQuery('<div/>', {
+			class : 'panel',
+			id : 'info'
+		});
+		infoobj.append("<h3 class=\"subheader\">" + text + "</h3>");
+		infoobj.appendTo('#content');
+	} else {
+		$("#info .subheader").text(text);
+	}
+}
+
+function loadingPoolroom(distance, mypoint) {
+	createInfo("正在加载附近的球房...");
+	url = NEARBY_URL;
+    $.ajax({
+		url : url.replace(/00\.00/g, mypoint.lat).replace(/11\.11/g, mypoint.lng)
+				.replace(/00/g, distance),
+		data : {'f':'json'},
+		dataType : 'json',
+		success : function(data)
+		{
+			if (data.length == 0) {
+				$("#info .subheader").text("真遗憾，您附近没有我们收录的球房。");
+			} else {
+				POOLROOM_URL = "{% url poolroom_detail '000' %}";
+				$("#info").remove();
+				addPoolroom(data, mypoint);
+			}
+		},
+		error: function (xhr, ajaxOptions, thrownError) {
+			$("#info .subheader").text("无法获取周边的球房，请刷新重试。");
+	     }
+	});
 }
