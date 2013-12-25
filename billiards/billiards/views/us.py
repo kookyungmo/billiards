@@ -14,3 +14,6 @@ def contact(request):
 
 def partner(request):
     return render_to_response(TEMPLATE_ROOT + 'partner.html', context_instance=RequestContext(request))
+
+def home(request):
+    return render_to_response(TEMPLATE_ROOT + 'index.html', context_instance=RequestContext(request))
