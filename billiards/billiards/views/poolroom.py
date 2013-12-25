@@ -25,7 +25,7 @@ def more(request, poolroomid):
     json_serializer.serialize(equipments, fields=('tabletype', 'producer', 'quantity', 'cue', 'price'), ensure_ascii=False, stream=response, indent=2, use_natural_keys=True)
     return response
         
-def nearby(request, lat = None, lng = None):
+def nearby(request, lat = None, lng = None, distance = 10):
     if lat is not None and lng is not None:
         googles = bd2gcj(float(lat), float(lng))
         '''
@@ -34,20 +34,22 @@ def nearby(request, lat = None, lng = None):
         '''
         haversine = '6371 * acos( cos( radians(%s) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(%s) ) + sin( radians(%s) )\
              * sin( radians( lat ) ) )' %(googles[0], googles[1], googles[0])
+        where = "1 having distance <= %s" %(str(distance))
         nearby_poolrooms = Poolroom.objects.extra(select={'distance' : haversine}).extra(order_by=['distance'])\
-            .extra(where=["1 having distance <= 10"])#[:5]
+            .extra(where=[where])
         # hacking
-        concrete_model = nearby_poolrooms[0]._meta.concrete_model
-        distance = models.DecimalField(name='distance', max_digits=11,decimal_places=7,null=True)
-        setattr(distance, 'attname', 'distance')
-        concrete_model._meta.local_fields.append(distance)
+        if len(nearby_poolrooms) > 0:
+            concrete_model = nearby_poolrooms[0]._meta.concrete_model
+            distance = models.DecimalField(name='distance', max_digits=11,decimal_places=7,null=True)
+            setattr(distance, 'attname', 'distance')
+            concrete_model._meta.local_fields.append(distance)
         json_serializer = serializers.get_serializer("json")()
         response = HttpResponse()
         fields = list(poolroom_fields)
         fields.append('distance')
         json_serializer.serialize(nearby_poolrooms, fields=fields, ensure_ascii=False, stream=response, indent=2, use_natural_keys=True)
         return response
-    return render_to_response(TEMPLATE_ROOT + 'poolroom_nearby.html', {},
+    return render_to_response(TEMPLATE_ROOT + 'poolroom_nearby.html', {'defaultDistance': 5},
                               context_instance=RequestContext(request))
     
 def updateBaiduLocation(request):
