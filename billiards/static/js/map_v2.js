@@ -35,9 +35,10 @@ function addMatchToList_v2(match, point) {
 	});
 	detail_url = MATCH_URL.replace(/000/g, match.pk);
 	contentTemplate ="<div class=\"row\">"// "<div class=\"small-2 columns\">"
-			+ "<div class=\"row panel\" style=\"position:relative;left:38.5px;width:95%;\">$starttime &nbsp; &nbsp; 冠军奖励 &nbsp;"
+			+ "<div class=\"small-2 columns\">$starttime</div>"
+			+ "<div class=\"small-10 columns\">&nbsp; &nbsp; 冠军奖励 &nbsp;"
         if (match.fields.bonus > 0)
-                contentTemplate += "现金: $bonus元 &nbsp;&nbsp;";
+                contentTemplate += "现金: $bonus元 &nbsp;&nbsp;&nbsp;";
         if (match.fields.rechargeablecard > 0)
                 contentTemplate += "俱乐部充值卡: $rechargeablecard元 &nbsp;&nbsp;";
         if (match.fields.otherprize != null)
