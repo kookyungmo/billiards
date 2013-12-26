@@ -35,8 +35,8 @@ function addMatchToList_v2(match, point) {
 	});
 	detail_url = MATCH_URL.replace(/000/g, match.pk);
 	contentTemplate ="<div class=\"row\">"// "<div class=\"small-2 columns\">"
-			+ "<div class=\"small-2 columns\">$starttime</div>"
-			+ "<div class=\"small-10 columns\">&nbsp; &nbsp; 冠军奖励 &nbsp;"
+			+ "<div class=\"small-3 large-3 columns\"><strong>$starttime</strong></div>"
+			+ "<div class=\"small-9 large-9 columns\">&nbsp; &nbsp; 冠军奖励 &nbsp;"
         if (match.fields.bonus > 0)
                 contentTemplate += "现金: $bonus元 &nbsp;&nbsp;&nbsp;";
         if (match.fields.rechargeablecard > 0)
@@ -46,7 +46,7 @@ function addMatchToList_v2(match, point) {
 		contentTemplate += "<span data-tooltip class=\"has-tip\" title=\"$bonusdetail\">奖金设置</span>"
         	contentTemplate += "</div></div>"
 			+ "<div class=\"row\">"
-			+ "<div class=\"small-16 columns\">"
+			+ "<div class=\"small-12 columns\">"
 			+ "<div class=\"columns panel clickable\" style=\"overflow:auto;\">"
 //			+ "<div class=\"small-4 medium-2 columns\"><img src=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/demo1-th.jpg\"></div>"
 			+ "<div class=\"small-8 medium-8 columns\">"
