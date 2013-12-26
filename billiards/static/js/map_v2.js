@@ -35,25 +35,25 @@ function addMatchToList_v2(match, point) {
 	});
 	detail_url = MATCH_URL.replace(/000/g, match.pk);
 	contentTemplate ="<div class=\"row\">"// "<div class=\"small-2 columns\">"
-			+ "<div class=\"small-3 large-3 columns\"><strong>$starttime</strong></div>"
-			+ "<div class=\"small-9 large-9 columns\">&nbsp; &nbsp; 冠军奖励 &nbsp;"
-        if (match.fields.bonus > 0)
-                contentTemplate += "现金: $bonus元 &nbsp;&nbsp;&nbsp;";
-        if (match.fields.rechargeablecard > 0)
-                contentTemplate += "俱乐部充值卡: $rechargeablecard元 &nbsp;&nbsp;";
-        if (match.fields.otherprize != null)
-                contentTemplate += "$otherprize";
-		contentTemplate += "<span data-tooltip class=\"has-tip\" title=\"$bonusdetail\">奖金设置</span>"
-        	contentTemplate += "</div></div>"
+			+ "<div class=\"small-10 large-10 large-centered columns panel\">"
+			+ "<div class=\"row\">"
+
+			+ "<div class=\"small-8 large-8 columns\">"
 			+ "<div class=\"row\">"
 			+ "<div class=\"small-12 columns\">"
 			+ "<div class=\"columns panel clickable\" style=\"overflow:auto;\">"
-//			+ "<div class=\"small-4 medium-2 columns\"><img src=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/demo1-th.jpg\"></div>"
+			+ "<div class=\"small-4 medium-4 columns\">"
+			
+			+ "<ul class=\"clearing-thumbs\" data-clearing>"
+			+ " <li><a class=\"th\" href=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/demo1-th.jpg\"><img data-caption=\"caption 3 here\" src=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/demo1-th.jpg\"></a></li>"
+			+ "</ul>"
+			+ "</div>"
+
 			+ "<div class=\"small-8 medium-8 columns\">"
 			+ "<div class=\"row\">"
-			+ "<h5><span name=\"title\" point=\"$point\" match=\"$matchjsonstr\" style=\"color:#EB6100\"><strong>$poolroomname&nbsp;&nbsp;&nbsp;</strong></span>"
-			+"<span data-tooltip class=\"has-tip\" title=\"$rule\">比赛规则</span>"
-			+ "&nbsp; &nbsp; <a href=\"" + detail_url + "\">比赛详情</a></h5>"
+			+ "<p><font size= -1><span name=\"title\" point=\"$point\" match=\"$matchjsonstr\" style=\"color:#EB6100\"><strong>$poolroomname&nbsp;&nbsp;&nbsp;</strong></span>"
+			+ "<p>比赛时间：$starttime</p>"
+			+ "<a href=\"" + detail_url + "\">比赛详情 >></a></font></p>"
 			+ "</div>"
 			+ "<br>"
 			+ "<div class=\"row\">"
@@ -70,38 +70,58 @@ function addMatchToList_v2(match, point) {
 		equipment += "<span class=\"ico_bus\" title=\"地铁周边\"></span>";
 	if (equipment != "") {
 		contentTemplate += "<span class=\"icon_list\">";
-		contentTemplate += "<div class=\"ico_none\">球房设施: </div>";
+		contentTemplate += "<div class=\"ico_none\"><font size=-1>球房设施: </font></div>";
 		contentTemplate += equipment;
 		contentTemplate += "</span>";
 	}
 	contentTemplate += "</div><div class=\"row\" id=\"distance\"></div>" 
-			+ "</div><div class=\"small-12 medium-3 columns\">"
-			+ "<div class=\"row\">已报名人数:</div>"
-			+ "<div class=\"row\">0人</div>"
-			+ "<div class=\"row\">"
-			+ "<a href=\"#\" class=\"small radius button\">我要报名</a>"
 			+ "</div>"
 			+ "</div>"
 			+ "</div>"
 			+ "</div>"
-//			+ "<div class=\"small-4 columns panel\" style=\"height:0px;overflow:auto;\">"
-		//	+ "<div class=\"row\"><strong>冠军奖励:</strong></div>";
-//	if (match.fields.bonus > 0)
-//		contentTemplate += "<div class=\"row\">现金: $bonus元</div>";
-//	if (match.fields.rechargeablecard > 0)
-//		contentTemplate += "<div class=\"row\">俱乐部充值卡: $rechargeablecard元</div>";
-//	if (match.fields.otherprize != null)
-//		contentTemplate += "<div class=\"row\">$otherprize</div>";
-//	contentTemplate += "<div class=\"row\">"
-//			+ "<span data-tooltip class=\"has-tip\" title=\"$rule\">比赛规则</span>"
-//			+ "&nbsp;&nbsp;&nbsp;&nbsp;"
-//			+ "<span data-tooltip class=\"has-tip\" title=\"$bonusdetail\">奖金设置</span></div>"
-//			+ "</div>";
+			+ "</div>"
+                        + "<div class=\"small-4 large-4 columns panel\">"
+			+ "<div class=\"row\"><font size=-1><strong>冠军奖励:</strong></font><br></div>";
+	if (match.fields.bonus > 0)
+		contentTemplate += "<div class=\"row\"><font size=-1>现金: $bonus元</font></div>";
+	if (match.fields.rechargeablecard > 0)
+		contentTemplate += "<div class=\"row\"><font size=-1>俱乐部充值卡: $rechargeablecard元</font></div>";
+	if (match.fields.otherprize != null)
+		contentTemplate += "<div class=\"row\"><font size=-1>$otherprize</font></div>";
+	contentTemplate += "<div class=\"row\"><br>"
+//			+ "<span data-tooltip class=\"has-tip\" title=\"$rule\"><font size=-1>比赛规则 >></font></span>"
+			+ "<a href=\"#\" data-reveal-id=\"rule\"><font size=-1>比赛规则 >></font></a>"
+			+ "&nbsp;&nbsp;&nbsp;&nbsp;"
++ "<div id=\"rule\" class=\"reveal-modal\" data-reveal>"
++ " <p>$rule</p>"
++ " <a class=\"close-reveal-modal\">&#215;</a>"
++ "</div>"
+
+//			+ "<span data-tooltip class=\"has-tip\" title=\"$bonusdetail\"><font size=-1>奖金设置 >></font></span></div>"
+                        + "<a href=\"#\" data-reveal-id=\"bonusdetail\"><font size=-1>奖金设置 >></font></a>"
++ "<div id=\"bonusdetail\" class=\"reveal-modal\" data-reveal>"
++ " <p>$bonusdetail</p>"
++ " <a class=\"close-reveal-modal\">&#215;</a>"
++ "</div>"
+			+ "<div class=\"small-12 medium-12 columns\"><br>"
+                        + "<div class=\"row\"><font size=-1>已报名人数:</font></div>"
+                        + "<div class=\"row\"><font size=-1>0人</font></div>"
+                        + "<div class=\"row\"><br>"
+                        + "<a href=\"#\" class=\"alert round tiny button\"><font size=-1>我要报名</font></a>"
+                        + "</div>"
+                        + "</div>"
+
+
+			+ "</div>"
+                        + "</div>"
+			+ "</div>";
+
+
 	contentTemplate = contentTemplate.replace(/\$point/g,
 			point.lng + "," + point.lat).replace(/\$matchjsonstr/g,
 			objectToJsonString([ match ])).replace(/\$poolroomname/g,
 			match.fields.poolroom.name).replace(/\$starttime/g,
-			getFormattedTime2(match.fields.starttime))
+			getFormattedTimeToDate(match.fields.starttime))
 			.replace(/\$bonusdetail/g, match.fields.bonusdetail)
 			.replace(/\$bonus/g, match.fields.bonus)
 			.replace(/\$rechargeablecard/g, match.fields.rechargeablecard)
@@ -152,7 +172,7 @@ function updateDistance(mypoint) {
 		var pointstr = $(this).find("span[name=title]").attr("point").split(",");
 		var point = new BMap.Point(pointstr[0], pointstr[1]);
 		var distanceobj = $(this).find("#distance");
-		var html = "<h5>距离我: <strong>" + formatDistance(distance(mypoint, point)) + "</strong></h5>";
+		var html = "<h4>距离我: <strong>" + formatDistance(distance(mypoint, point)) + "</strong></h4>";
 		distanceobj.append(html);
 	});
 }
