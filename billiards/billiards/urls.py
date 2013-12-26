@@ -30,7 +30,6 @@ urlpatterns += patterns('billiards.views.user.login',
 
 urlpatterns += patterns('',
 #    url(r'^$', RedirectView.as_view(url='match/map', permanent=False), name="home"),
-    url(r'^$', RedirectView.as_view(url='home',permanent=False), name="home"),
     url(r'^admin/', include(admin.site.urls)),
 )
 
@@ -39,6 +38,7 @@ urlpatterns += patterns('billiards.views.us',
     url(r'^join','join', name='join'),
     url(r'^contact','contact',name='contact'),
     url(r'^partner','partner',name='partner'),
+    url(r'^$', 'home',name=''),
 )
 
 urlpatterns += patterns('billiards.views.us',
