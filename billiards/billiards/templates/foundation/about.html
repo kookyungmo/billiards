@@ -1,9 +1,18 @@
 {% extends "foundation/base.html" %}
 {% block content %}
   <div class="row">
-<div class="medium-2 columns"><img class="animated fadeInUp" style = "position:relative;top:20px;left:50px;height:150px;"src="http://billiardsalbum.bcs.duapp.com/2013/12/ComicPhone.jpg"><p style="position:relative;top:20px;left:90px;">Bill</p><img style = "position:relative;top:20px;left:50px;width:140px;height:150px;"src="http://billiardsalbum.bcs.duapp.com/2013/12/ComicPhone.jpg"><p style="position:relative;top:20px;left:90px;">Kane</p><img style = "position:relative;top:20px;left:50px;width:140px;height:150px;" src="http://billiardsalbum.bcs.duapp.com/2013/12/ComicPhone.jpg"><p style="position:relative;top:20px;left:90px;">Baron</p></div>
-<div id="about" class="medium-8 columns">
-
+<div class="small-1 medium-1 columns">
+<h3></h3>
+</div><div class="small-2 medium-2 columns">
+<br>
+<ul class="side-nav">
+  <li><a href="{% url about %}"><font size=+1>关于我们</font></a></li>
+  <li><a href="{% url join %}"><font size=+1>加入我们</font></a></li>
+  <li><a href="{% url contact %}"><font size=+1>联系我们</font></a></li>
+  <li><a href="{% url partner %}"><font size=+1>商业合作</font></a></li>
+</ul>
+</div>
+<div id="about" class="small-9 medium-9 columns">
 
 	<br>
 	<h3>关于我们</h3>
