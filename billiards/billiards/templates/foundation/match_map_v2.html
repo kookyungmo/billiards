@@ -45,7 +45,7 @@
 							var dayItem = jQuery('<dd/>', {});
 							if (m.date() == starttime.date() && m.month() == starttime.month())
 								dayItem.attr('class', 'active');
-							contentTemplate = "<h2><a href=\"javascript:void(0);\" timestamp=\"" + m.valueOf() + "\">" + m.format('DD') + "</a>";
+							contentTemplate = "<h4><a href=\"javascript:void(0);\" timestamp=\"" + m.valueOf() + "\">" + m.format('dddd') + " " + m.format('DD') + "</a>";
 		 					var formattedday = m.format("YYYY-MM-DD");
 							if (formattedday in summary) {
 								contentTemplate += "<sub><span data-tooltip=\"\" class=\"has-tip tip-top noradius\" title=\"当日比赛场数\">" + summary[formattedday] + "</span></sub>";
@@ -54,7 +54,7 @@
 								contentTemplate += "<span data-tooltip=\"\" class=\"has-tip tip-top noradius\" title=\"奖金最高的比赛\"><sup>\
 									<img src=\"{% static "images/bonus.jpeg" %}\"><sup></span>";
 							}
-							contentTemplate += "</h2>";
+							contentTemplate += "</h4>";
 							dayItem.append(contentTemplate);
 							dayItem.appendTo(daysItem);
 							m.add('days', 1);
@@ -99,6 +99,8 @@
 {% block foundationscript %}
     <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.magellan.min.js"></script>
     <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.tooltip.min.js"></script>
+    <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.clearing.js"></script>
+    <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.reveal.js"></script>
 {% endblock %}
 {% block script %}
 	<script>

@@ -6,7 +6,7 @@
 '''
 
 from django.http import HttpResponse, Http404
-from billiards.models import Poolroom, PoolroomEquipment, poolroom_fields
+from billiards.models import Poolroom, PoolroomEquipment, poolroom_fields, Match
 from django.shortcuts import get_object_or_404, render_to_response
 from django.core import serializers
 from django.template.context import RequestContext
@@ -14,6 +14,8 @@ from billiards.settings import TEMPLATE_ROOT
 from django.db import models
 from billiards.location_convertor import bd2gcj, gcj2bd
 from django.db.models.query_utils import Q
+import datetime
+from dateutil.relativedelta import relativedelta
 
 def more(request, poolroomid):
     poolroom = get_object_or_404(Poolroom, pk=poolroomid)
@@ -72,4 +74,15 @@ def updateBaiduLocation(request):
     
 def detail(request, poolroomid):
     poolroom = get_object_or_404(Poolroom, pk=poolroomid)
-    return HttpResponse()
+    
+    starttime = datetime.datetime.today()
+    endtime = starttime + relativedelta(days=30)
+    datefmt = "%Y-%m-%d"
+    matches = Match.objects.filter(Q(starttime__gte=starttime.strftime(datefmt)) & Q(poolroom__id=poolroomid)) \
+        .exclude(starttime__gt=endtime.strftime(datefmt)).order_by('starttime')
+        
+    equipments = PoolroomEquipment.objects.filter(poolroom=poolroom.id)
+
+    return render_to_response(TEMPLATE_ROOT + 'poolroom_detail.html', 
+                              {'poolroom': poolroom, 'matches':matches, 'equipments': equipments},
+                              context_instance=RequestContext(request))

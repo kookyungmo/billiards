@@ -1,0 +1,138 @@
+{% extends "foundation/base.html" %}
+{% block header %}
+{% load staticfiles %}
+<script type="text/javascript"
+	src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>
+<script src="{% static "js/moment-with-langs.min.js" %}"></script>
+<script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}";</script>
+<script src="{% static "js/map.js" %}?{{buildid}}"></script>
+<script src="{% static "js/map_v2.js" %}?{{buildid}}"></script>
+<link rel="stylesheet" href="{% static "css/map.css" %}?{{buildid}}">
+{% endblock %}
+{% load extras %}
+{% load url from future %} 
+{% block content %}
+  <hr>
+      <div class="medium-9 columns">
+         <div class="row">
+          <div class="medium-7 medium-push-5 columns">
+			<div class="row">
+				<div id="baidumap"
+						style="overflow: hidden; margin: 0;"></div>
+			</div>
+			<hr>
+          </div>
+          <div class="medium-5 medium-pull-7 columns">
+            <h3 style = color:#EB6100>{{ poolroom.name }}</h3>
+            <h3 class="subheader">地址：{{ poolroom.address }}</h3>
+            <span class="icon_list">
+            	{% if poolroom.flags.wifi %}
+				    <span class="ico_wifi" title="公共区域WIFI"></span>
+				{% endif %}
+				{% if poolroom.flags.wifi_free %}
+				    <span class="ico_free_wifi" title="公共区域WIFI"></span>
+				{% endif %}
+	            {% if poolroom.flags.parking or poolroom.flags.parking_free %}
+				    <span class="ico_parking" title="停车场"></span>
+	            {% endif %}
+	            {% if poolroom.flags.cafeteria %}
+				    <span class="ico_restaurant" title="餐饮服务"></span>
+	            {% endif %}
+	            {% if poolroom.flags.subway %}
+				    <span class="ico_bus" title="地铁周边"></span>
+				{% endif %}
+			</span>
+            <hr>
+            <h3 class="subheader"><strong>营业时间</strong></h3>
+            <h4 class="subheader">
+              <p><strong>{{ poolroom.businesshours }}</strong></p>
+            </h4>
+            <hr>
+            <h3 class="subheader"><strong>球房面积</strong></h3>
+			<h4 class="subheader">
+				    <p><strong>{{ poolroom.size }}平方米</strong></p>
+			</h4>
+			<hr>
+			<h3 class="subheader"><strong>综合评分</strong></h3>
+			<h4 class="subheader">
+				<p>{{ poolroom.rating }}</p>
+			</h4>
+			<hr>
+			<h3 class="subheader"><strong> 专业点评</strong></h3>
+			<h5 class="subheader">
+				<p>{{ poolroom.review }}</p>
+			</h5>
+		</div>
+	</div>
+	<div class="row">
+		<hr>
+		<div class="small-12 columns">
+			<div class="row"><h3>球台信息</h3></div>
+			<div class="row">
+				{% for equipment in equipments %}
+					<div class="small-6 medium-3 left columns">
+						<ul class="pricing-table">
+						  <li class="title">{{ equipment|equipmentname }}</li>
+						  <li class="price">{{ equipment.price }}元/小时</li>
+						  <li class="bullet-item">数量: {{ equipment.quantity }}张</li>
+						  <li class="bullet-item">球桌品牌: {{ equipment.producer }}</li>
+						  <li class="bullet-item">球杆品牌: {{ equipment.cue }}</li>
+						</ul>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+      </div>
+    	<div class="medium-3 small-12 columns">
+    		<div class="row"><h2>近期的比赛</h2><hr></div>
+        {% for match in matches %}
+	 <div class="row">
+	    	<h3 class="subheader"><strong>比赛日期</strong></h3>
+            <h4 class="subheader">
+              <p><strong><script>document.write(getFormattedTime('{{ match.starttime|date:"D d M Y, H:i" }}'));</script></strong></p>
+            </h4>
+            <h3 class="subheader"><strong>冠军奖金</strong></h3>
+			<h4 class="subheader">
+				{% if match.bonus > 0 %}
+				    <p>现金: <strong>{{ match.bonus }}元</strong></p>
+				{% elif match.rechargeablecard > 0 %}
+				    <p>俱乐部充值卡: <strong>{{ match.rechargeablecard }}元</strong></p>
+	            {% elif match.otherprize != None %}
+				    <p>其它奖励: <strong>{{ match.otherprize }}</strong></p>
+				{% endif %}
+			</h4>
+			<h3 class="subheader"><a href="{% url 'match_detail' match.id %}">详情</a></h3>
+	    {% if not forloop.last %}
+	    <hr>
+	    {% endif %}
+	</div>
+  {% empty %}
+	    <div class="row"><h2>近期没有比赛信息。</h2></div>
+  {% endfor %}
+      </div>
+{% endblock %}
+{% block script %}
+	<script>
+	var map = new BMap.Map("baidumap");
+	$(document).ready(
+		function() {
+			$("#baidumap").css("height", 350);
+		    map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_RIGHT, type: BMAP_NAVIGATION_CONTROL_SMALL}));
+		    map.enableScrollWheelZoom(true);
+		    data = eval(jsonescape('{{ poolroom|poolroomtojson|safe }}'));
+		    point = new BMap.Point(data[0].fields.lng_baidu,
+					data[0].fields.lat_baidu);
+		    map.centerAndZoom(point, 16);
+			marker = addPoolroomMarker(0, point, data[0]);
+			setTimeout(function(){
+				map.panTo(point);
+				marker.setAnimation(BMAP_ANIMATION_BOUNCE);
+				setTimeout(function(){
+					marker.setAnimation(null);
+				}, 3000);
+			}, 1000);
+			$(document).foundation();
+		});
+	</script>
+{% endblock %}	

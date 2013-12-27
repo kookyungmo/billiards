@@ -1,9 +1,17 @@
 function getFormattedTime(timestr) {
-	return moment(timestr).lang('zh_CN').format('MMMM Do, h:mm a')
+	return moment(timestr).lang('zh_CN').format('MMM Do')
 }
 
 function getFormattedTime2(timestr) {
 	return moment(timestr).lang('zh_CN').format('h:mm a')
+}
+
+function getFormattedTimeToWeekDay(timestr) {
+	return moment(timestr).lang('zh_CN').format('dddd')
+}
+
+function getFormattedTimeToDate(timestr) {
+        return moment(timestr).lang('zh_CN').format('MMM Do dddd, h:mm a' )
 }
 
 var matchInfo = function(marker, name, matches) {
