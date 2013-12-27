@@ -34,10 +34,18 @@ function addMatchToList_v2(match, point) {
 		id : 'match'
 	});
 	detail_url = MATCH_URL.replace(/000/g, match.pk);
-	contentTemplate ="<div class=\"row\">"// "<div class=\"small-2 columns\">"
-			+ "<div class=\"small-10 large-10 large-centered columns panel\">"
-			+ "<div class=\"row\">"
+	contentTemplate ="<div class=\"row\">"
+			+ "<div class=\"small-2 large-2 columns\">"
+                        + "<ul class=\"pricing-table\">"
+                        + "<li class=\"title\"><font size=+1>$starttimedate</font></li>"
+                        + "<li class=\"price\">$starttimeweekday</li>"
+                        + "<li class=\"title\"><font size=+1>$starttimehour</font></li>"
+			+ "</ul>"
+			+ "<a href=\"#\" class=\"button expand\">我要报名比赛</a>"
+			+ "</div>"
 
+			+ "<div class=\"small-10 large-10 columns\">"
+			+ "<div class=\"row\">"
 			+ "<div class=\"small-8 large-8 columns\">"
 			+ "<div class=\"row\">"
 			+ "<div class=\"small-12 columns\">"
@@ -45,14 +53,13 @@ function addMatchToList_v2(match, point) {
 			+ "<div class=\"small-4 medium-4 columns\">"
 			
 			+ "<ul class=\"clearing-thumbs\" data-clearing>"
-			+ " <li><a class=\"th\" href=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/demo1-th.jpg\"><img data-caption=\"caption 3 here\" src=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/demo1-th.jpg\"></a></li>"
+			+ " <li><a class=\"th\" href=\"http://billiardsalbum.bcs.duapp.com/2013/12/ComicPhone.jpg\"><img data-caption=\"caption 3 here\" src=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/demo1-th.jpg\"></a></li>"
 			+ "</ul>"
 			+ "</div>"
 
 			+ "<div class=\"small-8 medium-8 columns\">"
 			+ "<div class=\"row\">"
-			+ "<p><font size= -1><span name=\"title\" point=\"$point\" match=\"$matchjsonstr\" style=\"color:#EB6100\"><strong>$poolroomname&nbsp;&nbsp;&nbsp;</strong></span>"
-			+ "<p>比赛时间：$starttime</p>"
+			+ "<p><font size=><span name=\"title\" point=\"$point\" match=\"$matchjsonstr\" style=\"color:#EB6100\"><strong>$poolroomname&nbsp;&nbsp;&nbsp;</strong></span>"
 			+ "<a href=\"" + detail_url + "\">比赛详情 >></a></font></p>"
 			+ "</div>"
 			+ "<br>"
@@ -80,36 +87,30 @@ function addMatchToList_v2(match, point) {
 			+ "</div>"
 			+ "</div>"
 			+ "</div>"
-                        + "<div class=\"small-4 large-4 columns panel\">"
-			+ "<div class=\"row\"><font size=-1><strong>冠军奖励:</strong></font><br></div>";
+                        + "<div class=\"small-4 large-4 columns\">"
+			+ "<ul class=\"pricing-table\">"
+			+ "<li class=\"title\"><font size=+1>"
 	if (match.fields.bonus > 0)
-		contentTemplate += "<div class=\"row\"><font size=-1>现金: $bonus元</font></div>";
+		contentTemplate += "现金: $bonus元 &nbsp;&nbsp"
 	if (match.fields.rechargeablecard > 0)
-		contentTemplate += "<div class=\"row\"><font size=-1>俱乐部充值卡: $rechargeablecard元</font></div>";
+		contentTemplate += "俱乐部充值卡: $rechargeablecard元";
 	if (match.fields.otherprize != null)
-		contentTemplate += "<div class=\"row\"><font size=-1>$otherprize</font></div>";
-	contentTemplate += "<div class=\"row\"><br>"
+		contentTemplate += "$otherprize</font></li>";
+	contentTemplate += ""
 //			+ "<span data-tooltip class=\"has-tip\" title=\"$rule\"><font size=-1>比赛规则 >></font></span>"
 			+ "<a href=\"#\" data-reveal-id=\"rule\"><font size=-1>比赛规则 >></font></a>"
 			+ "&nbsp;&nbsp;&nbsp;&nbsp;"
-+ "<div id=\"rule\" class=\"reveal-modal\" data-reveal>"
++ "<li id=\"rule\" class=\"reveal-modal\" data-reveal>"
 + " <p>$rule</p>"
 + " <a class=\"close-reveal-modal\">&#215;</a>"
-+ "</div>"
++ "</li>"
 
 //			+ "<span data-tooltip class=\"has-tip\" title=\"$bonusdetail\"><font size=-1>奖金设置 >></font></span></div>"
                         + "<a href=\"#\" data-reveal-id=\"bonusdetail\"><font size=-1>奖金设置 >></font></a>"
-+ "<div id=\"bonusdetail\" class=\"reveal-modal\" data-reveal>"
++ "<li id=\"bonusdetail\" class=\"reveal-modal\" data-reveal>"
 + " <p>$bonusdetail</p>"
 + " <a class=\"close-reveal-modal\">&#215;</a>"
-+ "</div>"
-			+ "<div class=\"small-12 medium-12 columns\"><br>"
-                        + "<div class=\"row\"><font size=-1>已报名人数:</font></div>"
-                        + "<div class=\"row\"><font size=-1>0人</font></div>"
-                        + "<div class=\"row\"><br>"
-                        + "<a href=\"#\" class=\"alert round tiny button\"><font size=-1>我要报名</font></a>"
-                        + "</div>"
-                        + "</div>"
++ "</li></ul>"
 
 
 			+ "</div>"
@@ -120,8 +121,11 @@ function addMatchToList_v2(match, point) {
 	contentTemplate = contentTemplate.replace(/\$point/g,
 			point.lng + "," + point.lat).replace(/\$matchjsonstr/g,
 			objectToJsonString([ match ])).replace(/\$poolroomname/g,
-			match.fields.poolroom.name).replace(/\$starttime/g,
-			getFormattedTimeToDate(match.fields.starttime))
+			match.fields.poolroom.name)
+			.replace(/\$starttimeweekday/g,getFormattedTimeToWeekDay(match.fields.starttime))
+			.replace(/\$starttimedate/g,getFormattedTime(match.fields.starttime))
+			.replace(/\$starttimehour/g,getFormattedTime2(match.fields.starttime))
+			.replace(/\$starttime/g,getFormattedTimeToDate(match.fields.starttime))
 			.replace(/\$bonusdetail/g, match.fields.bonusdetail)
 			.replace(/\$bonus/g, match.fields.bonus)
 			.replace(/\$rechargeablecard/g, match.fields.rechargeablecard)

@@ -1,5 +1,5 @@
 function getFormattedTime(timestr) {
-	return moment(timestr).lang('zh_CN').format('MMMM Do, h:mm a')
+	return moment(timestr).lang('zh_CN').format('MMM Do')
 }
 
 function getFormattedTime2(timestr) {
