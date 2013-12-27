@@ -35,7 +35,7 @@ function addMatchToList_v2(match, point) {
 	});
 	detail_url = MATCH_URL.replace(/000/g, match.pk);
 	contentTemplate ="<div class=\"row\">"
-			+ "<div class=\"small-2 large-2 columns\">"
+			+ "<div class=\"small-12 large-2 columns\">"
                         + "<ul class=\"pricing-table\">"
                         + "<li class=\"title\"><font size=+1>$starttimedate</font></li>"
                         + "<li class=\"price\">$starttimeweekday</li>"
@@ -44,7 +44,7 @@ function addMatchToList_v2(match, point) {
 			+ "<a href=\"#\" class=\"button expand\">我要报名比赛</a>"
 			+ "</div>"
 
-			+ "<div class=\"small-10 large-10 columns\">"
+			+ "<div class=\"small-12 large-10 columns\">"
 			+ "<div class=\"row\">"
 			+ "<div class=\"small-8 large-8 columns\">"
 			+ "<div class=\"row\">"
