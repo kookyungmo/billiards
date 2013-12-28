@@ -18,15 +18,15 @@ var matchInfo = function(marker, name, matches) {
 	(function() {
 		var info = {
 			open : function(type, target) {
-				var content = "<h3 style = color:#EB6100><strong>" + name + "</strong></h3>";
+				var content = "<h6 style = color:#EB6100><strong>" + name + "</strong></h6>";
 				for ( var idx in matches) {
-					content += "<p><p/>地址: "
+					content += "<p><font size=-2><strong>奖金: "
+                                                        + matches[idx].fields.bonus
+                                                        + "</strong>&nbsp &nbsp &nbsp<strong>比赛时间: "
+                                                        + getFormattedTimeToDate(matches[idx].fields.starttime) + "</strong></font></p>"
+							+"<p><font size=-2><strong>地址: "
 							+ matches[idx].fields.poolroom.address
-							+ "<p><p/><strong>奖金: "
-							+ matches[idx].fields.bonus
-							+ "<br/>"
-							+ "</strong><br/><strong>比赛时间: "
-							+ getFormattedTime(matches[idx].fields.starttime) + "</strong></p>";
+							+ "</font></strong></p>";
 				}
 				var infoWindow = new BMap.InfoWindow(content);
 				marker.openInfoWindow(infoWindow);

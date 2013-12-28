@@ -284,12 +284,12 @@ var poolroomInfo = function(marker, poolroom) {
 	(function() {
 		var info = {
 			open : function(type, target) {
-				var content = "<h3 style = color:#EB6100><strong>" + poolroom.fields.name + "</strong></h3>";
-				content += "<p>地址: <strong>"
+				var content = "<h6 style = color:#EB6100><strong>" + poolroom.fields.name + "</strong></h6>";
+				content += "<p><font size=-2>地址: <strong>"
 					+ poolroom.fields.address
-					+ "</strong></p><p>营业时间: <strong>"
+					+ "</strong></font></p><p><font size=-2>营业时间: <strong>"
 					+ poolroom.fields.businesshours
-					+ "</strong></p>";
+					+ "</strong></font></p>";
 				if (poolroom.fields.distance != null) {
 					content += "<p>距离我: <strong>"
 						+ formatDistance(poolroom.fields.distance * 1000) + "</strong></p>";
