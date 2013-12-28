@@ -35,18 +35,15 @@ function addMatchToList_v2(match, point) {
 	});
 	detail_url = MATCH_URL.replace(/000/g, match.pk);
 	contentTemplate ="<div class=\"row\">"
-			+ "<div class=\"small-12 large-2 columns\">"
+			+ "<div class=\"small-12 large-3 columns\">"
                         + "<ul class=\"pricing-table\">"
                         + "<li class=\"title\"><font size=+1>$starttimedate</font></li>"
                         + "<li class=\"price\">$starttimeweekday</li>"
                         + "<li class=\"title\"><font size=+1>$starttimehour</font></li>"
 			+ "</ul>"
-			+ "<a href=\"#\" class=\"button expand\">我要报名比赛</a>"
 			+ "</div>"
 
-			+ "<div class=\"small-12 large-10 columns\">"
-			+ "<div class=\"row\">"
-			+ "<div class=\"small-8 large-8 columns\">"
+			+ "<div class=\"small-12 large-6 columns\">"
 			+ "<div class=\"row\">"
 			+ "<div class=\"small-12 columns\">"
 			+ "<div class=\"columns panel clickable\" style=\"overflow:auto;\">"
@@ -87,7 +84,7 @@ function addMatchToList_v2(match, point) {
 			+ "</div>"
 			+ "</div>"
 			+ "</div>"
-                        + "<div class=\"small-4 large-4 columns\">"
+                        + "<div class=\"small-12 large-3 columns\">"
 			+ "<ul class=\"pricing-table\">"
 			+ "<li class=\"title\"><font size=+1>"
 	if (match.fields.bonus > 0)
@@ -112,9 +109,9 @@ function addMatchToList_v2(match, point) {
 + " <a class=\"close-reveal-modal\">&#215;</a>"
 + "</li></ul>"
 
+			+ "<a href=\"#\" class=\"button expand\">我要报名比赛</a>"
 
 			+ "</div>"
-                        + "</div>"
 			+ "</div>";
 
 
