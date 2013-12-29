@@ -169,5 +169,16 @@ class Profile(ProfileObject):
     site_name = models.CharField(max_length=20, null=True, default='', verbose_name="来源") # site name 
     gender = models.CharField(max_length=1, default='m', null=True, verbose_name="性别")
     
+class MatchEnroll(models.Model):
+    id = models.AutoField(primary_key=True)
+    match = models.ForeignKey(Match, verbose_name='比赛')
+    user = models.ForeignKey(User, verbose_name='用户')
+    enrolltime = models.DateTimeField(verbose_name='报名时间')
+    
+    class Meta:
+        db_table = 'match_enroll'
+        verbose_name = '比赛报名信息'
+        verbose_name_plural = '比赛报名信息'
 
-      
+    def __unicode__(self):
+        return unicode(self.match) + " - " + (self.user.nickname if self.user.nickname is not None and self.user.nickname != "" else self.user.username)

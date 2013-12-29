@@ -22,8 +22,8 @@ urlpatterns += patterns('billiards.views.poolroom',
 )
 
 urlpatterns += patterns('billiards.views.user.login',
-    url(r'^user/login/(?P<site_name>\w+)/$','login_3rd', name='login_3rd'),
-    url(r'^user/oauth/(?P<site_name>\w+).*', 'callback', name="oauth_code"),
+    url(r'^user/login/(?P<site_name>\w+)','login_3rd', name='login_3rd'),
+    url(r'^user/oauth/(?P<site_name>\w+)', 'callback', name="oauth_code"),
     url(r'^user/oautherror/$', 'oautherror', name='oautherror'),
     url(r'^user/logout/$', 'logout', name='user_logout'),
 )
@@ -38,11 +38,7 @@ urlpatterns += patterns('billiards.views.us',
     url(r'^join','join', name='join'),
     url(r'^contact','contact',name='contact'),
     url(r'^partner','partner',name='partner'),
-    url(r'^$', 'home',name=''),
-)
-
-urlpatterns += patterns('billiards.views.us',
-    url(r'^home','home', name='home'),
+    url(r'^$', 'home', name='home'),
 )
 
 urlpatterns += staticfiles_urlpatterns()

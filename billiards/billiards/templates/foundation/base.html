@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="{% static 'css/docs.css' %}">
   <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/vendor/jquery.min.js"></script>
 {% block header %}{% endblock %}
+{% load url from future %} 
 </head>
 
 <body>
@@ -39,9 +40,9 @@
 	      <!-- Left Nav Section -->
 	      <ul class="left">
 	        <li class="divider"></li>
-	        {% url match_map 'map' as mapurl %}
+	        {% url 'match_map' 'map' as mapurl %}
 	        <li {% if request.path == mapurl %} class="active" {% endif %}><a href="{{ mapurl }}">赛事活动</a></li>
-	        {% url poolroom_nearby as nearby %}
+	        {% url 'poolroom_nearby' as nearby %}
 	        <li {% if request.path == nearby %} class="active" {% endif %}><a href="{{ nearby }}">附近球房</a></li>
 	      </ul>
 		
@@ -49,16 +50,17 @@
 	      <!-- Right Nav Section -->
 	      <ul class="right">
 	        <li class="divider"></li>
-	        {% url login_3rd 'qq' as qq %}
-	        {% url login_3rd 'weibo' as weibo %}
+	        {% url 'login_3rd' 'qq' as qq %}
+	        {% url 'login_3rd' 'weibo' as weibo %}
+	        {% url 'user_logout' as user_logout %}
 	        {% if user.is_authenticated %}
 	        <li><a href="#"><img src="{{ user.avatar }}" width="30">&nbsp&nbsp{{ user.nickname }}</a></li>
 	        <li class="divider"></li>
-	        <li><a href="{% url user_logout %}">登出</a></li>
+	        <li><a href="{{ user_logout }}">登出</a></li>
 	        {% else %}
-	        <li><a href="{{ qq }}"><img src="{% static 'images/logo_qq.png' %}" >QQ登录</a></li>
+	        <li><a href="{{ qq }}?returnurl={{ request.get_full_path }}"><img src="{% static 'images/logo_qq.png' %}" >QQ登录</a></li>
 	        <li class="divider"></li>
-	        <li><a href="{{ weibo }}"><img src="{% static 'images/logo_weibo.png' %}" >weibo登录</a></li>
+	        <li><a href="{{ weibo }}?returnurl={{ request.get_full_path }}"><img src="{% static 'images/logo_weibo.png' %}" >weibo登录</a></li>
 	        {% endif %}
 	      </ul>
 	    </section>
@@ -82,11 +84,11 @@
 	    {% if user.is_authenticated %}
 	    <li><label>用户中心</label></li>
 	    <li><a href="#"><img src="{{ user.avatar }}" >&nbsp&nbsp{{ user.nickname }}</a></li>
-	    <li><a href="{% url user_logout %}">登出</a></li>
+	    <li><a href="{{ user_logout }}">登出</a></li>
 	    {% else %}
 	    <li><label>用户登录</label></li>
-	    <li><a href="{{ qq }}">QQ登录</a></li>
-		<li><a href="{{ weibo }}">微博登录</a></li>
+	    <li><a href="{{ qq }}?returnurl={{ request.get_full_path }}">QQ登录</a></li>
+		<li><a href="{{ weibo }}?returnurl={{ request.get_full_path }}">微博登录</a></li>
 	    {% endif %}
 	  </ul>
 	</aside>
@@ -107,10 +109,10 @@
 		      <div class="row">
 		        <div class="medium-7 medium-push-5 columns">
 					<ul class="inline-list right">
-		                <li><a href="{% url about %}">关于我们</a></li>
-		                <li><a href="{% url join %}">加入我们</a></li>
-		                <li><a href="{% url contact %}">联系我们</a></li>
-		                <li><a href="{% url partner %}">商业合作</a></li>
+		                <li><a href="{% url 'about' %}">关于我们</a></li>
+		                <li><a href="{% url 'join' %}">加入我们</a></li>
+		                <li><a href="{% url 'contact' %}">联系我们</a></li>
+		                <li><a href="{% url 'partner' %}">商业合作</a></li>
 		            </ul>
 		        </div>		      
 		        <div class="medium-5 medium-pull-7 columns">
