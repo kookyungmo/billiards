@@ -6593,15 +6593,18 @@ opacity: 0;
 }
 
 .ch-img-1 {
-    background-image: url();
+    background-image: url(http://placehold.it/200x300);
+    background-position: center;
 }
 
 .ch-img-2 {
-    background-image: url();
+    background-image: url(http://placehold.it/300x300);
+    background-position: center;
 }
 
 .ch-img-3 {
-    background-image: url();
+    background-image: url(http://placehold.it/200x300);
+    background-position: center;
 }
 
 .ch-info {
