@@ -1,66 +1,39 @@
 {% extends "foundation/base.html" %}
+
 {% block content %}
 
-<div class="row">
-
-<ul class="example-orbit-content" data-orbit>
-  <li data-orbit-slide="headline-1">
-    <div>
-      <h5 style="color:white">欢迎来到PK台球。竞技人生路，PK伴你左右。</h5>
-    </div>
-  </li>
-  <li data-orbit-slide="headline-2">
-    <div>
-      <h5 style="color:white">发现更多身边的台球赛事，点击 <a href="/match/map" style="color:white"> &nbsp赛事活动</a></h5>
-    </div>
-  </li>
-  <li data-orbit-slide="headline-3">
-    <div>
-      <h5 style="color:white">发现身边的台球俱乐部，点击<a href="/poolroom/nearby" style="color:white">&nbsp附近球房</a></h5>
-    </div>
-  </li>
-</ul>
-            <div class="large-3 medium-4 columns">
-              <div class="hide-for-small">
-              <div class="sidebar">
-  <h5>球房俱乐部快捷搜索</h5>
-  <form>
-    <!--  <label>Search Documentation</label> -->
-    <input tabindex="1" id="autocomplete" type="search" placeholder="云川台球俱乐部">
-  </form>
-
-  <nav>
-    <ul class="side-nav">
-    </ul>
-  </nav>
-</div>  
-              </div>
+<div id="circlefeatures">
+                   <ul class="ch-grid">
+			<br>
+			<br>
+                    <li id="leftcircle">
+                        <div class="ch-item ch-img-1">
+                            <div class="ch-info">
+                                <a href="{{nearby}}" title="nearby"><p class="circle_project">发现附近<br>NEARBY</p>
+                                <p class="view_project">俱乐部球房<br>BILLIARD CLUB</p></a>
+                            </div>
+                        </div>
+                    </li>
+                    <li id="centrecircle">
+                        <div class="ch-item ch-img-2">
+                            <div class="ch-info">
+                                <a href="{{mapurl}}" title="poolroom match"><p class="circle_project">俱乐部赛事<br>CLUB MATCH</p>
+                                <p class="view_project">信息<br>INFOMATION</p></a>
+                            </div>
+                        </div>
+                    </li>
+                    <li id="rightcircle">
+                        <div class="ch-item ch-img-3">
+                            <div class="ch-info">
+                                <a href="#" title="match date"><p class="circle_project">约球服务<br>RESERVATION SERVICE</p>
+                                <p class="view_project">即将推出<br>COMING SOON</p></a>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                                <h1><strong>BILLIARD PRO</strong></h1>
             </div>
-<div class="large-9 medium-8 columns">
-
-<ul class="example-orbit" data-orbit>
-  <li>
-    <img src="http://billiardsalbum.bcs.duapp.com/2013/12/51345aebcd5f2.jpg" alt="slide 1"/>
-    <div class="orbit-caption">
-      <h5 style="color: white">测试图片</h5>
-    </div>
-  </li>
-  <li>
-    <img src="http://billiardsalbum.bcs.duapp.com/2013/12/20110613104917b5.jpg" alt="slide 2"/>
-    <div class="orbit-caption">
-      <h5 style="color: white">测试图片</h5>
-    </div>
-  </li>
-  <li>
-    <img src="http://billiardsalbum.bcs.duapp.com/2013/12/11112588_773.jpg" alt="slide 3"/>
-    <div class="orbit-caption">
-      <h5 style="color: white">测试图片</h5>
-    </div>
-  </li>
-</ul>
-
-  </div>
+                        
 {% endblock %}
 {% block foundationscript %}
-    <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.orbit.js"></script>
 {% endblock %}
