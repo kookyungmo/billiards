@@ -50,13 +50,14 @@ function addMatchToList_v2(match, point) {
 			+ "<div class=\"small-4 medium-4 columns\">"
 			
 			+ "<ul class=\"clearing-thumbs\" data-clearing>"
-			+ " <li><a class=\"th\" href=\"http://billiardsalbum.bcs.duapp.com/2013/12/ComicPhone.jpg\"><img data-caption=\"caption 3 here\" src=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/demo1-th.jpg\"></a></li>"
+			+ " <li><a class=\"th\" href=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/demo1-th.jpg\"><img data-caption=\"caption 3 here\" src=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/demo1-th.jpg\"></a></li>"
+
 			+ "</ul>"
 			+ "</div>"
 
 			+ "<div class=\"small-8 medium-8 columns\">"
 			+ "<div class=\"row\">"
-			+ "<p><font size=><span name=\"title\" point=\"$point\" match=\"$matchjsonstr\" style=\"color:#EB6100\"><strong>$poolroomname&nbsp;&nbsp;&nbsp;</strong></span>"
+			+ "<p><font size=><span name=\"title\" point=\"$point\" match=\"$matchjsonstr\" style=\"color:#EB6100\"><strong>$poolroomname&nbsp;&nbsp;&nbsp;</strong></a></span>"
 			+ "<a href=\"" + detail_url + "\">比赛详情 >></a></font></p>"
 			+ "</div>"
 			+ "<br>"
@@ -283,12 +284,12 @@ var poolroomInfo = function(marker, poolroom) {
 	(function() {
 		var info = {
 			open : function(type, target) {
-				var content = "<h3 style = color:#EB6100><strong>" + poolroom.fields.name + "</strong></h3>";
-				content += "<p>地址: <strong>"
+				var content = "<h6 style = color:#EB6100><strong>" + poolroom.fields.name + "</strong></h6>";
+				content += "<p><font size=-2>地址: <strong>"
 					+ poolroom.fields.address
-					+ "</strong></p><p>营业时间: <strong>"
+					+ "</strong></font></p><p><font size=-2>营业时间: <strong>"
 					+ poolroom.fields.businesshours
-					+ "</strong></p>";
+					+ "</strong></font></p>";
 				if (poolroom.fields.distance != null) {
 					content += "<p>距离我: <strong>"
 						+ formatDistance(poolroom.fields.distance * 1000) + "</strong></p>";

@@ -37,7 +37,7 @@
 	
 <div id="newsfeed" class="large-2 columns">
 			<div class="row">
-				<div class="large-11 large-centered columns">
+				<div class="large-10 large-centered columns">
 					<br>
 					<div class="row"><h3><strong>最新球房动态</strong></h3></div>
 					<div class="row"><br></div>
@@ -52,7 +52,7 @@
 {% block script %}
 	<script>
 	var map = initialMap("baidumap");
-	$("#baidumap").css("height", 350);
+	$("#baidumap").css("height", 250);
 	map.centerAndZoom('北京',12);
 	var mypoint = null;
 	NEARBY_URL = "{% url 'poolroom_nearby_point_distance' '00.00' '11.11' '00' %}";
