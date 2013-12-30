@@ -9,6 +9,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('billiards.views.match',
     url(r'^match/(?P<matchid>\d+)/$', 'detail', name="match_detail"),
+    url(r'^match/(?P<matchid>\d+)/enroll', 'enroll', name="match_enroll"),
 #     url(r'^match$', 'index', name="match"),
     url(r'^match/(?P<view>\w+)/$', 'index', name="match_map"),
 )

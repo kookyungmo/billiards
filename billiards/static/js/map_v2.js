@@ -1,3 +1,19 @@
+function hasOwnProperty(obj, prop) {
+    var proto = obj.__proto__ || obj.constructor.prototype;
+    return (prop in obj) &&
+        (!(prop in proto) || proto[prop] !== obj[prop]);
+}
+
+if ( Object.prototype.hasOwnProperty ) {
+    var hasOwnProperty = function(obj, prop) {
+        return obj.hasOwnProperty(prop);
+    }
+}
+
+function isAuth() {
+	return AUTH == 1;
+}
+
 function addMatchItems_v2(data) {
 	if (data.length == 0) {
 		if ($("#nomatch").length == 0) {
@@ -85,7 +101,7 @@ function addMatchToList_v2(match, point) {
 			+ "</div>"
 			+ "</div>"
 			+ "</div>"
-                        + "<div class=\"small-12 large-3 columns\">"
+            + "<div class=\"small-12 large-3 columns\">"
 			+ "<ul class=\"pricing-table\">"
 			+ "<li class=\"title\"><font size=+1>"
 	if (match.fields.bonus > 0)
@@ -95,26 +111,26 @@ function addMatchToList_v2(match, point) {
 	if (match.fields.otherprize != null)
 		contentTemplate += "$otherprize</font></li>";
 	contentTemplate += ""
-//			+ "<span data-tooltip class=\"has-tip\" title=\"$rule\"><font size=-1>比赛规则 >></font></span>"
 			+ "<a href=\"#\" data-reveal-id=\"rule\"><font size=-1>比赛规则 >></font></a>"
 			+ "&nbsp;&nbsp;&nbsp;&nbsp;"
-+ "<li id=\"rule\" class=\"reveal-modal\" data-reveal>"
-+ " <p>$rule</p>"
-+ " <a class=\"close-reveal-modal\">&#215;</a>"
-+ "</li>"
-
-//			+ "<span data-tooltip class=\"has-tip\" title=\"$bonusdetail\"><font size=-1>奖金设置 >></font></span></div>"
-                        + "<a href=\"#\" data-reveal-id=\"bonusdetail\"><font size=-1>奖金设置 >></font></a>"
-+ "<li id=\"bonusdetail\" class=\"reveal-modal\" data-reveal>"
-+ " <p>$bonusdetail</p>"
-+ " <a class=\"close-reveal-modal\">&#215;</a>"
-+ "</li></ul>"
-
-			+ "<a href=\"#\" class=\"button expand\">我要报名比赛</a>"
-
-			+ "</div>"
+			+ "<li id=\"rule\" class=\"reveal-modal\" data-reveal>"
+			+ " <p>$rule</p>"
+			+ " <a class=\"close-reveal-modal\">&#215;</a>"
+			+ "</li>"
+            + "<a href=\"#\" data-reveal-id=\"bonusdetail\"><font size=-1>奖金设置 >></font></a>"
+			+ "<li id=\"bonusdetail\" class=\"reveal-modal\" data-reveal>"
+			+ " <p>$bonusdetail</p>"
+			+ " <a class=\"close-reveal-modal\">&#215;</a>"
+			+ "</li></ul>";
+	if (isAuth())
+		if ( hasOwnProperty(match.fields, 'enrolled') ) 
+			contentTemplate += "<h3>已报名。</h3>";
+		else
+			contentTemplate += "<a href=\"javascript:void(0);\" id=\"enroll\" match='" + match.pk + "' class=\"button expand\">我要报名比赛</a>";
+	else
+		contentTemplate	+= "<a href=\"javascript:void(0);\" data-reveal-id=\"quickLogin\" class=\"button expand\">我要报名比赛</a>";
+	contentTemplate += "</div>"
 			+ "</div>";
-
 
 	contentTemplate = contentTemplate.replace(/\$point/g,
 			point.lng + "," + point.lat).replace(/\$matchjsonstr/g,
@@ -132,6 +148,9 @@ function addMatchToList_v2(match, point) {
 			.replace(/\$enrollfocalpoint/g, match.fields.enrollfocal);
 	matchobj.append(contentTemplate);
 	matchobj.appendTo('#matchlist');
+	$("#match #enroll").click(function(){
+		matchEnroll($(this).parent(), $(this).attr('match'));
+	});
 	return matchobj;
 }
 
@@ -365,6 +384,24 @@ function loadingPoolroom(distance, mypoint) {
 		},
 		error: function (xhr, ajaxOptions, thrownError) {
 			$("#info .subheader").text("无法获取周边的球房，请刷新重试。");
+	     }
+	});
+}
+
+function matchEnroll(objdiv, id) {
+	url = ENROLL_URL;
+	$.ajax({
+		url : url.replace(/000/g, id),
+		dataType : 'json',
+		success : function(data)
+		{
+			objdiv.children("#enroll").remove();
+			objdiv.append("<h3>报名成功。</h3>");
+		},
+		error: function (xhr, ajaxOptions, thrownError) {
+			if (xhr.status == 403) {
+				$('#quickLogin').foundation('reveal', 'open');
+		    }
 	     }
 	});
 }

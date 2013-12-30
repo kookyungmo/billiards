@@ -11,7 +11,6 @@ from django.utils.timezone import localtime
 from bitfield import BitField
 from django.utils.encoding import force_unicode
 from django.contrib.auth.models import User
-from django.contrib.auth.admin import UserAdmin
 
 def toDict(bitfield):
     flag_dict = {}
