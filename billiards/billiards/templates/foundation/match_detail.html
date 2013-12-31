@@ -50,9 +50,9 @@
 		{% endif %}
 	</span>
           <hr>
-          <h3 class="subheader"><strong>比赛日期</strong></h3>
+          <h3 class="subheader"><strong>比赛时间</strong></h3>
           <h5 class="subheader">
-            <p><strong><script>document.write(getFormattedTime('{{ match.starttime|date:"D d M Y, H:i" }}'));</script></strong></p>
+            <p><strong><script>document.write(getFormattedTimeToDate('{{ match.starttime|date:"D d M Y, H:i" }}'));</script></strong></p>
            </h5>
            <hr>
            <h3 class="subheader"><strong>冠军奖金</strong></h3>
@@ -79,7 +79,7 @@
 </div>
 <div class="row">
 		<hr>
-		<h3 class="subheader"><strong>奖金细则</strong></h3>
+		<h3 class="subheader"><strong> 奖金细则</strong></h3>
 		<h5 class="subheader">
 			<p>{{ match.bonusdetail }}</p>
 		</h5>
@@ -96,7 +96,7 @@
      </div>
      </div>
    	<div class="medium-3 columns hide-for-small">
-       <h2>行动起来!</h2><hr/>
+       <h2 style="color:#FF9900">行动起来!</h2><hr/>
        <a class="large button expand" href="#">
          我要参加!
        </a>
@@ -111,7 +111,7 @@
 	var map = new BMap.Map("baidumap");
 		$(document).ready(
 			function() {
-				$("#baidumap").css("height", 350);
+				$("#baidumap").css("height", 250);
 			    map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_RIGHT, type: BMAP_NAVIGATION_CONTROL_SMALL}));
 			    map.enableScrollWheelZoom(true);
 			    data = eval(jsonescape('{{ match|matchtojson|safe }}'));

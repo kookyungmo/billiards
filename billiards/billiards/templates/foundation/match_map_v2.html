@@ -16,7 +16,7 @@
 						function addMonth(monthstr) {
 							var monthItem = jQuery('<div/>', {class : 'row'});
 							monthItem.append("<h5 style=color:#FF9900;><strong>赛事日程表</strong></h5>")
-							monthItem.append("<h3><strong>" + monthstr + "</strong></h3>");
+							monthItem.append("<h3 style=color:#FF9900><strong>" + monthstr + "</strong></h3>");
 							monthItem.appendTo($("#calendar"));
 						}
 
@@ -48,7 +48,7 @@
 							contentTemplate = "<h4><a href=\"javascript:void(0);\" timestamp=\"" + m.valueOf() + "\">" + m.format('dddd') + " " + m.format('DD') + "</a>";
 		 					var formattedday = m.format("YYYY-MM-DD");
 							if (formattedday in summary) {
-								contentTemplate += "<sub><span data-tooltip=\"\" class=\"has-tip tip-top noradius\" title=\"当日比赛场数\">" + summary[formattedday] + "</span></sub>";
+								contentTemplate += "<sub><span data-tooltip=\"\" class=\"has-tip tip-top noradius\" title=\"当日比赛场数\" style=color:#FF9900>" + summary[formattedday] + "</span></sub>";
 							}
 							if (formattedday in bonussummary) {
 								contentTemplate += "<span data-tooltip=\"\" class=\"has-tip tip-top noradius\" title=\"奖金最高的比赛\"><sup>\
@@ -68,7 +68,7 @@
 			<div id="baidumap" 
 				style="overflow: hidden; margin: 0;"></div>
 		</div>
-		<div class="row"><h3 style="color:#FF9900">俱乐部赛事</h3></div>
+		<div class="row"><h3 style="color:#FF9900"><strong>俱乐部赛事</strong></h3></div>
 		<div class="row">
 				<div id="matchlist" class="large-12 columns">
 				  	<script>

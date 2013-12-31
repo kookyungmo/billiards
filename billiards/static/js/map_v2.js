@@ -238,12 +238,18 @@ function addPoolroomToList(poolroom, point) {
 	});
 	url = POOLROOM_URL;
 	detail_url = url.replace(/000/g, poolroom.pk);
-	contentTemplate = "<div class=\"small-12 columns clickable\">"
+	contentTemplate = "<div class=\"row\">"
+			+ "<div class=\"small-2 large-2 columns\">"
+			+ "<ul class=\"pricing-table\">"
+			+ "<li class=\"title\"><font size=+1><strong>距离我：</strong></font></li>"
+			+ "<li class=\"price\">$distance</li>"
+			+ "</ul></div>"
+			+ "<div class=\"small-10 columns clickable\">"
 			+ "<div class=\"row panel poolroom-detail\">"
 			+ "<div class=\"small-4 columns\"><img src=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/demo1-th.jpg\"></div>"
 			+ "<div class=\"small-8 columns\">"
 			+ "<div class=\"row\">"
-			+ "<h3><span name=\"title\" point=\"$point\"><u><a href=\"" + detail_url + "\">$poolroomname</a></u></span></h3>"
+			+ "<h5><span name=\"title\" point=\"$point\"><u><a href=\"" + detail_url + "\">$poolroomname</a></u></span></h5>"
 			+ "</div>"
 			+ "<div class=\"row\">"
 	equipment = "";
@@ -263,11 +269,10 @@ function addPoolroomToList(poolroom, point) {
 		contentTemplate += equipment;
 		contentTemplate += "</span>";
 	}
-	contentTemplate += "</div><div class=\"row\"><h3 class=\"subheader\">地址: $address</h3></div>";
-	contentTemplate += "<div class=\"row\"><h3 class=\"subheader\">电话: $tel</h3></div>";
-	contentTemplate += "<div class=\"row\"><h3 class=\"subheader\">营业时间: $hour</h3></div>";
-	contentTemplate += "<div class=\"row\"><h3 class=\"subheader\">距离我: <strong>$distance</strong></h3></div>";
-	contentTemplate += "</div>";
+	contentTemplate += "</div><div class=\"row\"><h6 class=\"subheader\">地址: $address</h6></div>";
+	contentTemplate += "<div class=\"row\"><h6 class=\"subheader\">电话: $tel</h6></div>";
+	contentTemplate += "<div class=\"row\"><h6 class=\"subheader\">营业时间: $hour</h6></div>";
+	contentTemplate += "</div></div>";
 
 	contentTemplate = contentTemplate.replace(/\$point/g,
 			point.lng + "," + point.lat)
