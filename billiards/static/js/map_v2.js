@@ -36,11 +36,12 @@ function addMatchToList_v2(match, point) {
 	detail_url = MATCH_URL.replace(/000/g, match.pk);
 	contentTemplate ="<div class=\"row\">"
 			+ "<div class=\"small-12 large-3 columns\">"
-                        + "<ul class=\"pricing-table\">"
-                        + "<li class=\"title\"><font size=+1>$starttimedate</font></li>"
-                        + "<li class=\"price\">$starttimeweekday</li>"
-                        + "<li class=\"title\"><font size=+1>$starttimehour</font></li>"
-			+ "</ul>"
+//                        + "<ul class=\"pricing-table\">"
+//                        + "<li class=\"title\"><font size=+1>$starttimedate</font></li>"
+//                        + "<li class=\"price\">$starttimeweekday</li>"
+//                        + "<li class=\"title\"><font size=+1>$starttimehour</font></li>"
+//			+ "</ul>"
+			+ "<ul class=\"calendar\"><em>$starttimedate</em>$starttimehour<em>$starttimeweekday</em></ul>"
 			+ "</div>"
 
 			+ "<div class=\"small-12 large-6 columns\">"
