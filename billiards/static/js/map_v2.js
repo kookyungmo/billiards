@@ -239,12 +239,12 @@ function addPoolroomToList(poolroom, point) {
 	url = POOLROOM_URL;
 	detail_url = url.replace(/000/g, poolroom.pk);
 	contentTemplate = "<div class=\"row\">"
-			+ "<div class=\"small-2 large-2 columns\">"
+			+ "<div class=\"small-12 large-2 columns\">"
 			+ "<ul class=\"pricing-table\">"
 			+ "<li class=\"title\"><font size=+1><strong>距离我：</strong></font></li>"
 			+ "<li class=\"price\">$distance</li>"
 			+ "</ul></div>"
-			+ "<div class=\"small-10 columns clickable\">"
+			+ "<div class=\"small-12 columns clickable\">"
 			+ "<div class=\"row panel poolroom-detail\">"
 			+ "<div class=\"small-4 columns\"><img src=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/demo1-th.jpg\"></div>"
 			+ "<div class=\"small-8 columns\">"
