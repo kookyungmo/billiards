@@ -13,7 +13,7 @@
 {% load url from future %} 
 {% block content %}
   <hr>
-      <div class="medium-9 columns">
+      <div class="medium-9 columns panel">
          <div class="row">
           <div class="medium-7 medium-push-5 columns">
 			<div class="row">
@@ -24,7 +24,7 @@
           </div>
           <div class="medium-5 medium-pull-7 columns">
             <h3 style = color:#EB6100>{{ poolroom.name }}</h3>
-            <h3 class="subheader">地址：{{ poolroom.address }}</h3>
+            <h5 class="subheader">地址：{{ poolroom.address }}</h5>
             <span class="icon_list">
             	{% if poolroom.flags.wifi %}
 				    <span class="ico_wifi" title="公共区域WIFI"></span>
@@ -67,7 +67,7 @@
 	<div class="row">
 		<hr>
 		<div class="small-12 columns">
-			<div class="row"><h3>球台信息</h3></div>
+			<div class="row"><h3><strong> &nbsp 球台信息<strong></h3></div>
 			<div class="row">
 				{% for equipment in equipments %}
 					<div class="small-6 medium-3 left columns">
@@ -85,24 +85,24 @@
 	</div>
       </div>
     	<div class="medium-3 small-12 columns">
-    		<div class="row"><h2>近期的比赛</h2><hr></div>
+    		<div class="row"><h2 style="color:#FF9900"> &nbsp 近期的比赛</h2><hr></div>
         {% for match in matches %}
 	 <div class="row">
-	    	<h3 class="subheader"><strong>比赛日期</strong></h3>
-            <h4 class="subheader">
-              <p><strong><script>document.write(getFormattedTime('{{ match.starttime|date:"D d M Y, H:i" }}'));</script></strong></p>
+	    	<h3 class="subheader" style="color:#FF9900"><strong>&nbsp 比赛日期</strong></h3>
+            <h4 class="subheader" style="color:#FF9900">
+              <p><strong>&nbsp <script>document.write(getFormattedTimeToDate('{{ match.starttime|date:"D d M Y, H:i" }}'));</script></strong></p>
             </h4>
-            <h3 class="subheader"><strong>冠军奖金</strong></h3>
-			<h4 class="subheader">
+            <h3 class="subheader" style="color:#FF9900"><strong>&nbsp 冠军奖金</strong></h3>
+			<h4 class="subheader" style="color:#FF9900">
 				{% if match.bonus > 0 %}
-				    <p>现金: <strong>{{ match.bonus }}元</strong></p>
+				    <p>&nbsp 现金: <strong>{{ match.bonus }}元</strong></p>
 				{% elif match.rechargeablecard > 0 %}
-				    <p>俱乐部充值卡: <strong>{{ match.rechargeablecard }}元</strong></p>
+				    <p>&nbsp 俱乐部充值卡: <strong>{{ match.rechargeablecard }}元</strong></p>
 	            {% elif match.otherprize != None %}
-				    <p>其它奖励: <strong>{{ match.otherprize }}</strong></p>
+				    <p>&nbsp 其它奖励: <strong>{{ match.otherprize }}</strong></p>
 				{% endif %}
 			</h4>
-			<h3 class="subheader"><a href="{% url 'match_detail' match.id %}">详情</a></h3>
+			<h3 class="subheader"><a href="{% url 'match_detail' match.id %}">&nbsp 详情</a></h3>
 	    {% if not forloop.last %}
 	    <hr>
 	    {% endif %}
