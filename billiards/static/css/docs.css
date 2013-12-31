@@ -6762,7 +6762,7 @@ opacity: 0;
     background:#ededef;  
     background: -webkit-gradient(linear, left top, left bottom, from(#ededef), to(#ccc));   
     background: -moz-linear-gradient(top,  #ededef,  #ccc);   
-    font:bold 30px/60px Arial Black, Arial, Helvetica, sans-serif;  
+    font:bold 20px/40px Arial Black, Arial, Helvetica, sans-serif;  
     text-align:center;  
     color:#000;  
     text-shadow:#fff 0 1px 0;      
@@ -6777,7 +6777,7 @@ opacity: 0;
 
 .calendar em{  
     display:block;  
-    font:normal bold 25px/30px Arial, Helvetica, sans-serif;  
+    font:normal bold 20px/20px Arial, Helvetica, sans-serif;  
     color:#fff;  
     text-shadow:#00365a 0 -1px 0;      
     background:#04599a;  
