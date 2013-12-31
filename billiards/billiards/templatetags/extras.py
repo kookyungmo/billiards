@@ -23,7 +23,13 @@ def poolroomtojson(data):
     return tojson(data, poolroom_fields)
 
 def matchtojson(data):
-    return tojson(data, match_fields)
+    fields = list(match_fields)
+    if isinstance(data, (QuerySet, ValuesQuerySet)):
+        if hasattr(data[0], 'enrolled'):
+            fields.append('enrolled')
+    elif hasattr(data, 'enrolled'):
+        fields.append('enrolled')
+    return tojson(data, fields)
 
 def equipmentname(equipment):
     if isinstance(equipment, (PoolroomEquipment)):

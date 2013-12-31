@@ -74,6 +74,7 @@
 				  	<script>
 				  	var map = initialMap("baidumap");
 				    MATCH_URL = "{% url match_detail '000' %}";
+				    ENROLL_URL = "{% url match_enroll '000' %}";
 					{% if matches|length > 0 %}
 						matches = eval(jsonescape('{{ matches|matchtojson|safe }}'));
 						addMatchItems_v2(matches);
@@ -99,8 +100,7 @@
 {% block foundationscript %}
     <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.magellan.min.js"></script>
     <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.tooltip.min.js"></script>
-    <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.clearing.js"></script>
-    <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.reveal.js"></script>
+    <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.clearing.min.js"></script>
 {% endblock %}
 {% block script %}
 	<script>
