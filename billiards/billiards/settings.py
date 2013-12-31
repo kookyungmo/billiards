@@ -24,7 +24,9 @@ try:
         'PORT': const.MYSQL_PORT,
         }
     }
+    HOST_NAME = 'http://www.pktaiqiu.com'
 except ImportError:
+    HOST_NAME = 'http://127.0.0.1:8000'
     # here config your local mysql
     DATABASES = {
     'default': {
@@ -140,7 +142,7 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    # 'django.contrib.sites',
+#     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
@@ -192,8 +194,7 @@ SOCIALOAUTH_SITES = (
     
     ('qq', 'billiards.support.socialoauth.sites.qq.QQ', 'QQ',
               {
-#             'redirect_uri': 'http://127.0.0.1:8000/user/oauth/qq',
-                'redirect_uri': 'http://www.pktaiqiu.com/user/oauth/qq',
+                'redirect_uri': HOST_NAME + '/user/oauth/qq',
                 'client_id': '100568693',
                 'client_secret': '8c21be52fe3edf9fa9b75d55fe4abf64',
               }
