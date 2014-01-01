@@ -11,6 +11,9 @@ from billiards.settings import SOCIALOAUTH_SITES
 from billiards.support.socialoauth import SocialSites, SocialAPIError
 from django.contrib.auth.models import User
 from django.contrib import auth
+from time import mktime, localtime
+from datetime import datetime
+
 
 def login_3rd(request, site_name):
     socialsites = SocialSites(SOCIALOAUTH_SITES)
@@ -59,6 +62,9 @@ def callback(request, site_name):
     user.gender = (lambda x: 'm' if x else 'f')(_s.gender)
     user.avatar = _s.avatar
     user.site_name = _s.site_name
+    user.access_token = _s.access_token
+    user.expire_time = datetime.fromtimestamp(mktime(localtime()) + _s.expires_in)
+    user.refresh_token = _s.refresh_token
     user.save()
         
     auth.login(request, user)      
