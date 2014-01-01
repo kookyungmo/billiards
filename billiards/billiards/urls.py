@@ -29,6 +29,10 @@ urlpatterns += patterns('billiards.views.user.login',
     url(r'^user/logout/$', 'logout', name='user_logout'),
 )
 
+urlpatterns += patterns('billiards.views.user.manage',
+    url(r'^user/completeInfo','completeInfo', name='completeInfo'),
+)
+
 urlpatterns += patterns('',
 #    url(r'^$', RedirectView.as_view(url='match/map', permanent=False), name="home"),
     url(r'^admin/', include(admin.site.urls)),

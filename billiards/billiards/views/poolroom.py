@@ -11,7 +11,6 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.core import serializers
 from django.template.context import RequestContext
 from billiards.settings import TEMPLATE_ROOT
-from django.db import models
 from billiards.location_convertor import bd2gcj, gcj2bd
 from django.db.models.query_utils import Q
 import datetime

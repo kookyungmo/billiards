@@ -122,6 +122,8 @@ class Match(models.Model):
                 'starttime': self.starttime, 'enrollfee': self.enrollfee,
                 'enrollfocal': self.enrollfocal, 'flags': toDict(self.flags)}
 
+    def save(self):
+        super(Match, self).save()
 # Using a sub table-implemented the entending of auth_user table        
 # class Profile(models.Model):
 #     '''
@@ -170,6 +172,7 @@ class Profile(ProfileObject):
     access_token = models.CharField(max_length=64, default='', null=True)
     expire_time = models.DateTimeField(null=True)
     refresh_token = models.CharField(max_length=64, default='', null=True)
+    cellphone = models.CharField(max_length=11, null=True, blank=True, verbose_name="移动电话")
     
 class MatchEnroll(models.Model):
     id = models.AutoField(primary_key=True)

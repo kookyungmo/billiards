@@ -14,7 +14,7 @@ from bitfield.admin import BitFieldListFilter
 from billiards.location_convertor import gcj2bd
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserChangeForm
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 
 class ModelWithFlagsAdmin(admin.ModelAdmin):
     formfield_overrides = {
@@ -44,7 +44,7 @@ class CustomUserChangeForm(UserChangeForm):
         fields =('avatar','id','username','password','first_name','last_name',
                  'site_name','nickname','gender','email','last_login',
                  'date_joined','is_active','is_staff','is_superuser','user_permissions',
-                 'groups', 'access_token', 'expire_time', 'refresh_token')
+                 'groups', 'access_token', 'expire_time', 'refresh_token', 'cellphone')
 
 class CustomUserAdmin(UserAdmin):
     fieldsets = (
@@ -58,7 +58,7 @@ class CustomUserAdmin(UserAdmin):
                                                 'refresh_token')}),
         )
     form = CustomUserChangeForm
-    list_display = UserAdmin.list_display + ('nickname', 'site_name', 'gender',)
+    list_display = UserAdmin.list_display + ('nickname', 'site_name', 'gender', 'cellphone')
     search_fields = UserAdmin.search_fields + ('nickname', )
 
 admin.site.register(Poolroom, PoolroomAdmin)
