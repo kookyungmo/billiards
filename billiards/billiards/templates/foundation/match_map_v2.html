@@ -76,7 +76,7 @@
 				    MATCH_URL = "{% url match_detail '000' %}";
 				    ENROLL_URL = "{% url match_enroll '000' %}";
 					{% if matches|length > 0 %}
-						matches = eval(jsonescape('{{ matches|matchtojson|safe }}'));
+						matches = eval(jsonescape('{{ matches|matchtojsonwithenroll:user|safe }}'));
 						addMatchItems_v2(matches);
 					{% else %}
 			           	createNoMatch();

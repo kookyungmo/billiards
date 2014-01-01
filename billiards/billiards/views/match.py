@@ -17,29 +17,29 @@ from django.utils import simplejson
 from billiards.settings import TEMPLATE_ROOT
 import json
 from django.db.models.query_utils import Q
-from django.db import models
-from django.db.models.query import QuerySet, ValuesQuerySet
+from StringIO import StringIO
 
-def hajackMatchWithEnrollinfo(match, user):
-    if isinstance(match, (QuerySet, ValuesQuerySet)):
-        matchArray = match
-    else:
-        matchArray = [match]
+def updateMatchJsonStrEnrollInfo(matchjsonstr, user, matchArray):
     enrolledMatch = MatchEnroll.objects.filter(Q(match__in=matchArray) & Q(user__exact=user))
     if len(enrolledMatch) > 0:
-        concrete_model = matchArray[0]._meta.concrete_model
-        enrolled_true = models.BooleanField(name='enrolled', default=True, blank=True)
-        setattr(enrolled_true, 'attname', 'enrolled')
-        concrete_model._meta.local_fields.append(enrolled_true)
-        fields = list(match_fields)
-        fields.append('enrolled')
+        matches = simplejson.loads(matchjsonstr)
         for enrollinfo in enrolledMatch:
-            for match in matchArray:
-                if enrollinfo.match.id == match.id:
-                    setattr(match, 'enrolled', enrolled_true)
-                    match.enrolled = True
+            for match in matches:
+                if enrollinfo.match.id == match['pk']:
+                    match['fields']['enrolled'] = True
                     break
-    return matchArray
+        matchjsonstr = simplejson.dumps(matches)
+    return matchjsonstr
+
+def updateMatchQuerySetEnrollInfo(matchQuerySet, user):
+    enrolledMatch = MatchEnroll.objects.filter(Q(match__in=matchQuerySet) & Q(user__exact=user))
+    if len(enrolledMatch) > 0:
+        for enrollinfo in enrolledMatch:
+            for match in matchQuerySet:
+                if enrollinfo.match.id == match.id:
+                    setattr(match, 'enrolled', True)
+                    break
+    return matchQuerySet
 
 def index(request, view = None):
     starttime = datetime.datetime.today()
@@ -58,16 +58,15 @@ def index(request, view = None):
     datefmt = "%Y-%m-%d"
     matches = Match.objects.filter(starttime__gte=starttime.strftime(datefmt)) \
         .exclude(starttime__gt=endtime.strftime(datefmt)).order_by('starttime')
-
-    fields = list(match_fields)
-    if request.user.is_authenticated():
-        matches = hajackMatchWithEnrollinfo(matches, request.user)
-                            
+                  
     if request.GET.get('f') == 'json':
         json_serializer = serializers.get_serializer("json")()
-        response = HttpResponse()
-        json_serializer.serialize(matches, fields=fields, ensure_ascii=False, stream=response, indent=2, use_natural_keys=True)
-        return response
+        stream = StringIO()
+        json_serializer.serialize(matches, fields=match_fields, ensure_ascii=False, stream=stream, indent=2, use_natural_keys=True)
+        jsonstr = stream.getvalue()
+        if request.user.is_authenticated():
+            jsonstr = updateMatchJsonStrEnrollInfo(jsonstr, request.user, matches)
+        return HttpResponse(jsonstr)
     if view == 'map':
         page = 'match_map_v2.html'
     else:
@@ -99,16 +98,19 @@ def index(request, view = None):
 
 def detail(request, matchid):
     match = get_object_or_404(Match, pk=matchid)
-
-    if request.user.is_authenticated():
-        match = hajackMatchWithEnrollinfo(match, request.user)[0]
         
     if request.GET.get('f') == 'json':
         json_serializer = serializers.get_serializer("json")()
-        response = HttpResponse()
-        json_serializer.serialize([match], fields=('id', 'poolroom', 'bonus', 'starttime', 'description'), ensure_ascii=False, stream=response, indent=2, use_natural_keys=True)
-        return response
-
+        stream = StringIO()
+        json_serializer.serialize([match], fields=('id', 'poolroom', 'bonus', 'starttime', 'description'), ensure_ascii=False, stream=stream, indent=2, use_natural_keys=True)
+        jsonstr = stream.getvalue()
+        if request.user.is_authenticated():
+            jsonstr = updateMatchJsonStrEnrollInfo(jsonstr, request.user, [match])
+        return HttpResponse(jsonstr)
+    
+    if request.user.is_authenticated():
+        match = updateMatchQuerySetEnrollInfo([match], request.user)[0]
+        
     return render_to_response(TEMPLATE_ROOT + 'match_detail.html', {'match': match},
                               context_instance=RequestContext(request))
 
