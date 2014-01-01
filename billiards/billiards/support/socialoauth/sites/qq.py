@@ -46,7 +46,7 @@ class QQ(OAuth2):
 
         self.access_token = res['access_token']
         self.expires_in = int(res['expires_in'])
-        self.refresh_token = None
+        self.refresh_token = res['refresh_token']
 
         res = self.http_get(self.OPENID_URL, {'access_token': self.access_token}, parse=False)
         res = json.loads(QQ_OPENID_PATTERN.search(res).group())
