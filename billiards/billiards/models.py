@@ -168,6 +168,9 @@ class Profile(ProfileObject):
     avatar = models.CharField(max_length=250, null=True, default='', verbose_name="头像") # address of the user logo
     site_name = models.CharField(max_length=20, null=True, default='', verbose_name="来源") # site name 
     gender = models.CharField(max_length=1, default='m', null=True, verbose_name="性别")
+    access_token = models.CharField(max_length=64, default='', null=True)
+    expire_time = models.DateTimeField(null=True)
+    refresh_token = models.CharField(max_length=64, default='', null=True)
     
 
       
