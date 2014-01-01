@@ -6,15 +6,40 @@ Created on 2013年10月22日
 @author: kane
 '''
 from django.shortcuts import render_to_response, get_object_or_404
-from billiards.models import Match, match_fields
+from billiards.models import Match, match_fields, MatchEnroll
 import datetime
 from dateutil.relativedelta import relativedelta
 from django.core import serializers
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from django.template.context import RequestContext
 from django.db.models.aggregates import Max
 from django.utils import simplejson
 from billiards.settings import TEMPLATE_ROOT
+import json
+from django.db.models.query_utils import Q
+from django.db import models
+from django.db.models.query import QuerySet, ValuesQuerySet
+
+def hajackMatchWithEnrollinfo(match, user):
+    if isinstance(match, (QuerySet, ValuesQuerySet)):
+        matchArray = match
+    else:
+        matchArray = [match]
+    enrolledMatch = MatchEnroll.objects.filter(Q(match__in=matchArray) & Q(user__exact=user))
+    if len(enrolledMatch) > 0:
+        concrete_model = matchArray[0]._meta.concrete_model
+        enrolled_true = models.BooleanField(name='enrolled', default=True, blank=True)
+        setattr(enrolled_true, 'attname', 'enrolled')
+        concrete_model._meta.local_fields.append(enrolled_true)
+        fields = list(match_fields)
+        fields.append('enrolled')
+        for enrollinfo in enrolledMatch:
+            for match in matchArray:
+                if enrollinfo.match.id == match.id:
+                    setattr(match, 'enrolled', enrolled_true)
+                    match.enrolled = True
+                    break
+    return matchArray
 
 def index(request, view = None):
     starttime = datetime.datetime.today()
@@ -34,10 +59,14 @@ def index(request, view = None):
     matches = Match.objects.filter(starttime__gte=starttime.strftime(datefmt)) \
         .exclude(starttime__gt=endtime.strftime(datefmt)).order_by('starttime')
 
+    fields = list(match_fields)
+    if request.user.is_authenticated():
+        matches = hajackMatchWithEnrollinfo(matches, request.user)
+                            
     if request.GET.get('f') == 'json':
         json_serializer = serializers.get_serializer("json")()
         response = HttpResponse()
-        json_serializer.serialize(matches, fields=match_fields, ensure_ascii=False, stream=response, indent=2, use_natural_keys=True)
+        json_serializer.serialize(matches, fields=fields, ensure_ascii=False, stream=response, indent=2, use_natural_keys=True)
         return response
     if view == 'map':
         page = 'match_map_v2.html'
@@ -62,21 +91,18 @@ def index(request, view = None):
     def ValuesQuerySetToDict(vqs):
         return [{'bonus': item['bonus'], 'starttime': item['starttime'].strftime(datefmt)} for item in vqs]
     
-#     if request.user.is_authenticated():
-#         user_profile = request.user.get_profile()
-#     else:
-#         user_profile = None
-    
     return render_to_response(TEMPLATE_ROOT + page,
                               {'matches': matches, 'startdate': starttime, 'enddate': endtime,
                                'intervals': intervals, 'matchsummary': matchCountSummary, 'bonussummary': simplejson.dumps(ValuesQuerySetToDict(topOneBonusSummary)),
-#                                'user_profile': user_profile},
                               },
                               context_instance=RequestContext(request))
 
 def detail(request, matchid):
     match = get_object_or_404(Match, pk=matchid)
 
+    if request.user.is_authenticated():
+        match = hajackMatchWithEnrollinfo(match, request.user)[0]
+        
     if request.GET.get('f') == 'json':
         json_serializer = serializers.get_serializer("json")()
         response = HttpResponse()
@@ -86,3 +112,16 @@ def detail(request, matchid):
     return render_to_response(TEMPLATE_ROOT + 'match_detail.html', {'match': match},
                               context_instance=RequestContext(request))
 
+def enroll(request, matchid):
+    if not request.user.is_authenticated():
+        raise HttpResponseForbidden()
+    
+    match = get_object_or_404(Match, pk=matchid)
+    
+    obj, created = MatchEnroll.objects.get_or_create(match=match, user=request.user,
+                  defaults={'enrolltime': datetime.datetime.now()})
+    if obj != False:
+        msg = {'rt': 2, 'msg': 'already enrolled'}
+    elif created != False:
+        msg = {'rt': 1, 'msg': 'enrolled'}
+    return HttpResponse(json.dumps(msg), content_type="application/json")

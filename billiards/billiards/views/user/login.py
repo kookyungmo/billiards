@@ -16,6 +16,12 @@ from datetime import datetime
 
 
 def login_3rd(request, site_name):
+    if 'returnurl' in request.GET:
+        for item in SOCIALOAUTH_SITES:
+            if item[0] == site_name:
+                origurl = item[3]['redirect_uri']
+                item[3]['redirect_uri'] = origurl + "?returnurl=" + request.GET.get('returnurl')
+                break
     socialsites = SocialSites(SOCIALOAUTH_SITES)
     if site_name in socialsites._sites_name_list:
         _s = socialsites.get_site_object_by_name(site_name)
@@ -26,6 +32,9 @@ def login_3rd(request, site_name):
 
 # not finished yet, to be continued...    
 def callback(request, site_name):
+    returnurl = '/'
+    if 'returnurl' in request.GET:
+        returnurl = request.GET.get('returnurl')
     '''
     user store and manage should be replaced by django.contib.auth (TBD)
     '''
@@ -56,7 +65,7 @@ def callback(request, site_name):
         user = auth.authenticate(username=_s.uid[0:29], password=(_s.site_name+_s.uid[30:]))        
     
     if user.is_active == 0:
-        return HttpResponseRedirect('/')
+        return HttpResponseRedirect(returnurl)
 
     user.nickname = _s.name
     user.gender = (lambda x: 'm' if x else 'f')(_s.gender)
@@ -69,7 +78,7 @@ def callback(request, site_name):
         
     auth.login(request, user)      
     
-    return HttpResponseRedirect('/')
+    return HttpResponseRedirect(returnurl)
     
 
 def logout(request):

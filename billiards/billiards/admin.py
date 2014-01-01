@@ -5,7 +5,8 @@ Created on 2013年10月21日
 
 @author: kane
 '''
-from billiards.models import Poolroom, Match, PoolroomEquipment, User
+from billiards.models import Poolroom, Match, PoolroomEquipment, User,\
+    MatchEnroll
 from django.contrib import admin
 from bitfield import BitField
 from bitfield.forms import BitFieldCheckboxSelectMultiple
@@ -65,3 +66,4 @@ admin.site.register(PoolroomEquipment)
 admin.site.register(Match, MatchAdmin)
 admin.site.unregister(User)
 admin.site.register(User, CustomUserAdmin)
+admin.site.register(MatchEnroll)
