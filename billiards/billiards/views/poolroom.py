@@ -11,11 +11,12 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.core import serializers
 from django.template.context import RequestContext
 from billiards.settings import TEMPLATE_ROOT
-from django.db import models
 from billiards.location_convertor import bd2gcj, gcj2bd
 from django.db.models.query_utils import Q
 import datetime
 from dateutil.relativedelta import relativedelta
+from StringIO import StringIO
+from django.utils import simplejson
 
 def more(request, poolroomid):
     poolroom = get_object_or_404(Poolroom, pk=poolroomid)
@@ -26,7 +27,16 @@ def more(request, poolroomid):
     response['Cache-Control'] = 'max-age=%s' % (60 * 60 * 24 * 7)
     json_serializer.serialize(equipments, fields=('tabletype', 'producer', 'quantity', 'cue', 'price'), ensure_ascii=False, stream=response, indent=2, use_natural_keys=True)
     return response
-        
+
+def updateJsonStrWithDistance(poolroomJsonStr, poolrooms):        
+    poolroomObjs = simplejson.loads(poolroomJsonStr)
+    for poolroomObj in poolroomObjs:
+        for poolroom in poolrooms:
+            if poolroom.id == poolroomObj['pk']:
+                poolroomObj['fields']['distance'] = str(poolroom.distance)
+                break
+    return simplejson.dumps(poolroomObjs)
+    
 def nearby(request, lat = None, lng = None, distance = 10):
     if lat is not None and lng is not None:
         googles = bd2gcj(float(lat), float(lng))
@@ -39,18 +49,13 @@ def nearby(request, lat = None, lng = None, distance = 10):
         where = "1 having distance <= %s" %(str(distance))
         nearby_poolrooms = Poolroom.objects.extra(select={'distance' : haversine}).extra(order_by=['distance'])\
             .extra(where=[where])
-        # hacking
-        if len(nearby_poolrooms) > 0:
-            concrete_model = nearby_poolrooms[0]._meta.concrete_model
-            distance = models.DecimalField(name='distance', max_digits=11,decimal_places=7,null=True)
-            setattr(distance, 'attname', 'distance')
-            concrete_model._meta.local_fields.append(distance)
         json_serializer = serializers.get_serializer("json")()
-        response = HttpResponse()
-        fields = list(poolroom_fields)
-        fields.append('distance')
-        json_serializer.serialize(nearby_poolrooms, fields=fields, ensure_ascii=False, stream=response, indent=2, use_natural_keys=True)
-        return response
+        stream = StringIO()
+        json_serializer.serialize(nearby_poolrooms, fields=poolroom_fields, ensure_ascii=False, stream=stream, indent=2, use_natural_keys=True)
+        jsonstr = stream.getvalue()
+        if len(nearby_poolrooms) > 0:
+            jsonstr = updateJsonStrWithDistance(jsonstr, nearby_poolrooms)
+        return HttpResponse(jsonstr)
     return render_to_response(TEMPLATE_ROOT + 'poolroom_nearby.html', {'defaultDistance': 5},
                               context_instance=RequestContext(request))
     

@@ -399,6 +399,9 @@ function matchEnroll(objdiv, id) {
 		{
 			objdiv.children("#enroll").remove();
 			objdiv.append("<h3>报名成功。</h3>");
+			if (data.info_missing) {
+				$('#userInfoForm').foundation('reveal', 'open');
+			}
 		},
 		error: function (xhr, ajaxOptions, thrownError) {
 			if (xhr.status == 403) {
