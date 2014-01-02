@@ -202,4 +202,9 @@ SOCIALOAUTH_SITES = (
 )
 
 TEMPLATE_ROOT = 'foundation/'
-# AUTH_PROFILE_MODULE = 'billiards.Profile' 
+
+BCS_BUCKET = {
+              'AK': 'CD24fab6adfe297cb08515f7e6064c0b',
+              'SK': '9b1dee3fef41c498fbb54c58a804eed2',
+              'bucket_name': 'billiardsalbum',
+              }
