@@ -11,12 +11,12 @@
 {% endblock %}
 {% load extras %}
 {% block content %}
-	<div id="calendar" class="medium-1 columns">
+	<div id="calendar" class="medium-2 columns">
 					<script>
 						function addMonth(monthstr) {
 							var monthItem = jQuery('<div/>', {class : 'row'});
-							monthItem.append("<h5 style=color:#FF9900;><strong>赛事日程表</strong></h5>")
-							monthItem.append("<h3 style=color:#FF9900><strong>" + monthstr + "</strong></h3>");
+							monthItem.append("<h3><strong>赛事日程表</strong></h3>")
+							monthItem.append("<h3><strong>" + monthstr + "</strong></h3>");
 							monthItem.appendTo($("#calendar"));
 						}
 
@@ -45,16 +45,15 @@
 							var dayItem = jQuery('<dd/>', {});
 							if (m.date() == starttime.date() && m.month() == starttime.month())
 								dayItem.attr('class', 'active');
-							contentTemplate = "<h4><a href=\"javascript:void(0);\" timestamp=\"" + m.valueOf() + "\">" + m.format('dddd') + " " + m.format('DD') + "</a>";
+							contentTemplate = "<h3><a href=\"javascript:void(0);\" timestamp=\"" + m.valueOf() + "\">" + m.format('DD') + " " + m.format('dddd');
 		 					var formattedday = m.format("YYYY-MM-DD");
 							if (formattedday in summary) {
-								contentTemplate += "<sub><span data-tooltip=\"\" class=\"has-tip tip-top noradius\" title=\"当日比赛场数\" style=color:#FF9900>" + summary[formattedday] + "</span></sub>";
+								contentTemplate += "<sub><span data-tooltip=\"\" class=\"has-tip tip-top noradius\" title=\"当日比赛场数\">" + summary[formattedday] + "</span></sub>";
 							}
 							if (formattedday in bonussummary) {
-								contentTemplate += "<span data-tooltip=\"\" class=\"has-tip tip-top noradius\" title=\"奖金最高的比赛\"><sup>\
-									<img src=\"{% static "images/bonus.jpeg" %}\"><sup></span>";
+								contentTemplate += "<span data-tooltip=\"\" class=\"has-tip tip-top noradius\" title=\"奖金最高的比赛\"><sup><img src=\"{% static "images/bonus.jpeg" %}\"><sup></span>";
 							}
-							contentTemplate += "</h4>";
+							contentTemplate += "</a>" + "</h3>";
 							dayItem.append(contentTemplate);
 							dayItem.appendTo(daysItem);
 							m.add('days', 1);
@@ -62,13 +61,13 @@
 						daysItem.appendTo($("#calendar"));
 						</script>
 	</div>
-	<div id="map_matches" class="medium-9 columns">
+	<div id="map_matches" class="medium-8 columns">
 		<br>
 		<div class="row show-for-medium-up">
 			<div id="baidumap" 
 				style="overflow: hidden; margin: 0;"></div>
 		</div>
-		<div class="row"><h3 style="color:#FF9900"><strong>俱乐部赛事</strong></h3></div>
+		<!--div class="row"><h3 style="color:#FF9900"><strong>俱乐部赛事</strong></h3></div--><br>
 		<div class="row">
 				<div id="matchlist" class="large-12 columns">
 				  	<script>
@@ -85,13 +84,13 @@
 				</div>
 		</div>
 	</div>
-	<div id="newsfeed" class="large-2 columns">
+	<div id="newsfeed" class="medium-2 columns">
 			<div class="row">
 				<div class="large-11 large-centered columns">
 					<br>
-					<div class="row"><h3 style="color:#FF9900"><font size =+1><strong>最新俱乐部赛事动态</strong></font></h3></div>
+					<div class="row"><h3><font size =+1><strong>最新俱乐部赛事动态</strong></font></h3></div>
 					<div class="row"><br></div>
-					<div class="row"><p style="color:#FF9900">2013年12月9日，网站第一次内部测试</p></div>
+					<div class="row"><p>2013年12月9日，网站第一次内部测试</p></div>
 					<div class="row"><br/><br/></div>
 				</div>
 			</div>

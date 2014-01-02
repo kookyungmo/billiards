@@ -51,15 +51,16 @@ function addMatchToList_v2(match, point) {
 	});
 	detail_url = MATCH_URL.replace(/000/g, match.pk);
 	contentTemplate ="<div class=\"row\">"
-			+ "<div class=\"small-12 large-3 columns\">"
-                        + "<ul class=\"pricing-table\">"
-                        + "<li class=\"title\"><font size=+1>$starttimedate</font></li>"
-                        + "<li class=\"price\">$starttimeweekday</li>"
-                        + "<li class=\"title\"><font size=+1>$starttimehour</font></li>"
-			+ "</ul>"
+			+ "<div class=\"small-12 large-2 columns\">"
+//                        + "<ul class=\"pricing-table\">"
+//                        + "<li class=\"title\"><font size=+1>$starttimedate</font></li>"
+//                        + "<li class=\"price\">$starttimeweekday</li>"
+//                        + "<li class=\"title\"><font size=+1>$starttimehour</font></li>"
+//			+ "</ul>"
+			+ "<ul class=\"calendar\"><em>$starttimedate</em>$starttimehour<em>$starttimeweekday</em></ul>"
 			+ "</div>"
 
-			+ "<div class=\"small-12 large-6 columns\">"
+			+ "<div class=\"small-12 large-7 columns\">"
 			+ "<div class=\"row\">"
 			+ "<div class=\"small-12 columns\">"
 			+ "<div class=\"columns panel clickable\" style=\"overflow:auto;\">"
@@ -258,13 +259,14 @@ function addPoolroomToList(poolroom, point) {
 	url = POOLROOM_URL;
 	detail_url = url.replace(/000/g, poolroom.pk);
 	contentTemplate = "<div class=\"row\">"
-			+ "<div class=\"small-2 large-2 columns\">"
+
+			+ "<div class=\"small-12 large-2 columns\">"
 			+ "<ul class=\"pricing-table\">"
 			+ "<li class=\"title\"><font size=+1><strong>距离我：</strong></font></li>"
 			+ "<li class=\"price\">$distance</li>"
 			+ "</ul></div>"
-			+ "<div class=\"small-10 columns clickable\">"
-			+ "<div class=\"row panel poolroom-detail\">"
+
+			+ "<div class=\"small-12 large-10 columns panel clickable\">"
 			+ "<div class=\"small-4 columns\"><img src=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/demo1-th.jpg\"></div>"
 			+ "<div class=\"small-8 columns\">"
 			+ "<div class=\"row\">"
@@ -291,7 +293,7 @@ function addPoolroomToList(poolroom, point) {
 	contentTemplate += "</div><div class=\"row\"><h6 class=\"subheader\">地址: $address</h6></div>";
 	contentTemplate += "<div class=\"row\"><h6 class=\"subheader\">电话: $tel</h6></div>";
 	contentTemplate += "<div class=\"row\"><h6 class=\"subheader\">营业时间: $hour</h6></div>";
-	contentTemplate += "</div></div>";
+	contentTemplate += "</div></div></div>";
 
 	contentTemplate = contentTemplate.replace(/\$point/g,
 			point.lng + "," + point.lat)

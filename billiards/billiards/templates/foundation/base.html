@@ -37,7 +37,7 @@
 	      <li class="name">
 	        <h1>
 	          <a href="http://{{ request.get_host }}">
-	            <font size =+2>我为台球狂</font>
+	            我为台球狂
 	          </a>
 	        </h1>
 	      </li>
@@ -51,7 +51,7 @@
 	        <li {% if request.path == mapurl %} class="active" {% endif %}><a href="{{ mapurl }}">赛事活动</a></li>
 	        {% url 'poolroom_nearby' as nearby %}
 	        <li {% if request.path == nearby %} class="active" {% endif %}><a href="{{ nearby }}">附近球房</a></li>
-	      </ul>
+</ul>
 		
 	
 	      <!-- Right Nav Section -->
@@ -76,7 +76,7 @@
 	</nav>
 	<nav class="tab-bar show-for-small">
 	  <section class="left-small">
-        <a class="left-off-canvas-toggle menu-icon" ><span>站点导航</span></a>
+        <a class="left-off-canvas-toggle menu-icon" ><span></span></a>
       </section>
 	  <section class="middle tab-bar-section">
         <h1 class="title">我为台球狂</h1>
@@ -106,7 +106,7 @@
 	
 	    <!-- Main Feed -->
 		<section role="main">
-		  	<div class="row" style="background-image:url(http://billiardsalbum.bcs.duapp.com/2013/12/billiard_balls_with_light-2560x1600.jpg); background-position: center">
+		  	<div class="row">
 		  		{% block content %}{% endblock %}
 		  	</div>
 		
