@@ -85,15 +85,15 @@
 	</div>
       </div>
     	<div class="medium-3 small-12 columns">
-    		<div class="row"><h2 style="color:#FF9900"> &nbsp 近期的比赛</h2><hr></div>
+    		<div class="row"><h2> &nbsp 近期的比赛</h2><hr></div>
         {% for match in matches %}
 	 <div class="row">
-	    	<h3 class="subheader" style="color:#FF9900"><strong>&nbsp 比赛日期</strong></h3>
-            <h4 class="subheader" style="color:#FF9900">
+	    	<h3 class="subheader"><strong>&nbsp 比赛日期</strong></h3>
+            <h4 class="subheader">
               <p><strong>&nbsp <script>document.write(getFormattedTimeToDate('{{ match.starttime|date:"D d M Y, H:i" }}'));</script></strong></p>
             </h4>
-            <h3 class="subheader" style="color:#FF9900"><strong>&nbsp 冠军奖金</strong></h3>
-			<h4 class="subheader" style="color:#FF9900">
+            <h3 class="subheader"><strong>&nbsp 冠军奖金</strong></h3>
+			<h4 class="subheader">
 				{% if match.bonus > 0 %}
 				    <p>&nbsp 现金: <strong>{{ match.bonus }}元</strong></p>
 				{% elif match.rechargeablecard > 0 %}

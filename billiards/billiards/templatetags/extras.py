@@ -9,6 +9,7 @@ from django import template
 from django.core import serializers
 from django.db.models.query import QuerySet, ValuesQuerySet
 from billiards.models import match_fields, poolroom_fields, PoolroomEquipment
+from billiards.views import match
 
 def tojson(data, fields = None):
     json_serializer = serializers.get_serializer("json")()
@@ -23,21 +24,23 @@ def poolroomtojson(data):
     return tojson(data, poolroom_fields)
 
 def matchtojson(data):
-    fields = list(match_fields)
-    if isinstance(data, (QuerySet, ValuesQuerySet)):
-        if hasattr(data[0], 'enrolled'):
-            fields.append('enrolled')
-    elif hasattr(data, 'enrolled'):
-        fields.append('enrolled')
-    return tojson(data, fields)
+    return tojson(data, match_fields)
 
 def equipmentname(equipment):
     if isinstance(equipment, (PoolroomEquipment)):
         return equipment.get_tabletype_display()
     raise Exception()
 
+def matchtojsonwithenroll(matches, user):
+    jsonstr = matchtojson(matches)
+    if user.is_authenticated():
+        return match.updateMatchJsonStrEnrollInfo(jsonstr, user, matches)
+    else:
+        return jsonstr
+
 register = template.Library()
 register.filter('matchtojson', matchtojson)
 register.filter('poolroomtojson', poolroomtojson)
 register.filter('tojson', tojson)
 register.filter('equipmentname', equipmentname)
+register.filter('matchtojsonwithenroll', matchtojsonwithenroll)

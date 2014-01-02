@@ -14,7 +14,7 @@ from bitfield.admin import BitFieldListFilter
 from billiards.location_convertor import gcj2bd
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserChangeForm
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 
 class ModelWithFlagsAdmin(admin.ModelAdmin):
     formfield_overrides = {
@@ -43,7 +43,8 @@ class CustomUserChangeForm(UserChangeForm):
         model = User
         fields =('avatar','id','username','password','first_name','last_name',
                  'site_name','nickname','gender','email','last_login',
-                 'date_joined','is_active','is_staff','is_superuser','user_permissions','groups')
+                 'date_joined','is_active','is_staff','is_superuser','user_permissions',
+                 'groups', 'access_token', 'expire_time', 'refresh_token', 'cellphone')
 
 class CustomUserAdmin(UserAdmin):
     fieldsets = (
@@ -52,10 +53,12 @@ class CustomUserAdmin(UserAdmin):
             (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
                                            'groups', 'user_permissions')}),
             (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
-            (_('Social Site info'), {'fields': ('nickname', 'site_name', 'gender', 'avatar')}),
+            (_('Social Site info'), {'fields': ('nickname', 'site_name', 'gender', 'avatar',
+                                                'access_token', 'expire_time', 
+                                                'refresh_token')}),
         )
     form = CustomUserChangeForm
-    list_display = UserAdmin.list_display + ('nickname', 'site_name', 'gender',)
+    list_display = UserAdmin.list_display + ('nickname', 'site_name', 'gender', 'cellphone')
     search_fields = UserAdmin.search_fields + ('nickname', )
 
 admin.site.register(Poolroom, PoolroomAdmin)

@@ -37,7 +37,7 @@
 	      <li class="name">
 	        <h1>
 	          <a href="http://{{ request.get_host }}">
-	            <font size =+2>我为台球狂</font>
+	            我为台球狂
 	          </a>
 	        </h1>
 	      </li>
@@ -51,7 +51,7 @@
 	        <li {% if request.path == mapurl %} class="active" {% endif %}><a href="{{ mapurl }}">赛事活动</a></li>
 	        {% url 'poolroom_nearby' as nearby %}
 	        <li {% if request.path == nearby %} class="active" {% endif %}><a href="{{ nearby }}">附近球房</a></li>
-	      </ul>
+</ul>
 		
 	
 	      <!-- Right Nav Section -->
@@ -106,7 +106,7 @@
 	
 	    <!-- Main Feed -->
 		<section role="main">
-		  	<div class="row" style="background-image:url(http://billiardsalbum.bcs.duapp.com/2013/12/billiard_balls_with_light-2560x1600.jpg); background-position: center">
+		  	<div class="row">
 		  		{% block content %}{% endblock %}
 		  	</div>
 		
@@ -142,14 +142,65 @@
   <a href="{{ weibourl }}" class="radius button">新浪微博</a>
   <a class="close-reveal-modal">&#215;</a>
 </div>
+<div id="userInfoForm" class="reveal-modal small" data-reveal>
+  <h3>请完善你的个人资料，方便我们更好的为你提供服务。</h3>
+  <form data-abide>
+	  <div class="row">
+	    <div class="small-8">
+	      <div class="row">
+	        <div class="small-3 columns">
+	          <label for="phone" class="right inline">移动电话</label>
+	        </div>
+	        <div class="small-9 columns">
+	          <input type="tel" id="phone" placeholder="移动电话号码" required>
+	          <small class="error">请输入移动电话号码</small>
+	        </div>
+	      </div>
+		  <div class="row">
+	        <div class="small-3 columns">
+	          <label for="email-label" class="right inline">Email</label>
+	        </div>
+	        <div class="small-9 columns">
+	          <input id="email-label" placeholder="email" type="email" required>
+	          <small class="error">请填入Email地址</small>
+	        </div>
+	      </div>
+	      <div class="row">
+	      		<a href="javascript:void(0);" id="doitlater" class="button [radius round]">以后再说</a>
+	      		<button type="submit" class="medium button green radius">更新</button>
+	      </div>	      
+	    </div>
+	  </div>
+  </form>
+  <a class="close-reveal-modal">&#215;</a>
+</div>
 	  {% endwith %}
 	  {% endwith %}
   <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.min.js"></script>
   <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/vendor/custom.modernizr.min.js"></script>
   <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.offcanvas.min.js"></script>
   <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.reveal.min.js"></script>
+  <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.abide.min.js"></script>
   {% block foundationscript %}{% endblock %}
   <script>
+  	$("#doitlater").click(function(){
+  		$("#userInfoForm .close-reveal-modal").click();
+  	});
+  	$("#userInfoForm button").click(function(){
+  		phone = $("#phone").val();
+  		email = $("#email-label").val();
+  		$.ajax({
+			url : "{% url 'completeInfo' %}",
+			data : {'tel': phone, 'email': email},
+			dataType : 'json',
+			success : function(data) {
+				
+			},
+			error : function() {
+				
+			}
+		});
+  	});
     $(document).foundation();
   </script>
 
