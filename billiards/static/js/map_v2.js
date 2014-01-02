@@ -67,7 +67,7 @@ function addMatchToList_v2(match, point) {
 			+ "<div class=\"small-4 medium-4 columns\">"
 			
 			+ "<ul class=\"clearing-thumbs\" data-clearing>"
-			+ " <li><a class=\"th\" href=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/demo1-th.jpg\"><img data-caption=\"caption 3 here\" src=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/demo1-th.jpg\"></a></li>"
+			+ " <li><a class=\"th\" href=\"http://api.map.baidu.com/staticimage?center=116.403874,39.914888&width=600&height=400&zoom=15\"><img data-caption=\"caption 3 here\" src=\"http://api.map.baidu.com/staticimage?center=116.403874,39.914888&width=300&height=200&zoom=11\"></a></li>"
 
 			+ "</ul>"
 			+ "</div>"
