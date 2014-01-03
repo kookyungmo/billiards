@@ -190,8 +190,8 @@
   		phone = $("#phone").val();
   		email = $("#email-label").val();
   		$.ajax({
-			url : "{% url 'completeInfo' %}",
 			data : {'tel': phone, 'email': email},
+  			url : "{% url 'completeInfo' %}",
 			dataType : 'json',
 			success : function(data) {
 				

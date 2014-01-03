@@ -193,7 +193,7 @@ function updateDistance(mypoint) {
 	$("#matchlist").children("#match").each(function() {
 		var pointstr = $(this).find("span[name=title]").attr("point").split(",");
 		var point = new BMap.Point(pointstr[0], pointstr[1]);
-		var distanceobj = $(this).find("#distance");
+		var distanceobj = $(this).find("div[id=distance]");
 		var html = "<h4>距离我: <strong>" + formatDistance(distance(mypoint, point)) + "</strong></h4>";
 		distanceobj.append(html);
 	});
