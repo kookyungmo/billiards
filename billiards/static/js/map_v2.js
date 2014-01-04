@@ -66,9 +66,9 @@ function addMatchToList_v2(match, point) {
 			+ "<div class=\"columns panel clickable\" style=\"overflow:auto;\">"
 			+ "<div class=\"small-4 medium-4 columns\">"
 			
-			+ "<ul class=\"clearing-thumbs\" data-clearing>"
-			+ " <li><a class=\"th\" href=\"http://api.map.baidu.com/staticimage?center=116.403874,39.914888&width=600&height=400&zoom=15\"><img data-caption=\"caption 3 here\" src=\"http://api.map.baidu.com/staticimage?center=116.403874,39.914888&width=300&height=200&zoom=11\"></a></li>"
-
+			+ "<ul class=\"clearing-thumbs clearing-feature\" data-clearing>"
+			+ " <li class=\"clearing-featured-img\"><a class=\"th\" href=\"http://api.map.baidu.com/staticimage?center=$point&width=600&height=400&zoom=18&scale=2&markers=$point&markerStyles=-1,http://billiardsalbum.bcs.duapp.com/2014/01/marker-2.png\"><img data-caption=\"MapShot\" src=\"http://api.map.baidu.com/staticimage?center=$point&width=300&height=200&zoom=16&scale=2&markers=$point&markerStyles=-1,http://billiardsalbum.bcs.duapp.com/2014/01/marker-2.png\"></a></li>"
+			+ "<li><a class=\"th\" href=\"http://placehold.it/200x200\"><img src=\"http://placehold.it/200x200\"></a></li>"
 			+ "</ul>"
 			+ "</div>"
 
@@ -267,7 +267,12 @@ function addPoolroomToList(poolroom, point) {
 			+ "</ul></div>"
 
 			+ "<div class=\"small-12 large-10 columns panel clickable\">"
-			+ "<div class=\"small-4 columns\"><img src=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/demo1-th.jpg\"></div>"
+			+ "<div class=\"small-4 columns\">"
+                        + "<ul class=\"clearing-thumbs clearing-feature\" data-clearing>"
+                        + "<li class=\"clearing-featured-img\"><a class=\"th\" href=\"http://api.map.baidu.com/staticimage?center=$point&width=600&height=400&zoom=18&scale=2&markers=$point&markerStyles=-1,http://billiardsalbum.bcs.duapp.com/2014/01/marker-2.png\"><img data-caption=\"MapShot\" src=\"http://api.map.baidu.com/staticimage?center=$point&width=300&height=200&zoom=16&scale=2&markers=$point&markerStyles=-1,http://billiardsalbum.bcs.duapp.com/2014/01/marker-2.png\"></a></li>"
+                        + "<li><a class=\"th\" href=\"http://placehold.it/200x300\"><img src=\"http://placehold.it/200x300\"></a></li>"
+                        + "</ul>"
+                        + "</div>"
 			+ "<div class=\"small-8 columns\">"
 			+ "<div class=\"row\">"
 			+ "<h5><span name=\"title\" point=\"$point\"><u><a href=\"" + detail_url + "\">$poolroomname</a></u></span></h5>"
