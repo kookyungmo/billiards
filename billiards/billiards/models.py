@@ -57,15 +57,27 @@ class Poolroom(models.Model):
                 'businesshours': self.businesshours, 'size': self.size,
                 'address': self.address, 'flags': toDict(self.flags), 'rating': self.rating}
 
-class TableTypeField(models.CharField):
+class ChoiceTypeField(models.CharField):
+    ''' use value of key when serializing as json
+    '''
+    jsonUseValue = True
+    def __init__(self, *args, **kwargs):
+        if 'jsonUseValue' in kwargs:
+            self.jsonUseValue = kwargs['jsonUseValue']
+            del kwargs['jsonUseValue']
+        super(ChoiceTypeField, self).__init__(*args, **kwargs)
+        
     def value_to_string(self, obj):
         value = self._get_val_from_obj(obj)
         return force_unicode(dict(self.flatchoices).get(value, value), strings_only=True)
+    
+    def json_use_value(self):
+        return self.jsonUseValue
 
 class PoolroomEquipment(models.Model):
     id = models.AutoField(primary_key=True)
     poolroom = models.ForeignKey(Poolroom, verbose_name='台球厅')
-    tabletype = TableTypeField(max_length=10, choices=(
+    tabletype = ChoiceTypeField(max_length=10, choices=(
             ('snooker', u'斯诺克 snooker'),
             ('pocket', u'十六彩(美式落袋)'),
             ('nine-ball', u'花式九球'),
@@ -187,3 +199,56 @@ class MatchEnroll(models.Model):
 
     def __unicode__(self):
         return unicode(self.match) + " - " + (self.user.nickname if self.user.nickname is not None and self.user.nickname != "" else self.user.username)
+
+class Challenge(models.Model):
+    id = models.AutoField(primary_key=True)
+    issuer = models.ForeignKey(Poolroom, verbose_name='发起俱乐部')
+    starttime = models.DateTimeField(verbose_name='开始时间')
+    expiretime = models.DateTimeField(verbose_name='过期时间')
+    level = ChoiceTypeField(max_length=12, choices=(
+            ('amateur', u'初级球友'),
+            ('professional', u'专业高手'),
+            ('master', u'职业球手'),
+            ('companion', u'陪练(70元/小时)')
+        ), verbose_name='发起者水平')
+    tabletype = ChoiceTypeField(max_length=10, choices=(
+            ('snooker', u'斯诺克 snooker'),
+            ('pocket', u'十六彩(美式落袋)'),
+            ('nine-ball', u'花式九球'),
+            ('any', u'不限')
+        ), verbose_name='球台类型')
+    rule = models.CharField(max_length=50, verbose_name="比赛方式")
+    status = ChoiceTypeField(max_length=7, choices=(
+            ('waiting', u'等待匹配'),
+            ('matched', u'已经匹配'),
+            ('expired', u'已经过期'),
+        ), default='waiting', verbose_name='状态', jsonUseValue=False)
+
+    class Meta:
+        db_table = 'challenge'
+        verbose_name = '约赛'
+        verbose_name_plural = '约赛'
+        
+    def __unicode__(self):
+        return u'%s - %s - %s - %s - %s - %s' %(self.issuer.name, self.starttime, self.get_level_display(), self.get_tabletype_display(), self.rule, self.get_status_display())
+   
+class ChallengeApply(models.Model):
+    id = models.AutoField(primary_key=True)
+    challenge = models.ForeignKey(Challenge, verbose_name='约赛')
+    user = models.ForeignKey(User, verbose_name='用户')
+    applytime = models.DateTimeField(verbose_name='应战时间')
+    status = ChoiceTypeField(max_length=10, choices=(
+            ('submitted', u'已提交'),
+            ('accepted', u'审核通过'),
+            ('rejected', u'审核拒绝'),
+        ), default='submitted', verbose_name='状态') 
+    
+    class Meta:
+        db_table = 'challenge_apply'
+        verbose_name = '约赛应战'
+        verbose_name_plural = '约赛应战'
+        
+    def __unicode__(self):
+        return u'%s - %s - %s - %s' %(unicode(self.challenge), (self.user.nickname if self.user.nickname is not None and self.user.nickname != "" else self.user.username),\
+                                       self.applytime, self.get_status_display())
+        

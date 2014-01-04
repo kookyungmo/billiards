@@ -414,3 +414,146 @@ function matchEnroll(objdiv, id) {
 	     }
 	});
 }
+
+function getChallenges(point) {
+	url = CHALLENGE_URL;
+	if (point != null) {
+		url = CHALLENGE_WITH_DISTANCE_URL;
+		url = url.replace(/00\.00/g, point.lat).replace(/11\.11/g, point.lng);
+	}
+	$.ajax({
+		url : url,
+		data : {'f':'json'},
+		dataType : 'json',
+		success : function(data)
+		{
+			if (data.length == 0) {
+				$("#info .subheader").text("真遗憾，暂时没有俱乐部发布的约球信息。");
+			} else {
+				$("#info").remove();
+				addChallenges(data, point);
+			}
+		},
+		error: function (xhr, ajaxOptions, thrownError) {
+			$("#info .subheader").text("无法获取约球信息，请刷新重试。");
+	     }
+	});
+}
+
+function addChallengeToList(challenge, point, mypoint) {
+	var challengeobj = jQuery('<div/>', {
+		class : 'row',
+		id : 'challenge'
+	});
+	url = POOLROOM_URL;
+	detail_url = url.replace(/000/g, challenge.fields.issuer.id);
+	contentTemplate = "<div class=\"small-12 columns\">"
+			+ "<div class=\"row\">"
+			+ "<div class=\"small-4 large-2 columns\">"
+			+ "<ul class=\"pricing-table\">"
+			+ "<li class=\"title\"><font size=+1><strong>距离我：</strong></font></li>"
+			+ "<li class=\"price\">$distance</li>"
+			+ "</ul></div>"
+			+ "<div class=\"small-8 large-10 columns panel\">"
+			+ "<div class=\"row\">"
+			+ "<div class=\"small-5 medium-2 center columns\"><img src=\"http://foundation.zurb.com/docs/v/4.3.2/img/demos/demo1-th.jpg\"></div>"
+			+ "<div class=\"small-7 medium-10 columns\">"
+			+ "<h5><span name=\"title\" point=\"$point\"><u><a href=\"" + detail_url + "\">$poolroomname</a></u></span></h5>"
+			+ "<div class=\"row\">"
+	equipment = "";
+	if (challenge.fields.issuer.flags.wifi)
+		equipment += "<span class=\"ico_wifi\" title=\"公共区域WIFI\"></span>";
+	if (challenge.fields.issuer.flags.wifi_free)
+		equipment += "<span class=\"ico_free_wifi\" title=\"公共区域WIFI\"></span>";
+	if (challenge.fields.issuer.flags.parking || challenge.fields.issuer.flags.parking_free)
+		equipment += "<span class=\"ico_parking\" title=\"停车场\"></span>";
+	if (challenge.fields.issuer.flags.cafeteria)
+		equipment += "<span class=\"ico_restaurant\" title=\"餐饮服务\"></span>";
+	if (challenge.fields.issuer.flags.subway)
+		equipment += "<span class=\"ico_bus\" title=\"地铁周边\"></span>";
+	if (equipment != "") {
+		contentTemplate += "<span class=\"icon_list\">";
+		contentTemplate += "<div class=\"ico_none\">球房设施: </div>";
+		contentTemplate += equipment;
+		contentTemplate += "</span>";
+	}
+	contentTemplate += "</div></div></div>";
+	contentTemplate += "<hr><div class=\"row\">"
+		+ "<div class=\"small-5 medium-2 columns\">" 
+		+ "<ul class=\"pricing-table\"><li class=\"title\">开始时间</li><li class=\"bullet-item\">$starttime</li>"
+		+ "<li class=\"title\">过期时间</li><li class=\"bullet-item\">$endtime</li></ul>"
+		+ "</div>"
+		+ "<div class=\"small-7 medium-10 columns\">"
+		+ "<p>一名<code>$level</code>发起约球</p>"
+		+ "<div class=\"row\">" 
+		+ "<div class=\"small-12 medium-4 columns\">"
+		+ "<p>比赛类型: <code>$tabletype</code></p></div>"
+		+ "<div class=\"small-12 medium-8 columns\"><p>比赛方式: <code>$rule</code></p></div></div>";
+	
+	if (challenge.fields.applied) {
+		contentTemplate += "<a class=\"button radius disabled\">您已经申请, 请等待俱乐部的确认。</a>";
+	} else {
+		if (challenge.fields.status == 'waiting') {
+			if (isAuth()) {
+				contentTemplate += "<a id=\"enroll\" challenge=\"" + challenge.pk + "\" class=\"button radius\">我要应战</a>";
+			} else
+				contentTemplate += "<a href=\"javascript:void(0);\" data-reveal-id=\"quickLogin\" class=\"button radius\">我要应战</a>";
+		} else if (challenge.fields.status == 'matched')
+			contentTemplate += "<a class=\"button radius disabled\">已经匹配</a>";
+		else if (challenge.fields.status == 'expired') {
+			contentTemplate += "<a class=\"button radius disabled\">已经过期</a>";
+		}
+	}
+	contentTemplate += "</div></div></div>";
+
+	contentTemplate = contentTemplate.replace(/\$point/g, point.lng + "," + point.lat)
+			.replace(/\$distance/g, (mypoint == null ? "无法获取你的位置" : formatDistance(distance(mypoint, point))))
+			.replace(/\$poolroomname/g, challenge.fields.issuer.name)
+			.replace(/\$starttime/g, getSmartTime(challenge.fields.starttime))
+			.replace(/\$endtime/g, getSmartTime(challenge.fields.expiretime))
+			.replace(/\$level/g, challenge.fields.level)
+			.replace(/\$tabletype/g, challenge.fields.tabletype)
+			.replace(/\$rule/g, challenge.fields.rule);
+	challengeobj.append(contentTemplate);
+	challengeobj.appendTo('#content');
+	$("#content #enroll").click(function(){
+		applyChallenge($(this).parent(), $(this).attr('challenge'));
+	});
+	return challengeobj;
+}
+
+function getSmartTime(datetime) {
+	if (moment(datetime).format("MM-DD-YYYY") == moment().format("MM-DD-YYYY")) {
+		return getFormattedTime2(datetime);
+	}
+	return getFormattedTimeToDate(datetime);
+}
+
+function addChallenges(challenges, mypoint) {
+	for ( var idx in challenges) {
+		point = new BMap.Point(challenges[idx].fields.issuer.lng,
+				challenges[idx].fields.issuer.lat);
+		addChallengeToList(challenges[idx], point, mypoint);
+	}
+}
+
+function applyChallenge(objdiv, id) {
+	url = CHALLENGE_APPLY_URL;
+	$.ajax({
+		url : url.replace(/000/g, id),
+		dataType : 'json',
+		success : function(data)
+		{
+			objdiv.children("#enroll").text('应战已提交到俱乐部');
+			objdiv.children("#enroll").addClass('disabled');
+			if (data.info_missing) {
+				$('#userInfoForm').foundation('reveal', 'open');
+			}
+		},
+		error: function (xhr, ajaxOptions, thrownError) {
+			if (xhr.status == 403) {
+				$('#quickLogin').foundation('reveal', 'open');
+		    }
+	     }
+	});
+}

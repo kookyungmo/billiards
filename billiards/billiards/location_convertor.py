@@ -30,3 +30,12 @@ def gcj2bd(lat, lng):
     z = math.sqrt(x * x + y * y) + 0.00002 * math.sin(y * x_pi);
     theta = math.atan2(y, x) + 0.000003 * math.cos(x * x_pi);
     return (z * math.sin(theta) + 0.006, z * math.cos(theta) + 0.0065)
+'''
+Calculate the distance between my location and target point
+@param lat0, lng0: my location
+@param lat1, lng1: the target point  
+'''
+def distance(lat0, lng0, lat1, lng1):
+    return 6371 * math.acos( math.cos( math.radians(lat0) ) * math.cos( math.radians( lat1 ) ) * \
+            math.cos( math.radians( lng1 ) - math.radians(lng0) ) + math.sin( math.radians(lat0) )\
+             * math.sin( math.radians( lat1 ) ) )

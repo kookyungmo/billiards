@@ -13,4 +13,5 @@ def completeInfo(request):
         user.cellphone = request.GET.get('tel')
         user.email = request.GET.get('email')
         user.save()
-    return HttpResponse
+    # return empty json data
+    return HttpResponse("{}")

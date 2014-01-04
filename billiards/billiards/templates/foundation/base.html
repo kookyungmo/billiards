@@ -52,6 +52,8 @@
 	        <li {% if request.path == mapurl %} class="active" {% endif %}><a href="{{ mapurl }}">赛事活动</a></li>
 	        {% url 'poolroom_nearby' as nearby %}
 	        <li {% if request.path == nearby %} class="active" {% endif %}><a href="{{ nearby }}">附近球房</a></li>
+	        {% url 'challenge_list' as challenge %}
+	        <li {% if request.path == challenge %} class="active" {% endif %}><a href="{{ challenge }}">约球公告</a></li>
 </ul>
 		
 	
@@ -91,6 +93,7 @@
 	  <ul class="off-canvas-list">
 	    <li><a href="{{ mapurl }}">赛事活动</a></li>
 	    <li><a href="{{ nearby }}">附近球房</a></li>
+	    <li><a href="{{ challenge }}">约球公告</a></li>
 	    {% if user.is_authenticated %}
 	    <li><label>用户中心</label></li>
 	    <li><a href="#"><img src="{{ user.avatar }}" >&nbsp&nbsp{{ user.nickname }}</a></li>
@@ -107,7 +110,7 @@
 	
 	    <!-- Main Feed -->
 		<section role="main">
-		  	<div class="row">
+		  	<div id="mainContent" class="row">
 		  		{% block content %}{% endblock %}
 		  	</div>
 		
@@ -188,7 +191,8 @@
   	$("#doitlater").click(function(){
   		$("#userInfoForm .close-reveal-modal").click();
   	});
-  	$("#userInfoForm button").click(function(){
+  	$("form").submit(function (e) {
+  		e.preventDefault();
   		phone = $("#phone").val();
   		email = $("#email-label").val();
   		$.ajax({
@@ -196,13 +200,17 @@
   			url : "{% url 'completeInfo' %}",
 			dataType : 'json',
 			success : function(data) {
-				
+				$("#userInfoForm .close-reveal-modal").click();
 			},
 			error : function() {
-				
+				//TODO alert error
 			}
 		});
-  	});
+    });
+  	if ($(".off-canvas-wrap").outerHeight() < $(window).height()) {
+  		$("#mainContent").height($(window).height() - $("#footer").outerHeight() 
+  				- $(".top-bar.hide-for-small").outerHeight() - $(".top-bar.show-for-small").outerHeight());
+  	}
     $(document).foundation();
   </script>
 
