@@ -52,4 +52,8 @@ urlpatterns += patterns('billiards.views.challenge',
     url(r'^challenge/(?P<challengeid>\d+)/apply$', 'applyChallenge', name='apply_challenge'),
 )
 
+urlpatterns += patterns('billiards.views.utility',
+    url(r'^unsupportedbrowser$', 'unsupportedbrowser', name='unsupportedbrowser'),
+)
+
 urlpatterns += staticfiles_urlpatterns()

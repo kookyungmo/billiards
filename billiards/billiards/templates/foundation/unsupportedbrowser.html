@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+{% load staticfiles %}
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+<title>我为台球狂</title>
+<meta name="description" content="我为台球狂-不支持的浏览器帮助页面">
+<meta name="keywords" content="">
+
+<!-- Mobile viewport -->
+<meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+<link rel="shortcut icon" href="{% static 'images/favicon.ico' %}"  type="image/x-icon" />
+
+<!-- CSS-->
+<!-- Google web fonts. You can get your own bundle at http://www.google.com/fonts. Don't forget to update the CSS accordingly!-->
+<link href='http://fonts.googleapis.com/css?family=Droid+Serif|Ubuntu' rel='stylesheet' type='text/css'>
+
+<link rel="stylesheet" href="{% static 'css/normalize.css' %}">
+<link rel="stylesheet" href="{% static 'css/basic-style.css' %}">
+
+<!-- end CSS-->
+    
+<!-- JS-->
+<script src="{% static 'js/modernizr-2.6.2.min.js' %}"></script>
+<!-- end JS-->
+</head>
+
+<body id="home">
+<!--[if lt IE 7]>
+            <p class="chromeframe">你正在使用<strong>过时的</strong>浏览器. 请 <a href="http://browsehappy.com/">升级您的浏览器</a> 或者 <a href="http://www.google.com/chromeframe/?redirect=true">激活 Google Chrome Frame</a> 来改善您的用户体验。</p>
+<![endif]-->
+
+<!-- hero area (the grey one with a slider -->
+    <section id="hero" class="clearfix">    
+    <!-- responsive FlexSlider image slideshow -->
+    <div class="wrapper">
+        <div class="grid_12 alpha" style="text-align: center;">
+                <h1 class="archive-title">改善您的用户体验</h1>
+            <p>
+            您正在使用一款我们不支持的浏览器。
+            </p>
+            <p>您可以通过使用下面任一款浏览器在访问"我为台球狂"时获得更好的体验。</p>
+        </div>
+    </div>
+    </section><!-- end hero area -->
+
+<!-- main content area -->   
+<div id="main" class="wrapper">
+    
+<!-- content area -->    
+	<section id="content" class="wide-content" style="text-align: center;">
+    	<div id="chrome" class="grid_3">
+    	  <a href="http://www.google.com/chrome" title="Google Chrome">
+            	<div class="icon"></div>
+				<h2 class="first-header">Google Chrome</h2>
+            	<p>“Google 全新推出的高速浏览器。”</p>
+		  </a>
+        </div>
+    	<div id="firefox" class="grid_3">
+    			<a href="http://www.firefox.com/" title="Mozilla Firefox">
+					<div class="icon"></div>
+					<h2 class="first-header">MOZZILA FIREFOX</h2>
+	            	<p>“Firefox 注重您的信息安全。汇聚各种全新特性，给你更好的上网体验！”</p>
+				</a>
+        </div>
+    	<div id="safari" class="grid_3">
+				<a href="http://www.apple.com/safari/" title="Apple Safari">
+					<div class="icon"></div>
+					<h2 class="first-header">Safari</h2>
+            		<p>“Safari 是苹果公司充满创新设计的产品，可用于 Mac 和 Windows。”</p>
+				</a>    	
+		  </a>
+        </div>
+    	<div id="ie" class="grid_3">
+    			<a href="http://windows.microsoft.com/ie" title="Microsoft Internet Explorer">
+					<div class="icon"></div>
+					<h2 class="first-header">Internet Explorer 11+</h2>
+            		<p>“来自微软公司的免费浏览器。全新特性助您控制个人隐私。”</p>
+				</a>
+        </div>        
+	</section><!-- #end content area -->   
+            
+  </div><!-- #end div #main .wrapper -->
+
+<!-- jQuery -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="% static 'js/jquery-1.9.0.min.js' %}">\x3C/script>')</script>
+
+</body>
+</html>
