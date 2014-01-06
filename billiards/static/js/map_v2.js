@@ -485,7 +485,7 @@ function addChallengeToList(challenge, point, mypoint) {
 		+ "<li class=\"title\">过期时间</li><li class=\"bullet-item\">$endtime</li></ul>"
 		+ "</div>"
 		+ "<div class=\"small-7 medium-10 columns\">"
-		+ "<p>一名<code>$level</code>发起约球</p>"
+		+ "<p>一名<code>$level $nick</code>发起约球</p>"
 		+ "<div class=\"row\">" 
 		+ "<div class=\"small-12 medium-4 columns\">"
 		+ "<p>比赛类型: <code>$tabletype</code></p></div>"
@@ -513,6 +513,7 @@ function addChallengeToList(challenge, point, mypoint) {
 			.replace(/\$starttime/g, getSmartTime(challenge.fields.starttime))
 			.replace(/\$endtime/g, getSmartTime(challenge.fields.expiretime))
 			.replace(/\$level/g, challenge.fields.level)
+			.replace(/\$nick/g, (challenge.fields.issuer_nickname == null ? "" : challenge.fields.issuer_nickname))
 			.replace(/\$tabletype/g, challenge.fields.tabletype)
 			.replace(/\$rule/g, challenge.fields.rule);
 	challengeobj.append(contentTemplate);
@@ -536,6 +537,7 @@ function addChallenges(challenges, mypoint) {
 				challenges[idx].fields.issuer.lat);
 		addChallengeToList(challenges[idx], point, mypoint);
 	}
+	$(document).foundation();
 }
 
 function applyChallenge(objdiv, id) {

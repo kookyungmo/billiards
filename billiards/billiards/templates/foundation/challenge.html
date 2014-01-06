@@ -6,7 +6,7 @@
 <script src="{% static "js/moment-with-langs.min.js" %}"></script>	
 <script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}";</script>
 <script src="{% static "js/map.js" %}?{{buildid}}"></script>
-<script src="{% static "js/map_v2.js" %}"></script>
+<script src="{% static "js/map_v2.js" %}?{{buildid}}"></script>
 {% endblock %}
 {% load extras %}
 {% block content %}

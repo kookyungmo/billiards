@@ -203,6 +203,7 @@ class MatchEnroll(models.Model):
 class Challenge(models.Model):
     id = models.AutoField(primary_key=True)
     issuer = models.ForeignKey(Poolroom, verbose_name='发起俱乐部')
+    issuer_nickname = models.CharField(max_length=20, null=True, blank=True, verbose_name="发起者的昵称")
     starttime = models.DateTimeField(verbose_name='开始时间')
     expiretime = models.DateTimeField(verbose_name='过期时间')
     level = ChoiceTypeField(max_length=12, choices=(
@@ -249,6 +250,7 @@ class ChallengeApply(models.Model):
         verbose_name_plural = '约赛应战'
         
     def __unicode__(self):
-        return u'%s - %s - %s - %s' %(unicode(self.challenge), (self.user.nickname if self.user.nickname is not None and self.user.nickname != "" else self.user.username),\
-                                       self.applytime, self.get_status_display())
+        return u'[%s]%s(%s)已应战 %s' %(self.get_status_display(), \
+                                     (self.user.nickname if self.user.nickname is not None and self.user.nickname != "" else self.user.username),\
+                                     self.applytime, unicode(self.challenge))
         
