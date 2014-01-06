@@ -386,6 +386,7 @@ function loadingPoolroom(distance, mypoint) {
 			} else {
 				$("#info").remove();
 				addPoolroom(data, mypoint);
+				$(document).foundation();
 			}
 		},
 		error: function (xhr, ajaxOptions, thrownError) {
