@@ -57,3 +57,5 @@ urlpatterns += patterns('billiards.views.utility',
 )
 
 urlpatterns += staticfiles_urlpatterns()
+handler404 = 'billiards.views.exceptions.handler404'
+handler500 = 'billiards.views.exceptions.handler500'
