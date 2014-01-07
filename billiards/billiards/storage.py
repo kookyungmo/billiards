@@ -11,6 +11,7 @@ from django.core.exceptions import SuspiciousOperation
 from billiards import settings
 from billiards.settings import BCS_BUCKET
 from billiards.support import pybcs
+import unicodedata
 
 # set bucket
 AK = BCS_BUCKET['AK']
@@ -33,6 +34,17 @@ class BcsStorage(FileSystemStorage):
     @property
     def filetypes(self):
         return []
+    
+    def get_available_name(self, name):
+        return name.encode('utf8')
+    
+    def get_valid_name(self, name):
+        try:
+            name = unicodedata.normalize('NFKD', name).encode('utf8')
+        except Exception:
+            name = "%s.jpg"%type(name)
+        #end
+        return super(BcsStorage, self).get_valid_name(name)
     
     def connect_bucket(self):
         """
@@ -94,6 +106,11 @@ class BcsStorage(FileSystemStorage):
             obj.delete()
         except Exception:
             pass
+        
+    def url(self, name):
+        if self.base_url is None:
+            raise ValueError("This file is not accessible via a URL.")
+        return self.base_url+name
         
 class ImageStorage(BcsStorage):
     """
