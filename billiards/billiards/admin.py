@@ -68,11 +68,14 @@ class ChallengeAdmin(admin.ModelAdmin):
         return self.readonly_fields
     
 class ChallengeApplyAdmin(admin.ModelAdmin):
+    list_display = ('challenge', 'status', 'applytime', 'verbose_username')
     def get_readonly_fields(self, request, obj=None):
         if obj is not None: # modify a object
-            return self.readonly_fields + ('challenge', 'user', 'applytime',)
+            return self.readonly_fields + ('challenge', 'verbose_username', 'user', 'applytime',)
         return self.readonly_fields
     def has_add_permission(self, request):
+        return False
+    def has_delete_permission(self, request, obj=None):
         return False
           
 admin.site.register(Poolroom, PoolroomAdmin)

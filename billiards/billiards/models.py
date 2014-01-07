@@ -237,7 +237,7 @@ class ChallengeApply(models.Model):
     id = models.AutoField(primary_key=True)
     challenge = models.ForeignKey(Challenge, verbose_name='约赛')
     user = models.ForeignKey(User, verbose_name='用户')
-    applytime = models.DateTimeField(verbose_name='应战时间')
+    applytime = models.DateTimeField(verbose_name='申请应战时间')
     status = ChoiceTypeField(max_length=10, choices=(
             ('submitted', u'已提交'),
             ('accepted', u'审核通过'),
@@ -253,4 +253,8 @@ class ChallengeApply(models.Model):
         return u'[%s]%s(%s)已应战 %s' %(self.get_status_display(), \
                                      (self.user.nickname if self.user.nickname is not None and self.user.nickname != "" else self.user.username),\
                                      self.applytime, unicode(self.challenge))
+    def verbose_username(self):
+        return "%s <br/>Email: %s<br/>Tel: %s" % ((self.user.nickname if self.user.nickname is not None and self.user.nickname != "" else self.user.username), self.user.email, self.user.cellphone)
+    verbose_username.short_description = u'用户详细信息'
+    verbose_username.allow_tags = True
         
