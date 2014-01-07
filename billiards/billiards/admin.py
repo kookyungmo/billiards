@@ -6,7 +6,7 @@ Created on 2013年10月21日
 @author: kane
 '''
 from billiards.models import Poolroom, Match, PoolroomEquipment, User,\
-    MatchEnroll, Challenge, ChallengeApply
+    MatchEnroll, Challenge, ChallengeApply, Images
 from django.contrib import admin
 from bitfield import BitField
 from bitfield.forms import BitFieldCheckboxSelectMultiple
@@ -75,6 +75,7 @@ class ChallengeApplyAdmin(admin.ModelAdmin):
         return self.readonly_fields
     def has_add_permission(self, request):
         return False
+
     def has_delete_permission(self, request, obj=None):
         return False
           
@@ -86,3 +87,4 @@ admin.site.register(User, CustomUserAdmin)
 admin.site.register(MatchEnroll)
 admin.site.register(Challenge, ChallengeAdmin)
 admin.site.register(ChallengeApply, ChallengeApplyAdmin)
+admin.site.register(Images)
