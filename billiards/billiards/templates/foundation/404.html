@@ -1,8 +1,12 @@
 {% extends "foundation/base.html" %}
-
-
 {% block content %}
-<h1 style="text-align:center">很抱歉，您访问的页面不存才</h1>
-<div style="height:80%; width:80%; background-image:url('http://billiardsalbum.bcs.duapp.com/2014/01/404.jpg');center;center;margin:0 auto;"></div>
+
+<div style="height:100%; width:80%;background-image:url(../../../static/images/404.jpg);background-repeat: no-repeat;center;center;center;margin:0 auto;">
+<h1 style="text-align:center;color: white">您似乎走进了一家生意冷清的球房……</h1>
+<br><br><br>
+<h2 style="text-align:center;color: white">想参加<a style="color:red" href="{{mapurl}}">京城火热的俱乐部赛事？</a>&nbsp &nbsp还是想寻找<a style="color:red" href="{{nearby}}">京城人气球房？</a>&nbsp &nbsp 或者<a style="color:red" href="{{challenge}}">约美女打球？</a></h2>
+<br>
+<h2 style="text-align:center;color: white"><a style="color:red" href="{{home}}">返回首页</a></h2>
+</div>
 
 {% endblock %}

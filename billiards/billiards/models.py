@@ -11,6 +11,8 @@ from django.utils.timezone import localtime
 from bitfield import BitField
 from django.utils.encoding import force_unicode
 from django.contrib.auth.models import User
+from billiards.storage import ImageStorage
+from billiards.settings import UPLOAD_TO
 
 def toDict(bitfield):
     flag_dict = {}
@@ -258,3 +260,25 @@ class ChallengeApply(models.Model):
     verbose_username.short_description = u'用户详细信息'
     verbose_username.allow_tags = True
         
+        
+UPLOAD_TO = UPLOAD_TO + 'poolroom/'
+class Images(models.Model):
+    user = models.ForeignKey(User, verbose_name=u"当前用户", related_name="userimages")
+    picture = models.ImageField(verbose_name=u'图片', max_length=250,
+                                     upload_to=UPLOAD_TO,
+                                     storage=ImageStorage(),
+                                     null=True, blank=True)
+
+    def __unicode__(self):
+        return u"%s" % self.user
+
+    class Meta:
+        verbose_name = u'图片文件夹'
+        verbose_name_plural = verbose_name   
+
+    def delete(self, using=None):
+        try:
+            self.picture.storage.delete(self.picture.name)
+        except Exception:
+            pass
+        super(Images, self).delete(using=using)
