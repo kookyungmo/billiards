@@ -39,10 +39,10 @@ urlpatterns += patterns('',
 )
 
 urlpatterns += patterns('billiards.views.us',
-    url(r'^about','about', name='about'),
-    url(r'^join','join', name='join'),
-    url(r'^contact','contact',name='contact'),
-    url(r'^partner','partner',name='partner'),
+    url(r'^about$','about', name='about'),
+    url(r'^join$','join', name='join'),
+    url(r'^contact$','contact',name='contact'),
+    url(r'^partner$','partner',name='partner'),
     url(r'^$', 'home', name='home'),
 )
 
