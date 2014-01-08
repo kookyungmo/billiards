@@ -7,4 +7,4 @@ def handler404(request):
     return render_to_response(TEMPLATE_ROOT + '404.html', context_instance=RequestContext(request))
 
 def handler500(request):
-    return render_to_response(TEMPLATE_ROOT + '404.html', context_instance=RequestContext(request))
+    return render_to_response(TEMPLATE_ROOT + '500.html', context_instance=RequestContext(request))
