@@ -1,0 +1,29 @@
+{% extends "foundation/base.html" %} 
+{% block header %} 
+{% load staticfiles %}
+<script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}";</script>
+{% endblock %} 
+{% load extras %} 
+{% load url from future %} 
+{% block content %}
+<div class="large-3 medium-4 columns">
+	<div class="hide-for-small">
+		<div class="sidebar">
+			<nav>
+				<ul class="side-nav">
+					<li class="heading">{{poolroomuser.poolroom.name}}的会员服务</li>
+					{% url 'club_match' as matchurl %}
+					{% url 'club_challenge' as challengeurl %}
+					<li {% if request.path == matchurl %} class="active" {% endif %}><a href="{{ matchurl }}" data-search="match">比赛</a></li>
+					<li {% if request.path == challengeurl %} class="active" {% endif %}><a href="{{ challengeurl }}" data-search="challenge">约赛</a></li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<div class="large-9 medium-8 columns">
+{% block rightcontent %}{% endblock %}
+</div>
+{% endblock %} 
+{% block script %}
+{% endblock %}

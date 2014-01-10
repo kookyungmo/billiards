@@ -68,7 +68,11 @@
 	        {% with weibo|add:'?returnurl='|add:request.get_full_path as weibourl %}
 	        {% url 'user_logout' as user_logout %}
 	        {% if user.is_authenticated %}
-	        <li><a href="#"><img src="{{ user.avatar }}" width="30">&nbsp&nbsp{{ user.nickname }}</a></li>
+		        {% if poolroomuser %}
+		        <li><a href="{% url 'club_index' %}">欢迎你,{{ poolroomuser.poolroom.name }}</a></li>
+		        {% else %}
+		        <li><a href="#"><img src="{{ user.avatar }}" width="30">&nbsp&nbsp{{ user.nickname }}</a></li>
+		        {% endif %}
 	        <li class="divider"></li>
 	        <li><a href="{{ user_logout }}">登出</a></li>
 	        {% else %}
@@ -97,8 +101,14 @@
 	    <li><a href="{{ nearby }}">附近球房</a></li>
 	    <li><a href="{{ challenge }}">约球公告</a></li>
 	    {% if user.is_authenticated %}
+	    {% if poolroomuser %}
+	    <li><label>俱乐部会员服务</label></li>
+		<li><a href="{% url 'club_match' %}">比赛</a></li>
+		<li><a href="{% url 'club_challenge' %}">约赛</a></li>
+		{% else %}
 	    <li><label>用户中心</label></li>
 	    <li><a href="#"><img src="{{ user.avatar }}" >&nbsp&nbsp{{ user.nickname }}</a></li>
+	    {% endif %}
 	    <li><a href="{{ user_logout }}">登出</a></li>
 	    {% else %}
 	    <li><label>用户登录</label></li>
@@ -151,7 +161,7 @@
 </div>
 <div id="userInfoForm" class="reveal-modal small" data-reveal>
   <h3>请完善你的个人资料，方便我们更好的为你提供服务。</h3>
-  <form data-abide>
+  <form id="completeInfoForm" data-abide>
 	  <div class="row">
 	    <div class="small-8">
 	      <div class="row">
@@ -191,10 +201,33 @@
 
   {% block foundationscript %}{% endblock %}
   <script>
+  $.ajaxSetup({ 
+	     beforeSend: function(xhr, settings) {
+	         function getCookie(name) {
+	             var cookieValue = null;
+	             if (document.cookie && document.cookie != '') {
+	                 var cookies = document.cookie.split(';');
+	                 for (var i = 0; i < cookies.length; i++) {
+	                     var cookie = jQuery.trim(cookies[i]);
+	                     // Does this cookie string begin with the name we want?
+	                 if (cookie.substring(0, name.length + 1) == (name + '=')) {
+	                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+	                     break;
+	                 }
+	             }
+	         }
+	         return cookieValue;
+	         }
+	         if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+	             // Only send the token to relative URLs i.e. locally.
+	             xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+	         }
+	     } 
+	});
   	$("#doitlater").click(function(){
   		$("#userInfoForm .close-reveal-modal").click();
   	});
-  	$("form").submit(function (e) {
+  	$("#completeInfoForm").submit(function (e) {
   		e.preventDefault();
   		phone = $("#phone").val();
   		email = $("#email-label").val();

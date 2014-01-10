@@ -1,0 +1,37 @@
+{% extends "foundation/club/base.html" %} 
+{% block header %} 
+{% load staticfiles %}
+<script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}";</script>
+<script src="{% static "js/moment-with-langs.min.js" %}"></script>
+<script src="{% static "js/map.js" %}?{{buildid}}"></script>
+<script src="{% static "js/map_v2.js" %}"></script>
+{% endblock %} 
+{% load extras %} 
+{% load url from future %} 
+{% block rightcontent %}
+<h1>{{poolroomuser.poolroom.name}}开始于<code><script>document.write(getSmartTime('{{ match.starttime|date:'c' }}'));</script> {{ match.title }}</code>的报名详情，总计<code>{{ enrolments|length }}</code>人报名</h1>
+{% if enrolments|length > 0 %}
+<hr>
+<table>
+  <thead>
+    <tr>
+      <th width="200">报名时间</th>
+      <th width="300">用户名</th>
+      <th width="150">联系电话</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for enrolment in enrolments %}
+    <tr>
+      <td><script>document.write(getSmartTime('{{ enrolment.enrolltime|date:'c' }}'));</script></td>
+      <td>{{ enrolment.user.nickname }}</td>
+      <td>{{ enrolment.user.cellphone }}</td>
+    </tr>
+   {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<pre><code class="language-html"><h2>还没有用户报名。</h2>
+</code></pre>
+{% endif %}
+{% endblock %}
