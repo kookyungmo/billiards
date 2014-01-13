@@ -9,28 +9,40 @@
   <li><a href="{% url about %}"><font size=+1>关于我们</font></a></li>
   <li><a href="{% url join %}"><font size=+1>加入我们</font></a></li>
   <li><a href="{% url contact %}"><font size=+1>联系我们</font></a></li>
-  <li><a href="{% url partner %}"><font size=+1>商业合作</font></a></li>
+  <li><a href="{% url partner %}"><font size=+1>关注俱乐部</font></a></li>
 </ul>
 </div>
 <div id="about" class="small-8 medium-9 columns">
-	<br>
-	<h3>加入我们</h3>
-	<br>
-	<br>
-	<p>加入我们，您可以免费了解俱乐部球房的比赛信息和日程安排。</p>
-	<p>加入我们，您可以方便快捷的定位俱乐部球房的位置信息。</p>
-	<p>加入我们，您可以通过移动设备随时随地发现身边最受欢迎的俱乐部球房。</p>
-	<p>加入我们，您可以和传说中的民间台球高手轻松对决。</p>
-	<p>加入我们，您可以和朋友们一起享受台球的魅力，分享比赛的乐趣。</p>
-	<br>
-	<p>联系邮箱：<a>join@pktaiqiu.com</a></p>
-</div>
-      <!-- End Feed Entry -->
-
-    </div>
-
-        <!-- Right Sidebar -->
-    <!-- On small devices this column is hidden -->
-
+        <br>
+        <h2>加入我们，成为我们的……</h2>
+        <br>
+<dl class="tabs" data-tab>
+  <dd class="active"><a href="#panel2-1"><h3>小伙伴</h3></a></dd>
+  <dd><a href="#panel2-2"><h3>关注俱乐部</h3></a></dd>
+</dl>
+<div class="tabs-content">
+  <div class="content active" id="panel2-1">
+        <p>您可以免费了解到京城俱乐部球房的比赛信息和日程安排。</p>
+        <p>您可以方便快捷的定位俱乐部球房的位置信息。</p>
+        <p>您可以通过移动设备随时随地发现身边最受欢迎的俱乐部球房。</p>
+        <p>您可以和传说中的民间台球高手轻松对决。</p>
+        <p>您可以和朋友们一起享受台球的魅力，分享比赛的乐趣。</p>
+        <br>
+        <p>我们愿意与您一起分享快乐：<a>feedback@pktaiqiu.com</a></p>
   </div>
+  <div class="content" id="panel2-2">
+    <p>可以让更多的台球爱好者们了解您所在俱乐部的赛事活动信息。</p>
+    <p>可以向更多的台球爱好者们展示您所在俱乐部的地理位置，球房环境，打球氛围。</p>
+    <p>可以让更多的台球“独行侠”们不再孤单练球。</p>
+    <p>可以……</p>
+    <p>更多可以，等待您的挖掘和反馈……</p>
+    <p>请告诉我们您的需求：<a>feedback@pktaiqiu.com</a></p>
+  </div>
+</div>
+
+</div>
+</div>
+{% endblock %}
+{% block foundationscript %}
+    <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.tab.js"></script>
 {% endblock %}

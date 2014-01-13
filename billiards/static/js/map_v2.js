@@ -129,7 +129,7 @@ function addMatchToList_v2(match, point) {
 		else
 			contentTemplate += "<a href=\"javascript:void(0);\" id=\"enroll\" match='" + match.pk + "' class=\"button expand\">我要报名比赛</a>";
 	else
-		contentTemplate	+= "<a href=\"javascript:void(0);\" data-reveal-id=\"quickLogin\" class=\"button expand\">我要报名比赛</a>";
+		contentTemplate	+= "<a href=\"javascript:loginFirst();\" class=\"button expand\">我要报名比赛</a>";
 	contentTemplate += "</div>"
 			+ "</div>";
 
@@ -502,7 +502,7 @@ function addChallengeToList(challenge, point, mypoint) {
 			if (isAuth()) {
 				contentTemplate += "<a id=\"enroll\" challenge=\"" + challenge.pk + "\" class=\"button radius\">我要应战</a>";
 			} else
-				contentTemplate += "<a href=\"javascript:void(0);\" data-reveal-id=\"quickLogin\" class=\"button radius\">我要应战</a>";
+				contentTemplate += "<a href=\"javascript:loginFirst();\" class=\"button radius\">我要应战</a>";
 		} else if (challenge.fields.status == 'matched')
 			contentTemplate += "<a class=\"button radius disabled\">已经匹配</a>";
 		else if (challenge.fields.status == 'expired') {
@@ -544,6 +544,10 @@ function addChallenges(challenges, mypoint) {
 	$(document).foundation();
 }
 
+function loginFirst() {
+	$('#quickLogin').foundation('reveal', 'open');
+}
+
 function applyChallenge(objdiv, id) {
 	url = CHALLENGE_APPLY_URL;
 	$.ajax({
@@ -559,7 +563,7 @@ function applyChallenge(objdiv, id) {
 		},
 		error: function (xhr, ajaxOptions, thrownError) {
 			if (xhr.status == 403) {
-				$('#quickLogin').foundation('reveal', 'open');
+				loginFirst();
 		    }
 	     }
 	});
