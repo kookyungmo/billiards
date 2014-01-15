@@ -23,7 +23,8 @@ except:
     import simplejson as json
 
 try:
-    from bae.api import logging as logger
+#    from bae.api import logging as logger
+    raise
 except:
     import logging
     logger = logging.getLogger('pyhttpclient')

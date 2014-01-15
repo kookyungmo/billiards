@@ -5,6 +5,7 @@ encoding//billiards/models.py=utf-8
 encoding//billiards/settings.py=utf-8
 encoding//billiards/storage.py=utf-8
 encoding//billiards/support/helper.py=utf-8
+encoding//billiards/support/pybcs/httpc.py=utf8
 encoding//billiards/support/pybcs/object.py=utf8
 encoding//billiards/support/socialoauth/__init__.py=utf-8
 encoding//billiards/support/socialoauth/exception.py=utf-8

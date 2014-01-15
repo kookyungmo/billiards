@@ -1,5 +1,6 @@
 try:
-    from bae.api import logging
+#    from bae.api import logging
+    raise
 except:
     import logging
     from httpc import logger
