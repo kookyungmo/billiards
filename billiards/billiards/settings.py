@@ -24,7 +24,6 @@ try:
         'PORT': const.MYSQL_PORT,
         }
     }
-    HOST_NAME = 'http://www.pktaiqiu.com'
 except ImportError:
     # here config your local mysql
     DATABASES = {
