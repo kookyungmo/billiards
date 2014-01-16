@@ -1,0 +1,81 @@
+{% extends "foundation/club/base.html" %} 
+{% block header %} 
+{% load staticfiles %}
+<script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}";</script>
+<script src="{% static "js/moment-with-langs.min.js" %}"></script>
+<script src="{% static "js/map.js" %}?{{buildid}}"></script>
+<script src="{% static "js/map_v2.js" %}?{{buildid}}"></script>
+{% endblock %} 
+{% load extras %} 
+{% load url from future %} 
+{% block rightcontent %}
+<h1>由<code>{{ ch.issuer_nickname }}</code>在{{poolroomuser.poolroom.name}}发起于<code><script>document.write(getSmartTime('{{ ch.starttime|date:'c' }}'));</script></code>开始的约赛应战详情，总计<code>{{ applications|length }}</code>人报名</h1>
+{% if applications|length > 0 %}
+<hr>
+<table>
+  <thead>
+    <tr>
+      <th width="200">应战时间</th>
+      <th width="150">用户名</th>
+      <th width="150">联系电话</th>
+      <th width="200">状态</th>
+      <th width="150">操作</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for application in applications %}
+    <tr app="{{ application.id }}">
+      <td><script>document.write(getSmartTime('{{ application.applytime|date:'c' }}'));</script></td>
+      <td>{{ application.user.nickname }}</td>
+      <td>{{ application.user.cellphone }}</td>
+      <td id="status">{{ application.status_display }}</td>
+      <td>{% if application.status == 'submitted' %}
+      <ul class="button-group radius">
+		  <li><a href="javascript:rejectApp({{application.id}});" class="tiny button alert">拒绝</a></li>
+		  <li><a href="javascript:acceptApp({{application.id}});" class="tiny button success">确认</a></li>
+	  </ul>
+       {% endif %}</td>
+    </tr>
+   {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<pre><code class="language-html"><h2>还没有用户应战。</h2>
+</code></pre>
+{% endif %}
+{% endblock %}
+{% block script %}
+<script>
+function acceptApp(id) {
+	url = "{% url 'club_challengeapp_accept' '000' %}";
+	$.ajax({
+		url : url.replace(/000/g, id),
+		type: 'POST',
+		dataType : 'json',
+		success : function(data) {
+			$("tr[app=" + id + "] ul").remove();
+			$("tr[app=" + id + "] #status").text("申请已经被接受");
+		},
+		error : function(jqXHR, textStatus, errorThrown) {
+			console.log(textStatus, errorThrown);
+		}
+	});	
+}
+
+function rejectApp(id) {
+	url = "{% url 'club_challengeapp_reject' '000' %}";
+	$.ajax({
+		url : url.replace(/000/g, id),
+		type: 'POST',
+		dataType : 'json',
+		success : function(data) {
+			$("tr[app=" + id + "] ul").remove();
+			$("tr[app=" + id + "] #status").text("申请已被拒绝");
+		},
+		error : function(jqXHR, textStatus, errorThrown) {
+			console.log(textStatus, errorThrown);
+		}
+	});	
+}
+</script>
+{% endblock %}

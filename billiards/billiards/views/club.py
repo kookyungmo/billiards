@@ -6,7 +6,8 @@ Created on 2014年1月10日
 @author: kane
 '''
 from django.http import HttpResponse
-from billiards.models import PoolroomUser, Match, MatchEnroll
+from billiards.models import PoolroomUser, Match, MatchEnroll, Challenge,\
+    ChallengeApply
 from django.template.context import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from billiards.settings import TEMPLATE_ROOT, TIME_ZONE
@@ -15,6 +16,13 @@ import json
 import datetime
 from django.utils.timezone import pytz
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
+
+def index(request):
+    poolroomusers = getPoolroom(request.user)
+    return render_to_response(TEMPLATE_ROOT + 'club/index.html', 
+                              combinePageVariables({}, poolroomusers),
+                              context_instance=RequestContext(request))
 
 def getPoolroom(user):
     if not user.is_authenticated():
@@ -82,7 +90,7 @@ def match_add(request):
         try:
             return saveMatch(request, list(poolroomusers)[0].poolroom.id)
         except Exception:     
-            return HttpResponse(json.dumps({'rt': 0, 'msg': u'Invalid Arguments.'}, content_type="application/json"))
+            return HttpResponse(json.dumps({'rt': 0, 'msg': u'Invalid Arguments.'}), content_type="application/json")
     return render_to_response(TEMPLATE_ROOT + 'club/match_edit.html', 
                                   combinePageVariables({}, poolroomusers),
                                   context_instance=RequestContext(request))
@@ -101,7 +109,7 @@ def match_edit(request, matchid):
         try:
             return saveMatch(request, list(poolroomusers)[0].poolroom.id, match)
         except Exception:     
-            return HttpResponse(json.dumps({'rt': 0, 'msg': u'Invalid Arguments.'}, content_type="application/json"))
+            return HttpResponse(json.dumps({'rt': 0, 'msg': u'Invalid Arguments.'}), content_type="application/json")
     return render_to_response(TEMPLATE_ROOT + 'club/match_edit.html', 
                                   combinePageVariables({'match': match}, poolroomusers),
                                   context_instance=RequestContext(request))
@@ -114,4 +122,108 @@ def match_enroll(request, matchid):
                                   context_instance=RequestContext(request))
 
 def challenge(request):
-    pass
+    poolroomusers = getPoolroom(request.user)
+    poolrooms = []
+    for pu in poolroomusers:
+        poolrooms.append(pu.poolroom)
+    publishedChallenges = Challenge.objects.filter(issuer__in=poolrooms).order_by('-starttime', 'status')
+    return render_to_response(TEMPLATE_ROOT + 'club/challenge.html', 
+                              combinePageVariables({'challenges': publishedChallenges}, poolroomusers),
+                              context_instance=RequestContext(request))
+
+class ChallengeForm(ModelForm):
+    class Meta:
+        model = Challenge
+        
+def saveChallenge(request, poolroomid, challenge = None):
+    starttime = datetime.datetime.fromtimestamp(float(request.POST['starttime'])/1000, pytz.timezone(TIME_ZONE))
+    expiredtime = datetime.datetime.fromtimestamp(float(request.POST['expiredtime'])/1000, pytz.timezone(TIME_ZONE))
+    data = {       
+           'issuer_nickname': request.POST['nickname'],
+           'level': request.POST['level'],
+           'tabletype': request.POST['tabletype'],
+           'rule': request.POST['rule'],
+           'starttime': starttime,
+           'expiretime': expiredtime,
+           }
+    if challenge is None:
+        data['issuer'] = poolroomid
+        data['status'] = 'waiting'
+        newchallenge = ChallengeForm(data)
+    else:
+        data['status'] = request.POST['status']
+        data['issuer'] = challenge.issuer.id
+        newchallenge = ChallengeForm(data=data, instance=challenge)
+    if newchallenge.is_valid():
+        newchallenge.save()
+        return HttpResponse(json.dumps({'rt': 1, 'msg': 'created'}), content_type="application/json")
+    return HttpResponse(json.dumps(dict({'rt': 0}.items() + newchallenge.errors.items())), content_type="application/json")
+
+def challenge_add(request):
+    poolroomusers = getPoolroom(request.user)
+    if request.method == 'POST':
+        try:
+            return saveChallenge(request, list(poolroomusers)[0].poolroom.id)
+        except Exception:
+            return HttpResponse(json.dumps({'rt': 0, 'msg': u'Invalid Arguments.'}), content_type="application/json")
+    return render_to_response(TEMPLATE_ROOT + 'club/challenge_edit.html', 
+                                  combinePageVariables({}, poolroomusers),
+                                  context_instance=RequestContext(request))
+
+def checkPoolroomUserByChallenge(user, challengeid):
+    poolroomusers = getPoolroom(user)
+    challenge = get_object_or_404(Challenge, pk=challengeid)
+    for pu in poolroomusers:
+        if pu.poolroom.id == challenge.issuer.id:
+            return poolroomusers, challenge
+    raise PermissionDenied
+
+def challenge_edit(request, challengeid):
+    poolroomusers, challenge = checkPoolroomUserByChallenge(request.user, challengeid)
+    if request.method == 'POST':
+        try:
+            return saveChallenge(request, list(poolroomusers)[0].poolroom.id, challenge)
+        except Exception:     
+            return HttpResponse(json.dumps({'rt': 0, 'msg': u'Invalid Arguments.'}), content_type="application/json")
+    return render_to_response(TEMPLATE_ROOT + 'club/challenge_edit.html', 
+                                  combinePageVariables({'ch': challenge}, poolroomusers),
+                                  context_instance=RequestContext(request))
+
+def challenge_enroll(request, challengeid):
+    poolroomusers, challenge = checkPoolroomUserByChallenge(request.user, challengeid)
+    applications = ChallengeApply.objects.filter(challenge=challenge).order_by('-applytime')
+    return render_to_response(TEMPLATE_ROOT + 'club/challenge_applications.html', 
+                                  combinePageVariables({'ch': challenge, 'applications': applications}, poolroomusers),
+                                  context_instance=RequestContext(request))
+
+def checkPoolroomUserByChallengeApp(user, appid):
+    poolroomusers = getPoolroom(user)
+    application = get_object_or_404(ChallengeApply, pk=appid)
+    for pu in poolroomusers:
+        if pu.poolroom.id == application.challenge.issuer.id:
+            return poolroomusers, application.challenge, application
+    raise PermissionDenied
+
+def challengeapp_accept(request, appid):
+    poolroomusers, challenge, app = checkPoolroomUserByChallengeApp(request.user, appid)
+    if app.status != 'accepted':
+        app.status = 'accepted'
+        app.save()
+        rt = {'rt': 1, 'msg': 'app is accepted'}
+    else:
+        rt = {'rt': 2, 'msg': 'app has been accepted'}
+    return HttpResponse(json.dumps(rt), content_type="application/json")
+
+@transaction.commit_on_success
+def challengeapp_reject(request, appid):
+    poolroomusers, challenge, app = checkPoolroomUserByChallengeApp(request.user, appid)
+    if app.status != 'rejected':
+        app.status = 'rejected'
+        app.save()
+        if not challenge.is_expired:
+            challenge.status = 'waiting'
+            challenge.save()
+        rt = {'rt': 1, 'msg': 'app is rejected'}
+    else:
+        rt = {'rt': 2, 'msg': 'app has been rejected'}
+    return HttpResponse(json.dumps(rt), content_type="application/json")

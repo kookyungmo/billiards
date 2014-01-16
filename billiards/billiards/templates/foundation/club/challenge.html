@@ -1,0 +1,49 @@
+{% extends "foundation/club/base.html" %} 
+{% block header %} 
+{% load staticfiles %}
+<script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}";</script>
+<script src="{% static "js/moment-with-langs.min.js" %}"></script>
+<script src="{% static "js/map.js" %}?{{buildid}}"></script>
+<script src="{% static "js/map_v2.js" %}?{{buildid}}"></script>
+{% endblock %} 
+{% load extras %} 
+{% load url from future %} 
+{% block rightcontent %}
+<h1>"{{poolroomuser.poolroom.name}}"发布的约赛</h1>
+<hr>
+<a href="{% url 'club_challenge_add' %}" class="button radius">发布新约赛</a>
+{% if challenges|length > 0 %}
+<hr>
+<table>
+  <thead>
+    <tr>
+      <th width="200">约赛开始时间</th>
+      <th width="300">约赛选手昵称</th>
+      <th width="150">应战人数</th>
+      <th width="150">状态</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for challenge in challenges %}
+    <tr>
+      <td><script>document.write(getSmartTime('{{ challenge.starttime|date:'c' }}'));</script></td>
+      <td><a href="{% url 'club_challenge_edit' challenge.id %}">{{ challenge.issuer_nickname }}</a></td>
+      <td><a href="{% url 'club_challenge_enroll' challenge.id %}">{{ challenge.enroll_count }}人</a></td>
+      <td>
+      {% if challenge.is_expired or challenge.status == 'expired' %}
+      已过期
+      {% elif challenge.status == 'waiting' %}
+      开放应战中
+      {% elif challenge.status == 'matched' %}
+      已匹配对手
+      {% endif %}
+      </td>
+    </tr>
+   {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<pre><code class="language-html"><h2>你还没有发布过约赛。</h2>
+</code></pre>
+{% endif %}
+{% endblock %}

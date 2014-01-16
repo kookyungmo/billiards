@@ -14,6 +14,8 @@ from django.contrib.auth.models import User
 from billiards.storage import ImageStorage
 from billiards.settings import UPLOAD_TO, TIME_ZONE
 import datetime
+from django.core.serializers.json import Serializer as JsonSerializer 
+from django.utils.encoding import is_protected_type 
 
 def toDict(bitfield):
     flag_dict = {}
@@ -103,7 +105,31 @@ class PoolroomEquipment(models.Model):
                 'producer': self.producer, 'quantity': self.quantity, 'cue': self.cue,
                 'price': self.price}
 
-match_fields = ('id', 'poolroom', 'title', 'bonus', 'rechargeablecard', 'otherprize', 'bonusdetail', 'rule', 'starttime', 'description')
+class DisplayNameJsonSerializer(JsonSerializer): 
+
+    def handle_field(self, obj, field): 
+        value = field._get_val_from_obj(obj) 
+
+        #If the object has a get_field_display() method, use it. 
+        display_method = "get_%s_display" % field.name 
+        if  hasattr(field, 'json_use_value') and getattr(field, 'json_use_value')() == False:
+            self._current[field.name] = value
+        elif hasattr(obj, display_method): 
+            self._current[field.name] = getattr(obj, display_method)() 
+        # Protected types (i.e., primitives like None, numbers, dates, 
+        # and Decimals) are passed through as is. All other values are 
+        # converted to string first. 
+        elif is_protected_type(value): 
+            self._current[field.name] = value 
+        else: 
+            self._current[field.name] = field.value_to_string(obj) 
+            
+def is_expired(atime):
+    if datetime.datetime.utcnow().replace(tzinfo=pytz.timezone(TIME_ZONE)) - atime.replace(tzinfo=pytz.timezone(TIME_ZONE)) > datetime.timedelta(seconds = 5):
+        return True
+    return False
+
+match_fields = ('id', 'poolroom', 'title', 'bonus', 'rechargeablecard', 'otherprize', 'bonusdetail', 'rule', 'starttime', 'description', 'status')
 class Match(models.Model):
     id = models.AutoField(primary_key=True)
     poolroom = models.ForeignKey(Poolroom, verbose_name='比赛组织者')
@@ -141,16 +167,15 @@ class Match(models.Model):
                 'otherprize': self.otherprize,
                 'bonusdetail': self.bonusdetail, 'rule': self.rule,
                 'starttime': self.starttime, 'enrollfee': self.enrollfee,
-                'enrollfocal': self.enrollfocal, 'flags': toDict(self.flags)}
+                'enrollfocal': self.enrollfocal, 'flags': toDict(self.flags),
+                'status': self.status}
 
     def save(self):
         super(Match, self).save()
         
     @property
     def is_expired(self):
-        if datetime.datetime.now().replace(tzinfo=pytz.timezone(TIME_ZONE)) - self.starttime > datetime.timedelta(seconds = 5):
-            return True
-        return False
+        return is_expired(self.starttime)
 
     @property
     def enroll_count(self):
@@ -244,10 +269,23 @@ class Challenge(models.Model):
             ('expired', u'已经过期'),
         ), default='waiting', verbose_name='状态', jsonUseValue=False)
 
+    @property
+    def is_expired(self):
+        return is_expired(self.expiretime)
+
+    @property
+    def enroll_count(self):
+        return ChallengeApply.objects.filter(challenge=self).count()
+    
+    @property
+    def is_readonly(self):
+        rt = self.is_expired or self.status != 'waiting' or self.enroll_count > 0
+        return rt
+    
     class Meta:
         db_table = 'challenge'
         verbose_name = '约赛'
-        verbose_name_plural = '约赛'
+        verbose_name_plural = '约赛'        
         
     def __unicode__(self):
         return u'%s - %s - %s - %s - %s - %s' %(self.issuer.name, self.starttime, self.get_level_display(), self.get_tabletype_display(), self.rule, self.get_status_display())
@@ -258,7 +296,7 @@ class ChallengeApply(models.Model):
     user = models.ForeignKey(User, verbose_name='用户')
     applytime = models.DateTimeField(verbose_name='申请应战时间')
     status = ChoiceTypeField(max_length=10, choices=(
-            ('submitted', u'已提交'),
+            ('submitted', u'已提交，等待俱乐部确认'),
             ('accepted', u'审核通过'),
             ('rejected', u'审核拒绝'),
         ), default='submitted', verbose_name='状态') 
@@ -273,6 +311,11 @@ class ChallengeApply(models.Model):
                                      (self.user.nickname if self.user.nickname is not None and self.user.nickname != "" else self.user.username),\
                                      self.applytime, unicode(self.challenge))
 
+    @property
+    def status_display(self):
+        return self.get_status_display()
+    
+    
     def verbose_username(self):
         return "%s <br/>Email: %s<br/>Tel: %s" % ((self.user.nickname if self.user.nickname is not None and self.user.nickname != "" else self.user.username), self.user.email, self.user.cellphone)
     verbose_username.short_description = u'用户详细信息'

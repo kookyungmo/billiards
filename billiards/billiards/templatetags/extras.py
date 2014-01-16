@@ -6,19 +6,9 @@ Created on 2013年10月31日
 @author: kane
 '''
 from django import template
-from django.core import serializers
-from django.db.models.query import QuerySet, ValuesQuerySet
 from billiards.models import match_fields, poolroom_fields, PoolroomEquipment
 from billiards.views import match
-
-def tojson(data, fields = None):
-    json_serializer = serializers.get_serializer("json")()
-    newdata = data
-    if not isinstance(newdata, (QuerySet, ValuesQuerySet)):
-        newdata = [data]
-    jsonstring = json_serializer.serialize(newdata, fields=fields,
-                                               ensure_ascii=False, use_natural_keys=True)
-    return jsonstring
+from billiards.views.match import tojson
 
 def poolroomtojson(data):
     return tojson(data, poolroom_fields)
