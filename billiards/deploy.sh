@@ -38,6 +38,7 @@ main(){
 	rm bitfield
 	mv django-bitfield/bitfield .
 	rm -rf django-bitfield/
+	cp -f static/images/favicon.ico .
 	pecho "Updating release version..."
         DATE=`date '+%Y%m%d'`
 	DATE2=`date '+%Y.%m.%d'`
@@ -49,6 +50,8 @@ main(){
 	pecho "Commit and push new version to BAE..."
 	git add .
 	git commit -m"Deploy new release of ibilliards"
+	# increase post buffer to 50MB
+	git config http.postBuffer 52428800
 	git push
 		
         exit $STATUS

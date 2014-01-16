@@ -12,30 +12,16 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-try:
-    from bae.core import const
-    DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'sRCwEcHbYjeJkwmqnDVh',
-        'USER': const.MYSQL_USER,
-        'PASSWORD': const.MYSQL_PASS,
-        'HOST': const.MYSQL_HOST,
-        'PORT': const.MYSQL_PORT,
-        }
+DATABASES = {
+'default': {
+    'ENGINE': 'django.db.backends.mysql',
+    'NAME': 'sRCwEcHbYjeJkwmqnDVh',
+    'USER': 'lzLVWuWXTWRpmUq78cD5CEwE',
+    'PASSWORD': 'GjLz74wHP1QUIubKPlI5BvGYPTHxb14X',
+    'HOST': 'sqld.duapp.com',
+    'PORT': '4050',
     }
-except ImportError:
-    # here config your local mysql
-    DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'billiards',
-        'USER': 'root',
-        'PASSWORD': 'passw0rd',
-        'HOST': '127.0.0.1',
-        'PORT': '',
-        }
-    }
+}
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
