@@ -24,9 +24,7 @@ try:
         'PORT': const.MYSQL_PORT,
         }
     }
-    HOST_NAME = 'http://www.pktaiqiu.com'
 except ImportError:
-    HOST_NAME = 'http://127.0.0.1:8000'
     # here config your local mysql
     DATABASES = {
     'default': {
@@ -43,7 +41,7 @@ except ImportError:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # In a Windows environment this must be set to your system time zone.
-TIME_ZONE = 'Asia/Hong_Kong'
+TIME_ZONE = 'Asia/Chongqing'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -187,7 +185,7 @@ SOCIALOAUTH_SITES = (
     ('weibo', 'billiards.support.socialoauth.sites.weibo.Weibo', '新浪微博',
               {
 #               'redirect_uri': 'http://127.0.0.1:8000/user/oauth/weibo',
-                'redirect_uri': 'http://www.pktaiqiu.com/user/oauth/weibo',
+                'redirect_uri': '$hostname/user/oauth/weibo',
                 'client_id': '1201635266',
                 'client_secret': '88c57d2325e59ec8d3871ab3d65741f6',
               }
@@ -195,7 +193,7 @@ SOCIALOAUTH_SITES = (
     
     ('qq', 'billiards.support.socialoauth.sites.qq.QQ', 'QQ',
               {
-                'redirect_uri': HOST_NAME + '/user/oauth/qq',
+                'redirect_uri': '$hostname/user/oauth/qq',
                 'client_id': '100568693',
                 'client_secret': '8c21be52fe3edf9fa9b75d55fe4abf64',
               }

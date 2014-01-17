@@ -41,6 +41,10 @@ def updateMatchQuerySetEnrollInfo(matchQuerySet, user):
                     break
     return matchQuerySet
 
+datefmt = "%Y-%m-%d"
+def getQueryCriteria(starttime, endtime):
+    return Q(starttime__gte=starttime.strftime(datefmt)) & Q(status='approved') & Q(starttime__lt=endtime.strftime(datefmt))
+    
 def index(request, view = None):
     starttime = datetime.datetime.today()
     try:
@@ -55,9 +59,8 @@ def index(request, view = None):
     except Exception:
         pass
 
-    datefmt = "%Y-%m-%d"
-    matches = Match.objects.filter(starttime__gte=starttime.strftime(datefmt)) \
-        .exclude(starttime__gt=endtime.strftime(datefmt)).order_by('starttime')
+    query = getQueryCriteria(starttime, endtime)
+    matches = Match.objects.filter(query).order_by('starttime')
                   
     if request.GET.get('f') == 'json':
         json_serializer = serializers.get_serializer("json")()
@@ -76,16 +79,14 @@ def index(request, view = None):
     starttime2 = datetime.datetime.today()
     endtime2 = starttime2 + relativedelta(days=intervals)
     matchCountSummary = dict()
-    rt = Match.objects.filter(starttime__gte=starttime2.strftime(datefmt)) \
-         .exclude(starttime__gt=endtime2.strftime(datefmt))
+    rt = Match.objects.filter(query)
     for match in rt:
         if match.starttime.strftime(datefmt) in matchCountSummary:
             matchCountSummary[match.starttime.strftime(datefmt)] += 1
         else:
             matchCountSummary[match.starttime.strftime(datefmt)] = 1
-    topOneBonusSummary = Match.objects.values('starttime','bonus').filter(starttime__gte=starttime2.strftime(datefmt)) \
-         .exclude(starttime__gt=endtime2.strftime(datefmt)).filter(bonus=Match.objects.filter(starttime__gte=starttime2.strftime(datefmt)) \
-         .exclude(starttime__gt=endtime2.strftime(datefmt)).aggregate(Max('bonus'))['bonus__max'])
+    query2 = getQueryCriteria(starttime2, endtime2)
+    topOneBonusSummary = Match.objects.values('starttime','bonus').filter(query2).filter(bonus=Match.objects.filter(query2).aggregate(Max('bonus'))['bonus__max'])
 
     def ValuesQuerySetToDict(vqs):
         return [{'bonus': item['bonus'], 'starttime': item['starttime'].strftime(datefmt)} for item in vqs]
@@ -95,14 +96,16 @@ def index(request, view = None):
                                'intervals': intervals, 'matchsummary': matchCountSummary, 'bonussummary': simplejson.dumps(ValuesQuerySetToDict(topOneBonusSummary)),
                               },
                               context_instance=RequestContext(request))
+def getMatch(matchid):
+    return get_object_or_404(Match, pk=matchid, status='approved')
 
 def detail(request, matchid):
-    match = get_object_or_404(Match, pk=matchid)
+    match = getMatch(matchid)
         
     if request.GET.get('f') == 'json':
         json_serializer = serializers.get_serializer("json")()
         stream = StringIO()
-        json_serializer.serialize([match], fields=('id', 'poolroom', 'bonus', 'starttime', 'description'), ensure_ascii=False, stream=stream, indent=2, use_natural_keys=True)
+        json_serializer.serialize([match], fields=('id', 'poolroom', 'title', 'bonus', 'starttime', 'description'), ensure_ascii=False, stream=stream, indent=2, use_natural_keys=True)
         jsonstr = stream.getvalue()
         if request.user.is_authenticated():
             jsonstr = updateMatchJsonStrEnrollInfo(jsonstr, request.user, [match])
@@ -118,7 +121,7 @@ def enroll(request, matchid):
     if not request.user.is_authenticated():
         raise HttpResponseForbidden()
     
-    match = get_object_or_404(Match, pk=matchid)
+    match = getMatch(matchid)
     
     obj, created = MatchEnroll.objects.get_or_create(match=match, user=request.user,
                   defaults={'enrolltime': datetime.datetime.now()})

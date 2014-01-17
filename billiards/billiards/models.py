@@ -7,12 +7,13 @@ Created on 2013年10月21日
 '''
 
 from django.db import models
-from django.utils.timezone import localtime
+from django.utils.timezone import localtime, pytz
 from bitfield import BitField
 from django.utils.encoding import force_unicode
 from django.contrib.auth.models import User
 from billiards.storage import ImageStorage
-from billiards.settings import UPLOAD_TO
+from billiards.settings import UPLOAD_TO, TIME_ZONE
+import datetime
 
 def toDict(bitfield):
     flag_dict = {}
@@ -102,10 +103,11 @@ class PoolroomEquipment(models.Model):
                 'producer': self.producer, 'quantity': self.quantity, 'cue': self.cue,
                 'price': self.price}
 
-match_fields = ('id', 'poolroom', 'bonus', 'rechargeablecard', 'otherprize', 'bonusdetail', 'rule', 'starttime', 'description')
+match_fields = ('id', 'poolroom', 'title', 'bonus', 'rechargeablecard', 'otherprize', 'bonusdetail', 'rule', 'starttime', 'description')
 class Match(models.Model):
     id = models.AutoField(primary_key=True)
     poolroom = models.ForeignKey(Poolroom, verbose_name='比赛组织者')
+    title = models.CharField(max_length=30, verbose_name='比赛名称')
     bonus = models.FloatField(null=False,verbose_name='最高现金奖金金额(元)')
     rechargeablecard = models.FloatField(null=False, verbose_name='最高充值卡奖金金额(元)')
     otherprize = models.CharField(max_length=100,null=True,blank=True,verbose_name='最高其它类别奖励')
@@ -119,6 +121,11 @@ class Match(models.Model):
             ('groupon', u'支持团购'),
             ('coupon', u'支持用券'),
         ), verbose_name='特色属性')
+    status = ChoiceTypeField(max_length=10, choices=(
+            ('reviewing', u'等待审核'),
+            ('approved', u'已审核通过'),
+            ('disabled', u'已禁用'),
+        ), default='approved', verbose_name='状态', jsonUseValue=False)
 
     class Meta:
         db_table = 'match'
@@ -129,7 +136,7 @@ class Match(models.Model):
         return '[' + localtime(self.starttime).strftime("%Y-%m-%d %H:%M:%S") + '] ' + self.poolroom.name
 
     def natural_key(self):
-        return {'id': self.id, 'poolroom': self.poolroom.natural_key(), 'bonus': self.bonus,
+        return {'id': self.id, 'title':self.title, 'poolroom': self.poolroom.natural_key(), 'bonus': self.bonus,
                 'rechargeablecard': self.rechargeablecard, 'description': self.description,
                 'otherprize': self.otherprize,
                 'bonusdetail': self.bonusdetail, 'rule': self.rule,
@@ -138,6 +145,16 @@ class Match(models.Model):
 
     def save(self):
         super(Match, self).save()
+        
+    @property
+    def is_expired(self):
+        if datetime.datetime.now().replace(tzinfo=pytz.timezone(TIME_ZONE)) - self.starttime > datetime.timedelta(seconds = 5):
+            return True
+        return False
+
+    @property
+    def enroll_count(self):
+        return MatchEnroll.objects.filter(match=self).count()
 # Using a sub table-implemented the entending of auth_user table        
 # class Profile(models.Model):
 #     '''
@@ -260,7 +277,24 @@ class ChallengeApply(models.Model):
     verbose_username.short_description = u'用户详细信息'
     verbose_username.allow_tags = True
         
+class PoolroomUser(models.Model):
+    id = models.AutoField(primary_key=True)
+    poolroom = models.ForeignKey(Poolroom, verbose_name='台球俱乐部')
+    user = models.ForeignKey(User, verbose_name='俱乐部管理员')
+    
+    class Meta:
+        db_table = 'poolroom_user'
+        verbose_name = '俱乐部管理员'
+        verbose_name_plural = '俱乐部管理员'
         
+    def __unicode__(self):
+        return u'\'%s\' 管理员:%s' %(self.poolroom, \
+                                     (self.user.nickname if self.user.nickname is not None and self.user.nickname != "" else self.user.username))
+    def verbose_user(self):
+            return "%s <br/>Email: %s<br/>Tel: %s" % ((self.user.nickname if self.user.nickname is not None and self.user.nickname != "" else self.user.username), self.user.email, self.user.cellphone)
+    verbose_user.short_description = u'俱乐部管理员详细信息'
+    verbose_user.allow_tags = True  
+
 UPLOAD_TO = UPLOAD_TO + 'poolroom/'
 class Images(models.Model):
     user = models.ForeignKey(User, verbose_name=u"当前用户", related_name="userimages")

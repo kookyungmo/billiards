@@ -56,6 +56,16 @@ urlpatterns += patterns('billiards.views.utility',
     url(r'^unsupportedbrowser$', 'unsupportedbrowser', name='unsupportedbrowser'),
 )
 
+urlpatterns += patterns('billiards.views.club',
+    url(r'^club$', RedirectView.as_view(url='club/match', permanent=False), name='club_index'),
+    url(r'^club/match$', 'match', name='club_match'),
+    url(r'^club/match/add$', 'match_add', name='club_match_add'),
+    url(r'^club/match/edit/(?P<matchid>\d+)$', 'match_edit', name='club_match_edit'),
+    url(r'^club/match/(?P<matchid>\d+)/enrollinfo$', 'match_enroll', name='club_match_enroll'),
+    url(r'^club/challenge', 'challenge', name='club_challenge'),
+)
+
 urlpatterns += staticfiles_urlpatterns()
+handler403 = 'billiards.views.exceptions.handler403'
 handler404 = 'billiards.views.exceptions.handler404'
 handler500 = 'billiards.views.exceptions.handler500'

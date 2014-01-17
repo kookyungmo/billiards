@@ -12,6 +12,7 @@ from billiards import settings
 from billiards.settings import BCS_BUCKET
 from billiards.support import pybcs
 import unicodedata
+import os
 
 # set bucket
 AK = BCS_BUCKET['AK']
@@ -79,21 +80,39 @@ class BcsStorage(FileSystemStorage):
             if hz.lower() not in self.filetypes:
                 raise SuspiciousOperation(u"不支持的文件类型,支持%s"%self.filetypes)
         
-#         name = self.makename(name)
+        rename = self.makename(name)
         # judge size
         if content.size > self.maxsize:
             raise SuspiciousOperation(u"文件大小超过限制")
 
         bkt = self.connect_bucket()
-        obj = bkt.object(name)
+        obj = bkt.object(rename)
 
         if hasattr(content, '_get_file'):  # admin entry
             obj.put(content._get_file().read())
         else:   # view entry（ContentFile）
             obj.put(content.read())
         
-        return name
+        return rename
 
+# Rename the file name to a unique string + file name
+    def makename(self, name):
+        basename = os.path.basename(name)
+        path = os.path.dirname(name)
+        
+        try:
+            fname, hk = basename.split('.')
+        except:
+            fname, hk = basename, ''
+        
+        random_string = ''.join(map(lambda xx:(hex(ord(xx))[2:]),os.urandom(16)))
+        
+        if hk:
+            rename = "%s_%s.%s" % (random_string, fname, hk)
+        else:
+            rename = "%s_%s" % (random_string, fname)
+        rename = os.path.join(path, rename)
+        return rename
 
     def delete(self,name):
         """

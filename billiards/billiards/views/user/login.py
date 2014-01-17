@@ -13,16 +13,22 @@ from django.contrib.auth.models import User
 from django.contrib import auth
 from time import mktime, localtime
 from datetime import datetime
+from billiards.models import PoolroomUser
+import copy
 
 
 def login_3rd(request, site_name):
-    if 'returnurl' in request.GET:
-        for item in SOCIALOAUTH_SITES:
-            if item[0] == site_name:
-                origurl = item[3]['redirect_uri']
-                item[3]['redirect_uri'] = origurl + "?returnurl=" + request.GET.get('returnurl')
-                break
-    socialsites = SocialSites(SOCIALOAUTH_SITES)
+    hostname = u"%s://%s" %("https" if request.is_secure() else "http", request.get_host())
+    sites = copy.deepcopy(SOCIALOAUTH_SITES)
+    for item in sites:
+        if item[0] == site_name:
+            origurl = item[3]['redirect_uri']
+            item[3]['redirect_uri'] = origurl.replace('$hostname', hostname)
+            if 'returnurl' in request.GET:
+                baseurl = item[3]['redirect_uri']
+                item[3]['redirect_uri'] = u"%s?returnurl=%s" %(baseurl, request.GET['returnurl'])
+            break
+    socialsites = SocialSites(sites)
     if site_name in socialsites._sites_name_list:
         _s = socialsites.get_site_object_by_name(site_name)
         url = _s.authorize_url
@@ -75,8 +81,14 @@ def callback(request, site_name):
     user.expire_time = datetime.fromtimestamp(mktime(localtime()) + _s.expires_in)
     user.refresh_token = _s.refresh_token
     user.save()
-        
-    auth.login(request, user)      
+    
+    poolrooms = list(PoolroomUser.objects.filter(user=user))
+    if len(poolrooms) > 0:
+        user.is_club_owner = True
+        user.poolroom = poolrooms[0].poolroom
+    else:
+        user.poolroom = None
+    auth.login(request, user)
     
     return HttpResponseRedirect(returnurl)
     
