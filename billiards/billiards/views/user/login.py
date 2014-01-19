@@ -16,8 +16,7 @@ from datetime import datetime
 from billiards.models import PoolroomUser
 import copy
 
-
-def login_3rd(request, site_name):
+def getSocialSite(request, site_name):
     hostname = u"%s://%s" %("https" if request.is_secure() else "http", request.get_host())
     sites = copy.deepcopy(SOCIALOAUTH_SITES)
     for item in sites:
@@ -28,7 +27,10 @@ def login_3rd(request, site_name):
                 baseurl = item[3]['redirect_uri']
                 item[3]['redirect_uri'] = u"%s?returnurl=%s" %(baseurl, request.GET['returnurl'])
             break
-    socialsites = SocialSites(sites)
+    return sites
+
+def login_3rd(request, site_name):
+    socialsites = SocialSites(getSocialSite(request, site_name))
     if site_name in socialsites._sites_name_list:
         _s = socialsites.get_site_object_by_name(site_name)
         url = _s.authorize_url
@@ -49,7 +51,7 @@ def callback(request, site_name):
         #error occurred
         return HttpResponseRedirect('/oautherror')
     
-    socialsites = SocialSites(SOCIALOAUTH_SITES)
+    socialsites = SocialSites(getSocialSite(request, site_name))
     _s = socialsites.get_site_object_by_name(site_name)
     
     try:
