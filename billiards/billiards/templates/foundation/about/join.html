@@ -1,18 +1,9 @@
-{% extends "foundation/base.html" %}
-{% block content %}
-  <div class="row">
-<div class="medium-1 columns">
-<h3></h3>
-</div><div class="small-4 medium-2 columns">
-<br>
-<ul class="side-nav">
-  <li><a href="{% url about %}"><font size=+1>关于我们</font></a></li>
-  <li><a href="{% url join %}"><font size=+1>加入我们</font></a></li>
-  <li><a href="{% url contact %}"><font size=+1>联系我们</font></a></li>
-  <li><a href="{% url partner %}"><font size=+1>关注俱乐部</font></a></li>
-</ul>
-</div>
-<div id="about" class="small-8 medium-9 columns">
+{% extends "foundation/about/base.html" %}
+{% block header %}
+{% load staticfiles %}
+<script src="{% static "js/map_v2.js" %}?{{buildid}}"></script>
+{% endblock %}
+{% block right %}
         <br>
         <h2>加入我们，成为我们的……</h2>
         <br>
@@ -37,10 +28,9 @@
     <p>可以……</p>
     <p>更多可以，等待您的挖掘和反馈……</p>
     <p>请告诉我们您的需求：<a>feedback@pktaiqiu.com</a></p>
+    <p>或者马上就<a {% if user.is_authenticated %} href="{% url club_apply %}" {% else %} href="javascript:loginFirst();" {% endif %}>加入我们</a>。</p>
+	<p>如果您已经加入了我们。从<a {% if user.is_authenticated %} href="{% url club_index %}" {% else %} href="javascript:loginFirst();" {% endif %}>这里</a>进入俱乐部页面。</p>
   </div>
-</div>
-
-</div>
 </div>
 {% endblock %}
 {% block foundationscript %}

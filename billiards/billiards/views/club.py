@@ -7,7 +7,7 @@ Created on 2014年1月10日
 '''
 from django.http import HttpResponse
 from billiards.models import PoolroomUser, Match, MatchEnroll, Challenge,\
-    ChallengeApply
+    ChallengeApply, Poolroom, PoolroomUserApply
 from django.template.context import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from billiards.settings import TEMPLATE_ROOT, TIME_ZONE
@@ -227,3 +227,37 @@ def challengeapp_reject(request, appid):
     else:
         rt = {'rt': 2, 'msg': 'app has been rejected'}
     return HttpResponse(json.dumps(rt), content_type="application/json")
+
+class PoolroomUserApplyForm(ModelForm):
+    class Meta:
+        model = PoolroomUserApply
+        
+def club_apply(request):
+    if not request.user.is_authenticated():
+        raise PermissionDenied
+    
+    if request.method == 'POST':
+        poolroomid = request.POST['club']
+        if int(poolroomid) == 0:
+            # use other for satisfying db design
+            poolroomid = Poolroom.objects.all()[:1][0].id
+        data = {
+           'poolroom': poolroomid,
+           'poolroomname_userinput': 'null' if request.POST['club_userinput'] == '' else request.POST['club_userinput'],
+           'user': request.user.id,
+           'realname': request.POST['realname'],
+           'cellphone': request.POST['cellphone'],
+           'email': request.POST['email'],
+           'justification': request.POST['justification'],
+           'applytime': datetime.datetime.utcnow().replace(tzinfo=pytz.timezone(TIME_ZONE)),
+           'status': 'submitted',
+           }
+        newapply = PoolroomUserApplyForm(data)
+        if newapply.is_valid():
+            newapply.save()
+            return HttpResponse(json.dumps({'rt': 1, 'msg': 'created'}), content_type="application/json")
+        return HttpResponse(json.dumps(dict({'rt': 0}.items() + newapply.errors.items())), content_type="application/json")
+    clubs = Poolroom.objects.all()
+    return render_to_response(TEMPLATE_ROOT + 'club/apply.html', 
+                                  {'clubs': clubs},
+                                  context_instance=RequestContext(request))

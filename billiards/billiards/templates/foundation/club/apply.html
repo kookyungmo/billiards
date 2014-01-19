@@ -1,0 +1,117 @@
+{% extends "foundation/about/base.html" %}
+{% block right %}
+<h1>申请管理您的俱乐部</h1>
+<hr>
+<form id="applyform" data-abide>
+  <fieldset>
+  	<legend>申请管理俱乐部</legend>
+    
+    <div class="row">
+	  <div class="medium-6 columns">
+        <label for="club">俱乐部名称<small>*</small></label>
+        <select id="club" class="medium" required>
+        	{% for club in clubs%}
+        		<option value="{{ club.id }}">{{ club.name }}</option>
+        	{% endfor %}
+        	<option value="0">以上都不是</option>
+        </select>
+      </div>
+      <div class="medium-6 columns">
+        <label for="club_userinput">其他俱乐部<small>，仅当俱乐部选择“以上都不是”的时候才填写</small></label>
+		<input type="text" id="club_userinput" placeholder="详细的俱乐部名字">
+        <small class="error">请输入俱乐部名字</small>        
+      </div>
+    </div>
+       
+    <div class="row">
+      <div class="medium-4 columns">
+        <label for="realname">真实姓名<small>*</small></label>
+		<input type="text" id="realname" placeholder="您的真实姓名" required>
+        <small class="error">请输入您的真实姓名</small>        
+      </div>
+      <div class="medium-4 columns">
+        <label for="cellphone">手机号码<small>*</small></label>
+		<input type="text" pattern="^(1(([35][0-9])|(47)|[8][01236789]))\d{8}$" id="cellphone" placeholder="您的手机号码" required>
+        <small class="error">请输入您的手机号码</small>        
+      </div>
+      <div class="medium-4 columns">
+        <label for="email-label">Email地址<small>*</small></label>
+		<input id="email-label" placeholder="email" type="email" required>
+	    <small class="error">请填入Email地址</small>    
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-12 columns">
+        <label for="justification">申请理由<small>*</small></label>
+        <textarea id="justification" placeholder="您的申请理由" required></textarea>
+        <small class="error">请输入您的申请理由</small>
+      </div>
+    </div>  
+
+    <div class="row">
+      <div id="errorMsg" class="large-12 columns hide">
+       	<div data-alert class="alert-box warning round">
+		</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-12 columns">
+        <button type="submit" class="medium button green">提交申请</button>
+      </div>
+    </div>
+
+  </fieldset>
+</form>
+<div id="successApply" class="reveal-modal small" data-reveal>
+  <h2>您的申请已成功提交。网站管理员会尽快与您联系。</h2>
+  <p><button type="submit" id="close" class="medium button green">我知道了</button></p>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+$("#applyform").submit(function (e) {
+  		e.preventDefault();
+  		$("#errorMsg").addClass("hide");
+   		$.ajax({
+			data : {'club': $("#club").val(),
+				'club_userinput': $("#club_userinput").val(),
+				'realname': $("#realname").val(),
+				'cellphone': $("#cellphone").val(),
+				'email': $("#email-label").val(),
+				'justification': $("#justification").val(),
+			},
+  			url : "{% url club_apply %}",
+  			type: 'POST',
+			dataType : 'json',
+			success : function(data) {
+				if (data.rt == 1) {
+					$("#close").click(function() {
+						window.location = "{% url home %}";
+					});
+					$('#successApply').foundation('reveal', 'open');
+				} else {
+					if (data.msg != null)
+						$("#errorMsg .alert-box").text(data.msg);
+					else {
+						var errorText = "";
+						for (var property in data) {
+						    if (data.hasOwnProperty(property) && property != 'rt') {
+						    	errorText += property + ":" + data[property] + " ";
+						    }
+						}
+						$("#errorMsg .alert-box").text(errorText);
+					}
+					$("#errorMsg").removeClass("hide");
+				}
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				console.log(textStatus, errorThrown);
+				$("#errorMsg .alert-box").text("网络错误，请重试。");
+				$("#errorMsg").removeClass("hide");
+			}
+		});
+    });
+</script>
+{% endblock %}

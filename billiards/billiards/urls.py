@@ -57,8 +57,8 @@ urlpatterns += patterns('billiards.views.utility',
 )
 
 urlpatterns += patterns('billiards.views.club',
-    url(r'^club$', 'index', name='club_index'),
     url(r'^club/$', 'index', name='club_index'),
+    url(r'^club$', 'index', name='club_index'),
     url(r'^club/match$', 'match', name='club_match'),
     url(r'^club/match/add$', 'match_add', name='club_match_add'),
     url(r'^club/match/edit/(?P<matchid>\d+)$', 'match_edit', name='club_match_edit'),
@@ -69,6 +69,7 @@ urlpatterns += patterns('billiards.views.club',
     url(r'^club/challenge/(?P<challengeid>\d+)/enrollinfo$', 'challenge_enroll', name='club_challenge_enroll'),
     url(r'^club/challengeapp/(?P<appid>\d+)/accept$', 'challengeapp_accept', name='club_challengeapp_accept'),
     url(r'^club/challengeapp/(?P<appid>\d+)/reject$', 'challengeapp_reject', name='club_challengeapp_reject'),
+    url(r'^club/apply$', 'club_apply', name='club_apply'),
 )
 
 urlpatterns += staticfiles_urlpatterns()

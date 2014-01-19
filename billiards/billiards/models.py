@@ -360,3 +360,32 @@ class Images(models.Model):
         except Exception:
             pass
         super(Images, self).delete(using=using)
+
+class PoolroomUserApply(models.Model):
+    id = models.AutoField(primary_key=True)
+    poolroom = models.ForeignKey(Poolroom, verbose_name='台球俱乐部')
+    poolroomname_userinput = models.CharField(max_length=50, null=True, default=True, verbose_name="用户输入俱乐部名")
+    user = models.ForeignKey(User, verbose_name='申请用户')
+    realname = models.CharField(max_length=10, verbose_name="真实姓名")
+    cellphone = models.CharField(max_length=15, verbose_name="手机号码")
+    email = models.CharField(max_length=20, verbose_name="电子邮箱")
+    justification = models.CharField(max_length=500, verbose_name="申请理由")
+    applytime = models.DateTimeField(verbose_name='申请时间')
+    status = ChoiceTypeField(max_length=10, choices=(
+            ('submitted', u'已提交，等待确认'),
+            ('accepted', u'审核通过'),
+            ('rejected', u'审核拒绝'),
+        ), default='submitted', verbose_name='状态') 
+    
+    class Meta:
+        db_table = 'poolroom_user_application'
+        verbose_name = '俱乐部管理员申请'
+        verbose_name_plural = '俱乐部管理员申请'
+        
+    def __unicode__(self):
+        return u'\'%s\' 管理员:%s' %(self.poolroom, \
+                                     (self.user.nickname if self.user.nickname is not None and self.user.nickname != "" else self.user.username))
+    def verbose_user(self):
+            return "%s <br/>Email: %s<br/>Tel: %s" % ((self.user.nickname if self.user.nickname is not None and self.user.nickname != "" else self.user.username), self.user.email, self.user.cellphone)
+    verbose_user.short_description = u'俱乐部管理员申请表单的详细信息'
+    verbose_user.allow_tags = True  

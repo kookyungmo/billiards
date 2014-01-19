@@ -115,6 +115,11 @@
 	    <li><a href="{{ qqurl }}">QQ登录</a></li>
 		<li><a href="{{ weibourl }}">微博登录</a></li>
 	    {% endif %}
+	    <li><label>关于我为台球狂</label></li>
+		<li><a href="{% url 'about' %}">关于我们</font></a></li>
+	  <li><a href="{% url 'join' %}">加入我们</font></a></li>
+	  <li><a href="{% url 'contact' %}">联系我们</font></a></li>
+	  <li><a href="{% url 'partner' %}">关注俱乐部</font></a></li>
 	  </ul>
 	</aside>
 	<a class="exit-off-canvas" href="#"></a>
@@ -170,7 +175,7 @@
 	          <label for="phone" class="right inline">移动电话</label>
 	        </div>
 	        <div class="small-9 columns">
-	          <input type="tel" id="phone" placeholder="移动电话号码" required>
+	          <input type="text" pattern="^(1(([35][0-9])|(47)|[8][01236789]))\d{8}$" id="phone" placeholder="移动电话号码" required>
 	          <small class="error">请输入移动电话号码</small>
 	        </div>
 	      </div>
