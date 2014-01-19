@@ -18,7 +18,7 @@
 		<div class="row">
 		<div class="row show-for-medium-up">
 			<div id="baidumap"
-						style="overflow: auto; margin: 0;"></div>
+						style="overflow: auto; margin: 0; height: 250px;"></div>
 		</div>
 		</div>
 		<hr>
@@ -60,7 +60,6 @@
 {% block script %}
 	<script>
 	var map = initialMap("baidumap");
-	$("#baidumap").css("height", 250);
 	map.centerAndZoom('北京',12);
 	var mypoint = null;
 	NEARBY_URL = "{% url 'poolroom_nearby_point_distance' '00.00' '11.11' '00' %}";
