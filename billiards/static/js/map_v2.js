@@ -27,6 +27,7 @@ function addMatchItems_v2(data) {
 		cleanNonLocationMarkers();
 		if (data.length > 1)
 			map.centerAndZoom('北京');
+		points = [];
 		for ( var idx in data) {
 			point = new BMap.Point(data[idx].fields.poolroom.lng,
 					data[idx].fields.poolroom.lat);
@@ -37,9 +38,13 @@ function addMatchItems_v2(data) {
 				map.centerAndZoom(point,15);
 			}
 			createMatchMarker(idx, titleobj);
+			points.push(point);
 		}
-		if (typeof mypoint !== "undefined")
+		if (typeof mypoint !== "undefined") {
 			updateDistance(mypoint);
+		}
+		if (points.length > 1)
+			map.setViewport(points);
 		if (typeof $(document).foundation !== 'undefined')
 			$(document).foundation();
 	}
@@ -261,14 +266,20 @@ function addCustomToolbar(map, point) {
 }
 
 function addPoolroom(data, mypoint) {	
-	if (data.length > 1)
+	points = [];
+	if (data.length == 0) {
 		map.panTo(mypoint);
+	} else
+		points.push(mypoint);
 	for ( var idx in data) {
 		point = new BMap.Point(data[idx].fields.lng_baidu,
 				data[idx].fields.lat_baidu);
 		poolroomobj = addPoolroomToList(data[idx], point);
 		createPoolroomMarker(idx, poolroomobj, data[idx], point);
+		points.push(point);
 	}
+	if (points.length > 0)
+		map.setViewport(points);
 }
 
 function addPoolroomToList(poolroom, point) {
