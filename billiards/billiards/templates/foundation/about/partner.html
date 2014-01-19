@@ -1,0 +1,17 @@
+{% extends "foundation/about/base.html" %}
+{% block header %}
+{% load staticfiles %}
+<script src="{% static "js/map_v2.js" %}?{{buildid}}"></script>
+{% endblock %}
+{% block right %}
+	<br>
+	<h3>关注俱乐部 (限北京地区)</h3>
+	<br>
+	<p>您可以在这里免费发布各种赛事，活动信息。</p>
+	<p>您可以在这里免费宣传各种优惠信息，会籍信息。</p>
+	<p>您可以在这里免费使用图片空间，推广您的俱乐部。</p>
+	<p>我们移动互联的技术优势，市场分析推广的能力，愿意为您所用。</p>
+	<br>
+	<p>欢迎您<a {% if user.is_authenticated %} href="{% url club_apply %}" {% else %} href="javascript:loginFirst();" {% endif %}>加入我们</a>。</p>
+	<p>	如果您已经加入了我们。从<a {% if user.is_authenticated %} href="{% url club_index %}" {% else %} href="javascript:loginFirst();" {% endif %}>这里</a>进入俱乐部页面。</p>
+{% endblock %}

@@ -18,7 +18,7 @@
 		<div class="row">
 			<div class="medium-7 medium-push-5 columns">
 				<div class="row">
-					<div id="baidumap" style="overflow: hidden; margin: 0;"></div>
+					<div id="baidumap" style="overflow: hidden; margin: 0; height: 250px;"></div>
 				</div>
 			</div>
 			<div class="medium-5 medium-pull-7 columns">
@@ -26,13 +26,20 @@
 					<hr>
 					{% if match.enrolled %}
 					<h3 style="color: #FF9900">已报名。</h3>
-					{% else %} <a class="small radius button"
+					{% else %} <a class="small radius button {% if match.is_expired or  match.status != 'approved' %} disabled {% endif %}"
 						href="javascript:void(0);" 
-					{% if not user.is_authenticated %} 
-						data-reveal-id="quickLogin"
-		       		{% else %}  
-		       			id="enroll" match="{{ match.pk }}"{% endif %}> 我要报名! </a> 
+						{% if match.is_expired %}
+			       			> 比赛已过期。
+			       		{% elif match.status != 'approved' %}
+			       		    > 比赛已失效。
+			       		{% else %}
+							{% if not user.is_authenticated %} 
+								data-reveal-id="quickLogin"
+				       		{% else %}  
+				       			id="enroll" match="{{ match.pk }}"{% endif %}> 我要报名!
+				       	{% endif %}
 		       		{% endif %}
+		       		</a>
 					<hr>
 				</div>
 				<h3 style="color: #EB6100">
@@ -126,13 +133,24 @@
 </div>
 <div class="medium-3 columns hide-for-small">
 	<h2>行动起来!</h2>
-	<hr />
+	<hr>
 	{% if match.enrolled %}
 	<h3 style="color: #FF9900">已报名。</h3>
-	{% else %} <a class="large button expand" href="javascript:void(0);"
-		{% if user.is_authenticated %} id="enroll" match="{{ match.pk }}"
-		{% else %} data-reveal-id="quickLogin" {% endif %}> 我要报名! </a> 
-	{% endif %}
+	{% else %} 
+		<a class="small radius button {% if match.is_expired or  match.status != 'approved' %} disabled {% endif %}"
+			href="javascript:void(0);" 
+		{% if match.is_expired %}
+      			> 比赛已过期。
+      	{% elif match.status != 'approved' %}
+      		    > 比赛已失效。
+      	{% else %}
+				{% if not user.is_authenticated %} 
+					data-reveal-id="quickLogin">我要报名!
+	       		{% else %}  
+	       			id="enroll" match="{{ match.pk }}"{% endif %}> 我要报名!
+	       		{% endif %}
+     	{% endif %}
+     	</a>	
 </div>
 {% endblock %} 
 {% block script %}
@@ -140,7 +158,6 @@
 	var map = new BMap.Map("baidumap");
 		$(document).ready(
 			function() {
-				$("#baidumap").css("height", 250);
 			    map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_RIGHT, type: BMAP_NAVIGATION_CONTROL_SMALL}));
 			    map.enableScrollWheelZoom(true);
 			    data = eval(jsonescape('{{ match|matchtojson|safe }}'));

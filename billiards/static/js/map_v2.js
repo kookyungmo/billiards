@@ -27,6 +27,7 @@ function addMatchItems_v2(data) {
 		cleanNonLocationMarkers();
 		if (data.length > 1)
 			map.centerAndZoom('北京');
+		points = [];
 		for ( var idx in data) {
 			point = new BMap.Point(data[idx].fields.poolroom.lng,
 					data[idx].fields.poolroom.lat);
@@ -37,10 +38,15 @@ function addMatchItems_v2(data) {
 				map.centerAndZoom(point,15);
 			}
 			createMatchMarker(idx, titleobj);
+			points.push(point);
 		}
-		if (mypoint != null)
+		if (typeof mypoint !== "undefined") {
 			updateDistance(mypoint);
-		$(document).foundation();
+		}
+		if (points.length > 1)
+			map.setViewport(points);
+		if (typeof $(document).foundation !== 'undefined')
+			$(document).foundation();
 	}
 }
 
@@ -123,13 +129,28 @@ function addMatchToList_v2(match, point) {
 			+ " <p>$bonusdetail</p>"
 			+ " <a class=\"close-reveal-modal\">&#215;</a>"
 			+ "</li></ul>";
+	enrolled = false;
 	if (isAuth())
-		if ( hasOwnProperty(match.fields, 'enrolled') ) 
+		if ( hasOwnProperty(match.fields, 'enrolled') ) {
+			enrolled = true;
 			contentTemplate += "<h3>已报名。</h3>";
-		else
-			contentTemplate += "<a href=\"javascript:void(0);\" id=\"enroll\" match='" + match.pk + "' class=\"button expand\">我要报名比赛</a>";
-	else
-		contentTemplate	+= "<a href=\"javascript:loginFirst();\" class=\"button expand\">我要报名比赛</a>";
+		}
+	if (!enrolled) {
+		if (isExpired(match.fields.starttime)) {
+			contentTemplate += "<h3>比赛已过期。</h3>";
+		} else {
+			if (match.fields.status == 'approved') {
+				if (isAuth()) {
+					contentTemplate += "<a href=\"javascript:void(0);\" id=\"enroll\" match='" + match.pk + "' class=\"button expand\">我要报名比赛</a>";
+				} else {
+					contentTemplate	+= "<a href=\"javascript:loginFirst();\" class=\"button expand\">我要报名比赛</a>";
+				}
+			} else {
+				contentTemplate += "<h3>比赛已无效。</h3>";
+			}
+		}
+		
+	}
 	contentTemplate += "</div>"
 			+ "</div>";
 
@@ -153,6 +174,10 @@ function addMatchToList_v2(match, point) {
 		matchEnroll($(this).parent(), $(this).attr('match'));
 	});
 	return matchobj;
+}
+
+function isExpired(timestr) {
+	return moment(timestr).diff(moment()) <= 0;
 }
 
 function MyLocaiton(){
@@ -241,14 +266,20 @@ function addCustomToolbar(map, point) {
 }
 
 function addPoolroom(data, mypoint) {	
-	if (data.length > 1)
+	points = [];
+	if (data.length == 0) {
 		map.panTo(mypoint);
+	} else
+		points.push(mypoint);
 	for ( var idx in data) {
 		point = new BMap.Point(data[idx].fields.lng_baidu,
 				data[idx].fields.lat_baidu);
 		poolroomobj = addPoolroomToList(data[idx], point);
 		createPoolroomMarker(idx, poolroomobj, data[idx], point);
+		points.push(point);
 	}
+	if (points.length > 0)
+		map.setViewport(points);
 }
 
 function addPoolroomToList(poolroom, point) {
@@ -403,9 +434,15 @@ function matchEnroll(objdiv, id) {
 		success : function(data)
 		{
 			objdiv.children("#enroll").remove();
-			objdiv.append("<h3>报名成功。</h3>");
-			if (data.info_missing) {
-				$('#userInfoForm').foundation('reveal', 'open');
+			if (data.rt == 3) {
+				objdiv.append("<h3>比赛已过期。</h3>");
+			} else if (data.rt == 4) {
+				objdiv.append("<h3>比赛已无效。</h3>");
+			} else {
+				objdiv.append("<h3>报名成功。</h3>");
+				if (data.info_missing) {
+					$('#userInfoForm').foundation('reveal', 'open');
+				}
 			}
 		},
 		error: function (xhr, ajaxOptions, thrownError) {
@@ -457,12 +494,12 @@ function addChallengeToList(challenge, point, mypoint) {
 			+ "</ul></div>"
 			+ "<div class=\"small-8 large-10 columns panel\">"
 			+ "<div class=\"row\">"
-			+ "<div class=\"small-5 medium-2 center columns\">"
+			+ "<div class=\"small-5 medium-3 center columns\">"
 			+ "<ul class=\"clearing-thumbs clearing-feature\" data-clearing>"
 			+ " <li class=\"clearing-featured-img\"><a class=\"th\" href=\"http://api.map.baidu.com/staticimage?center=$point&width=900&height=600&zoom=18&scale=2&markers=$point&markerStyles=-1,http://billiardsalbum.bcs.duapp.com/2014/01/marker-2.png\"><img data-caption=\"MapShot\" src=\"http://api.map.baidu.com/staticimage?center=$point&width=100&height=62&zoom=16&scale=2&markers=$point&markerStyles=-1\"></a></li>"
 			+ "</ul>"
                         + "</div>"
-			+ "<div class=\"small-7 medium-10 columns\">"
+			+ "<div class=\"small-7 medium-9 columns\">"
 			+ "<h5><span name=\"title\" point=\"$point\"><u><a href=\"" + detail_url + "\">$poolroomname</a></u></span></h5>"
 			+ "<div class=\"row\">"
 	equipment = "";
@@ -496,7 +533,12 @@ function addChallengeToList(challenge, point, mypoint) {
 		+ "<div class=\"small-12 medium-8 columns\"><p>比赛方式: <code>$rule</code></p></div></div>";
 	
 	if (challenge.fields.applied) {
-		contentTemplate += "<a class=\"button radius disabled\">您已经申请, 请等待俱乐部的确认。</a>";
+		if (challenge.fields.applystatus == 'accepted')
+			contentTemplate += "<a class=\"button radius disabled\">您的申请已经被俱乐部接受，请您按时去俱乐部应战。</a>";
+		else if (challenge.fields.applystatus == 'rejected')
+			contentTemplate += "<a class=\"button radius disabled\">您的申请已经被俱乐部拒绝。</a>";
+		else
+			contentTemplate += "<a class=\"button radius disabled\">您已经申请, 请等待俱乐部的确认。</a>";
 	} else {
 		if (challenge.fields.status == 'waiting') {
 			if (isAuth()) {

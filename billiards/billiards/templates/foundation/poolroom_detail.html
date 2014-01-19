@@ -18,7 +18,7 @@
           <div class="medium-7 medium-push-5 columns">
 			<div class="row">
 				<div id="baidumap"
-						style="overflow: hidden; margin: 0;"></div>
+						style="overflow: hidden; margin: 0; height: 250px;"></div>
 			</div>
 			<hr>
           </div>
@@ -117,7 +117,6 @@
 	var map = new BMap.Map("baidumap");
 	$(document).ready(
 		function() {
-			$("#baidumap").css("height", 250);
 		    map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_RIGHT, type: BMAP_NAVIGATION_CONTROL_SMALL}));
 		    map.enableScrollWheelZoom(true);
 		    data = eval(jsonescape('{{ poolroom|poolroomtojson|safe }}'));

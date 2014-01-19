@@ -1,20 +1,5 @@
-{% extends "foundation/base.html" %}
-{% block content %}
-  <div class="row">
-<div class="medium-1 columns">
-<h3></h3>
-</div>
-<div class="small-4 medium-2 columns">
-<br>
-<ul class="side-nav">
-  <li><a href="{% url about %}"><font size=+1>关于我们</font></a></li>
-  <li><a href="{% url join %}"><font size=+1>加入我们</font></a></li>
-  <li><a href="{% url contact %}"><font size=+1>联系我们</font></a></li>
-  <li><a href="{% url partner %}"><font size=+1>关注俱乐部</font></a></li>
-</ul>
-</div>
-<div id="about" class="small-8 medium-9 columns">
-
+{% extends "foundation/about/base.html" %}
+{% block right %}
 	<br>
 	<h3>关于我们</h3>
         <br>
@@ -29,7 +14,6 @@
 	<p>我们, 是大众台球运动的拥护者</p>
 	<p>我们, 是你身边的台球高手</p>
 	<p>我们, 在你台球生活的每一天里</p>
-</div>
 <!--div class="small-6 medium-3 columns">
 		<div class="circular" style="width:50%; height:50%" align=center>
 <div class="card">
@@ -75,7 +59,4 @@
                 </div>
         </div>
 </div-->
-
-</div>
-
 {% endblock %}

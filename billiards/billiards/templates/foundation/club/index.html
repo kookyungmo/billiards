@@ -1,0 +1,25 @@
+{% extends "foundation/club/base.html" %} 
+{% block header %} 
+{% load staticfiles %}
+<script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}";</script>
+<script src="{% static "js/moment-with-langs.min.js" %}"></script>
+<script src="{% static "js/map.js" %}?{{buildid}}"></script>
+<script src="{% static "js/map_v2.js" %}?{{buildid}}"></script>
+{% endblock %} 
+{% load extras %} 
+{% load url from future %} 
+{% block rightcontent %}
+<h1>来自{{poolroomuser.poolroom.name}}的朋友</h1>
+<h3 class="subheader">这是你在<code>我为台球狂</code>专用的管理平台，在这里你可以发布及管理俱乐部的赛事和约赛。查看报名用户的情况。</h3>
+<hr>
+<h2>开启你在这里的旅程吧</h2>
+<div class="row">
+  <div class="large-6 columns">
+  		<a href="{% url 'club_match_add' %}" class="button radius">发布新比赛</a>
+  </div>
+  <div class="large-6 columns">
+  		<a href="{% url 'club_challenge_add' %}" class="button radius">发布新约赛</a>
+  </div>
+</div>
+
+{% endblock %}
