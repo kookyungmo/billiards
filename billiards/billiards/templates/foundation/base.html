@@ -27,8 +27,14 @@
 <script>
 	{% if user.is_authenticated %}
 		var AUTH = 1;
+		{% if user.cellphone != '' %}
+		var MISSING_INFO = 0;
+		{% else %}
+		var MISSING_INFO = 1;
+		{% endif %}
 	{% else %}
 		var AUTH = 0;
+		var MISSING_INFO = 1;
 	{% endif %}
 </script>
 <div class="off-canvas-wrap doc-wrap">
@@ -165,8 +171,8 @@
   <a class="close-reveal-modal">&#215;</a>
 </div>
 <div id="userInfoForm" class="reveal-modal small" data-reveal>
-  <h3>请完善你的联系方式，方便我们更好的为你提供服务。</h3>
-  <h4>你的联系方式确定一定以及肯定只用于俱乐部与你确认报名信息。</h4>
+  <h3>请完善您的联系方式，方便我们更好的为您提供服务。</h3>
+  <h4>您的联系方式确定一定以及肯定只用于俱乐部与您确认报名信息。</h4>
   <form id="completeInfoForm" data-abide>
 	  <div class="row">
 	    <div class="small-8">
@@ -243,6 +249,7 @@
 			dataType : 'json',
 			success : function(data) {
 				$("#userInfoForm .close-reveal-modal").click();
+				location.reload(true);
 			},
 			error : function() {
 				//TODO alert error

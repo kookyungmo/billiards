@@ -14,16 +14,19 @@ function isAuth() {
 	return AUTH == 1;
 }
 
+function needInfo() {
+	return MISSING_INFO == 1;
+}
 function addMatchItems_v2(data) {
 	if (data.length == 0) {
 		if ($("#nomatch").length == 0) {
-			$("#matchlist").children("#match").remove();
+			$("#matchlist").children("div[id^='match']").remove();
 			createNoMatch();
 			cleanNonLocationMarkers();
 		}
 	} else {
 		$("#matchlist").children("#nomatch").remove();
-		$("#matchlist").children("#match").remove();
+		$("#matchlist").children("div[id^='match']").remove();
 		cleanNonLocationMarkers();
 		if (data.length > 1)
 			map.centerAndZoom('北京');
@@ -51,9 +54,11 @@ function addMatchItems_v2(data) {
 }
 
 function addMatchToList_v2(match, point) {
+	matchid = 'match' + (point.lat + point.lng);
+	matchid = matchid.replace(/\./g, '_'); 
 	var matchobj = jQuery('<div/>', {
 		class : 'row',
-		id : 'match'
+		id : matchid,
 	});
 	detail_url = MATCH_URL.replace(/000/g, match.pk);
 	contentTemplate ="<div class=\"row\">"
@@ -141,7 +146,10 @@ function addMatchToList_v2(match, point) {
 		} else {
 			if (match.fields.status == 'approved') {
 				if (isAuth()) {
-					contentTemplate += "<a href=\"javascript:void(0);\" id=\"enroll\" match='" + match.pk + "' class=\"button expand\">我要报名比赛</a>";
+					if (needInfo())
+						contentTemplate	+= "<a href=\"javascript:completeInfo();\" class=\"button expand\">我要报名比赛</a>";
+					else
+						contentTemplate += "<a href=\"javascript:void(0);\" id=\"enroll\" match='" + match.pk + "' class=\"button expand\">我要报名比赛</a>";
 				} else {
 					contentTemplate	+= "<a href=\"javascript:loginFirst();\" class=\"button expand\">我要报名比赛</a>";
 				}
@@ -170,7 +178,7 @@ function addMatchToList_v2(match, point) {
 			.replace(/\$enrollfocalpoint/g, match.fields.enrollfocal);
 	matchobj.append(contentTemplate);
 	matchobj.appendTo('#matchlist');
-	$("#match #enroll").click(function(){
+	$("#" + matchid + " #enroll").click(function(){
 		matchEnroll($(this).parent(), $(this).attr('match'));
 	});
 	return matchobj;
@@ -440,9 +448,6 @@ function matchEnroll(objdiv, id) {
 				objdiv.append("<h3>比赛已无效。</h3>");
 			} else {
 				objdiv.append("<h3>报名成功。</h3>");
-				if (data.info_missing) {
-					$('#userInfoForm').foundation('reveal', 'open');
-				}
 			}
 		},
 		error: function (xhr, ajaxOptions, thrownError) {
@@ -542,7 +547,10 @@ function addChallengeToList(challenge, point, mypoint) {
 	} else {
 		if (challenge.fields.status == 'waiting') {
 			if (isAuth()) {
-				contentTemplate += "<a id=\"enroll\" challenge=\"" + challenge.pk + "\" class=\"button radius\">我要应战</a>";
+				if (needInfo())
+					contentTemplate += "<a href=\"javascript:completeInfo();\" class=\"button radius\">我要应战</a>";
+				else
+					contentTemplate += "<a id=\"enroll\" challenge=\"" + challenge.pk + "\" class=\"button radius\">我要应战</a>";
 			} else
 				contentTemplate += "<a href=\"javascript:loginFirst();\" class=\"button radius\">我要应战</a>";
 		} else if (challenge.fields.status == 'matched')
@@ -590,6 +598,10 @@ function loginFirst() {
 	$('#quickLogin').foundation('reveal', 'open');
 }
 
+function completeInfo() {
+	$('#userInfoForm').foundation('reveal', 'open');
+}
+
 function applyChallenge(objdiv, id) {
 	url = CHALLENGE_APPLY_URL;
 	$.ajax({
@@ -599,9 +611,6 @@ function applyChallenge(objdiv, id) {
 		{
 			objdiv.children("#enroll").text('应战已提交到俱乐部');
 			objdiv.children("#enroll").addClass('disabled');
-			if (data.info_missing) {
-				$('#userInfoForm').foundation('reveal', 'open');
-			}
 		},
 		error: function (xhr, ajaxOptions, thrownError) {
 			if (xhr.status == 403) {

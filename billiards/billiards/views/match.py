@@ -141,11 +141,8 @@ def enroll(request, matchid):
     obj, created = MatchEnroll.objects.get_or_create(match=match, user=request.user,
                   defaults={'enrolltime': datetime.datetime.utcnow().replace(tzinfo=pytz.timezone(TIME_ZONE))})
     
-    addition = {'info_missing': False}
-    if request.user.email == None or request.user.cellphone == None:
-        addition['info_missing'] = True
     if obj != False:
         msg = {'rt': 2, 'msg': 'already enrolled'}
     elif created != False:
         msg = {'rt': 1, 'msg': 'enrolled'}
-    return HttpResponse(json.dumps(dict(addition.items() + msg.items())), content_type="application/json")
+    return HttpResponse(json.dumps(msg), content_type="application/json")
