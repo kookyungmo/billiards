@@ -89,16 +89,15 @@ def index(request, view = None):
     intervals = 7
     starttime2 = datetime.datetime.today()
     endtime2 = starttime2 + relativedelta(days=intervals)
+    query2 = getQueryCriteria(starttime2, endtime2)
     matchCountSummary = dict()
-    rt = Match.objects.filter(query)
+    rt = Match.objects.filter(query2)
     for match in rt:
         if match.starttime.strftime(datefmt) in matchCountSummary:
             matchCountSummary[match.starttime.strftime(datefmt)] += 1
         else:
             matchCountSummary[match.starttime.strftime(datefmt)] = 1
-    query2 = getQueryCriteria(starttime2, endtime2)
     topOneBonusSummary = Match.objects.values('starttime','bonus').filter(query2).filter(bonus=Match.objects.filter(query2).aggregate(Max('bonus'))['bonus__max'])
-
     def ValuesQuerySetToDict(vqs):
         return [{'bonus': item['bonus'], 'starttime': item['starttime'].strftime(datefmt)} for item in vqs]
     
