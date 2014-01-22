@@ -27,7 +27,7 @@
 <script>
 	{% if user.is_authenticated %}
 		var AUTH = 1;
-		{% if user.cellphone != '' %}
+		{% if user.cellphone %}
 		var MISSING_INFO = 0;
 		{% else %}
 		var MISSING_INFO = 1;
@@ -77,7 +77,7 @@
 		        {% if poolroomuser %}
 		        <li><a href="{% url 'club_index' %}">欢迎你,{{ poolroomuser.poolroom.name }}</a></li>
 		        {% else %}
-		        <li><a href="#"><img src="{{ user.avatar }}" width="30">&nbsp&nbsp{{ user.nickname }}</a></li>
+		        <li>{% if user.avatar %}<img src="{{ user.avatar }}" width="30">{% endif %}&nbsp&nbsp{{ user.nickname }}</a></li>
 		        {% endif %}
 	        <li class="divider"></li>
 	        <li><a href="{{ user_logout }}">登出</a></li>
@@ -113,7 +113,7 @@
 		<li><a href="{% url 'club_challenge' %}">约赛</a></li>
 		{% else %}
 	    <li><label>用户中心</label></li>
-	    <li><a href="#"><img src="{{ user.avatar }}" >&nbsp&nbsp{{ user.nickname }}</a></li>
+	    <li>{{ user.nickname }}</li>
 	    {% endif %}
 	    <li><a href="{{ user_logout }}">登出</a></li>
 	    {% else %}
@@ -170,7 +170,7 @@
   <a href="{{ weibourl }}" class="radius button">新浪微博</a>
   <a class="close-reveal-modal">&#215;</a>
 </div>
-<div id="userInfoForm" class="reveal-modal small" data-reveal>
+<div id="userInfoForm" class="reveal-modal medium" data-reveal>
   <h3>请完善您的联系方式，方便我们更好的为您提供服务。</h3>
   <h4>您的联系方式确定一定以及肯定只用于俱乐部与您确认报名信息。</h4>
   <form id="completeInfoForm" data-abide>

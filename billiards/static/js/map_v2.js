@@ -138,7 +138,7 @@ function addMatchToList_v2(match, point) {
 	if (isAuth())
 		if ( hasOwnProperty(match.fields, 'enrolled') ) {
 			enrolled = true;
-			contentTemplate += "<h3>已报名。</h3>";
+			contentTemplate += "<h3>已预留报名位，请在赛事规定时效内到俱乐部缴费。</h3>";
 		}
 	if (!enrolled) {
 		if (isExpired(match.fields.starttime)) {
@@ -147,11 +147,11 @@ function addMatchToList_v2(match, point) {
 			if (match.fields.status == 'approved') {
 				if (isAuth()) {
 					if (needInfo())
-						contentTemplate	+= "<a href=\"javascript:completeInfo();\" class=\"button expand\">我要报名比赛</a>";
+						contentTemplate	+= "<a href=\"javascript:completeInfo();\" class=\"button expand\">我要预留报名位</a>";
 					else
-						contentTemplate += "<a href=\"javascript:void(0);\" id=\"enroll\" match='" + match.pk + "' class=\"button expand\">我要报名比赛</a>";
+						contentTemplate += "<a href=\"javascript:void(0);\" id=\"enroll\" match='" + match.pk + "' class=\"button expand\">我要预留报名位</a>";
 				} else {
-					contentTemplate	+= "<a href=\"javascript:loginFirst();\" class=\"button expand\">我要报名比赛</a>";
+					contentTemplate	+= "<a href=\"javascript:loginFirst();\" class=\"button expand\">我要预留报名位</a>";
 				}
 			} else {
 				contentTemplate += "<h3>比赛已无效。</h3>";
@@ -447,7 +447,7 @@ function matchEnroll(objdiv, id) {
 			} else if (data.rt == 4) {
 				objdiv.append("<h3>比赛已无效。</h3>");
 			} else {
-				objdiv.append("<h3>报名成功。</h3>");
+				objdiv.append("<h3>预留报名位成功，请在赛事规定时效内到俱乐部缴费。</h3>");
 			}
 		},
 		error: function (xhr, ajaxOptions, thrownError) {

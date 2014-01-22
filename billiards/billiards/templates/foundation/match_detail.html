@@ -25,18 +25,22 @@
 				<div class="show-for-small" align="center">
 					<hr>
 					{% if match.enrolled %}
-					<h3 style="color: #FF9900">已报名。</h3>
+					<h3 style="color: #FF9900">已预留报名位，请在赛事规定时间内到俱乐部缴费。</h3>
 					{% else %} <a class="small radius button {% if match.is_expired or  match.status != 'approved' %} disabled {% endif %}"
-						href="javascript:void(0);" 
 						{% if match.is_expired %}
-			       			> 比赛已过期。
+			       			href="javascript:void(0);"> 比赛已过期。
 			       		{% elif match.status != 'approved' %}
-			       		    > 比赛已失效。
+			       		    href="javascript:void(0);"> 比赛已失效。
 			       		{% else %}
 							{% if not user.is_authenticated %} 
-								data-reveal-id="quickLogin"
+								href="javascript:void(0);" data-reveal-id="quickLogin"
 				       		{% else %}  
-				       			id="enroll" match="{{ match.pk }}"{% endif %}> 我要报名!
+				       		    {% if user.cellphone != None and user.cellphone != '' %}
+				       			href="javascript:void(0);" id="enroll" match="{{ match.pk }}"> 我要预留报名位!
+				       			{% else %}
+				       			href="javascript:completeInfo();"> 我要预留报名位!
+				       			{% endif %}
+				       		{% endif %}
 				       	{% endif %}
 		       		{% endif %}
 		       		</a>
@@ -135,22 +139,26 @@
 	<h2>行动起来!</h2>
 	<hr>
 	{% if match.enrolled %}
-	<h3 style="color: #FF9900">已报名。</h3>
+	<h3 style="color: #FF9900">已预留报名位，请在赛事规定时间内到俱乐部缴费。</h3>
 	{% else %} 
 		<a class="small radius button {% if match.is_expired or  match.status != 'approved' %} disabled {% endif %}"
-			href="javascript:void(0);" 
 		{% if match.is_expired %}
-      			> 比赛已过期。
-      	{% elif match.status != 'approved' %}
-      		    > 比赛已失效。
-      	{% else %}
-				{% if not user.is_authenticated %} 
-					data-reveal-id="quickLogin">我要报名!
-	       		{% else %}  
-	       			id="enroll" match="{{ match.pk }}"{% endif %}> 我要报名!
-	       		{% endif %}
-     	{% endif %}
+    		href="javascript:void(0);"> 比赛已过期。
+     	{% elif match.status != 'approved' %}
+     	    href="javascript:void(0);"> 比赛已失效。
+     	{% else %}
+			{% if not user.is_authenticated %} 
+				href="javascript:void(0);" data-reveal-id="quickLogin"
+      		{% else %}  
+      		    {% if user.cellphone != None and user.cellphone != '' %}
+      				href="javascript:void(0);" id="enroll" match="{{ match.pk }}"> 我要预留报名位!
+      			{% else %}
+      				href="javascript:completeInfo();"> 我要预留报名位!
+      			{% endif %}
+      		{% endif %}
+      	{% endif %}
      	</a>	
+     {% endif %}
 </div>
 {% endblock %} 
 {% block script %}
