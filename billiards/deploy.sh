@@ -27,7 +27,9 @@ main(){
 	pecho "Deploying project to DIR $TARGET..."
 	cd $TARGET
 	# pull latest versions
-	git pull
+	git fetch
+	git checkout -f master
+	git reset --hard origin/master
 	rm -rf $TARGET/*
 
 	pecho "Clean unnecessary files..."
@@ -48,7 +50,7 @@ main(){
 	cp -f billiards/context_processors.py.new billiards/context_processors.py
 	rm -f billiards/context_processors.py.new
 	pecho "Commit and push new version to BAE..."
-	git add .
+	git add --all .
 	git commit -m"Deploy new release of ibilliards"
 	# increase post buffer to 50MB
 	git config http.postBuffer 52428800
