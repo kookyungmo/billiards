@@ -17,6 +17,7 @@ import datetime
 from django.utils.timezone import pytz
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 def index(request):
     poolroomusers = getPoolroom(request.user)
@@ -84,6 +85,7 @@ def saveMatch(request, poolroomid, match = None):
         return HttpResponse(json.dumps({'rt': 1, 'msg': 'created'}), content_type="application/json")
     return HttpResponse(json.dumps(dict({'rt': 0}.items() + newmatch.errors.items())), content_type="application/json")
 
+@ensure_csrf_cookie
 def match_add(request):
     poolroomusers = getPoolroom(request.user)
     if request.method == 'POST':
@@ -103,6 +105,7 @@ def checkPoolroomUserByMatch(user, matchid):
             return poolroomusers, match
     raise PermissionDenied
 
+@ensure_csrf_cookie
 def match_edit(request, matchid):
     poolroomusers, match = checkPoolroomUserByMatch(request.user, matchid)
     if request.method == 'POST':
@@ -159,6 +162,7 @@ def saveChallenge(request, poolroomid, challenge = None):
         return HttpResponse(json.dumps({'rt': 1, 'msg': 'created'}), content_type="application/json")
     return HttpResponse(json.dumps(dict({'rt': 0}.items() + newchallenge.errors.items())), content_type="application/json")
 
+@ensure_csrf_cookie   
 def challenge_add(request):
     poolroomusers = getPoolroom(request.user)
     if request.method == 'POST':
@@ -178,6 +182,7 @@ def checkPoolroomUserByChallenge(user, challengeid):
             return poolroomusers, challenge
     raise PermissionDenied
 
+@ensure_csrf_cookie
 def challenge_edit(request, challengeid):
     poolroomusers, challenge = checkPoolroomUserByChallenge(request.user, challengeid)
     if request.method == 'POST':
@@ -231,7 +236,8 @@ def challengeapp_reject(request, appid):
 class PoolroomUserApplyForm(ModelForm):
     class Meta:
         model = PoolroomUserApply
-        
+     
+@ensure_csrf_cookie   
 def club_apply(request):
     if not request.user.is_authenticated():
         raise PermissionDenied

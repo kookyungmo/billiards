@@ -89,16 +89,15 @@ def index(request, view = None):
     intervals = 7
     starttime2 = datetime.datetime.today()
     endtime2 = starttime2 + relativedelta(days=intervals)
+    query2 = getQueryCriteria(starttime2, endtime2)
     matchCountSummary = dict()
-    rt = Match.objects.filter(query)
+    rt = Match.objects.filter(query2)
     for match in rt:
         if match.starttime.strftime(datefmt) in matchCountSummary:
             matchCountSummary[match.starttime.strftime(datefmt)] += 1
         else:
             matchCountSummary[match.starttime.strftime(datefmt)] = 1
-    query2 = getQueryCriteria(starttime2, endtime2)
     topOneBonusSummary = Match.objects.values('starttime','bonus').filter(query2).filter(bonus=Match.objects.filter(query2).aggregate(Max('bonus'))['bonus__max'])
-
     def ValuesQuerySetToDict(vqs):
         return [{'bonus': item['bonus'], 'starttime': item['starttime'].strftime(datefmt)} for item in vqs]
     
@@ -142,11 +141,8 @@ def enroll(request, matchid):
     obj, created = MatchEnroll.objects.get_or_create(match=match, user=request.user,
                   defaults={'enrolltime': datetime.datetime.utcnow().replace(tzinfo=pytz.timezone(TIME_ZONE))})
     
-    addition = {'info_missing': False}
-    if request.user.email == None or request.user.cellphone == None:
-        addition['info_missing'] = True
     if obj != False:
         msg = {'rt': 2, 'msg': 'already enrolled'}
     elif created != False:
         msg = {'rt': 1, 'msg': 'enrolled'}
-    return HttpResponse(json.dumps(dict(addition.items() + msg.items())), content_type="application/json")
+    return HttpResponse(json.dumps(msg), content_type="application/json")
