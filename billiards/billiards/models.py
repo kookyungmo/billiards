@@ -12,10 +12,12 @@ from bitfield import BitField
 from django.utils.encoding import force_unicode
 from django.contrib.auth.models import User
 from billiards.storage import ImageStorage
-from billiards.settings import UPLOAD_TO, TIME_ZONE, MEDIA_ROOT
+from billiards.settings import UPLOAD_TO, TIME_ZONE, MEDIA_ROOT, BAE_IMAGE,\
+    THUMBNAIL_WIDTH
 import datetime
 from django.core.serializers.json import Serializer as JsonSerializer 
 from django.utils.encoding import is_protected_type 
+import os
 
 def toDict(bitfield):
     flag_dict = {}
@@ -87,6 +89,30 @@ class PoolroomImage(models.Model):
 
     def __unicode__(self):
         return self.poolroom.name + "-" + self.description
+    
+    def save(self):
+        super(PoolroomImage, self).save()
+        
+        # avoid import issue in local env
+        # https://github.com/BaiduAppEngine/bae-python-sdk/issues/1
+        try:
+            from bae_image.image import BaeImage
+            img = BaeImage(BAE_IMAGE['key'], BAE_IMAGE['secret'], BAE_IMAGE['host'])
+            albumstorage = ImageStorage()
+            path = str(self.imagepath)
+            import base64
+            for width in THUMBNAIL_WIDTH:
+                img.clearOperations()
+                img.setSource(MEDIA_ROOT + path)
+                img.setZooming(BaeImage.ZOOMING_TYPE_WIDTH, width)
+                ret = img.process()
+                body = ret['response_params']['image_data']
+            
+                fileName, fileExtension = os.path.splitext(path)
+                newpath = "%s-w%s.%s" %(fileName, width, fileExtension)
+                albumstorage.saveToBucket(newpath, base64.b64decode(body))
+        except ImportError:
+            pass
 
 class ChoiceTypeField(models.CharField):
     ''' use value of key when serializing as json

@@ -208,3 +208,11 @@ BCS_BUCKET = {
               'BUCKET_NAME': 'billiardsalbum',
               'BCS_SITE': 'http://bcs.duapp.com/',
               }
+
+BAE_IMAGE = {
+    'key': 'lzLVWuWXTWRpmUq78cD5CEwE',
+    'secret': 'GjLz74wHP1QUIubKPlI5BvGYPTHxb14X',
+    'host': 'image.duapp.com',
+}
+
+THUMBNAIL_WIDTH = [100, 200, 300]

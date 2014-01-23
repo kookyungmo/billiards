@@ -13,6 +13,7 @@ from billiards.settings import BCS_BUCKET
 from billiards.support import pybcs
 import unicodedata
 import os
+from django.core.files.base import ContentFile
 
 # set bucket
 AK = BCS_BUCKET['AK']
@@ -85,15 +86,21 @@ class BcsStorage(FileSystemStorage):
         if content.size > self.maxsize:
             raise SuspiciousOperation(u"文件大小超过限制")
 
+        self.saveToBucket(rename, content)
+        return rename
+    
+    def saveToBucket(self, name, content):
         bkt = self.connect_bucket()
-        obj = bkt.object(rename)
-
+        obj = bkt.object(name)
+        
         if hasattr(content, '_get_file'):  # admin entry
             obj.put(content._get_file().read())
-        else:   # view entry（ContentFile）
+        elif isinstance(content, (ContentFile)) :   # view entry（ContentFile）
             obj.put(content.read())
-        
-        return rename
+        else:
+            obj.put(content)
+            
+        return obj
 
 # Rename the file name to a unique string + file name
     def makename(self, name):
