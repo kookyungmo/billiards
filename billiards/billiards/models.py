@@ -12,7 +12,7 @@ from bitfield import BitField
 from django.utils.encoding import force_unicode
 from django.contrib.auth.models import User
 from billiards.storage import ImageStorage
-from billiards.settings import UPLOAD_TO, TIME_ZONE
+from billiards.settings import UPLOAD_TO, TIME_ZONE, MEDIA_ROOT
 import datetime
 from django.core.serializers.json import Serializer as JsonSerializer 
 from django.utils.encoding import is_protected_type 
@@ -61,6 +61,32 @@ class Poolroom(models.Model):
         return {'id': self.id, 'name': self.name, 'lat': self.lat_baidu, 'lng': self.lng_baidu,
                 'businesshours': self.businesshours, 'size': self.size,
                 'address': self.address, 'flags': toDict(self.flags), 'rating': self.rating}
+
+UPLOAD_TO_POOLROOM = UPLOAD_TO + 'poolroom/'
+class PoolroomImage(models.Model):
+    id = models.AutoField(primary_key=True)
+    poolroom = models.ForeignKey(Poolroom, verbose_name='台球厅')
+    imagepath = models.ImageField(verbose_name=u'选择本地图片/图片路径', max_length=250, upload_to=UPLOAD_TO_POOLROOM, 
+                                  storage=ImageStorage())
+    description = models.CharField(verbose_name=u'图片说明', null=True, blank=True, max_length=50)
+    iscover = models.BooleanField(verbose_name=u'是否是封面图片', default=False)
+    status = models.IntegerField(verbose_name=u'状态', choices=(
+            (0, u'不可用'),
+            (1, u'可用'),
+        ), default=1,)
+    
+    class Meta:
+        db_table = 'poolroom_images'
+        verbose_name = '台球厅图片'
+        verbose_name_plural = '台球厅图片'
+        
+    def imagetag(self):
+        return u'<img src="%s%s" />' %(MEDIA_ROOT, self.imagepath)
+    imagetag.short_description = u'图片预览'
+    imagetag.allow_tags = True
+
+    def __unicode__(self):
+        return self.poolroom.name + "-" + self.description
 
 class ChoiceTypeField(models.CharField):
     ''' use value of key when serializing as json
@@ -338,28 +364,6 @@ class PoolroomUser(models.Model):
             return "%s <br/>Email: %s<br/>Tel: %s" % ((self.user.nickname if self.user.nickname is not None and self.user.nickname != "" else self.user.username), self.user.email, self.user.cellphone)
     verbose_user.short_description = u'俱乐部管理员详细信息'
     verbose_user.allow_tags = True  
-
-UPLOAD_TO = UPLOAD_TO + 'poolroom/'
-class Images(models.Model):
-    user = models.ForeignKey(User, verbose_name=u"当前用户", related_name="userimages")
-    picture = models.ImageField(verbose_name=u'图片', max_length=250,
-                                     upload_to=UPLOAD_TO,
-                                     storage=ImageStorage(),
-                                     null=True, blank=True)
-
-    def __unicode__(self):
-        return u"%s" % self.user
-
-    class Meta:
-        verbose_name = u'图片文件夹'
-        verbose_name_plural = verbose_name   
-
-    def delete(self, using=None):
-        try:
-            self.picture.storage.delete(self.picture.name)
-        except Exception:
-            pass
-        super(Images, self).delete(using=using)
 
 class PoolroomUserApply(models.Model):
     id = models.AutoField(primary_key=True)
