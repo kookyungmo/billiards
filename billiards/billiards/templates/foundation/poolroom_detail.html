@@ -16,11 +16,23 @@
       <div class="medium-9 columns panel">
          <div class="row">
           <div class="medium-7 medium-push-5 columns">
+			{% with picimages=poolroom.images %}
+			{% if picimages|length > 0 %}
+			<div class="row">
+				<ul class="clearing-thumbs clearing-feature" data-clearing>
+					{% for image in picimages %}
+						<li {% if image.iscover %} class="clearing-featured-img" {% endif %}><a href="{{ MEDIA_URL }}{{ image.imagepath }}">
+						<img src="{{ MEDIA_URL }}{{ image.imagepath|thumbnail:"400" }}"></a></li>
+					{% endfor %}
+				</ul>
+			</div>
+			<hr>
+			{% endif %}
+			{% endwith %}
 			<div class="row">
 				<div id="baidumap"
 						style="overflow: hidden; margin: 0; height: 250px;"></div>
 			</div>
-			<hr>
           </div>
           <div class="medium-5 medium-pull-7 columns">
             <h3 style = color:#EB6100>{{ poolroom.name }}</h3>
@@ -111,6 +123,9 @@
 	    <div class="row"><h2>近期没有比赛信息。</h2></div>
   {% endfor %}
       </div>
+{% endblock %}
+{% block foundationscript %}
+    <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.clearing.min.js"></script>
 {% endblock %}
 {% block script %}
 	<script>

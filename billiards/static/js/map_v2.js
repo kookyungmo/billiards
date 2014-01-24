@@ -63,26 +63,28 @@ function addMatchToList_v2(match, point) {
 	detail_url = MATCH_URL.replace(/000/g, match.pk);
 	contentTemplate ="<div class=\"row\">"
 			+ "<div class=\"small-12 large-2 columns\">"
-//                        + "<ul class=\"pricing-table\">"
-//                        + "<li class=\"title\"><font size=+1>$starttimedate</font></li>"
-//                        + "<li class=\"price\">$starttimeweekday</li>"
-//                        + "<li class=\"title\"><font size=+1>$starttimehour</font></li>"
-//			+ "</ul>"
 			+ "<ul class=\"calendar\"><em>$starttimedate</em>$starttimehour<em>$starttimeweekday</em></ul>"
 			+ "</div>"
-
 			+ "<div class=\"small-12 large-7 columns\">"
 			+ "<div class=\"row\">"
 			+ "<div class=\"small-12 columns\">"
 			+ "<div class=\"columns panel clickable\" style=\"overflow:auto;\">"
 			+ "<div class=\"small-4 medium-4 columns\">"
-			
-			+ "<ul class=\"clearing-thumbs clearing-feature\" data-clearing>"
-			+ " <li class=\"clearing-featured-img\"><a class=\"th\" href=\"http://api.map.baidu.com/staticimage?center=$point&width=600&height=400&zoom=18&scale=2&markers=$point&markerStyles=-1,http://billiardsalbum.bcs.duapp.com/2014/01/marker-2.png\"><img data-caption=\"MapShot\" src=\"http://api.map.baidu.com/staticimage?center=$point&width=100&height=62&zoom=16&scale=2&markers=$point&markerStyles=-1\"></a></li>"
-			+ "<li><a class=\"th\" href=\"http://placehold.it/200x200\"><img src=\"http://placehold.it/200x200\"></a></li>"
-			+ "</ul>"
+			+ "<ul class=\"clearing-thumbs clearing-feature\" data-clearing>";
+	images = Object.getOwnPropertyNames(match.fields.poolroom.images);
+	if (images.length > 0) {
+		for (var idx in images) {
+			image = match.fields.poolroom.images[images[idx]]
+			contentTemplate += "<li ";
+			if ( image.iscover)
+				contentTemplate += "class=\"clearing-featured-img\"";
+			contentTemplate += "><a href=\"" + MEDIA_URL + image.imagepath 
+			+ "\"><img src=\"" + MEDIA_URL + getThumbnail(image.imagepath, '100') + "\"></a></li>";
+		}
+	} else
+		contentTemplate += " <li class=\"clearing-featured-img\"><a class=\"th\" href=\"http://api.map.baidu.com/staticimage?center=$point&width=600&height=400&zoom=18&scale=2&markers=$point&markerStyles=-1,http://billiardsalbum.bcs.duapp.com/2014/01/marker-2.png\"><img data-caption=\"MapShot\" src=\"http://api.map.baidu.com/staticimage?center=$point&width=100&height=62&zoom=16&scale=2&markers=$point&markerStyles=-1\"></a></li>";
+	contentTemplate += "</ul>"
 			+ "</div>"
-
 			+ "<div class=\"small-8 medium-8 columns\">"
 			+ "<div class=\"row\">"
 			+ "<p><font size=><span name=\"title\" point=\"$point\" match=\"$matchjsonstr\" style=\"color:#EB6100\"><strong>$poolroomname&nbsp;&nbsp;&nbsp;</strong></a></span>"
@@ -307,10 +309,22 @@ function addPoolroomToList(poolroom, point) {
 
 			+ "<div class=\"small-12 large-10 columns panel clickable\">"
 			+ "<div class=\"small-4 large-4 columns\">"
-			+ "<ul class=\"clearing-thumbs clearing-feature\" data-clearing>"
-			+ " <li class=\"clearing-featured-img\"><a class=\"th\" href=\"http://api.map.baidu.com/staticimage?center=$point&width=900&height=600&zoom=18&scale=2&markers=$point&markerStyles=-1,http://billiardsalbum.bcs.duapp.com/2014/01/marker-2.png\"><img data-caption=\"MapShot\" src=\"http://api.map.baidu.com/staticimage?center=$point&width=100&height=62&zoom=16&scale=2&markers=$point&markerStyles=-1\"></a></li>"
-			+ "</ul>"
-                        + "</div>"
+			+ "<ul class=\"clearing-thumbs clearing-feature\" data-clearing>";
+	images = Object.getOwnPropertyNames(poolroom.fields.images)
+	if (images.length == 0)
+		contentTemplate += " <li class=\"clearing-featured-img\"><a class=\"th\" href=\"http://api.map.baidu.com/staticimage?center=$point&width=900&height=600&zoom=18&scale=2&markers=$point&markerStyles=-1,http://billiardsalbum.bcs.duapp.com/2014/01/marker-2.png\"><img data-caption=\"MapShot\" src=\"http://api.map.baidu.com/staticimage?center=$point&width=100&height=62&zoom=16&scale=2&markers=$point&markerStyles=-1\"></a></li>";
+	else {
+		for (var idx in images) {
+			image = poolroom.fields.images[images[idx]]
+			contentTemplate += "<li ";
+			if ( image.fields.iscover)
+				contentTemplate += "class=\"clearing-featured-img\"";
+			contentTemplate += "><a href=\"" + MEDIA_URL + image.fields.imagepath 
+			+ "\"><img src=\"" + MEDIA_URL + getThumbnail(image.fields.imagepath, '200') + "\"></a></li>";
+		}
+	}
+	contentTemplate += "</ul>"
+            + "</div>"
 			+ "<div class=\"small-8 large-8 columns\">"
 			+ "<div class=\"row\">"
 			+ "<h5><span name=\"title\" point=\"$point\"><u><a href=\"" + detail_url + "\">$poolroomname</a></u></span></h5>"
@@ -348,6 +362,10 @@ function addPoolroomToList(poolroom, point) {
 	poolroomobj.append(contentTemplate);
 	poolroomobj.appendTo('#poolroomlist');
 	return poolroomobj;	
+}
+
+function getThumbnail(filename, width) {
+	return filename.replace(/(\.[\w\d_-]+)$/i, '-w'+width+'$1');
 }
 
 var poolroomInfo = function(marker, poolroom) {
@@ -499,12 +517,23 @@ function addChallengeToList(challenge, point, mypoint) {
 			+ "</ul></div>"
 			+ "<div class=\"small-8 large-10 columns panel\">"
 			+ "<div class=\"row\">"
-			+ "<div class=\"small-5 medium-3 center columns\">"
-			+ "<ul class=\"clearing-thumbs clearing-feature\" data-clearing>"
-			+ " <li class=\"clearing-featured-img\"><a class=\"th\" href=\"http://api.map.baidu.com/staticimage?center=$point&width=900&height=600&zoom=18&scale=2&markers=$point&markerStyles=-1,http://billiardsalbum.bcs.duapp.com/2014/01/marker-2.png\"><img data-caption=\"MapShot\" src=\"http://api.map.baidu.com/staticimage?center=$point&width=100&height=62&zoom=16&scale=2&markers=$point&markerStyles=-1\"></a></li>"
-			+ "</ul>"
-                        + "</div>"
-			+ "<div class=\"small-7 medium-9 columns\">"
+			+ "<div class=\"small-5 medium-4 center columns\">"
+			+ "<ul class=\"clearing-thumbs clearing-feature\" data-clearing>";
+	images = Object.getOwnPropertyNames(challenge.fields.issuer.images);
+	if (images.length > 0) {
+		for (var idx in images) {
+			image = challenge.fields.issuer.images[images[idx]]
+	        contentTemplate += "<li ";
+			if ( image.iscover)
+				contentTemplate += "class=\"clearing-featured-img\"";
+			contentTemplate += "><a href=\"" + MEDIA_URL + image.imagepath
+	    		+ "\"><img src=\"" + MEDIA_URL + getThumbnail(image.imagepath, '300') + "\"></a></li>";
+	    }
+	} else
+		contentTemplate += " <li class=\"clearing-featured-img\"><a class=\"th\" href=\"http://api.map.baidu.com/staticimage?center=$point&width=900&height=600&zoom=18&scale=2&markers=$point&markerStyles=-1,http://billiardsalbum.bcs.duapp.com/2014/01/marker-2.png\"><img data-caption=\"MapShot\" src=\"http://api.map.baidu.com/staticimage?center=$point&width=100&height=62&zoom=16&scale=2&markers=$point&markerStyles=-1\"></a></li>";
+	contentTemplate += "</ul>"
+            + "</div>"
+			+ "<div class=\"small-7 medium-8 columns\">"
 			+ "<h5><span name=\"title\" point=\"$point\"><u><a href=\"" + detail_url + "\">$poolroomname</a></u></span></h5>"
 			+ "<div class=\"row\">"
 	equipment = "";

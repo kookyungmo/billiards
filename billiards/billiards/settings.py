@@ -215,4 +215,4 @@ BAE_IMAGE = {
     'host': 'image.duapp.com',
 }
 
-THUMBNAIL_WIDTH = [100, 200, 300]
+THUMBNAIL_WIDTH = [100, 200, 300, 400]

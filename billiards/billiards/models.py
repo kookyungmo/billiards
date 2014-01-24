@@ -18,6 +18,9 @@ import datetime
 from django.core.serializers.json import Serializer as JsonSerializer 
 from django.utils.encoding import is_protected_type 
 import os
+from django.db.models.query_utils import Q
+from django.db.models.signals import pre_delete
+from django.dispatch.dispatcher import receiver
 
 def toDict(bitfield):
     flag_dict = {}
@@ -60,11 +63,24 @@ class Poolroom(models.Model):
         return self.name
 
     def natural_key(self):
+        images = {}
+        for idx, image in enumerate(self.images):
+            newimage = {}
+            newimage['imagepath'] = image.imagepath.name
+            newimage['iscover'] = image.iscover
+            newimage['description'] = image.description
+            images['img' + str(idx)] = newimage
         return {'id': self.id, 'name': self.name, 'lat': self.lat_baidu, 'lng': self.lng_baidu,
                 'businesshours': self.businesshours, 'size': self.size,
-                'address': self.address, 'flags': toDict(self.flags), 'rating': self.rating}
+                'address': self.address, 'flags': toDict(self.flags), 'rating': self.rating,
+                'images': images}
+        
+    @property
+    def images(self):
+        return PoolroomImage.objects.filter(Q(poolroom=self) & Q(status=1))
 
 UPLOAD_TO_POOLROOM = UPLOAD_TO + 'poolroom/'
+poolroomimage_fields = ('imagepath', 'description', 'iscover')
 class PoolroomImage(models.Model):
     id = models.AutoField(primary_key=True)
     poolroom = models.ForeignKey(Poolroom, verbose_name='台球厅')
@@ -90,30 +106,54 @@ class PoolroomImage(models.Model):
     def __unicode__(self):
         return self.poolroom.name + "-" + self.description
     
+    __imagepath = None
+    
+    def __init__(self, *args, **kwargs):
+        super(PoolroomImage, self).__init__(*args, **kwargs)
+        self.__imagepath = self.imagepath
+    
     def save(self):
         super(PoolroomImage, self).save()
         
-        # avoid import issue in local env
-        # https://github.com/BaiduAppEngine/bae-python-sdk/issues/1
-        try:
-            from bae_image.image import BaeImage
-            img = BaeImage(BAE_IMAGE['key'], BAE_IMAGE['secret'], BAE_IMAGE['host'])
-            albumstorage = ImageStorage()
-            path = str(self.imagepath)
-            import base64
-            for width in THUMBNAIL_WIDTH:
-                img.clearOperations()
-                img.setSource(MEDIA_ROOT + path)
-                img.setZooming(BaeImage.ZOOMING_TYPE_WIDTH, width)
-                ret = img.process()
-                body = ret['response_params']['image_data']
-            
-                fileName, fileExtension = os.path.splitext(path)
-                newpath = "%s-w%s.%s" %(fileName, width, fileExtension)
-                albumstorage.saveToBucket(newpath, base64.b64decode(body))
-        except ImportError:
-            pass
+        if self.imagepath != self.__imagepath:
+            # avoid import issue in local env
+            # https://github.com/BaiduAppEngine/bae-python-sdk/issues/1
+            try:
+                from bae_image.image import BaeImage
+                img = BaeImage(BAE_IMAGE['key'], BAE_IMAGE['secret'], BAE_IMAGE['host'])
+                albumstorage = ImageStorage()
+                path = str(self.imagepath)
+                import base64
+                for width in THUMBNAIL_WIDTH:
+                    img.clearOperations()
+                    img.setSource(MEDIA_ROOT + path)
+                    img.setZooming(BaeImage.ZOOMING_TYPE_WIDTH, width)
+                    ret = img.process()
+                    body = ret['response_params']['image_data']
+                
+                    newpath = PoolroomImage.getThumbnailPath(path, width)
+                    albumstorage.saveToBucket(newpath, base64.b64decode(body))
+            except ImportError:
+                pass
+        self.__imagepath = self.imagepath
 
+    @staticmethod
+    def getThumbnailPath(path, width):
+        fileName, fileExtension = os.path.splitext(path)
+        return "%s-w%s%s" %(fileName, width, fileExtension)
+
+@receiver(pre_delete, sender=PoolroomImage)
+def delete_image(instance, **kwargs):
+    try:
+        instance.imagepath.storage.delete(instance.imagepath.name)
+    except Exception:
+        pass
+    for width in THUMBNAIL_WIDTH:
+        try:
+            instance.imagepath.storage.delete(PoolroomImage.getThumbnailPath(instance.imagepath.name, width))
+        except Exception:
+            pass
+        
 class ChoiceTypeField(models.CharField):
     ''' use value of key when serializing as json
     '''

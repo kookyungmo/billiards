@@ -6,9 +6,11 @@ Created on 2013年10月31日
 @author: kane
 '''
 from django import template
-from billiards.models import match_fields, poolroom_fields, PoolroomEquipment
+from billiards.models import match_fields, poolroom_fields, PoolroomEquipment,\
+    PoolroomImage
 from billiards.views import match
 from billiards.views.match import tojson
+import os
 
 def poolroomtojson(data):
     return tojson(data, poolroom_fields)
@@ -28,9 +30,13 @@ def matchtojsonwithenroll(matches, user):
     else:
         return jsonstr
 
+def thumbnail(imagepath, width):
+    return PoolroomImage.getThumbnailPath(imagepath.name, width)
+
 register = template.Library()
 register.filter('matchtojson', matchtojson)
 register.filter('poolroomtojson', poolroomtojson)
 register.filter('tojson', tojson)
 register.filter('equipmentname', equipmentname)
 register.filter('matchtojsonwithenroll', matchtojsonwithenroll)
+register.filter('thumbnail', thumbnail)
