@@ -54,7 +54,7 @@ MEDIA_ROOT = 'http://billiardsalbum.bcs.duapp.com'
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
 MEDIA_URL = MEDIA_ROOT
-UPLOAD_TO = '/filesystem/'
+UPLOAD_TO = '/resources/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
