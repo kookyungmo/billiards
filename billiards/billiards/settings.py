@@ -48,12 +48,12 @@ USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = 'http://bcs.duapp.com/billiardsalbum/'
+MEDIA_ROOT = 'http://billiardsalbum.bcs.duapp.com'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = 'http://bcs.duapp.com/billiardsalbum/'
+MEDIA_URL = MEDIA_ROOT
 UPLOAD_TO = '/filesystem/'
 
 # Absolute path to the directory static files should be collected to.
@@ -194,3 +194,11 @@ BCS_BUCKET = {
               'BUCKET_NAME': 'billiardsalbum',
               'BCS_SITE': 'http://bcs.duapp.com/',
               }
+
+BAE_IMAGE = {
+    'key': 'lzLVWuWXTWRpmUq78cD5CEwE',
+    'secret': 'GjLz74wHP1QUIubKPlI5BvGYPTHxb14X',
+    'host': 'image.duapp.com',
+}
+
+THUMBNAIL_WIDTH = [100, 200, 300, 400]

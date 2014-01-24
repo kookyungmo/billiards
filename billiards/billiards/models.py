@@ -12,10 +12,15 @@ from bitfield import BitField
 from django.utils.encoding import force_unicode
 from django.contrib.auth.models import User
 from billiards.storage import ImageStorage
-from billiards.settings import UPLOAD_TO, TIME_ZONE
+from billiards.settings import UPLOAD_TO, TIME_ZONE, MEDIA_ROOT, BAE_IMAGE,\
+    THUMBNAIL_WIDTH
 import datetime
 from django.core.serializers.json import Serializer as JsonSerializer 
 from django.utils.encoding import is_protected_type 
+import os
+from django.db.models.query_utils import Q
+from django.db.models.signals import pre_delete
+from django.dispatch.dispatcher import receiver
 
 def toDict(bitfield):
     flag_dict = {}
@@ -58,10 +63,97 @@ class Poolroom(models.Model):
         return self.name
 
     def natural_key(self):
+        images = {}
+        for idx, image in enumerate(self.images):
+            newimage = {}
+            newimage['imagepath'] = image.imagepath.name
+            newimage['iscover'] = image.iscover
+            newimage['description'] = image.description
+            images['img' + str(idx)] = newimage
         return {'id': self.id, 'name': self.name, 'lat': self.lat_baidu, 'lng': self.lng_baidu,
                 'businesshours': self.businesshours, 'size': self.size,
-                'address': self.address, 'flags': toDict(self.flags), 'rating': self.rating}
+                'address': self.address, 'flags': toDict(self.flags), 'rating': self.rating,
+                'images': images}
+        
+    @property
+    def images(self):
+        return PoolroomImage.objects.filter(Q(poolroom=self) & Q(status=1))
 
+UPLOAD_TO_POOLROOM = UPLOAD_TO + 'poolroom/'
+poolroomimage_fields = ('imagepath', 'description', 'iscover')
+class PoolroomImage(models.Model):
+    id = models.AutoField(primary_key=True)
+    poolroom = models.ForeignKey(Poolroom, verbose_name='台球厅')
+    imagepath = models.ImageField(verbose_name=u'选择本地图片/图片路径', max_length=250, upload_to=UPLOAD_TO_POOLROOM, 
+                                  storage=ImageStorage())
+    description = models.CharField(verbose_name=u'图片说明', null=True, blank=True, max_length=50)
+    iscover = models.BooleanField(verbose_name=u'是否是封面图片', default=False)
+    status = models.IntegerField(verbose_name=u'状态', choices=(
+            (0, u'不可用'),
+            (1, u'可用'),
+        ), default=1,)
+    
+    class Meta:
+        db_table = 'poolroom_images'
+        verbose_name = '台球厅图片'
+        verbose_name_plural = '台球厅图片'
+        
+    def imagetag(self):
+        return u'<img src="%s%s" />' %(MEDIA_ROOT, self.imagepath)
+    imagetag.short_description = u'图片预览'
+    imagetag.allow_tags = True
+
+    def __unicode__(self):
+        return self.poolroom.name + "-" + self.description
+    
+    __imagepath = None
+    
+    def __init__(self, *args, **kwargs):
+        super(PoolroomImage, self).__init__(*args, **kwargs)
+        self.__imagepath = self.imagepath
+    
+    def save(self):
+        super(PoolroomImage, self).save()
+        
+        if self.imagepath != self.__imagepath:
+            # avoid import issue in local env
+            # https://github.com/BaiduAppEngine/bae-python-sdk/issues/1
+            try:
+                from bae_image.image import BaeImage
+                img = BaeImage(BAE_IMAGE['key'], BAE_IMAGE['secret'], BAE_IMAGE['host'])
+                albumstorage = ImageStorage()
+                path = str(self.imagepath)
+                import base64
+                for width in THUMBNAIL_WIDTH:
+                    img.clearOperations()
+                    img.setSource(MEDIA_ROOT + path)
+                    img.setZooming(BaeImage.ZOOMING_TYPE_WIDTH, width)
+                    ret = img.process()
+                    body = ret['response_params']['image_data']
+                
+                    newpath = PoolroomImage.getThumbnailPath(path, width)
+                    albumstorage.saveToBucket(newpath, base64.b64decode(body))
+            except ImportError:
+                pass
+        self.__imagepath = self.imagepath
+
+    @staticmethod
+    def getThumbnailPath(path, width):
+        fileName, fileExtension = os.path.splitext(path)
+        return "%s-w%s%s" %(fileName, width, fileExtension)
+
+@receiver(pre_delete, sender=PoolroomImage)
+def delete_image(instance, **kwargs):
+    try:
+        instance.imagepath.storage.delete(instance.imagepath.name)
+    except Exception:
+        pass
+    for width in THUMBNAIL_WIDTH:
+        try:
+            instance.imagepath.storage.delete(PoolroomImage.getThumbnailPath(instance.imagepath.name, width))
+        except Exception:
+            pass
+        
 class ChoiceTypeField(models.CharField):
     ''' use value of key when serializing as json
     '''
@@ -337,28 +429,6 @@ class PoolroomUser(models.Model):
             return "%s <br/>Email: %s<br/>Tel: %s" % ((self.user.nickname if self.user.nickname is not None and self.user.nickname != "" else self.user.username), self.user.email, self.user.cellphone)
     verbose_user.short_description = u'俱乐部管理员详细信息'
     verbose_user.allow_tags = True  
-
-UPLOAD_TO = UPLOAD_TO + 'poolroom/'
-class Images(models.Model):
-    user = models.ForeignKey(User, verbose_name=u"当前用户", related_name="userimages")
-    picture = models.ImageField(verbose_name=u'图片', max_length=250,
-                                     upload_to=UPLOAD_TO,
-                                     storage=ImageStorage(),
-                                     null=True, blank=True)
-
-    def __unicode__(self):
-        return u"%s" % self.user
-
-    class Meta:
-        verbose_name = u'图片文件夹'
-        verbose_name_plural = verbose_name   
-
-    def delete(self, using=None):
-        try:
-            self.picture.storage.delete(self.picture.name)
-        except Exception:
-            pass
-        super(Images, self).delete(using=using)
 
 class PoolroomUserApply(models.Model):
     id = models.AutoField(primary_key=True)

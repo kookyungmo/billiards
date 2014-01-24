@@ -17,6 +17,19 @@
 	<div class="panel radius">
 		<div class="row">
 			<div class="medium-7 medium-push-5 columns">
+				{% with picimages=match.poolroom.images %}
+				{% if picimages|length > 0 %}
+				<div class="row">
+					<ul class="clearing-thumbs clearing-feature" data-clearing>
+						{% for image in picimages %}
+							<li {% if image.iscover %} class="clearing-featured-img" {% endif %}><a href="{{ MEDIA_URL }}{{ image.imagepath }}">
+							<img src="{{ MEDIA_URL }}{{ image.imagepath|thumbnail:"400" }}"></a></li>
+						{% endfor %}
+					</ul>
+				</div>
+				<hr>
+				{% endif %}
+				{% endwith %}
 				<div class="row">
 					<div id="baidumap" style="overflow: hidden; margin: 0; height: 250px;"></div>
 				</div>
@@ -33,7 +46,7 @@
 			       		    href="javascript:void(0);"> 比赛已失效。
 			       		{% else %}
 							{% if not user.is_authenticated %} 
-								href="javascript:void(0);" data-reveal-id="quickLogin"
+								href="javascript:void(0);" data-reveal-id="quickLogin"> 我要预留报名位!
 				       		{% else %}  
 				       		    {% if user.cellphone != None and user.cellphone != '' %}
 				       			href="javascript:void(0);" id="enroll" match="{{ match.pk }}"> 我要预留报名位!
@@ -148,7 +161,7 @@
      	    href="javascript:void(0);"> 比赛已失效。
      	{% else %}
 			{% if not user.is_authenticated %} 
-				href="javascript:void(0);" data-reveal-id="quickLogin"
+				href="javascript:void(0);" data-reveal-id="quickLogin"> 我要预留报名位!
       		{% else %}  
       		    {% if user.cellphone != None and user.cellphone != '' %}
       				href="javascript:void(0);" id="enroll" match="{{ match.pk }}"> 我要预留报名位!
@@ -161,6 +174,9 @@
      {% endif %}
 </div>
 {% endblock %} 
+{% block foundationscript %}
+    <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.clearing.min.js"></script>
+{% endblock %}
 {% block script %}
 <script>
 	var map = new BMap.Map("baidumap");

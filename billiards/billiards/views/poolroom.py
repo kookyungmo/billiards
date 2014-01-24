@@ -6,7 +6,8 @@
 '''
 
 from django.http import HttpResponse, Http404
-from billiards.models import Poolroom, PoolroomEquipment, poolroom_fields, Match
+from billiards.models import Poolroom, PoolroomEquipment, poolroom_fields, Match,\
+    poolroomimage_fields
 from django.shortcuts import get_object_or_404, render_to_response
 from django.core import serializers
 from django.template.context import RequestContext
@@ -17,6 +18,7 @@ import datetime
 from dateutil.relativedelta import relativedelta
 from StringIO import StringIO
 from django.utils import simplejson
+from billiards.views.match import tojson
 
 def more(request, poolroomid):
     poolroom = get_object_or_404(Poolroom, pk=poolroomid)
@@ -34,6 +36,18 @@ def updateJsonStrWithDistance(poolroomJsonStr, poolrooms):
         for poolroom in poolrooms:
             if poolroom.id == poolroomObj['pk']:
                 poolroomObj['fields']['distance'] = str(poolroom.distance)
+                break
+    return simplejson.dumps(poolroomObjs)
+
+def updateJsonStrWithImages(poolroomJsonStr, poolrooms):        
+    poolroomObjs = simplejson.loads(poolroomJsonStr)
+    for poolroomObj in poolroomObjs:
+        for poolroom in poolrooms:
+            if poolroom.id == poolroomObj['pk']:
+                images = {}
+                for i, image in enumerate(poolroom.images):
+                    images['img' + str(i)] = simplejson.loads(tojson(image, poolroomimage_fields)[1:-1])
+                poolroomObj['fields']['images'] = images
                 break
     return simplejson.dumps(poolroomObjs)
     
@@ -55,6 +69,7 @@ def nearby(request, lat = None, lng = None, distance = 10):
         jsonstr = stream.getvalue()
         if len(nearby_poolrooms) > 0:
             jsonstr = updateJsonStrWithDistance(jsonstr, nearby_poolrooms)
+            jsonstr = updateJsonStrWithImages(jsonstr, nearby_poolrooms)
         return HttpResponse(jsonstr)
     return render_to_response(TEMPLATE_ROOT + 'poolroom_nearby.html', {'defaultDistance': 5},
                               context_instance=RequestContext(request))
