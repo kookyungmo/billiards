@@ -34,15 +34,48 @@ def parse_msg(request):
     for child in root:
         msg[child.tag] = child.text
     return msg
+
+def set_video(request):
+    videos = [
+              {"title":"毒液花式台球史诗级巨制！神一般的弗洛里安·科勒(Florian Kohler)", "plink":"http://billiardsalbum.bcs.duapp.com/2014/02/FlorianKohler1.jpg","description":"绝对不能错过的精彩！点击观看","vlink":"http://v.youku.com/v_show/id_XNTU3MjMyNjI0.html"},
+              {"title":"花式台球帝-毒液和他的彪悍女友 未来最疯狂的特技球家庭！", "plink":"http://billiardsalbum.bcs.duapp.com/2014/02/FlorianKohler1.jpg","description":"精彩不容错过！点击观看","vlink":"http://v.youku.com/v_show/id_XNTIxMjQzMzM2.html"},
+              {"title":"毒液 最新花式台球集锦", "plink":"http://billiardsalbum.bcs.duapp.com/2014/02/FlorianKohler1.jpg","description":"精彩！犀利！点击观看","vlink":"http://v.youku.com/v_show/id_XNDQyNzI5MjEy.html"},
+              {"title":"花式台球 最美的境界 Venom Trickshots", "plink":"http://billiardsalbum.bcs.duapp.com/2014/02/FlorianKohler1.jpg","description":"精彩！高清！点击观看","vlink":"http://v.youku.com/v_show/id_XMzExMjIxMDgw.html"}
+              ]
+    return videos
+  
+def set_zsbq_video(request):
+    videos = [
+              {"title":"2013年首届中式八球大师邀请赛决赛 加雷斯·波茨vs克里斯·梅林", "plink":"http://billiardsalbum.bcs.duapp.com/2014/02/potts.jpg","description":"加雷斯·波茨vs克里斯·梅林 点击观看\r\n时长：93:47","vlink":"http://v.youku.com/v_show/id_XNDk4Nzc2OTg4.html"},
+              {"title":"加雷斯·波茨——清台集锦", "plink":"http://billiardsalbum.bcs.duapp.com/2014/02/potts.jpg","description":"点击观看\r\n时长：57:20","vlink":"http://v.youku.com/v_show/id_XNjA4Njg4OTQ0.html"},
+              {"title":"李赫文VS亨德利01-“英伦汽车·乔氏杯”亨德利中式八球挑战赛", "plink":"http://billiardsalbum.bcs.duapp.com/2014/02/hendry.jpg","description":"点击观看\r\n时长：82:46","vlink":"http://v.youku.com/v_show/id_XMzgzOTg2MjIw.html"}
+              ]
+    return videos
  
 def set_pic(request):
-    pic = [
-      "tE17_sIjh2JHqRTtXg7j_5d795D03ImAY3dyP5EPO_l0x_7J6ugzPODpYJw6AjAY",
-      "m0O57-8EhyEhsb0gWYF_vdxxeJSpbdtSBQBa0Z774fkCmcK1TiG2-EpgWtaMJDxz",
-      ""
-           ]
-    return pic
-      
+    pics = ["NI5B4DBUP_ZihYXxcnmztzOPohOE9e4OThm3UPLc3nZJFfg7MGWyBd43D2wi4UCe",
+            "GyKwjOnao9S0wLmrXJn6UjdHC4mnK-YRufy-IKJ23GnOIdg5XQZULN3KQ_fjK2se",
+            "ybHUAJZXq1yjbgtT5fi-c0h5TZVGhnsMX9iyQZ0Tw7DCDzfN9kiGsDbJRX92e44w",
+            "syVNC2pWzdPNS46pybv4XvcHtCuDsdexGWZLeyZKW3NoQ_ZXcX1rbzgsuZ3IljS7",
+            "Xi5pEU9b3irwrRu-7HAwzN8CQy_MWIW01_XMmVrcjBJFw0dEDWs2d1MgrFP7uDJN",
+            "2Ib4l8bne06Zze1ifJXDHqJZiIDBC0jTC1mcnBx6LZamskvRQNohu-JVmDL38GM5",
+            "IARm4EO8tF0cSmxWSx2hMiFPMRX7VVOIjINUTuvH3Kcd3CwSKamuZZkI2_2B2Xkw",
+            "tIEBJVt7_3BVM8ynJV7CvVFYgIL5VxTcAM6MywZ4j02yGQwzqdoI__3MhXLn-NKK",
+            "PgRUIcJGvYKwds5nHBrpuui_609w5JKM-23hMVJ6k6DBVJes088j7wXokR9J0war",
+            "ecl1Fmh_zB0DaC2FA_8HC5q8pkWMSP27lk5xXgyExRdG-A_fqA-9LyYcyJuNNKNR",
+            "jNcesbmUDJnzWpAr8wr6OhmQ2sQbUqc_bgqIF4WKF_TQWINi9wyDmpKwvzpoD-Nz",
+            "TjUCyHdQDiYN8CjoJVm541kqpkMJXNlWKkPFNDzDfSWoZReynNHzkWhCVxH4rCqw",
+            "gBLzJCrY_5Gk8wQkz7fYyWSa8dv5DWTEDjmyA1XY-YTW4J2d_NqulSBzis836Ffe",
+            "tJB36nEeCbFaXF0AMk4t7L5YubKPzeyL5vQmI8qfM-JI6EfIe_o3Qaq4sDBCT6ne",
+            "VQh8Ix7Tj9-5cIMkhg8G94sNACohza8q3xKe-kCMIYTlmmPK0ltRUXwcTaGdWj7l",
+            "66wI6vj4y9QLzAYpSdg7qALuQxTd2-Do5D-wV3I13_hYqQhvXdHJEomRf4o98kOw",
+            "EoqWm4TnVhR7KnZZaMfmwFoy3sgtfd2OL4L_lqcduHaOgr7jEvzB7HVEOOuDP6f5",
+            "CN9f4evPHpz7k8J57FqwuDCLwWs-E5modvJXMPt6JU2iiTEnURJMC2995uHlGPHz",
+            "V_knyD0qZpELQRAH_SpyEETTPiZwtnZkFqBETggd6l8d4u4KKT65KSLf_wX4DTMe",
+            "2e0zTWKJScab6BEGWV6-MKicrl-d3rAjj351zpMVdPS6db9pu6sinkHqjeFcYUJz",
+            "GJUBVTcraWK_yMynYlHPtUnGWxliIWlXEBwZJJELRI-Np2-CWKXFvIUurFYsf3O7"]
+    return pics
+  
 def set_content(request):
     content = {
       #English content
@@ -50,14 +83,11 @@ def set_content(request):
       "fj":"您想找附近的台球俱乐部吗？请发送您的位置给我们，给您推荐身边的台球俱乐部。",
       "bs":"您想找台球俱乐部举办的比赛吗？",
       "nh":"你好啊，朋友",
-      "bz":"帮助信息",
+      "bz":"您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、发送“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。",
       "zf":"送祝福啦，祝您马年吉祥，身体健康，马到成功，财源滚滚来！",
-      "help":"您好，需要帮助吗？\r\n发送您的位置信息，获取附近台球俱乐部信息。",
+      "help":"您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、发送“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。",
       "yeah":"oh,yeah,我们一起为您欢呼",
-      "":"",
-      "":"",
-      "":"",
-      "":"",
+
       #Chinese content
       u"你好":"你好啊，朋友",
       u"附近":"您想找附近的台球俱乐部吗？请发送您的位置给我们，给您推荐身边的台球俱乐部。",
@@ -68,7 +98,7 @@ def set_content(request):
       u"春节快乐":"祝您马年马到成功，吉祥如意，吉星高照，大吉大利",
       u"呵呵":"笑一笑十年少",
       u"再见":"您走好，欢迎随时找我来聊聊",
-      u"帮助":"您好，需要帮助吗？\r\n发送您的位置信息，获取附近台球俱乐部信息。",
+      u"帮助":"您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、发送“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。",
       u"我想回家":"走啊走啊走……到家了",
       u"徐浩":"他现在不在，稍后联系您",
       u"过节好":"您也过节好啊！",
@@ -81,21 +111,12 @@ def set_content(request):
       u"我美吗":"您是我见过的世界上最美丽的容颜！",
       u"好玩":"好玩您就多玩会儿吧",
       u"新春快乐":"祝您马年马到成功，吉祥如意，吉星高照，大吉大利",
-      u"":"",
-      u"":"",
-      u"":"",
-      u"":"",
-      u"":"",
-      u"":"",
-      u"":"",
-      u"":"",
-      u"":"",
-      u"":"",
+
       #face mark
       #"/::)":"/:,@-D",
       #marks
-      "?":"您好，需要帮助吗？\r\n发送您的位置信息，获取附近台球俱乐部信息。",
-      u"？":"您好，需要帮助吗？\r\n发送您的位置信息，获取附近台球俱乐部信息。"
+      "?":"您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、发送“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。",
+      u"？":"您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、发送“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。"
 }
     return content
 
@@ -171,9 +192,20 @@ def response_msg(request):
              <FromUserName><![CDATA[%s]]></FromUserName>
              <CreateTime>%s</CreateTime>
              <MsgType><![CDATA[video]]></MsgType>
-             <MediaId><![CDATA[media_id]]></MediaId>
+             <MediaId><![CDATA[%s]]></MediaId>
              <ThumbMediaId><![CDATA[thumb_media_id]]></ThumbMediaId>
              <MsgId>1234567890123456</MsgId>
+             </xml>"""
+    videoRpl = """<xml>
+             <ToUserName><![CDATA[%s]]></ToUserName>
+             <FromUserName><![CDATA[%s]]></FromUserName>
+             <CreateTime>%s</CreateTime>
+             <MsgType><![CDATA[video]]></MsgType>
+             <Video>
+             <MediaId><![CDATA[%s]]></MediaId>
+             <Title><![CDATA[%s]]></Title>
+             <Description><![CDATA[%s]]></Description>
+             </Video> 
              </xml>"""
     #handle link message
     linkTpl = """<xml>
@@ -230,7 +262,7 @@ def response_msg(request):
     if msg['MsgType'] == "event":
       echostr = textTpl % (
                            msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
-                           '欢迎您关注我为台球狂官方微信，获取更多身边俱乐部信息，请访问：http://www.pktaiqiu.com，与我们更多互动，发送您的位置信息给我们，为您推荐身边的台球俱乐部')
+                           '欢迎您关注我为台球狂官方微信，获取更多身边俱乐部信息，请访问：http://www.pktaiqiu.com，与我们更多互动，发送您的位置信息给我们，为您推荐身边的台球俱乐部。发送 ？，帮助，获取帮助手册。')
       return echostr
     #response location message
     elif msg['MsgType'] == "location":
@@ -276,15 +308,8 @@ def response_msg(request):
     elif msg['MsgType'] == "image":
       media_id = msg['MediaId']
       pic_url = msg['PicUrl']
-      pics = ["NI5B4DBUP_ZihYXxcnmztzOPohOE9e4OThm3UPLc3nZJFfg7MGWyBd43D2wi4UCe",
-              "GyKwjOnao9S0wLmrXJn6UjdHC4mnK-YRufy-IKJ23GnOIdg5XQZULN3KQ_fjK2se",
-              "ybHUAJZXq1yjbgtT5fi-c0h5TZVGhnsMX9iyQZ0Tw7DCDzfN9kiGsDbJRX92e44w",
-              "syVNC2pWzdPNS46pybv4XvcHtCuDsdexGWZLeyZKW3NoQ_ZXcX1rbzgsuZ3IljS7",
-              "Xi5pEU9b3irwrRu-7HAwzN8CQy_MWIW01_XMmVrcjBJFw0dEDWs2d1MgrFP7uDJN",
-              "2Ib4l8bne06Zze1ifJXDHqJZiIDBC0jTC1mcnBx6LZamskvRQNohu-JVmDL38GM5",
-              "2e0zTWKJScab6BEGWV6-MKicrl-d3rAjj351zpMVdPS6db9pu6sinkHqjeFcYUJz",
-              "GJUBVTcraWK_yMynYlHPtUnGWxliIWlXEBwZJJELRI-Np2-CWKXFvIUurFYsf3O7"]
-      picid = randint(0,7)
+      pics = set_pic(request)
+      picid = randint(0,len(pics)-1)
       echostr = textTpl % (
                            msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
                            '图片信息回复敬请期待'+'\r\nmedia id is '+media_id)
@@ -303,9 +328,11 @@ def response_msg(request):
       return echostr
     #response video message
     elif msg['MsgType'] == "video":
+      media_id = msg['MediaId']
       echostr = textTpl % (
                            msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
-                           '视频信息回复敬请期待')
+                           '视频信息回复敬请期待'+'\r\nmedia id is:'+media_id)
+      echovideo = videoRpl % (msg['FromUserName'], msg['ToUserName'], str(int(time.time())),'sXzKe8DDiDtNMdxgg-76VBC_BlKEDZ3qwVO1Qqw9BqN_m97Er_I2hFCDYcSflodh','','')
       return echostr
     #response text message
     elif msg['MsgType'] == "text":
@@ -321,6 +348,27 @@ def response_msg(request):
                            msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
                            msg['Content'])
           return echostr
+        elif msg['Content'] == "图片" or msg['Content'] == "墙纸":
+          pics = set_pic(request)
+          picid = randint(0,len(pics)-1)
+          echopic = picRpl % (
+                          msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
+                          pics[picid])
+          return echopic
+        elif msg['Content'] == "花式" or msg['Content'] == "花式台球":
+          videos = set_video(request)
+          videoid = randint(0,len(videos)-1)
+          echopictext = pictextTpl % (
+                           msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
+                           videos[videoid]['title'], videos[videoid]['description'], videos[videoid]['plink'], videos[videoid]['vlink'])          
+          return echopictext
+        elif msg['Content'] == "中式八球" or msg['Content'] == "中式" or msg['Content'] == "zsbq":
+          videos = set_zsbq_video(request)
+          videoid = randint(0,len(videos)-1)
+          echopictext = pictextTpl % (
+                           msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
+                           videos[videoid]['title'], videos[videoid]['description'], videos[videoid]['plink'], videos[videoid]['vlink'])          
+          return echopictext
         else:
           replywords = msg['Content']
           echostr = textTpl % (
@@ -345,6 +393,7 @@ def weixin(request):
         return HttpResponse(response_msg(request),content_type="application/xml")
     else:
         return HttpResponse("hello world")
+
 
 
 
