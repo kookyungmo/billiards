@@ -5,7 +5,6 @@ from xml.etree import ElementTree as ET
 from django.views.decorators.csrf import csrf_exempt
 from django.template import RequestContext, Template
 from django.utils.encoding import smart_str, smart_unicode
-from billiards.views.poolroom import nearby
 from billiards.location_convertor import gcj2bd
 from random import randint
 import urllib2, urllib
@@ -40,6 +39,7 @@ def set_video(request):
               {"title":"毒液花式台球史诗级巨制！神一般的弗洛里安·科勒(Florian Kohler)", "plink":"http://billiardsalbum.bcs.duapp.com/2014/02/FlorianKohler1.jpg","description":"绝对不能错过的精彩！点击观看","vlink":"http://v.youku.com/v_show/id_XNTU3MjMyNjI0.html"},
               {"title":"花式台球帝-毒液和他的彪悍女友 未来最疯狂的特技球家庭！", "plink":"http://billiardsalbum.bcs.duapp.com/2014/02/FlorianKohler1.jpg","description":"精彩不容错过！点击观看","vlink":"http://v.youku.com/v_show/id_XNTIxMjQzMzM2.html"},
               {"title":"毒液 最新花式台球集锦", "plink":"http://billiardsalbum.bcs.duapp.com/2014/02/FlorianKohler1.jpg","description":"精彩！犀利！点击观看","vlink":"http://v.youku.com/v_show/id_XNDQyNzI5MjEy.html"},
+              {"title":"牛人和美女台球桌上玩花式台球", "plink":"http://billiardsalbum.bcs.duapp.com/2014/02/FlorianKohler1.jpg", "description":"点击观看\r\n时长：02:58", "vlink":"http://v.qq.com/boke/page/w/0/y/w0125gr8cny.html"},
               {"title":"花式台球 最美的境界 Venom Trickshots", "plink":"http://billiardsalbum.bcs.duapp.com/2014/02/FlorianKohler1.jpg","description":"精彩！高清！点击观看","vlink":"http://v.youku.com/v_show/id_XMzExMjIxMDgw.html"}
               ]
     return videos
@@ -51,6 +51,24 @@ def set_zsbq_video(request):
               {"title":"李赫文VS亨德利01-“英伦汽车·乔氏杯”亨德利中式八球挑战赛", "plink":"http://billiardsalbum.bcs.duapp.com/2014/02/hendry.jpg","description":"点击观看\r\n时长：82:46","vlink":"http://v.youku.com/v_show/id_XMzgzOTg2MjIw.html"}
               ]
     return videos
+  
+def set_coupon(request):
+    coupons = [
+               {"pk":"25", "title":"团购：北京迈8赫台球会所, 17.8元，畅打两小时", "description":"17.8元，畅打两小时", "time":"2013年9月7日 至 2014年3月6日", "baidu_lat":"40.0135572", "baidu_lng":"116.4147791", "tel":"010-84802532", "address":"朝阳区安立路九台2000家园地下一层", "link":"http://bj.meituan.com/deal/9340453.html"},
+               {"pk":"70", "title":"团购：北京隆轩台球俱乐部（望京）, 19.9元，畅打两小时", "description":"19.9元，畅打两小时", "time":"2013.10.19 至 2014.7.17", "baidu_lat":"39.9849635", "baidu_lng":"116.4750495", "tel":"010-64728646", "address":"北京望京花家地南里5号", "link":"http://bj.meituan.com/deal/7191716.html"},
+               {"pk":"95", "title":"团购：北京堂棒棒台球（朝外大街）, 30元，畅打两小时", "description":"30元，畅打两小时", "time":"2013.11.19 至 2014.2.18", "baidu_lat":"39.9257578", "baidu_lng":"116.4492575", "tel":"010-85694103", "address":"北京朝阳区日坛北路17号日坛国际贸易中心地下一层商业街星光大道北B088", "link":"http://bj.meituan.com/deal/8060768.html"},
+               {"pk":"54", "title":"团购：北京七星岛8号台球俱乐部（牡丹园/北太平庄），38元，畅打三小时", "description":"38元，畅打三小时", "time":"2014.1.6 至 2014.7.5", "baidu_lat":"39.9836187", "baidu_lng":"116.3743070", "tel":"15701004091", "address":"北京海淀区牡丹园翠微商场院内", "link":"http://bj.meituan.com/deal/9362028.html"},
+               {"pk":"92", "title":"团购：北京远望谷台球会所（紫竹桥），22元，畅打三小时", "description":"22元，畅打三小时", "time":"2013.11.13 至 2014.11.12", "baidu_lat":"39.9454621", "baidu_lng":"116.3203192", "tel":"010-62651088", "address":"北京海淀区西三环北路50号豪柏大厦C2座1-103室（紫竹桥东南角）", "link":"http://bj.meituan.com/deal/3654399.html"},
+               {"pk":"55", "title":"团购：北京奥亨台球（草桥/公益西桥），18元，畅打三小时", "description":"18元，畅打三小时", "time":"2013.8.20 至 2014.2.19", "baidu_lat":"39.8438451", "baidu_lng":"116.3769232", "tel":"010-67529905", "address":"北京丰台区马家堡西路星河苑2号院22号楼地下一层", "link":"http://bj.meituan.com/deal/7737048.html"},
+               {"pk":"30", "title":"团购：北京海格台球俱乐部（宣武门），19元，畅打两小时", "description":"19元，畅打两小时", "time":"2013.9.5 至 2014.3.31", "baidu_lat":"39.9009997", "baidu_lng":"116.3816211", "tel":"010-63183990", "address":"北京西城区宣武门外大街20号海格国际酒店地下2层", "link":"http://bj.meituan.com/deal/4211247.html"},
+               {"pk":"28", "title":"团购：北京潘晓婷台球俱乐部（潘家园），19.8元，畅打两小时", "description":"19.8元，畅打两小时", "time":"2013年10月22日-2014年03月12日", "baidu_lat":"39.8752954", "baidu_lng":"116.4658044", "tel":"010-65305655 & 010-67628288", "address":"北京朝阳区东三环南路辅路联合国际大厦地下一层", "link":"http://bj.nuomi.com/deal/obyoqflp.html"},
+               {"pk":"40", "title":"团购：北京球动力台球连锁俱乐部（立水桥），28.8元，畅打三小时", "description":"28.8元，畅打三小时", "time":"2013年11月20日至2014年02月20日", "baidu_lat":"40.0639378", "baidu_lng":"116.4217211", "tel":"010-57733777", "address":"北京昌平区立水桥明珠奥特莱斯中心广场地下一层 ", "link":"http://bj.nuomi.com/deal/fez5n2em.html"},
+               {"pk":"34", "title":"团购：北京领航者台球俱乐部（菜市口），17.9元，畅打一小时", "description":"17.9元，畅打一小时", "time":"2013年10月22日-2014年03月03日", "baidu_lat":"39.8885423", "baidu_lng":"116.3994264", "tel":"010-63013337", "address":"北京西城区东经路禄长街2条2号（速8天桥店B一层）", "link":"http://bj.nuomi.com/deal/7xqwdcl7.html"},
+               {"pk":"48", "title":"团购：北京昊天台球俱乐部（虎坊桥），19元，畅打两小时", "description":"19元，畅打两小时", "time":"2013年10月14日-2014年06月30日 ", "baidu_lat":"39.8896118", "baidu_lng":"116.3893745", "tel":"010-56155999", "address":"北京西城区虎坊路陶然北岸160-4号(近清华池)", "link":"http://bj.nuomi.com/deal/wt357lru.html"},
+               {"pk":"42", "title":"团购：北京寻梦港台球俱乐部（回龙观），35元，畅打两小时", "description":"35元，畅打两小时", "time":"2013年10月29日至2014年03月05日", "baidu_lat":"40.0847300", "baidu_lng":"116.3392966", "tel":"13601248756", "address":"北京昌平区回龙观镇回龙观西大街18号2段1层", "link":"http://bj.nuomi.com/deal/esp4nfrt.html"},
+               {"pk":"58", "title":"团购：北京猫头鹰台球俱乐部（酒仙桥），18.8元，畅打两小时", "description":"18.8元，畅打两小时", "time":"2013年10月18日-2014年04月15日", "baidu_lat":"39.9722142", "baidu_lng":"116.4973278", "tel":"010-51306858", "address":"北京朝阳区酒仙桥路26号晶都国际酒店B1楼", "link":"http://beijing.55tuan.com/goods-6a17a8a990c5df4d.html"}
+               ]
+    return coupons
  
 def set_pic(request):
     pics = ["NI5B4DBUP_ZihYXxcnmztzOPohOE9e4OThm3UPLc3nZJFfg7MGWyBd43D2wi4UCe",
@@ -77,15 +95,16 @@ def set_pic(request):
     return pics
   
 def set_content(request):
+    helpmessage = "您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、输入“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。\r\n4、输入“找便宜”，“团购”获取超值台球团购。"
     content = {
       #English content
       "hi":"Hello",
       "fj":"您想找附近的台球俱乐部吗？请发送您的位置给我们，给您推荐身边的台球俱乐部。",
       "bs":"您想找台球俱乐部举办的比赛吗？",
       "nh":"你好啊，朋友",
-      "bz":"您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、发送“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。",
+      "bz":"您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、输入“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。\r\n4、输入“找便宜”，“团购”获取超值台球团购。",
       "zf":"送祝福啦，祝您马年吉祥，身体健康，马到成功，财源滚滚来！",
-      "help":"您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、发送“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。",
+      "help":"您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、输入“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。\r\n4、输入“找便宜”，“团购”获取超值台球团购。",
       "yeah":"oh,yeah,我们一起为您欢呼",
 
       #Chinese content
@@ -98,7 +117,7 @@ def set_content(request):
       u"春节快乐":"祝您马年马到成功，吉祥如意，吉星高照，大吉大利",
       u"呵呵":"笑一笑十年少",
       u"再见":"您走好，欢迎随时找我来聊聊",
-      u"帮助":"您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、发送“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。",
+      u"帮助":"您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、输入“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。\r\n4、输入“找便宜”，“团购”获取超值台球团购。",
       u"我想回家":"走啊走啊走……到家了",
       u"徐浩":"他现在不在，稍后联系您",
       u"过节好":"您也过节好啊！",
@@ -115,8 +134,8 @@ def set_content(request):
       #face mark
       #"/::)":"/:,@-D",
       #marks
-      "?":"您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、发送“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。",
-      u"？":"您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、发送“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。"
+      "?":"您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、输入“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。\r\n4、输入“找便宜”，“团购”获取超值台球团购。",
+      u"？":"您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、输入“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。\r\n4、输入“找便宜”，“团购”获取超值台球团购。"
 }
     return content
 
@@ -288,6 +307,16 @@ def response_msg(request):
           title = club
           discription = "地址："+address+"\r\n营业面积："+size+"平方米"+"\r\n营业时间："+businesshours+"\r\n电话："+tel
           data = "附近精选台球俱乐部：\r\n"+club+"\r\n地址："+address+"\r\n营业面积："+size+"平方米"+"\r\n营业时间："+businesshours+"\r\n电话："+tel
+          coupons = set_coupon(request)
+          for i in range(len(coupons)):
+              if coupons[i]['pk'] == pkid:
+                  coupontitle = coupons[i]['title']
+                  coupondescription = coupons[i]['description']
+                  couponlink = coupons[i]['link']
+                  echopictext = pictext2Tpl % (
+                                   msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
+                                   title, discription, picurl, originContent,coupontitle, coupondescription,picurl,couponlink) 
+                  return echopictext
           echopictext = pictextTpl % (
                            msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
                            title, discription, picurl, originContent)
@@ -369,11 +398,24 @@ def response_msg(request):
                            msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
                            videos[videoid]['title'], videos[videoid]['description'], videos[videoid]['plink'], videos[videoid]['vlink'])          
           return echopictext
+        elif msg['Content'] == "团购" or msg['Content'] == "找便宜" or msg['Content'] == "tg":
+          coupons = set_coupon(request)
+          couponsid = randint(0,len(coupons)-1)
+          lat_baidu = coupons[couponsid]['baidu_lat']
+          lng_baidu = coupons[couponsid]['baidu_lng']
+          pkid = coupons[couponsid]['pk']
+          picurl = "http://api.map.baidu.com/staticimage?center="+lng_baidu+","+lat_baidu+"&width=450&height=300&zoom=18&scale=2&markers="+lng_baidu+","+lat_baidu+"&markerStyles=-1,"+"http://billiardsalbum.bcs.duapp.com/2014/01/marker-2.png"
+          weblink = "http://www.pktaiqiu.com/poolroom/"+pkid
+          echopictext = pictext2Tpl % (
+                           msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
+                           coupons[couponsid]['title'], "地址："+coupons[couponsid]['address']+"\r\n电话："+coupons[couponsid]['tel']+"\r\n\r\n查看详情，请点击阅读全文", picurl, coupons[couponsid]['link'],"俱乐部详情", "description",picurl,weblink)          
+          return echopictext
         else:
           replywords = msg['Content']
+          helpmessage = "您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、输入“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。\r\n4、输入“找便宜”，“团购”获取超值台球团购。"
           echostr = textTpl % (
                            msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
-                           '我们无法正确解析您发送来的信息：“'+replywords+'“，请发送您的位置，获取身边俱乐部信息')
+                           helpmessage)
           return echostr
     #response unsupported message
     else:
@@ -393,6 +435,7 @@ def weixin(request):
         return HttpResponse(response_msg(request),content_type="application/xml")
     else:
         return HttpResponse("hello world")
+
 
 
 
