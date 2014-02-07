@@ -12,6 +12,7 @@ urlpatterns = patterns('billiards.views.match',
     url(r'^match/(?P<matchid>\d+)/enroll', 'enroll', name="match_enroll"),
 #     url(r'^match$', 'index', name="match"),
     url(r'^match/(?P<view>\w+)/$', 'index', name="match_map"),
+    url(r'^activity/(?P<matchid>\d+)/$', 'activity', name="activity_detail"),
 )
 
 urlpatterns += patterns('billiards.views.poolroom',

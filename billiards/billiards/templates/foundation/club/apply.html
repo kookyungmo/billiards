@@ -13,13 +13,14 @@
         	{% for club in clubs%}
         		<option value="{{ club.id }}">{{ club.name }}</option>
         	{% endfor %}
+        	<option value="-1">我是台球群组织者</option>
         	<option value="0">以上都不是</option>
         </select>
       </div>
       <div class="medium-6 columns">
-        <label for="club_userinput">其他俱乐部<small>，仅当俱乐部选择“以上都不是”的时候才填写</small></label>
+        <label for="club_userinput">其他俱乐部/台球群组织者<small>，仅当俱乐部选“我是台球群组织者”或“以上都不是”的时候才填写</small></label>
 		<input type="text" id="club_userinput" placeholder="详细的俱乐部名字">
-        <small class="error">请输入俱乐部名字</small>        
+        <small class="error">请输入俱乐部/台球群名字</small>        
       </div>
     </div>
        

@@ -73,6 +73,7 @@
 				  	<script>
 				  	var map = initialMap("baidumap");
 				    MATCH_URL = "{% url match_detail '000' %}";
+				    ACTIVITY_URL = "{% url activity_detail '000' %}";
 				    ENROLL_URL = "{% url match_enroll '000' %}";
 					{% if matches|length > 0 %}
 						matches = eval(jsonescape('{{ matches|matchtojsonwithenroll:user|safe }}'));

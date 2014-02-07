@@ -13,7 +13,7 @@
 {% load url from future %} 
 {% block content %}
 <hr>
-<div class="medium-9 columns">
+<div class="medium-12 columns">
 	<div class="panel radius">
 		<div class="row">
 			<div class="medium-7 medium-push-5 columns">
@@ -41,31 +41,8 @@
 				</div>
 			</div>
 			<div class="medium-5 medium-pull-7 columns">
-				<div class="show-for-small" align="center">
-					<hr>
-					{% if match.enrolled %}
-					<h3 style="color: #FF9900">已预留报名位，请在赛事规定时间内到俱乐部缴费。</h3>
-					{% else %} <a class="small radius button {% if match.is_expired or  match.status != 'approved' %} disabled {% endif %}"
-						{% if match.is_expired %}
-			       			href="javascript:void(0);"> 比赛已过期。
-			       		{% elif match.status != 'approved' %}
-			       		    href="javascript:void(0);"> 比赛已失效。
-			       		{% else %}
-							{% if not user.is_authenticated %} 
-								href="javascript:void(0);" data-reveal-id="quickLogin"> 我要预留报名位!
-				       		{% else %}  
-				       		    {% if user.cellphone != None and user.cellphone != '' %}
-				       			href="javascript:void(0);" id="enroll" match="{{ match.pk }}"> 我要预留报名位!
-				       			{% else %}
-				       			href="javascript:completeInfo();"> 我要预留报名位!
-				       			{% endif %}
-				       		{% endif %}
-				       	{% endif %}
-		       		{% endif %}
-		       		</a>
-					<hr>
-				</div>
-				<h2 style="color: #EB6100">{{ match.title }}</h2><hr>
+				<h2 style="color: #EB6100">{{ match.title }}</h2>
+				<h3 class="subheader">活动组织者：{{ match.organizer.name }}</h3><hr>
 				<h3 style="color: #EB6100">
 					<a href="{% url 'poolroom_detail' match.poolroom.id %}">{{ match.poolroom.name }}</a>
 				</h3>
@@ -89,7 +66,7 @@
 				</span>
 				<hr>
 				<h3 class="subheader">
-					<strong>比赛时间</strong>
+					<strong>活动开始时间</strong>
 				</h3>
 				<h5 class="subheader">
 					<p>
@@ -98,87 +75,27 @@
 				</h5>
 				<hr>
 				<h3 class="subheader">
-					<strong>冠军奖金</strong>
-				</h3>
-				<h5 class="subheader">
-					{% if match.bonus > 0 %}
-					<p>
-						现金: <strong>{{ match.bonus }}元</strong>
-					</p>
-					{% elif match.rechargeablecard > 0 %}
-					<p>
-						俱乐部充值卡: <strong>{{ match.rechargeablecard }}元</strong>
-					</p>
-					{% elif match.otherprize != None %}
-					<p>
-						其它奖励: <strong>{{ match.otherprize }}</strong>
-					</p>
-					{% endif %}
-				</h5>
-				<hr>
-				<h3 class="subheader">
-					<strong>报名费</strong>
+					<strong>活动费用</strong>
 				</h3>
 				<h5 class="subheader">
 					<p>{{ match.enrollfee }}</p>
 				</h5>
+				<h3 class="subheader">
+					<strong>活动详情</strong>
+				</h3>
+				<h5 class="subheader">
+					<p>{{ match.description }}</p>
+				</h5>	
 				<hr>
 				<h3 class="subheader">
 					<strong>报名联系人</strong>
 				</h3>
 				<h5 class="subheader">
 					<p>{{ match.enrollfocal }}</p>
-				</h5>
+				</h5>			
 			</div>
 		</div>
-		<div class="row">
-			<hr>
-			<h3 class="subheader">
-				<strong> 奖金细则</strong>
-			</h3>
-			<h5 class="subheader">
-				<p>{{ match.bonusdetail }}</p>
-			</h5>
-			<hr>
-			<h3 class="subheader">
-				<strong>比赛规则</strong>
-			</h3>
-			<h5 class="subheader">
-				<p>{{ match.rule }}</p>
-			</h5>
-			<h3 class="subheader">
-				<strong>备注</strong>
-			</h3>
-			<h5 class="subheader">
-				<p>{{ match.description }}</p>
-			</h5>
-		</div>
 	</div>
-</div>
-<div class="medium-3 columns hide-for-small">
-	<h2>行动起来!</h2>
-	<hr>
-	{% if match.enrolled %}
-	<h3 style="color: #FF9900">已预留报名位，请在赛事规定时间内到俱乐部缴费。</h3>
-	{% else %} 
-		<a class="small radius button {% if match.is_expired or  match.status != 'approved' %} disabled {% endif %}"
-		{% if match.is_expired %}
-    		href="javascript:void(0);"> 比赛已过期。
-     	{% elif match.status != 'approved' %}
-     	    href="javascript:void(0);"> 比赛已失效。
-     	{% else %}
-			{% if not user.is_authenticated %} 
-				href="javascript:void(0);" data-reveal-id="quickLogin"> 我要预留报名位!
-      		{% else %}  
-      		    {% if user.cellphone != None and user.cellphone != '' %}
-      				href="javascript:void(0);" id="enroll" match="{{ match.pk }}"> 我要预留报名位!
-      			{% else %}
-      				href="javascript:completeInfo();"> 我要预留报名位!
-      			{% endif %}
-      		{% endif %}
-      	{% endif %}
-     	</a>	
-     {% endif %}
 </div>
 {% endblock %} 
 {% block foundationscript %}
