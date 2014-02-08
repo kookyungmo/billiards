@@ -52,6 +52,20 @@ def set_zsbq_video(request):
               ]
     return videos
   
+def set_match(request):
+    matches = [
+               {"title":"2014-02-09 北京英华联众台球俱乐部，冠军：800元现金+200代金卷+奖杯+证书","link":"http://www.pktaiqiu.com/match/74/"},
+               {"title":"2014-02-13 北京高谷台球俱乐部宣武门店，冠军：300现金+100储值卡","link":"http://www.pktaiqiu.com/match/75/"}
+               ]
+    return matches
+  
+def set_act(request):
+    acts = [
+               {"title":"北京高校台球联盟群活动","detail":"北京卓尚星球汇\r\n2014年2月9日 12:00-21:00不限时间，女生免费，男生30元／人","picurl":"http://billiardsalbum.bcs.duapp.com/2014/02/bjgxtqlm.jpg","link":"http://www.pktaiqiu.com/match/76/"},
+               {"title":"天天夜时尚，夜夜玩到底","detail":"北京夜时尚护国寺店\r\n地址：北京市西城区护国寺大街137号泊鑫宾馆地下一层\r\n电话：010-52427963","picurl":"http://billiardsalbum.bcs.duapp.com/resources/poolroom/f3100fe948a1ff838b63d50fbb11b9_IMG_1109.JPG","link":"http://www.pktaiqiu.com/match/71/"}    
+               ]
+    return acts
+  
 def set_coupon(request):
     coupons = [
                {"pk":"25", "title":"团购：北京迈8赫台球会所, 17.8元，畅打两小时", "description":"17.8元，畅打两小时", "time":"2013年9月7日 至 2014年3月6日", "baidu_lat":"40.0135572", "baidu_lng":"116.4147791", "tel":"010-84802532", "address":"朝阳区安立路九台2000家园地下一层", "link":"http://bj.meituan.com/deal/9340453.html"},
@@ -95,16 +109,16 @@ def set_pic(request):
     return pics
   
 def set_content(request):
-    helpmessage = "您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、输入“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。\r\n4、输入“找便宜”，“团购”获取超值台球团购。"
+    helpmessage = "您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、输入“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。\r\n4、输入“找便宜”，“团购”获取超值台球团购。\r\n5、输入“比赛”，“活动”获取俱乐部比赛活动信息。\r\n祝各位球友们玩得开心，愉快，谢谢关注。"
     content = {
       #English content
       "hi":"Hello",
       "fj":"您想找附近的台球俱乐部吗？请发送您的位置给我们，给您推荐身边的台球俱乐部。",
       "bs":"您想找台球俱乐部举办的比赛吗？",
       "nh":"你好啊，朋友",
-      "bz":"您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、输入“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。\r\n4、输入“找便宜”，“团购”获取超值台球团购。",
+      "bz":"您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、输入“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。\r\n4、输入“找便宜”，“团购”获取超值台球团购。\r\n5、输入“比赛”，“活动”获取俱乐部比赛活动信息。\r\n祝各位球友们玩得开心，愉快，谢谢关注。",
       "zf":"送祝福啦，祝您马年吉祥，身体健康，马到成功，财源滚滚来！",
-      "help":"您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、输入“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。\r\n4、输入“找便宜”，“团购”获取超值台球团购。",
+      "help":"您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、输入“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。\r\n4、输入“找便宜”，“团购”获取超值台球团购。\r\n5、输入“比赛”，“活动”获取俱乐部比赛活动信息。\r\n祝各位球友们玩得开心，愉快，谢谢关注。",
       "yeah":"oh,yeah,我们一起为您欢呼",
 
       #Chinese content
@@ -117,7 +131,7 @@ def set_content(request):
       u"春节快乐":"祝您马年马到成功，吉祥如意，吉星高照，大吉大利",
       u"呵呵":"笑一笑十年少",
       u"再见":"您走好，欢迎随时找我来聊聊",
-      u"帮助":"您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、输入“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。\r\n4、输入“找便宜”，“团购”获取超值台球团购。",
+      u"帮助":"您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、输入“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。\r\n4、输入“找便宜”，“团购”获取超值台球团购。\r\n5、输入“比赛”，“活动”获取俱乐部比赛活动信息。\r\n祝各位球友们玩得开心，愉快，谢谢关注。",
       u"我想回家":"走啊走啊走……到家了",
       u"徐浩":"他现在不在，稍后联系您",
       u"过节好":"您也过节好啊！",
@@ -134,8 +148,8 @@ def set_content(request):
       #face mark
       #"/::)":"/:,@-D",
       #marks
-      "?":"您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、输入“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。\r\n4、输入“找便宜”，“团购”获取超值台球团购。",
-      u"？":"您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、输入“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。\r\n4、输入“找便宜”，“团购”获取超值台球团购。"
+      "?":"您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、输入“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。\r\n4、输入“找便宜”，“团购”获取超值台球团购。\r\n5、输入“比赛”，“活动”获取俱乐部比赛活动信息。\r\n祝各位球友们玩得开心，愉快，谢谢关注。",
+      u"？":"您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、输入“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。\r\n4、输入“找便宜”，“团购”获取超值台球团购。\r\n5、输入“比赛”，“活动”获取俱乐部比赛活动信息。\r\n祝各位球友们玩得开心，愉快，谢谢关注。"
 }
     return content
 
@@ -410,9 +424,21 @@ def response_msg(request):
                            msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
                            coupons[couponsid]['title'], "地址："+coupons[couponsid]['address']+"\r\n电话："+coupons[couponsid]['tel']+"\r\n\r\n查看详情，请点击阅读全文", picurl, coupons[couponsid]['link'],"俱乐部详情", "description",picurl,weblink)          
           return echopictext
+        elif msg['Content'] == "活动":
+          acts = set_act(request)
+          echopictext = pictext2Tpl % (
+                           msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
+                           acts[0]['title'], acts[0]['detail'], acts[0]['picurl'], acts[0]['link'],acts[1]['title'], acts[1]['detail'], acts[1]['picurl'], acts[1]['link'])          
+          return echopictext
+        elif msg['Content'] == "比赛":
+          matches = set_match(request)
+          echopictext = pictext2Tpl % (
+                           msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
+                           matches[0]['title'], '', 'http://billiardsalbum.bcs.duapp.com/2014/01/404.jpg', 'http://www.pktaiqiu.com/match/74/',matches[1]['title'], '', 'http://billiardsalbum.bcs.duapp.com/2014/01/404.jpg', 'http://www.pktaiqiu.com/match/75/')          
+          return echopictext
         else:
           replywords = msg['Content']
-          helpmessage = "您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、输入“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。\r\n4、输入“找便宜”，“团购”获取超值台球团购。"
+          helpmessage = "您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、输入“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。\r\n4、输入“找便宜”，“团购”获取超值台球团购。\r\n5、输入“比赛”，“活动”获取俱乐部比赛活动信息。\r\n祝各位球友们玩得开心，愉快，谢谢关注。"
           echostr = textTpl % (
                            msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
                            helpmessage)
@@ -435,6 +461,8 @@ def weixin(request):
         return HttpResponse(response_msg(request),content_type="application/xml")
     else:
         return HttpResponse("hello world")
+
+
 
 
 
