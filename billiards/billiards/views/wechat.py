@@ -135,7 +135,7 @@ def response_msg(request):
              <Url><![CDATA[url]]></Url>
              <MsgId>1234567890123456</MsgId>
              </xml> """
-    
+   
     content = set_content(request)
     #response event message
     if msg['MsgType'] == "event":

@@ -153,7 +153,7 @@ def delete_image(instance, **kwargs):
             instance.imagepath.storage.delete(PoolroomImage.getThumbnailPath(instance.imagepath.name, width))
         except Exception:
             pass
-        
+            
 class ChoiceTypeField(models.CharField):
     ''' use value of key when serializing as json
     '''
@@ -167,6 +167,27 @@ class ChoiceTypeField(models.CharField):
     def value_to_string(self, obj):
         value = self._get_val_from_obj(obj)
         return force_unicode(dict(self.flatchoices).get(value, value), strings_only=True)
+    
+    def json_use_value(self):
+        return self.jsonUseValue
+
+class IntegerChoiceTypeField(models.IntegerField):
+    ''' use value of key when serializing as json
+    '''
+    jsonUseValue = True
+    def __init__(self, *args, **kwargs):
+        if 'jsonUseValue' in kwargs:
+            self.jsonUseValue = kwargs['jsonUseValue']
+            del kwargs['jsonUseValue']
+        super(IntegerChoiceTypeField, self).__init__(*args, **kwargs)
+        
+    def value_to_string(self, obj):
+        value = self._get_val_from_obj(obj)
+        return force_unicode(dict(self.flatchoices).get(value, value), strings_only=True)
+    
+    def value_to_int(self, obj):
+        value = self._get_val_from_obj(obj)
+        return int(dict(self.flatchoices).get(value, value))
     
     def json_use_value(self):
         return self.jsonUseValue
@@ -197,6 +218,26 @@ class PoolroomEquipment(models.Model):
                 'producer': self.producer, 'quantity': self.quantity, 'cue': self.cue,
                 'price': self.price}
 
+class Group(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=20, verbose_name="群名称")
+    description = models.CharField(max_length=1000, verbose_name="群简介")
+    status = models.IntegerField(verbose_name=u'状态', choices=(
+            (0, u'停用'),
+            (1, u'正常'),
+        ), default=1,)
+
+    class Meta:
+        db_table = 'fans_group'
+        verbose_name = u'爱好者群'
+        verbose_name_plural = u'爱好者群'
+
+    def __unicode__(self):
+        return u'%s' %(self.name)
+    
+    def natural_key(self):
+        return {'name': self.name}
+
 class DisplayNameJsonSerializer(JsonSerializer): 
 
     def handle_field(self, obj, field): 
@@ -221,19 +262,20 @@ def is_expired(atime):
         return True
     return False
 
-match_fields = ('id', 'poolroom', 'title', 'bonus', 'rechargeablecard', 'otherprize', 'bonusdetail', 'rule', 'starttime', 'description', 'status')
+match_fields = ('id', 'poolroom', 'title', 'organizer', 'bonus', 'rechargeablecard', 'otherprize', 'bonusdetail', 'rule', 'starttime', 'description', 'status', 'type', 'enrollfee')
 class Match(models.Model):
     id = models.AutoField(primary_key=True)
-    poolroom = models.ForeignKey(Poolroom, verbose_name='比赛组织者')
-    title = models.CharField(max_length=30, verbose_name='比赛名称')
+    poolroom = models.ForeignKey(Poolroom, verbose_name='比赛/活动所在球房')
+    title = models.CharField(max_length=30, verbose_name='比赛/活动名称')
+    organizer = models.ForeignKey(Group, verbose_name='比赛/活动组织者, 当比赛由球房组织，请使用默认值', default=1, db_column='organizer')
     bonus = models.FloatField(null=False,verbose_name='最高现金奖金金额(元)')
     rechargeablecard = models.FloatField(null=False, verbose_name='最高充值卡奖金金额(元)')
     otherprize = models.CharField(max_length=100,null=True,blank=True,verbose_name='最高其它类别奖励')
     bonusdetail = models.TextField(null=False,verbose_name='奖金细则')
     rule = models.TextField(null=False,verbose_name='比赛规则')
-    description = models.TextField(null=True,verbose_name='比赛详情')
-    starttime = models.DateTimeField(verbose_name='比赛开始时间')
-    enrollfee = models.CharField(max_length=100,null=True,verbose_name='报名费')
+    description = models.TextField(null=True,verbose_name='比赛/活动详情')
+    starttime = models.DateTimeField(verbose_name='比赛/活动开始时间')
+    enrollfee = models.CharField(max_length=100,null=True,verbose_name='比赛报名费/活动费用')
     enrollfocal = models.CharField(max_length=100,null=True,verbose_name='报名联系人')
     flags = BitField(flags=(
             ('groupon', u'支持团购'),
@@ -243,24 +285,28 @@ class Match(models.Model):
             ('reviewing', u'等待审核'),
             ('approved', u'已审核通过'),
             ('disabled', u'已禁用'),
-        ), default='approved', verbose_name='状态', jsonUseValue=False)
+        ), default='approved', verbose_name=u'状态', jsonUseValue=False)
+    type = IntegerChoiceTypeField(verbose_name=u'类型', choices=(
+            (1, u'比赛'),
+            (2, u'爱好者活动'),
+        ), default=1, jsonUseValue=False)
 
     class Meta:
         db_table = 'match'
-        verbose_name = '比赛'
-        verbose_name_plural = '比赛'
+        verbose_name = u'比赛/爱好者活动'
+        verbose_name_plural = '比赛/爱好者活动'
 
     def __unicode__(self):
-        return '[' + localtime(self.starttime).strftime("%Y-%m-%d %H:%M:%S") + '] ' + self.poolroom.name
+        return u'[%s - %s] %s' %(localtime(self.starttime).strftime("%Y-%m-%d %H:%M:%S"), self.get_type_display(), self.poolroom.name)
 
     def natural_key(self):
-        return {'id': self.id, 'title':self.title, 'poolroom': self.poolroom.natural_key(), 'bonus': self.bonus,
-                'rechargeablecard': self.rechargeablecard, 'description': self.description,
+        return {'id': self.id, 'title':self.title, 'poolroom': self.poolroom.natural_key(), 'organizer': self.organizer,
+                'bonus': self.bonus, 'rechargeablecard': self.rechargeablecard, 'description': self.description,
                 'otherprize': self.otherprize,
                 'bonusdetail': self.bonusdetail, 'rule': self.rule,
                 'starttime': self.starttime, 'enrollfee': self.enrollfee,
                 'enrollfocal': self.enrollfocal, 'flags': toDict(self.flags),
-                'status': self.status}
+                'status': self.status, 'type': self.type}
 
     def save(self):
         super(Match, self).save()
@@ -452,7 +498,7 @@ class PoolroomUserApply(models.Model):
         verbose_name_plural = '俱乐部管理员申请'
         
     def __unicode__(self):
-        return u'\'%s\' 管理员:%s' %(self.poolroom, \
+        return u'\'%s\' 申请者用户名:%s' %(self.poolroom, \
                                      (self.user.nickname if self.user.nickname is not None and self.user.nickname != "" else self.user.username))
     def verbose_user(self):
             return "%s <br/>Email: %s<br/>Tel: %s" % ((self.user.nickname if self.user.nickname is not None and self.user.nickname != "" else self.user.username), self.user.email, self.user.cellphone)

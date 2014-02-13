@@ -71,6 +71,8 @@ def saveMatch(request, poolroomid, match = None):
            'enrollfee': request.POST['enrollfee'],
            'enrollfocal': request.POST['enrollfocal'],
            'flags': attributelist,
+           'organizer': 1,
+           'type': 1,
            }
     if match is None:
         data['poolroom'] = poolroomid

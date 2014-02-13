@@ -5,7 +5,7 @@ Created on 2013年10月22日
 
 @author: kane
 '''
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404, redirect
 from billiards.models import Match, MatchEnroll,\
     DisplayNameJsonSerializer, match_fields
 import datetime
@@ -111,6 +111,9 @@ def getMatch(matchid):
 
 def detail(request, matchid):
     match = getMatch(matchid)
+    
+    if match.type == 2:
+        return redirect('activity_detail', matchid=matchid)
         
     if request.GET.get('f') == 'json':
         json_serializer = serializers.get_serializer("json")()
@@ -126,6 +129,16 @@ def detail(request, matchid):
         
     return render_to_response(TEMPLATE_ROOT + 'match_detail.html', {'match': match},
                               context_instance=RequestContext(request))
+    
+
+def activity(request, matchid):
+    match = getMatch(matchid)
+    
+    if match.type == 1:
+        return redirect('match_detail', matchid=matchid)
+        
+    return render_to_response(TEMPLATE_ROOT + 'activity_detail.html', {'match': match},
+                              context_instance=RequestContext(request))
 
 def enroll(request, matchid):
     if not request.user.is_authenticated():
@@ -137,6 +150,8 @@ def enroll(request, matchid):
         return HttpResponse(json.dumps({'rt': 3, 'msg': 'match is expired'}), content_type="application/json")
     elif match.status != 'approved':
         return HttpResponse(json.dumps({'rt': 4, 'msg': 'match is invalid'}), content_type="application/json")
+    elif match.type == 2:
+        return HttpResponse(json.dumps({'rt': 5, 'msg': 'can not enroll activity'}), content_type="application/json")
     
     obj, created = MatchEnroll.objects.get_or_create(match=match, user=request.user,
                   defaults={'enrolltime': datetime.datetime.utcnow().replace(tzinfo=pytz.timezone(TIME_ZONE))})

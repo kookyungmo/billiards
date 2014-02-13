@@ -60,7 +60,10 @@ function addMatchToList_v2(match, point) {
 		class : 'row',
 		id : matchid,
 	});
-	detail_url = MATCH_URL.replace(/000/g, match.pk);
+	if (match.fields.type == 1)
+		detail_url = MATCH_URL.replace(/000/g, match.pk);
+	else
+		detail_url = ACTIVITY_URL.replace(/000/g, match.pk);
 	contentTemplate ="<div class=\"row\">"
 			+ "<div class=\"small-12 large-2 columns\">"
 			+ "<ul class=\"calendar\"><em>$starttimedate</em>$starttimehour<em>$starttimeweekday</em></ul>"
@@ -87,10 +90,11 @@ function addMatchToList_v2(match, point) {
 			+ "</div>"
 			+ "<div class=\"small-8 medium-8 columns\">"
 			+ "<div class=\"row\">"
-			+ "<p><font size=><span name=\"title\" point=\"$point\" match=\"$matchjsonstr\" style=\"color:#EB6100\"><strong>$poolroomname&nbsp;&nbsp;&nbsp;</strong></a></span>"
-			+ "<a href=\"" + detail_url + "\">比赛详情 &raquo</a></font></p>"
+			+ "<p><font size=><span name=\"title\" point=\"$point\" match=\"$matchjsonstr\" style=\"color:#EB6100\"><strong>$title</strong></a></span>"
+			+ "&nbsp;&nbsp;&nbsp;<a href=\"" + detail_url + "\">$type详情 &raquo</a></font></p>"
 			+ "</div>"
 			+ "<br>"
+			+ "<div class=\"row\">$type球馆: $poolroomname</div>"
 			+ "<div class=\"row\">"
 	equipment = "";
 	if (match.fields.poolroom.flags.wifi)
@@ -105,11 +109,14 @@ function addMatchToList_v2(match, point) {
 		equipment += "<span class=\"ico_bus\" title=\"地铁周边\"></span>";
 	if (equipment != "") {
 		contentTemplate += "<span class=\"icon_list\">";
-		contentTemplate += "<div class=\"ico_none\"><font size=-1>球房设施: </font></div>";
+		contentTemplate += "<div class=\"ico_none\">球房设施: </div>";
 		contentTemplate += equipment;
 		contentTemplate += "</span>";
 	}
-	contentTemplate += "</div><div class=\"row\" id=\"distance\"></div>" 
+	contentTemplate += "</div>";
+	if (match.fields.type == 2)
+		contentTemplate += "<div class=\"row\">$type组织者: $organizer</div>";
+	contentTemplate	+= "<div class=\"row\" id=\"distance\"></div>" 
 			+ "</div>"
 			+ "</div>"
 			+ "</div>"
@@ -117,49 +124,58 @@ function addMatchToList_v2(match, point) {
 			+ "</div>"
             + "<div class=\"small-12 large-3 columns\">"
 			+ "<ul class=\"pricing-table\">"
-			+ "<li class=\"title\"><font size=+1>"
-	if (match.fields.bonus > 0)
-		contentTemplate += "现金: $bonus元 &nbsp;&nbsp"
-	if (match.fields.rechargeablecard > 0)
-		contentTemplate += "俱乐部充值卡: $rechargeablecard元";
-	if (match.fields.otherprize != null)
-		contentTemplate += "$otherprize</font></li>";
-	contentTemplate += ""
-			+ "<a href=\"#\" data-reveal-id=\"rule\"><font size=-1>比赛规则 &raquo</font></a>"
-			+ "&nbsp;&nbsp;&nbsp;&nbsp;"
-			+ "<li id=\"rule\" class=\"reveal-modal\" data-reveal>"
-			+ " <p>$rule</p>"
+			+ "<li class=\"title\"><font size=+1>";
+	if (match.fields.type == 1) {
+		if (match.fields.bonus > 0)
+			contentTemplate += "现金: $bonus元 &nbsp;&nbsp"
+		if (match.fields.rechargeablecard > 0)
+			contentTemplate += "俱乐部充值卡: $rechargeablecard元";
+		if (match.fields.otherprize != null)
+			contentTemplate += "$otherprize</font></li>";
+		contentTemplate += ""
+				+ "<a href=\"#\" data-reveal-id=\"rule\"><font size=-1>比赛规则 &raquo</font></a>"
+				+ "&nbsp;&nbsp;&nbsp;&nbsp;"
+				+ "<li id=\"rule\" class=\"reveal-modal\" data-reveal>"
+				+ " <p>$rule</p>"
+				+ " <a class=\"close-reveal-modal\">&#215;</a>"
+				+ "</li>"
+	            + "<a href=\"#\" data-reveal-id=\"bonusdetail\"><font size=-1>奖金设置 &raquo</font></a>"
+				+ "<li id=\"bonusdetail\" class=\"reveal-modal\" data-reveal>"
+				+ " <p>$bonusdetail</p>"
+				+ " <a class=\"close-reveal-modal\">&#215;</a>"
+				+ "</li></ul>";
+		enrolled = false;
+		if (isAuth())
+			if ( hasOwnProperty(match.fields, 'enrolled') ) {
+				enrolled = true;
+				contentTemplate += "<h3>已预留报名位，请在赛事规定时效内到俱乐部缴费。</h3>";
+			}
+		if (!enrolled) {
+			if (isExpired(match.fields.starttime)) {
+				contentTemplate += "<h3>比赛已过期。</h3>";
+			} else {
+				if (match.fields.status == 'approved') {
+					if (isAuth()) {
+						if (needInfo())
+							contentTemplate	+= "<a href=\"javascript:completeInfo();\" class=\"button expand\">我要预留报名位</a>";
+						else
+							contentTemplate += "<a href=\"javascript:void(0);\" id=\"enroll\" match='" + match.pk + "' class=\"button expand\">我要预留报名位</a>";
+					} else {
+						contentTemplate	+= "<a href=\"javascript:loginFirst();\" class=\"button expand\">我要预留报名位</a>";
+					}
+				} else {
+					contentTemplate += "<h3>比赛已无效。</h3>";
+				}
+			}
+			
+		}
+	} else {
+		contentTemplate += "$enrollfee</font></li>";
+		contentTemplate += "<a href=\"#\" data-reveal-id=\"details\"><font size=-1>活动详情 &raquo</font></a>"
+			+ "<li id=\"details\" class=\"reveal-modal\" data-reveal>"
+			+ " <p>$description</p>"
 			+ " <a class=\"close-reveal-modal\">&#215;</a>"
 			+ "</li>"
-            + "<a href=\"#\" data-reveal-id=\"bonusdetail\"><font size=-1>奖金设置 &raquo</font></a>"
-			+ "<li id=\"bonusdetail\" class=\"reveal-modal\" data-reveal>"
-			+ " <p>$bonusdetail</p>"
-			+ " <a class=\"close-reveal-modal\">&#215;</a>"
-			+ "</li></ul>";
-	enrolled = false;
-	if (isAuth())
-		if ( hasOwnProperty(match.fields, 'enrolled') ) {
-			enrolled = true;
-			contentTemplate += "<h3>已预留报名位，请在赛事规定时效内到俱乐部缴费。</h3>";
-		}
-	if (!enrolled) {
-		if (isExpired(match.fields.starttime)) {
-			contentTemplate += "<h3>比赛已过期。</h3>";
-		} else {
-			if (match.fields.status == 'approved') {
-				if (isAuth()) {
-					if (needInfo())
-						contentTemplate	+= "<a href=\"javascript:completeInfo();\" class=\"button expand\">我要预留报名位</a>";
-					else
-						contentTemplate += "<a href=\"javascript:void(0);\" id=\"enroll\" match='" + match.pk + "' class=\"button expand\">我要预留报名位</a>";
-				} else {
-					contentTemplate	+= "<a href=\"javascript:loginFirst();\" class=\"button expand\">我要预留报名位</a>";
-				}
-			} else {
-				contentTemplate += "<h3>比赛已无效。</h3>";
-			}
-		}
-		
 	}
 	contentTemplate += "</div>"
 			+ "</div>";
@@ -169,6 +185,8 @@ function addMatchToList_v2(match, point) {
 			objectToJsonString([ match ])).replace(/\$poolroomname/g,
 			match.fields.poolroom.name)
 			.replace(/\$starttimeweekday/g,getFormattedTimeToWeekDay(match.fields.starttime))
+			.replace(/\$title/g, match.fields.title).replace(/\$type/g, match.fields.type == 1 ? "比赛" : "活动")
+			.replace(/\$organizer/g, match.fields.organizer.name)
 			.replace(/\$starttimedate/g,getFormattedTime(match.fields.starttime))
 			.replace(/\$starttimehour/g,getFormattedTime2(match.fields.starttime))
 			.replace(/\$starttime/g,getFormattedTimeToDate(match.fields.starttime))
@@ -176,6 +194,7 @@ function addMatchToList_v2(match, point) {
 			.replace(/\$bonus/g, match.fields.bonus)
 			.replace(/\$rechargeablecard/g, match.fields.rechargeablecard)
 			.replace(/\$otherprize/g, match.fields.otherprize).replace(/\$rule/g, match.fields.rule)
+			.replace(/\$description/g, match.fields.description)
 			.replace(/\$address/g, match.fields.poolroom.address).replace(/\$enrollfee/g, match.fields.enrollfee)
 			.replace(/\$enrollfocalpoint/g, match.fields.enrollfocal);
 	matchobj.append(contentTemplate);

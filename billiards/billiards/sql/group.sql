@@ -1,0 +1,1 @@
+INSERT INTO fans_group (id, name, description, status) VALUES (1, '比赛所在球房', '此爱好者群为占位群, 当比赛发布者为球房/俱乐部时使用。请不要删除!', 0);
