@@ -22,12 +22,12 @@
 				<ul class="example-orbit" data-orbit>
 				  {% for image in picimages %}
 				  	{% if image.iscover %}
-				  	<li><img src="{{ MEDIA_URL }}{{ image.imagepath }}" alt="slide {{ forloop.counter }}"></li>
+				  	<li><img style="max-height:370px;display: block;margin-left: auto;margin-right: auto" src="{{ MEDIA_URL }}{{ image.imagepath }}" alt="slide {{ forloop.counter }}"></li>
 				  	{% endif %}
 				  {% endfor %}
 				  {% for image in picimages %}
 				  	{% if not image.iscover %}
-				  	<li><img src="{{ MEDIA_URL }}{{ image.imagepath }}" alt="slide {{ forloop.counter }}"></li>
+				  	<li><img style="max-height:370px;display: block;margin-left: auto;margin-right: auto" src="{{ MEDIA_URL }}{{ image.imagepath }}" alt="slide {{ forloop.counter }}"></li>
 				  	{% endif %}
 				  {% endfor %}
 				</ul>
