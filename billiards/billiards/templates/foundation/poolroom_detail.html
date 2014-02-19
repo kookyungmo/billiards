@@ -103,31 +103,51 @@
 	</div>
       </div>
     	<div class="medium-3 small-12 columns">
-    		<div class="row"><h2> &nbsp 近期的比赛</h2><hr></div>
-        {% for match in matches %}
-	 <div class="row">
-	    	<h3 class="subheader"><strong>&nbsp 比赛日期</strong></h3>
-            <h4 class="subheader">
-              <p><strong>&nbsp <script>document.write(getFormattedTimeToDate('{{ match.starttime|date:"D d M Y, H:i" }}'));</script></strong></p>
-            </h4>
-            <h3 class="subheader"><strong>&nbsp 冠军奖金</strong></h3>
-			<h4 class="subheader">
-				{% if match.bonus > 0 %}
-				    <p>&nbsp 现金: <strong>{{ match.bonus }}元</strong></p>
-				{% elif match.rechargeablecard > 0 %}
-				    <p>&nbsp 俱乐部充值卡: <strong>{{ match.rechargeablecard }}元</strong></p>
-	            {% elif match.otherprize != None %}
-				    <p>&nbsp 其它奖励: <strong>{{ match.otherprize }}</strong></p>
-				{% endif %}
-			</h4>
-			<h3 class="subheader"><a href="{% url 'match_detail' match.id %}">&nbsp 详情</a></h3>
-	    {% if not forloop.last %}
-	    <hr>
-	    {% endif %}
-	</div>
-  {% empty %}
-	    <div class="row"><h2>近期没有比赛信息。</h2></div>
-  {% endfor %}
+    	  <div style="margin-left:1em">
+    		{% for coupon in poolroom.coupons %}
+    			{% if forloop.first %}
+			    	<div class="row"><h2>近期的优惠</h2></div>
+			    {% endif %}
+			 <div class="row">
+					<h3 class="subheader">
+						<a href="{{ coupon.url }}">{{ coupon.title }}</a>
+					</h3>
+			    {% if not forloop.last %}
+			    <hr>
+			    {% endif %}
+			 </div>		
+    		{% empty %}
+			    <div class="row"><h2>没有近期优惠信息。</h2></div>
+    		{% endfor %}
+    		<hr>
+	        {% for match in matches %}
+	        	{% if forloop.first %}
+			    <div class="row"><h2>近期的比赛</h2></div><hr>
+			    {% endif %}
+				 <div class="row">
+				    	<h3 class="subheader"><strong>&nbsp 比赛日期</strong></h3>
+			            <h4 class="subheader">
+			              <p><strong>&nbsp <script>document.write(getFormattedTimeToDate('{{ match.starttime|date:"D d M Y, H:i" }}'));</script></strong></p>
+			            </h4>
+			            <h3 class="subheader"><strong>&nbsp 冠军奖金</strong></h3>
+						<h4 class="subheader">
+							{% if match.bonus > 0 %}
+							    <p>&nbsp 现金: <strong>{{ match.bonus }}元</strong></p>
+							{% elif match.rechargeablecard > 0 %}
+							    <p>&nbsp 俱乐部充值卡: <strong>{{ match.rechargeablecard }}元</strong></p>
+				            {% elif match.otherprize != None %}
+							    <p>&nbsp 其它奖励: <strong>{{ match.otherprize }}</strong></p>
+							{% endif %}
+						</h4>
+						<h3 class="subheader"><a href="{% url 'match_detail' match.id %}">&nbsp 详情</a></h3>
+				    {% if not forloop.last %}
+				    <hr>
+				    {% endif %}
+				 </div>
+		    {% empty %}
+			    <div class="row"><h2>没有近期比赛信息。</h2></div>
+		    {% endfor %}
+        </div>
       </div>
 {% endblock %}
 {% block foundationscript %}
