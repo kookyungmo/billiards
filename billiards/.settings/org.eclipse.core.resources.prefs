@@ -1,6 +1,7 @@
 eclipse.preferences.version=1
 encoding//billiards/admin.py=utf-8
 encoding//billiards/location_convertor.py=utf-8
+encoding//billiards/management/commands/importcoupons.py=utf-8
 encoding//billiards/models.py=utf-8
 encoding//billiards/settings.py=utf-8
 encoding//billiards/storage.py=utf-8

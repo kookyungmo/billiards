@@ -29,6 +29,14 @@ def toDict(bitfield):
     return flag_dict
 
 poolroom_fields = ('id', 'name', 'address', 'tel', 'lat_baidu', 'lng_baidu', 'flags', 'businesshours', 'size', 'rating')
+
+def getCouponCriteria():
+    datefmt = "%Y-%m-%d"
+    starttime = datetime.datetime.today()
+    return Q(startdate__lte=starttime.strftime(datefmt)) & \
+        (Q(enddate__isnull=True) | Q(enddate__gte=starttime.strftime(datefmt))) & \
+        Q(status=1)
+        
 class Poolroom(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200,null=False,verbose_name='名字')
@@ -78,9 +86,14 @@ class Poolroom(models.Model):
     @property
     def images(self):
         return PoolroomImage.objects.filter(Q(poolroom=self) & Q(status=1))
+    
+    @property
+    def coupons(self):
+        return Coupon.objects.filter(Q(poolroom=self) & getCouponCriteria())
 
 UPLOAD_TO_POOLROOM = UPLOAD_TO + 'poolroom/'
 poolroomimage_fields = ('imagepath', 'description', 'iscover')
+poolroomcoupon_fields = ('title', 'description', 'discount', 'url')
 class PoolroomImage(models.Model):
     id = models.AutoField(primary_key=True)
     poolroom = models.ForeignKey(Poolroom, verbose_name='台球厅')
@@ -504,3 +517,27 @@ class PoolroomUserApply(models.Model):
             return "%s <br/>Email: %s<br/>Tel: %s" % ((self.user.nickname if self.user.nickname is not None and self.user.nickname != "" else self.user.username), self.user.email, self.user.cellphone)
     verbose_user.short_description = u'俱乐部管理员申请表单的详细信息'
     verbose_user.allow_tags = True  
+
+class Coupon(models.Model):
+    id = models.AutoField(primary_key=True)
+    poolroom = models.ForeignKey(Poolroom, verbose_name='台球俱乐部')
+    title = models.CharField(max_length=50, verbose_name='折扣标题')
+    description = models.CharField(max_length=200, verbose_name='折扣描述')
+    discount = models.IntegerField(max_length=3, verbose_name='折扣率')
+    startdate = models.DateField(verbose_name='开始日期')
+    enddate = models.DateField(verbose_name='结束日期', null=True, blank=True)
+    url = models.CharField(max_length=100, verbose_name='折扣链接')
+    type = IntegerChoiceTypeField(verbose_name=u'折扣类型', choices=(
+            (1, u'团购'),
+        ), default=1, jsonUseValue=False)
+    status = IntegerChoiceTypeField(verbose_name=u'状态', choices=(
+            (1, u'有效'),
+            (2, u'过期'),
+            (3, u'失效'),
+            (4, u'无效')
+        ), default=1, jsonUseValue=False)
+    
+    class Meta:
+        db_table = 'coupon'
+        verbose_name = '折扣信息'
+        verbose_name_plural = '折扣信息'

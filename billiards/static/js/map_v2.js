@@ -369,6 +369,14 @@ function addPoolroomToList(poolroom, point) {
 	contentTemplate += "</div><div class=\"row\"><h6 class=\"subheader\">地址: $address</h6></div>";
 	contentTemplate += "<div class=\"row\"><h6 class=\"subheader\">电话: $tel</h6></div>";
 	contentTemplate += "<div class=\"row\"><h6 class=\"subheader\">营业时间: $hour</h6></div>";
+	coupons = Object.getOwnPropertyNames(poolroom.fields.coupons)
+	if (coupons.length > 0) {
+		contentTemplate += "<div class=\"row\"><h5><b>优惠信息</b></h5></div>";
+		for (var i in coupons) {
+			coupon = poolroom.fields.coupons[coupons[i]]
+			contentTemplate += "<div class=\"row\"><h6><a href=\"" + coupon.fields.url + "\">" + coupon.fields.title + "</a></h6></div>";
+		}
+	}
 	contentTemplate += "</div></div></div>";
 
 	contentTemplate = contentTemplate.replace(/\$point/g,

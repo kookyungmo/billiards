@@ -7,7 +7,7 @@
 
 from django.http import HttpResponse, Http404
 from billiards.models import Poolroom, PoolroomEquipment, poolroom_fields, Match,\
-    poolroomimage_fields
+    poolroomimage_fields, Coupon, poolroomcoupon_fields, getCouponCriteria
 from django.shortcuts import get_object_or_404, render_to_response
 from django.core import serializers
 from django.template.context import RequestContext
@@ -50,6 +50,18 @@ def updateJsonStrWithImages(poolroomJsonStr, poolrooms):
                 poolroomObj['fields']['images'] = images
                 break
     return simplejson.dumps(poolroomObjs)
+
+def updateJsonStrWithCoupons(poolroomJsonStr, poolrooms):        
+    poolroomObjs = simplejson.loads(poolroomJsonStr)
+    for poolroomObj in poolroomObjs:
+        for poolroom in poolrooms:
+            if poolroom.id == poolroomObj['pk']:
+                coupons = {}
+                for i, coupon in enumerate(poolroom.coupons[:2]):
+                    coupons['coupon' + str(i)] = simplejson.loads(tojson(coupon, poolroomcoupon_fields)[1:-1])
+                poolroomObj['fields']['coupons'] = coupons
+                break
+    return simplejson.dumps(poolroomObjs)
     
 def nearby(request, lat = None, lng = None, distance = 10):
     if lat is not None and lng is not None:
@@ -70,6 +82,7 @@ def nearby(request, lat = None, lng = None, distance = 10):
         if len(nearby_poolrooms) > 0:
             jsonstr = updateJsonStrWithDistance(jsonstr, nearby_poolrooms)
             jsonstr = updateJsonStrWithImages(jsonstr, nearby_poolrooms)
+            jsonstr = updateJsonStrWithCoupons(jsonstr, nearby_poolrooms)
         return HttpResponse(jsonstr)
     return render_to_response(TEMPLATE_ROOT + 'poolroom_nearby.html', {'defaultDistance': 5},
                               context_instance=RequestContext(request))
@@ -91,6 +104,9 @@ def updateBaiduLocation(request):
         return HttpResponse("[{'msg':'%s records updated.'}]" %(withoutBaiduLocation.count()))
     else:
         raise Http404()
+
+def getCoupons(poolroomid):
+    return Coupon.objects.filter(getCouponCriteria() & Q(poolroom__id=poolroomid)).order_by('-discount')
     
 def detail(request, poolroomid):
     poolroom = get_object_or_404(Poolroom, pk=poolroomid)
