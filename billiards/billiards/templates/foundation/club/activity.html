@@ -1,0 +1,49 @@
+{% extends "foundation/club/base.html" %} 
+{% block header %} 
+{% load staticfiles %}
+<script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}";</script>
+<script src="{% static "js/moment-with-langs.min.js" %}"></script>
+<script src="{% static "js/map.js" %}?{{buildid}}"></script>
+<script src="{% static "js/map_v2.js" %}?{{buildid}}"></script>
+{% endblock %} 
+{% load extras %} 
+{% load url from future %} 
+{% block rightcontent %}
+<h1>"{{groups.0.group.name}}"发布的活动</h1>
+<hr>
+<a href="{% url 'club_activity_add' %}" class="button radius">发布新活动</a>
+{% if acitivies|length > 0 %}
+<hr>
+<table>
+  <thead>
+    <tr>
+      <th width="200">活动日期</th>
+      <th width="300">活动名称</th>
+      <th width="300">活动地点</th>
+      <th width="150">状态</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for activity in acitivies %}
+    <tr>
+      <td><script>document.write(getSmartTime('{{ activity.starttime|date:'c' }}'));</script></td>
+      <td><a href="{% url 'club_activity_edit' activity.id %}">{{ activity.title }}</a></td>
+      <td><a href="{% url 'poolroom_detail' activity.poolroom.id %}">{{ activity.poolroom.name }}</a></td>
+      <td>
+      {% if activity.is_expired  %}
+      已过期
+      {% elif activity.status == 'approved' %}
+      开放活动中
+      {% elif activity.status == 'disabled' %}
+      已禁用
+      {% endif %}
+      </td>
+    </tr>
+   {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<pre><code class="language-html"><h2>没有发布过的活动。</h2>
+</code></pre>
+{% endif %}
+{% endblock %}

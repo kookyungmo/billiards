@@ -1,0 +1,222 @@
+{% extends "foundation/club/base.html" %} 
+{% block header %} 
+{% load staticfiles %}
+<script src="{% static "js/moment-with-langs.min.js" %}"></script>
+<script src="{% static "js/moment-timezone.min.js" %}"></script>
+{% endblock %} 
+{% load extras %} 
+{% load url from future %} 
+{% block rightcontent %}
+{% with is_expired=activity.is_expired %}
+{% if activity != None %}
+<h1>修改"{{groups.0.group.name}}"的活动</h1>
+{% if is_expired %}
+<div data-alert class="alert-box warning round">
+  无法修改已经过期的活动。请发布新的活动。
+</div>
+{% endif %}
+{% else %}
+<h1>发布"{{groups.0.group.name}}"的比赛</h1>
+{% endif %}
+<hr>
+<form id="matchForm" data-abide>
+  <fieldset>
+  	{% if activity != None %}
+  	<legend>修改活动</legend>
+  	{% else %}
+    <legend>发布新的活动</legend>
+    {% endif %}
+    
+    <div class="row">
+	  <div class="large-12 columns">
+        <label for="matchtitle">活动名称<small>*</small></label>
+        <input type="text" id="matchtitle" placeholder="{{groups.0.group.name}}群活动" required
+         {% if activity != None %} value="{{ activity.title }}" {% if is_expired %} readonly {% endif %} {% endif %}>
+        <small class="error">请输入活动名称</small>
+      </div>
+	  <div class="large-12 columns">
+        <label for="matchtitle">活动所在俱乐部<small>*</small></label>
+         <select id="club" class="medium" required>
+        	{% for group in groups %}
+        		<option value="{{ group.poolroom.id }}" {% if activity != None and activity.poolroom.id == group.poolroom.id %} selected {% endif %}>{{ group.poolroom.name }}</option>
+        	{% endfor %}
+        </select>
+        <small class="error">请选择活动所在俱乐部</small>
+      </div>      
+    </div>
+
+    <div class="row">
+      <div class="large-12 columns">
+        <hr>
+      </div>
+    </div>    
+
+    <div class="row">
+      <div class="medium-6 columns">
+		<label for="matchdate">活动开始日期<small>*</small></label>
+        <input type="date" id="matchdate" placeholder="2014-01-30" required
+        {% if activity != None %} value="{{ activity.starttime|date:"Y-m-d" }}" {% if is_expired %} readonly {% endif %} {% endif %}>
+        <small class="error">请输入有效的日期</small>
+      </div>
+      <div class="medium-6 columns">
+		<label for="matchtime">活动开始时间<small>*</small></label>
+        <input type="text" pattern="time" id="matchtime" placeholder="20:00:00" required
+        {% if activity != None %} value="{{ activity.starttime|date:"H:i:s" }}" {% if is_expired %} readonly {% endif %} {% endif %}>
+        <small class="error">请输入有效的时间</small>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="medium-6 columns">
+		<label for="enrollfee">活动费用<small>*</small></label>
+        <input type="text" id="enrollfee" placeholder="每人10元/小时" required
+        {% if activity != None %} value="{{ activity.enrollfee }}" {% if is_expired %} readonly {% endif %} {% endif %}>
+        <small class="error">请输入活动费用</small>
+      </div>
+      <div class="medium-6 columns">
+		<label for="enrollfocal">报名联系人<small>*</small></label>
+        <input type="text" id="enrollfocal" placeholder="王先生,电话: 13912345678" required
+        {% if activity != None %} value="{{ activity.enrollfocal }}" {% if is_expired %} readonly {% endif %} {% endif %}>
+        <small class="error">请输入报名联系人</small>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-12 columns">
+        <hr>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="large-12 columns">
+        <label for="matchrule">活动规则<small>*</small></label>
+        <textarea id="matchrule" placeholder="输入活动规则" required
+        {% if is_expired %} readonly {% endif %}>{% if activity != None %}{{ activity.rule }}{% endif %}</textarea>
+        <small class="error">请输入活动规则</small>
+      </div>
+    </div>
+    
+     <div class="row">
+      <div class="large-12 columns">
+        <label for="description">活动详情<small>*</small></label>
+        <textarea id="description" placeholder="输入活动详情" required
+        {% if is_expired %} readonly {% endif %}>{% if activity != None %}{{ activity.description }}{% endif %}</textarea>
+        <small class="error">请输入活动详情</small>
+      </div>
+    </div>     
+{% if activty != None %}    
+    <div class="row">
+      <div class="large-12 columns">
+        <div class="row collapse">
+          <label for="status">比赛状态<small>*</small></label>
+          <select id="status" class="medium" required>
+            <option value="approved" {% if activity.status == 'approved' %} selected {% endif %}>开放活动中</option>
+            <option value="disabled" {% if activity.status == 'disabled' %} selected {% endif %}>禁用</option>
+          </select>
+        </div>
+      </div>
+    </div>
+{% else %}
+    <div class="row">
+      <div class="large-12 columns">
+        <div class="row collapse">
+        	<input type="hidden" id="status" value="approved" readonly>
+        </div>
+      </div>
+    </div>
+{% endif %}
+    <div class="row">
+      <div id="errorMsg" class="large-12 columns hide">
+       	<div data-alert class="alert-box warning round">
+		</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-12 columns">
+      	{% if activity != None %}
+      	<button type="submit" class="medium button green {% if is_expired %} disabled {% endif %}">修改</button>
+      	{% else %}
+        <button type="submit" class="medium button green">创建</button>
+        {% endif %}
+      </div>
+    </div>
+
+  </fieldset>
+</form>
+{% endwith %}
+{% endblock %}
+{% block script %}
+<script>
+{% if activity == None or not activity.is_expired %}
+$("#matchForm").submit(function (e) {
+  		e.preventDefault();
+  		$("#errorMsg").addClass("hide");
+  		matchtime = moment($("#matchdate").val() + " " + $("#matchtime").val()).tz("{{ TIME_ZONE }}");
+   		$.ajax({
+			data : {'matchtitle': $("#matchtitle").val(),
+				'club': $("#club").val(),
+				'cashbonus': '0',
+				'cardbonous': '0',
+				'otherbonous': 'none',
+				'enrollfee': $("#enrollfee").val(),
+				'enrollfocal': $("#enrollfocal").val(),
+				'bonusdetail': 'none',
+				'matchrule': $("#matchrule").val(),
+				'description': $("#description").val(),
+				'groupon': 'false',
+				'coupon': 'false',
+				'status': $('#status').val(),
+				'matchtime': matchtime.valueOf()},
+  			url : {% if activity == None %} "{% url 'club_activity_add' %}" {% else %} "{% url 'club_activity_edit' activity.id %}" {% endif %},
+  			type: 'POST',
+			dataType : 'json',
+			success : function(data) {
+				if (data.rt == 1) {
+					window.location = "{% url 'club_activity' %}";
+				} else {
+					if (data.msg != null)
+						$("#errorMsg .alert-box").text(data.msg);
+					else {
+						var errorText = "";
+						for (var property in data) {
+						    if (data.hasOwnProperty(property) && property != 'rt') {
+						    	errorText += property + ":" + data[property] + " ";
+						    }
+						}
+						$("#errorMsg .alert-box").text(errorText);
+					}
+					$("#errorMsg").removeClass("hide");
+				}
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				console.log(textStatus, errorThrown);
+				$("#errorMsg .alert-box").text("网络错误，请重试。");
+				$("#errorMsg").removeClass("hide");
+			}
+		});
+    });
+moment.tz.add({
+    "zones": {
+        "Asia/Chongqing": [
+            "7:6:20 - LMT 1928 7:6:20",
+            "7 - LONT 1980_4 7",
+            "8 PRC C%sT"
+        ]
+    },
+    "rules": {
+        "PRC": [
+            "1986 1986 4 4 7 0 0 1 D",
+            "1986 1991 8 11 0 0 0 0 S",
+            "1987 1991 3 10 0 0 0 1 D"
+        ]
+    },
+    "links": {}
+});
+{% else %}
+$("#matchForm").submit(function (e) {
+		e.preventDefault();
+});
+{% endif %}
+</script>
+{% endblock %}
