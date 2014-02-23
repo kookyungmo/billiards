@@ -11,11 +11,17 @@
 		<div class="sidebar">
 			<nav>
 				<ul class="side-nav">
+				{% if groups|length > 0 %}
+					<li class="heading">{{groups.0.group.name}}的会员服务</li>
+					{% url 'club_activity' as activityurl %}
+					<li {% if request.path == activityurl %} class="active" {% endif %}><a href="{{ activityurl }}" data-search="activity">活动</a></li>
+				{% else %}
 					<li class="heading">{{poolroomuser.poolroom.name}}的会员服务</li>
 					{% url 'club_match' as matchurl %}
 					{% url 'club_challenge' as challengeurl %}
 					<li {% if request.path == matchurl %} class="active" {% endif %}><a href="{{ matchurl }}" data-search="match">比赛</a></li>
 					<li {% if request.path == challengeurl %} class="active" {% endif %}><a href="{{ challengeurl }}" data-search="challenge">约赛</a></li>
+				{% endif %}
 				</ul>
 			</nav>
 		</div>

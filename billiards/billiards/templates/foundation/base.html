@@ -76,7 +76,9 @@
 	        {% with weibo|add:'?returnurl='|add:request.get_full_path as weibourl %}
 	        {% url 'user_logout' as user_logout %}
 	        {% if user.is_authenticated %}
-		        {% if poolroomuser %}
+	        	{% if groups %}
+	        	<li><a href="{% url 'club_index' %}">欢迎你,{{ groups.0.group.name }}</a></li>
+		        {% elif poolroomuser %}
 		        <li><a href="{% url 'club_index' %}">欢迎你,{{ poolroomuser.poolroom.name }}</a></li>
 		        {% else %}
 		        <li><a href="javascript:void(0);">{% if user.avatar != 'none' and user.avatar != None %}<img src="{{ user.avatar }}" width="30">{% endif %}&nbsp&nbsp{{ user.nickname }}</a></li>

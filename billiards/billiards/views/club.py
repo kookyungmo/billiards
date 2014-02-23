@@ -20,22 +20,28 @@ from django.db import transaction
 from django.views.decorators.csrf import ensure_csrf_cookie
 
 def index(request):
-    poolroomusers = getPoolroom(request.user)
+    poolroomusers = getPoolroom(request.user, (1|2))
     return render_to_response(TEMPLATE_ROOT + 'club/index.html', 
                               combinePageVariables({}, poolroomusers),
                               context_instance=RequestContext(request))
 
-def getPoolroom(user):
+def getPoolroom(user, matchtype = 1):
     if not user.is_authenticated():
         raise PermissionDenied
     poolroomusers = PoolroomUser.objects.filter(user=user)
     if len(poolroomusers) == 0:
         raise PermissionDenied
+    if (poolroomusers[0].type & matchtype) == 0:
+        raise PermissionDenied
     return poolroomusers
  
 def combinePageVariables(dict1, poolroomusers):
     if len(poolroomusers) > 0:
-        return dict(dict1.items() + {'poolroomuser': list(poolroomusers)[0]}.items())
+        groups = []
+        for poolroomuser in poolroomusers:
+            if poolroomuser.type == 2:
+                groups.append(poolroomuser)
+        return dict(dict1.items() + {'poolroomuser': list(poolroomusers)[0], 'groups': groups}.items())
     return dict1
     
 def match(request):
@@ -43,7 +49,7 @@ def match(request):
     poolrooms = []
     for pu in poolroomusers:
         poolrooms.append(pu.poolroom)
-    publishedMatches = Match.objects.filter(poolroom__in=poolrooms).order_by('-starttime', 'status')
+    publishedMatches = Match.objects.filter(poolroom__in=poolrooms).filter(type=1).order_by('-starttime', 'status')
     return render_to_response(TEMPLATE_ROOT + 'club/match.html', 
                               combinePageVariables({'matches': publishedMatches}, poolroomusers),
                               context_instance=RequestContext(request))
@@ -52,7 +58,7 @@ class MatchForm(ModelForm):
     class Meta:
         model = Match
 
-def saveMatch(request, poolroomid, match = None):
+def saveMatch(request, poolroomid, match = None, organizer = 1, matchtype = 1):
     attributelist = []
     if request.POST['groupon'] == 'true':
         attributelist.append('groupon')
@@ -71,8 +77,8 @@ def saveMatch(request, poolroomid, match = None):
            'enrollfee': request.POST['enrollfee'],
            'enrollfocal': request.POST['enrollfocal'],
            'flags': attributelist,
-           'organizer': 1,
-           'type': 1,
+           'organizer': organizer,
+           'type': matchtype,
            }
     if match is None:
         data['poolroom'] = poolroomid
@@ -80,7 +86,7 @@ def saveMatch(request, poolroomid, match = None):
         newmatch = MatchForm(data)
     else:
         data['status'] = request.POST['status']
-        data['poolroom'] = match.poolroom.id
+        data['poolroom'] = poolroomid
         newmatch = MatchForm(data=data, instance=match)
     if newmatch.is_valid():
         newmatch.save()
@@ -99,9 +105,11 @@ def match_add(request):
                                   combinePageVariables({}, poolroomusers),
                                   context_instance=RequestContext(request))
     
-def checkPoolroomUserByMatch(user, matchid):
-    poolroomusers = getPoolroom(user)
+def checkPoolroomUserByMatch(user, matchid, matchtype = 1):
+    poolroomusers = getPoolroom(user, matchtype)
     match = get_object_or_404(Match, pk=matchid)
+    if match.type != matchtype:
+        raise PermissionDenied
     for pu in poolroomusers:
         if pu.poolroom.id == match.poolroom.id:
             return poolroomusers, match
@@ -180,7 +188,7 @@ def checkPoolroomUserByChallenge(user, challengeid):
     poolroomusers = getPoolroom(user)
     challenge = get_object_or_404(Challenge, pk=challengeid)
     for pu in poolroomusers:
-        if pu.poolroom.id == challenge.issuer.id:
+        if pu.poolroom.id == challenge.issuer.id and (pu.type & 1 > 0):
             return poolroomusers, challenge
     raise PermissionDenied
 
@@ -207,7 +215,7 @@ def checkPoolroomUserByChallengeApp(user, appid):
     poolroomusers = getPoolroom(user)
     application = get_object_or_404(ChallengeApply, pk=appid)
     for pu in poolroomusers:
-        if pu.poolroom.id == application.challenge.issuer.id:
+        if pu.poolroom.id == application.challenge.issuer.id and (pu.type & 1 > 0):
             return poolroomusers, application.challenge, application
     raise PermissionDenied
 
@@ -268,4 +276,53 @@ def club_apply(request):
     clubs = Poolroom.objects.all()
     return render_to_response(TEMPLATE_ROOT + 'club/apply.html', 
                                   {'clubs': clubs},
+                                  context_instance=RequestContext(request))
+    
+def activity(request):
+    poolroomusers = getPoolroom(request.user, 2)
+    poolrooms = []
+    for pu in poolroomusers:
+        if pu.type == 2:
+            poolrooms.append(pu.poolroom)
+    publishedMatches = Match.objects.filter(poolroom__in=poolrooms).filter(organizer=poolroomusers[0].group).filter(type=2).order_by('-starttime', 'status')
+    return render_to_response(TEMPLATE_ROOT + 'club/activity.html', 
+                              combinePageVariables({'acitivies': publishedMatches}, poolroomusers),
+                              context_instance=RequestContext(request))
+
+@ensure_csrf_cookie
+def activity_add(request):
+    poolroomusers = getPoolroom(request.user, 2)
+    if request.method == 'POST':
+        try:
+            poolroomid = int(request.POST['club'])
+            for poolroomuser in poolroomusers:
+                if poolroomuser.type == 2 and poolroomid == poolroomuser.poolroom.id: 
+                    return saveMatch(request, poolroomid, organizer=poolroomuser.group.id, matchtype=2)
+            raise PermissionDenied
+        except PermissionDenied, e:
+            raise e
+        except Exception:     
+            return HttpResponse(json.dumps({'rt': 0, 'msg': u'Invalid Arguments.'}), content_type="application/json")
+    return render_to_response(TEMPLATE_ROOT + 'club/activity_edit.html', 
+                                  combinePageVariables({}, poolroomusers),
+                                  context_instance=RequestContext(request))
+    
+@ensure_csrf_cookie
+def activity_edit(request, activityid):
+    poolroomusers, activity = checkPoolroomUserByMatch(request.user, activityid, 2)
+    if request.method == 'POST':
+        try:
+            if activity.type != 2:
+                raise PermissionDenied
+            poolroomid = int(request.POST['club'])
+            for poolroomuser in poolroomusers:
+                if poolroomuser.type == 2 and poolroomid == poolroomuser.poolroom.id: 
+                    return saveMatch(request, poolroomid, activity, organizer=poolroomuser.group.id, matchtype=2)
+            raise PermissionDenied
+        except PermissionDenied, e:
+            raise e
+        except Exception:     
+            return HttpResponse(json.dumps({'rt': 0, 'msg': u'Invalid Arguments.'}), content_type="application/json")
+    return render_to_response(TEMPLATE_ROOT + 'club/activity_edit.html', 
+                                  combinePageVariables({'activity': activity}, poolroomusers),
                                   context_instance=RequestContext(request))

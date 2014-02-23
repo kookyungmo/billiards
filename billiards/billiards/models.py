@@ -354,6 +354,8 @@ class Match(models.Model):
 #  
 # post_save.connect(create_profile, sender=User)
 # #         
+def getusername(self):
+    return self.nickname if self.nickname is not None and self.nickname != "" else self.username
 
 class ProfileBase(type):
     def __new__(cls, name, bases, attrs):
@@ -364,6 +366,7 @@ class ProfileBase(type):
             for obj_name, obj in attrs.items():
                 if isinstance(obj, models.Field): fields.append(obj_name)
                 User.add_to_class(obj_name, obj)
+                User.__unicode__ = getusername
 #             UserAdmin.fieldsets = list(UserAdmin.fieldsets)
 #             UserAdmin.fieldsets.append((name, {'fields': fields}))
         return super(ProfileBase, cls).__new__(cls, name, bases, attrs)
@@ -465,7 +468,7 @@ class ChallengeApply(models.Model):
     @property
     def status_display(self):
         return self.get_status_display()
-        
+
     def verbose_username(self):
         return "%s <br/>Email: %s<br/>Tel: %s" % ((self.user.nickname if self.user.nickname is not None and self.user.nickname != "" else self.user.username), self.user.email, self.user.cellphone)
     verbose_username.short_description = u'用户详细信息'
@@ -474,15 +477,20 @@ class ChallengeApply(models.Model):
 class PoolroomUser(models.Model):
     id = models.AutoField(primary_key=True)
     poolroom = models.ForeignKey(Poolroom, verbose_name='台球俱乐部')
-    user = models.ForeignKey(User, verbose_name='俱乐部管理员')
+    group = models.ForeignKey(Group, verbose_name='爱好者群(当管理类型是俱乐部管理员时，请使用默认值)', default=0)
+    user = models.ForeignKey(User, verbose_name='用户名')
+    type = IntegerChoiceTypeField(verbose_name=u'类型', choices=(
+            (1, u'俱乐部管理员'),
+            (2, u'活动群组织者')
+        ), default=1)
     
     class Meta:
         db_table = 'poolroom_user'
-        verbose_name = '俱乐部管理员'
-        verbose_name_plural = '俱乐部管理员'
+        verbose_name = '俱乐部用户管理'
+        verbose_name_plural = '俱乐部用户管理'
         
     def __unicode__(self):
-        return u'\'%s\' 管理员:%s' %(self.poolroom, \
+        return u'\'%s%s\' %s:%s' %(self.poolroom, (u'' if self.type == 2 else u'合作群"%s"' %(self.group.name)), (u'管理员' if self.type == 1 else u'群组织者'), \
                                      (self.user.nickname if self.user.nickname is not None and self.user.nickname != "" else self.user.username))
     def verbose_user(self):
             return "%s <br/>Email: %s<br/>Tel: %s" % ((self.user.nickname if self.user.nickname is not None and self.user.nickname != "" else self.user.username), self.user.email, self.user.cellphone)
