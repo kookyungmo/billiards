@@ -10,3 +10,7 @@
 </div>
 
 {% endblock %}
+
+{% block trackingscript %}
+ga('send', 'event', 'exception', '404', {'page': '{{request.path}}'});
+{% endblock %}
