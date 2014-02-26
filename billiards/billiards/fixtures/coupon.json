@@ -1,0 +1,32 @@
+[
+    {
+        "pk": 40, 
+        "model": "billiards.coupon", 
+        "fields": {
+            "status": 1, 
+            "startdate": "2014-01-24", 
+            "enddate": "2014-03-31", 
+            "description": "12\u5143\uff0c\u7545\u6253\u4e00\u5c0f\u65f6", 
+            "title": "\u56e2\u8d2d\uff1a\u5317\u4eac98\u53f0\u7403\u4ff1\u4e50\u90e8\uff08\u56de\u9f99\u89c2\uff09\uff0c12\u5143\uff0c\u7545\u6253\u4e00\u5c0f\u65f6", 
+            "url": "http://bj.meituan.com/deal/5129093.html", 
+            "discount": 20, 
+            "type": 1, 
+            "poolroom": 137
+        }
+    }, 
+    {
+        "pk": 97, 
+        "model": "billiards.coupon", 
+        "fields": {
+            "status": 1, 
+            "startdate": "2013-12-07", 
+            "enddate": "2014-03-31", 
+            "description": "30\u5143\uff0c\u7545\u6253\u4e24\u5c0f\u65f6", 
+            "title": "\u56e2\u8d2d\uff1a\u5317\u4eac\u4e91\u5ddd\u53f0\u7403\u4ff1\u4e50\u90e8\u5927\u5c6f\u5e97\uff0836\u5e97\u901a\u7528\uff09\uff0c30\u5143\uff0c\u7545\u6253\u4e24\u5c0f\u65f6", 
+            "url": "http://bj.nuomi.com/deal/cpiv9rzm.html", 
+            "discount": 20, 
+            "type": 1, 
+            "poolroom": 187
+        }
+    }
+]

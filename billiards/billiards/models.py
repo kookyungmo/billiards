@@ -21,6 +21,7 @@ import os
 from django.db.models.query_utils import Q
 from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
+import sys
 
 def toDict(bitfield):
     flag_dict = {}
@@ -179,6 +180,8 @@ class ChoiceTypeField(models.CharField):
         
     def value_to_string(self, obj):
         value = self._get_val_from_obj(obj)
+        if sys._getframe(2).f_code.co_name == 'serialize':
+            return value
         return force_unicode(dict(self.flatchoices).get(value, value), strings_only=True)
     
     def json_use_value(self):
