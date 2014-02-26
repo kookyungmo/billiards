@@ -63,18 +63,22 @@ def updateJsonStrWithCoupons(poolroomJsonStr, poolrooms):
                 break
     return simplejson.dumps(poolroomObjs)
     
+def getNearbyPoolrooms(lat, lng, distance):
+    googles = bd2gcj(float(lat), float(lng))
+    '''
+    radius distance
+    https://developers.google.com/maps/articles/phpsqlsearch_v3?csw=1#findnearsql
+    '''
+    haversine = '6371 * acos( cos( radians(%s) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(%s) ) + sin( radians(%s) )\
+         * sin( radians( lat ) ) )' %(googles[0], googles[1], googles[0])
+    where = "1 having distance <= %s" %(str(distance))
+    return Poolroom.objects.extra(select={'distance' : haversine}).extra(order_by=['distance'])\
+        .extra(where=[where])
+    
+    
 def nearby(request, lat = None, lng = None, distance = 10):
     if lat is not None and lng is not None:
-        googles = bd2gcj(float(lat), float(lng))
-        '''
-        radius distance
-        https://developers.google.com/maps/articles/phpsqlsearch_v3?csw=1#findnearsql
-        '''
-        haversine = '6371 * acos( cos( radians(%s) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(%s) ) + sin( radians(%s) )\
-             * sin( radians( lat ) ) )' %(googles[0], googles[1], googles[0])
-        where = "1 having distance <= %s" %(str(distance))
-        nearby_poolrooms = Poolroom.objects.extra(select={'distance' : haversine}).extra(order_by=['distance'])\
-            .extra(where=[where])
+        nearby_poolrooms = getNearbyPoolrooms(lat, lng, distance)
         json_serializer = serializers.get_serializer("json")()
         stream = StringIO()
         json_serializer.serialize(nearby_poolrooms, fields=poolroom_fields, ensure_ascii=False, stream=stream, indent=2, use_natural_keys=True)

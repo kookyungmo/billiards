@@ -1,6 +1,7 @@
 eclipse.preferences.version=1
 encoding//billiards/admin.py=utf-8
 encoding//billiards/location_convertor.py=utf-8
+encoding//billiards/management/commands/dumptestdata.py=utf-8
 encoding//billiards/management/commands/importcoupons.py=utf-8
 encoding//billiards/models.py=utf-8
 encoding//billiards/settings.py=utf-8
@@ -18,6 +19,7 @@ encoding//billiards/support/socialoauth/sites/qq.py=utf-8
 encoding//billiards/support/socialoauth/sites/weibo.py=utf-8
 encoding//billiards/support/socialoauth/utils.py=utf-8
 encoding//billiards/templatetags/extras.py=utf-8
+encoding//billiards/tests/wechat.py=utf-8
 encoding//billiards/views/challenge.py=utf-8
 encoding//billiards/views/club.py=utf-8
 encoding//billiards/views/exceptions.py=utf-8
