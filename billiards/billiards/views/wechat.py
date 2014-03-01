@@ -322,7 +322,7 @@ def response_msg(request):
                     text = []
                     for act in acts:
                         picurl = buildPoolroomImageURL(act.poolroom)
-                        text.append(newsItemTpl %(act.title, getNativeTime(act.starttime), picurl, request.build_absolute_uri(reverse('activity_detail', args=(act.pk,)))))
+                        text.append(newsItemTpl %(act.title, u"活动开始时间: %s" %(getNativeTime(act.starttime)), picurl, request.build_absolute_uri(reverse('activity_detail', args=(act.pk,)))))
                     return ''.join(text)
                 echopictext = newsReplyTpl % (
                                  msg['FromUserName'], msg['ToUserName'], str(int(time.time())), acts.count(),
@@ -344,7 +344,7 @@ def response_msg(request):
                     text = []
                     for match in matches:
                         picurl = buildPoolroomImageURL(match.poolroom)
-                        text.append(newsItemTpl %(match.title, getNativeTime(match.starttime), picurl, request.build_absolute_uri(reverse('match_detail', args=(match.pk,)))))
+                        text.append(newsItemTpl %(match.title, u"比赛开始时间: %s" %(getNativeTime(match.starttime)), picurl, request.build_absolute_uri(reverse('match_detail', args=(match.pk,)))))
                     return ''.join(text)
                 echopictext = newsReplyTpl % (
                                  msg['FromUserName'], msg['ToUserName'], str(int(time.time())), matches.count(),
