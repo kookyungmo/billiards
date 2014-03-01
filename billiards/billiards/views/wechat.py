@@ -322,7 +322,7 @@ def response_msg(request):
                     text = []
                     for act in acts:
                         picurl = buildPoolroomImageURL(act.poolroom)
-                        text.append(newsItemTpl %(act.title, act.starttime, picurl, request.build_absolute_uri(reverse('activity_detail', args=(act.pk,)))))
+                        text.append(newsItemTpl %(act.title, getNativeTime(act.starttime), picurl, request.build_absolute_uri(reverse('activity_detail', args=(act.pk,)))))
                     return ''.join(text)
                 echopictext = newsReplyTpl % (
                                  msg['FromUserName'], msg['ToUserName'], str(int(time.time())), acts.count(),
@@ -344,7 +344,7 @@ def response_msg(request):
                     text = []
                     for match in matches:
                         picurl = buildPoolroomImageURL(match.poolroom)
-                        text.append(newsItemTpl %(match.title, match.starttime, picurl, request.build_absolute_uri(reverse('match_detail', args=(match.pk,)))))
+                        text.append(newsItemTpl %(match.title, getNativeTime(match.starttime), picurl, request.build_absolute_uri(reverse('match_detail', args=(match.pk,)))))
                     return ''.join(text)
                 echopictext = newsReplyTpl % (
                                  msg['FromUserName'], msg['ToUserName'], str(int(time.time())), matches.count(),
@@ -378,6 +378,10 @@ def buildPoolroomImageURL(poolroom):
     lat_baidu = str(poolroom.lat_baidu)
     return "http://api.map.baidu.com/staticimage?center=%s,%s&width=450&height=300&zoom=18&scale=2&markers=%s,%s&markerStyles=-1,http://billiardsalbum.bcs.duapp.com/2014/01/marker-2.png" %(lng_baidu, lat_baidu, lng_baidu, lat_baidu)
             
+def getNativeTime(utctime):
+    localtz = pytz.timezone(settings.TIME_ZONE)
+    return utctime.astimezone(localtz)
+
 def getCouponsText(coupons):
     text = []
     for coupon in coupons:
