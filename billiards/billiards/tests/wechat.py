@@ -10,7 +10,8 @@ from django.test.client import Client
 from django.core.urlresolvers import reverse
 from django.utils.encoding import smart_str
 from xml.etree import ElementTree as ET
-from billiards.models import Match
+from billiards.models import Match, WechatActivity
+from django.utils import simplejson
 
 def parse_tree(root):
     msg = {}
@@ -57,6 +58,13 @@ class WechatTest(TestCase):
         msg = self._send_wechat_message(data)
         self.assertEqual("pktaiqiu", msg['FromUserName'])
         self.assertEqual("newuser", msg['ToUserName'])
+        activityquery = WechatActivity.objects.filter(eventtype='event')
+        self.assertEqual(1, activityquery.count())
+        activity = activityquery[:1][0]
+        self.assertEqual('newuser', activity.userid)
+        msg = simplejson.loads(activity.message)
+        self.assertEqual('subscribe', msg['event'])
+        self.assertEqual('subscribe', msg['eventkey'])
         
     def test_location_event(self):
         data = """
@@ -77,6 +85,16 @@ class WechatTest(TestCase):
         self.assertEqual(1, int(msg['ArticleCount']))
         self.assertEqual(u'北京黑桃8撞球馆上坡家园店', msg['Articles']['item']['Title'])
         self.assertTrue(msg['Articles']['item']['PicUrl'].startswith('http://api.map.baidu.com/staticimage'))
+        activityquery = WechatActivity.objects.filter(eventtype='location')
+        self.assertEqual(1, activityquery.count())
+        activity = activityquery[:1][0]
+        self.assertEqual('fromUser', activity.userid)
+        msg = simplejson.loads(activity.message)
+        self.assertEqual(u'40.094799793619', msg['lat'])
+        self.assertEqual(u'116.36137302268', msg['lng'])
+        reply = simplejson.loads(activity.reply)
+        self.assertEqual(u'北京黑桃8撞球馆上坡家园店', reply['name'])
+        self.assertEqual(148, reply['id'])
         # the poolroom has coupon
         data = """
         <xml>
@@ -121,7 +139,7 @@ class WechatTest(TestCase):
         msg = parse_msg(response.content)
         return msg
     
-    def test_text_poolroom_message(self):
+    def test_text_match_message(self):
         self.assertEqual(2, Match.objects.filter(type=1).count())
         data = u"""
         <xml>
@@ -136,6 +154,14 @@ class WechatTest(TestCase):
         msg = self._send_wechat_message(data)
         self.assertTrue('ArticleCount' in msg)
         self.assertEqual(1, int(msg['ArticleCount']))
+        activityquery = WechatActivity.objects.filter(eventtype='text')
+        self.assertEqual(1, activityquery.count())
+        activity = activityquery[:1][0]
+        self.assertEqual('fromUser', activity.userid)
+        msg = simplejson.loads(activity.message)
+        self.assertEqual(u'比赛', msg['content'])
+        reply = simplejson.loads(activity.reply)
+        self.assertEqual(1, reply['count'])
         
     def test_text_activity_message(self):
         self.assertEqual(2, Match.objects.filter(type=2).count())
