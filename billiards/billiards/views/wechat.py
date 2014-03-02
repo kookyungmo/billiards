@@ -1,12 +1,22 @@
 # coding=utf-8
 from django.http import HttpResponse
-import hashlib, time, re, json
-from xml.etree import ElementTree as ET
+from django.utils.encoding import smart_str
 from django.views.decorators.csrf import csrf_exempt
-from django.template import RequestContext, Template
-from django.utils.encoding import smart_str, smart_unicode
-from billiards.views.poolroom import nearby
-import urllib2, urllib
+import hashlib, time, re
+from random import randint
+from xml.etree import ElementTree as ET
+
+from billiards.location_convertor import gcj2bd
+from billiards.views.poolroom import getNearbyPoolrooms
+from django.core.urlresolvers import reverse
+from billiards.models import Coupon, getCouponCriteria, Poolroom, PoolroomImage,\
+    WechatActivity
+from billiards.views.match import getMatchByRequest
+import datetime
+from billiards import settings
+import pytz
+from django.utils import simplejson, timezone
+
 
 def checkSignature(request):
     signature=request.GET.get('signature','')
@@ -32,8 +42,51 @@ def parse_msg(request):
     for child in root:
         msg[child.tag] = child.text
     return msg
-      
+
+def set_video(request):
+    videos = [
+              {"title":"毒液花式台球史诗级巨制！神一般的弗洛里安·科勒(Florian Kohler)", "plink":"http://billiardsalbum.bcs.duapp.com/2014/02/FlorianKohler1.jpg","description":"绝对不能错过的精彩！点击观看","vlink":"http://v.youku.com/v_show/id_XNTU3MjMyNjI0.html"},
+              {"title":"花式台球帝-毒液和他的彪悍女友 未来最疯狂的特技球家庭！", "plink":"http://billiardsalbum.bcs.duapp.com/2014/02/FlorianKohler1.jpg","description":"精彩不容错过！点击观看","vlink":"http://v.youku.com/v_show/id_XNTIxMjQzMzM2.html"},
+              {"title":"毒液 最新花式台球集锦", "plink":"http://billiardsalbum.bcs.duapp.com/2014/02/FlorianKohler1.jpg","description":"精彩！犀利！点击观看","vlink":"http://v.youku.com/v_show/id_XNDQyNzI5MjEy.html"},
+              {"title":"牛人和美女台球桌上玩花式台球", "plink":"http://billiardsalbum.bcs.duapp.com/2014/02/FlorianKohler1.jpg", "description":"点击观看\r\n时长：02:58", "vlink":"http://v.qq.com/boke/page/w/0/y/w0125gr8cny.html"},
+              {"title":"花式台球 最美的境界 Venom Trickshots", "plink":"http://billiardsalbum.bcs.duapp.com/2014/02/FlorianKohler1.jpg","description":"精彩！高清！点击观看","vlink":"http://v.youku.com/v_show/id_XMzExMjIxMDgw.html"}
+              ]
+    return videos
+  
+def set_zsbq_video(request):
+    videos = [
+              {"title":"2013年首届中式八球大师邀请赛决赛 加雷斯·波茨vs克里斯·梅林", "plink":"http://billiardsalbum.bcs.duapp.com/2014/02/potts.jpg","description":"加雷斯·波茨vs克里斯·梅林 点击观看\r\n时长：93:47","vlink":"http://v.youku.com/v_show/id_XNDk4Nzc2OTg4.html"},
+              {"title":"加雷斯·波茨——清台集锦", "plink":"http://billiardsalbum.bcs.duapp.com/2014/02/potts.jpg","description":"点击观看\r\n时长：57:20","vlink":"http://v.youku.com/v_show/id_XNjA4Njg4OTQ0.html"},
+              {"title":"李赫文VS亨德利01-“英伦汽车·乔氏杯”亨德利中式八球挑战赛", "plink":"http://billiardsalbum.bcs.duapp.com/2014/02/hendry.jpg","description":"点击观看\r\n时长：82:46","vlink":"http://v.youku.com/v_show/id_XMzgzOTg2MjIw.html"}
+              ]
+    return videos
+
+def set_pic(request):
+    pics = ["NI5B4DBUP_ZihYXxcnmztzOPohOE9e4OThm3UPLc3nZJFfg7MGWyBd43D2wi4UCe",
+            "GyKwjOnao9S0wLmrXJn6UjdHC4mnK-YRufy-IKJ23GnOIdg5XQZULN3KQ_fjK2se",
+            "ybHUAJZXq1yjbgtT5fi-c0h5TZVGhnsMX9iyQZ0Tw7DCDzfN9kiGsDbJRX92e44w",
+            "syVNC2pWzdPNS46pybv4XvcHtCuDsdexGWZLeyZKW3NoQ_ZXcX1rbzgsuZ3IljS7",
+            "Xi5pEU9b3irwrRu-7HAwzN8CQy_MWIW01_XMmVrcjBJFw0dEDWs2d1MgrFP7uDJN",
+            "2Ib4l8bne06Zze1ifJXDHqJZiIDBC0jTC1mcnBx6LZamskvRQNohu-JVmDL38GM5",
+            "IARm4EO8tF0cSmxWSx2hMiFPMRX7VVOIjINUTuvH3Kcd3CwSKamuZZkI2_2B2Xkw",
+            "tIEBJVt7_3BVM8ynJV7CvVFYgIL5VxTcAM6MywZ4j02yGQwzqdoI__3MhXLn-NKK",
+            "PgRUIcJGvYKwds5nHBrpuui_609w5JKM-23hMVJ6k6DBVJes088j7wXokR9J0war",
+            "ecl1Fmh_zB0DaC2FA_8HC5q8pkWMSP27lk5xXgyExRdG-A_fqA-9LyYcyJuNNKNR",
+            "jNcesbmUDJnzWpAr8wr6OhmQ2sQbUqc_bgqIF4WKF_TQWINi9wyDmpKwvzpoD-Nz",
+            "TjUCyHdQDiYN8CjoJVm541kqpkMJXNlWKkPFNDzDfSWoZReynNHzkWhCVxH4rCqw",
+            "gBLzJCrY_5Gk8wQkz7fYyWSa8dv5DWTEDjmyA1XY-YTW4J2d_NqulSBzis836Ffe",
+            "tJB36nEeCbFaXF0AMk4t7L5YubKPzeyL5vQmI8qfM-JI6EfIe_o3Qaq4sDBCT6ne",
+            "VQh8Ix7Tj9-5cIMkhg8G94sNACohza8q3xKe-kCMIYTlmmPK0ltRUXwcTaGdWj7l",
+            "66wI6vj4y9QLzAYpSdg7qALuQxTd2-Do5D-wV3I13_hYqQhvXdHJEomRf4o98kOw",
+            "EoqWm4TnVhR7KnZZaMfmwFoy3sgtfd2OL4L_lqcduHaOgr7jEvzB7HVEOOuDP6f5",
+            "CN9f4evPHpz7k8J57FqwuDCLwWs-E5modvJXMPt6JU2iiTEnURJMC2995uHlGPHz",
+            "V_knyD0qZpELQRAH_SpyEETTPiZwtnZkFqBETggd6l8d4u4KKT65KSLf_wX4DTMe",
+            "2e0zTWKJScab6BEGWV6-MKicrl-d3rAjj351zpMVdPS6db9pu6sinkHqjeFcYUJz",
+            "GJUBVTcraWK_yMynYlHPtUnGWxliIWlXEBwZJJELRI-Np2-CWKXFvIUurFYsf3O7"]
+    return pics
+  
 def set_content(request):
+    help_msg = "您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、输入“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。\r\n4、输入“找便宜”，“团购”获取超值台球团购。\r\n5、输入“比赛”，“活动”获取俱乐部比赛活动信息。\r\n祝各位球友们玩得开心，愉快，谢谢关注。"
     content = {
       #English content
       "hi":"Hello",
@@ -50,158 +103,328 @@ def set_content(request):
       u"新年好":"新年好呀，新年好呀，祝您和家人新年好，身体健康，万事如意",
       u"呵呵":"笑一笑十年少",
       u"再见":"您走好，欢迎随时找我来聊聊",
-      u"帮助":"您好，需要帮助吗？\r\n1、发送中文或者词语拼音首字母，聊天机器人陪您聊天解闷。\r\n2、发送您的位置信息，获取附近台球俱乐部信息。",
+      u"我想回家":"走啊走啊走……到家了",
+      u"徐浩":"他现在不在，稍后联系您",
+      u"过节好":"您也过节好啊！",
+      u"二":"不二不二",
+      u"你二":"我不二啊",
+      u"哈哈":"祝您每天都开心",
+      u"改天":"择日不如撞日，今天就是良辰吉日",
+      u"哥就是个传奇":"我们尊称您一声：传奇哥",
+      u"你很帅":"您最帅了",
+      u"我美吗":"您是我见过的世界上最美丽的容颜！",
+      u"好玩":"好玩您就多玩会儿吧",
+      u"新春快乐":"祝您马年马到成功，吉祥如意，吉星高照，大吉大利",
+
       #face mark
       #"[微笑]":"[愉快]"
       #marks
+      u"帮助": help_msg,
+      u"?": help_msg,
+      u"？": help_msg,
 }
     return content
-
-def json_parse(url):
-    data = urllib2.urlopen(url).read()
-    j_data = json.loads(data)
-    #j_dump_data = json.dumps(j_data, ensure_ascii=False)
-    return j_data
   
+#handle text message
+textReplyTpl = """<xml>
+         <ToUserName><![CDATA[%s]]></ToUserName>
+         <FromUserName><![CDATA[%s]]></FromUserName>
+         <CreateTime>%s</CreateTime>
+         <MsgType><![CDATA[text]]></MsgType>
+         <Content><![CDATA[%s]]></Content>
+         <FuncFlag>0</FuncFlag>
+         </xml>"""
+#handle picture message
+picReplyTpl = """<xml>
+         <ToUserName><![CDATA[%s]]></ToUserName>
+         <FromUserName><![CDATA[%s]]></FromUserName>
+         <CreateTime>%s</CreateTime>
+         <MsgType><![CDATA[image]]></MsgType>
+         <Image>
+         <MediaId><![CDATA[%s]]></MediaId>
+         </Image>
+         </xml>"""
+
+#handle pic & text message
+newsReplyTpl = """<xml>
+         <ToUserName><![CDATA[%s]]></ToUserName>
+         <FromUserName><![CDATA[%s]]></FromUserName>
+         <CreateTime>%s</CreateTime>
+         <MsgType><![CDATA[news]]></MsgType>
+         <ArticleCount>%s</ArticleCount>
+         <Articles>
+         %s
+         </Articles>
+         <FuncFlag>1</FuncFlag>
+         </xml>""" 
+         
+newsItemTpl = """<item>
+         <Title><![CDATA[%s]]></Title> 
+         <Description><![CDATA[%s]]></Description>
+         <PicUrl><![CDATA[%s]]></PicUrl>
+         <Url><![CDATA[%s]]></Url>
+         </item>"""
+             
 def response_msg(request):
     msg = parse_msg(request)
-    #handle text message
-    textTpl = """<xml>
-             <ToUserName><![CDATA[%s]]></ToUserName>
-             <FromUserName><![CDATA[%s]]></FromUserName>
-             <CreateTime>%s</CreateTime>
-             <MsgType><![CDATA[text]]></MsgType>
-             <Content><![CDATA[%s]]></Content>
-             <FuncFlag>0</FuncFlag>
-             </xml>"""
-    #handle event message
-    eventTpl = """<xml>
-             <ToUserName><![CDATA[%s]]></ToUserName>
-             <FromUserName><![CDATA[%s]]></FromUserName>
-             <CreateTime>%s</CreateTime>
-             <MsgType><![CDATA[event]]></MsgType>
-             <Event><![CDATA[%s]]></Event>
-             </xml>"""
-    #handle location message
-    locationTpl = """<xml>
-             <ToUserName><![CDATA[%s]]></ToUserName>
-             <FromUserName><![CDATA[%s]]></FromUserName>
-             <CreateTime>%s</CreateTime>
-             <MsgType><![CDATA[location]]></MsgType>
-             <Location_X>%s</Location_X>
-             <Location_Y>%s</Location_Y>
-             <Scale>20</Scale>
-             <Label><![CDATA[位置信息]]></Label>
-             <MsgId>1234567890123456</MsgId>
-             </xml> """
-    #handle picture message
-    picTpl = """ <xml>
-             <ToUserName><![CDATA[%s]]></ToUserName>
-             <FromUserName><![CDATA[%s]]></FromUserName>
-             <CreateTime>%s</CreateTime>
-             <MsgType><![CDATA[image]]></MsgType>
-             <PicUrl><![CDATA[this is a url]]></PicUrl>
-             <MediaId><![CDATA[media_id]]></MediaId>
-             <MsgId>1234567890123456</MsgId>
-             </xml>"""
-    #handle voice message
-    voiceTpl = """<xml>
-             <ToUserName><![CDATA[%s]]></ToUserName>
-             <FromUserName><![CDATA[%s]]></FromUserName>
-             <CreateTime>%s</CreateTime>
-             <MsgType><![CDATA[voice]]></MsgType>
-             <MediaId><![CDATA[media_id]]></MediaId>
-             <Format><![CDATA[Format]]></Format>
-             <MsgId>1234567890123456</MsgId>
-             </xml>"""
-    #handle video message
-    videoTpl = """<xml>
-             <ToUserName><![CDATA[%s]]></ToUserName>
-             <FromUserName><![CDATA[%s]]></FromUserName>
-             <CreateTime>%s</CreateTime>
-             <MsgType><![CDATA[video]]></MsgType>
-             <MediaId><![CDATA[media_id]]></MediaId>
-             <ThumbMediaId><![CDATA[thumb_media_id]]></ThumbMediaId>
-             <MsgId>1234567890123456</MsgId>
-             </xml>"""
-    #handle link message
-    linkTpl = """<xml>
-             <ToUserName><![CDATA[%s]]></ToUserName>
-             <FromUserName><![CDATA[%s]]></FromUserName>
-             <CreateTime>%s</CreateTime>
-             <MsgType><![CDATA[link]]></MsgType>
-             <Title><![CDATA[公众平台官网链接]]></Title>
-             <Description><![CDATA[公众平台官网链接]]></Description>
-             <Url><![CDATA[url]]></Url>
-             <MsgId>1234567890123456</MsgId>
-             </xml> """
-   
-    content = set_content(request)
+    
     #response event message
     if msg['MsgType'] == "event":
-      echostr = textTpl % (
-                           msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
-                           '欢迎您关注我为台球狂官方微信，获取更多身边俱乐部信息，请访问：http://www.pktaiqiu.com，想与我们更多互动，发送您想说的话给我们吧')
-      return echostr
+        echostr = textReplyTpl % (
+                             msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
+                             '欢迎您关注我为台球狂官方微信，获取更多身边俱乐部信息，请访问：http://www.pktaiqiu.com，与我们更多互动，发送您的位置信息给我们，为您推荐身边的台球俱乐部。发送 ？，帮助，获取帮助手册。')
+        recordUserActivity(msg['FromUserName'], 'event', {'event': msg['Event'], 'eventkey': msg['EventKey']}, msg['CreateTime'], None)
+        return echostr
     #response location message
     elif msg['MsgType'] == "location":
-      lat = msg['Location_X']
-      lng = msg['Location_Y']
-      url = "http://www.pktaiqiu.com/poolroom/nearby/"+lat+','+lng+"/3"
-      raw_data = json_parse(url)
-      if len(raw_data) != 0:
-          data = "您的附近有一家名为\"" + raw_data[0]['fields']['name'] + "\"的台球俱乐部\r\n" + "地址：" + raw_data[0]['fields']['address'] + "\r\n" + "前台电话：" + raw_data[0]['fields']['tel']
-          data_lat = raw_data[0]['fields']['lat_baidu']
-          data_lng = raw_data[0]['fields']['lng_baidu']
-      else:
-          data = "您的附近没有台球俱乐部，去其他地方找找看吧"
-      echostr = textTpl % (
-                           msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
-                           data)
-      return echostr
+        lat = msg['Location_X']
+        lng = msg['Location_Y']
+        baidu_loc = gcj2bd(float(lat),float(lng))
+        baidu_loc_lat = unicode(baidu_loc[0])
+        baidu_loc_lng = unicode(baidu_loc[1])
+        nearbyPoolrooms = getNearbyPoolrooms(baidu_loc_lat, baidu_loc_lng, 3)[:1]
+        
+        if len(nearbyPoolrooms) > 0:
+            poolroom = nearbyPoolrooms[0]
+            club = poolroom.name
+            address = poolroom.address
+            tel = poolroom.tel
+            size = str(poolroom.size)
+            pkid = unicode(poolroom.pk)
+            businesshours = poolroom.businesshours
+            picurl = buildPoolroomImageURL(poolroom)
+            originContent = buildAbsoluteURI(request, reverse('poolroom_detail', args=(pkid,)))
+            title = club
+            discription = u"地址：%s\r\n营业面积：%s平方米\r\n营业时间：%s\r\n电话：%s" %(address, size, businesshours, tel)
+            coupons = poolroom.coupons
+            if coupons.count() > 0:
+                echopictext = newsReplyTpl % (
+                                 msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1 + coupons.count(),
+                                 (newsItemTpl %(title, discription, picurl, originContent) + getCouponsText(coupons))) 
+            else:
+                echopictext = newsReplyTpl % (
+                         msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1,
+                         (newsItemTpl %(title, discription, picurl, originContent)))
+            recordUserActivity(msg['FromUserName'], 'location', {'lat': lat, 'lng': lng, 'scale': msg['Scale'], 'label': ['Label']}, msg['CreateTime'], 
+                               {'id': poolroom.id, 'name': poolroom.name, 'distance': poolroom.distance})
+            return echopictext
+        else:
+            data = "在您附近3公里以内，没有推荐的台球俱乐部，去其他地方试试吧"
+            echostr = textReplyTpl % (
+                             msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
+                             data)
+            recordUserActivity(msg['FromUserName'], 'location', {'lat': lat, 'lng': lng, 'scale': msg['Scale'], 'label': ['Label']}, msg['CreateTime'], 
+                               None)
+            return echostr
     #response voice message
     elif msg['MsgType'] == "voice":
-      echostr = textTpl % (
-                           msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
-                           '这是一条语音信息')
-      return echostr
+        echostr = textReplyTpl % (
+                             msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
+                             '语音信息回复敬请期待')
+        return echostr
     #response image message
     elif msg['MsgType'] == "image":
-      echostr = textTpl % (
-                           msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
-                           '这是一条图片信息')
-      return echostr
+        media_id = msg['MediaId']
+        pic_url = msg['PicUrl']
+        pics = set_pic(request)
+        picid = randint(0,len(pics)-1)
+        echostr = textReplyTpl % (
+                             msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
+                             '图片信息回复敬请期待'+'\r\nmedia id is '+media_id)
+        echopictext = newsReplyTpl % (
+                            msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1,
+                            (newsItemTpl %('hello', 'hi', pic_url, '')))
+        echopic = picReplyTpl % (
+                            msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
+                            pics[picid])
+        return echopic
     #response link message
     elif msg['MsgType'] == "link":
-      echostr = textTpl % (
-                           msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
-                           '这是一条链接信息')
-      return echostr
+        echostr = textReplyTpl % (
+                             msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
+                             '链接信息回复敬请期待')
+        return echostr
     #response video message
     elif msg['MsgType'] == "video":
-      echostr = textTpl % (
-                           msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
-                           '这是一条视频信息')
-      return echostr
+        media_id = msg['MediaId']
+        echostr = textReplyTpl % (
+                             msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
+                             '视频信息回复敬请期待'+'\r\nmedia id is:'+media_id)
+        return echostr
     #response text message
     elif msg['MsgType'] == "text":
+        def getCouponText(coupons):
+            coupon = coupons[0]
+            picurl = buildPoolroomImageURL(coupon.poolroom)
+            weblink = buildAbsoluteURI(request, reverse('poolroom_detail', args=(coupon.poolroom.pk,)))
+            echopictext = newsReplyTpl % (
+                                        msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 2,
+                                        getCouponsText((coupons)) + (newsItemTpl %(u"俱乐部详情", coupon.poolroom.name, picurl, weblink)))      
+            return echopictext
+        qqface = "/::\\)|/::~|/::B|/::\\||/:8-\\)|/::<|/::$|/::X|/::Z|/::'\\(|/::-\\||/::@|/::P|/::D|/::O|/::\\(|/::\\+|/:--b|/::Q|/::T|/:,@P|/:,@-D|/::d|/:,@o|/::g|/:\\|-\\)|/::!|/::L|/::>|/::,@|/:,@f|/::-S|/:\\?|/:,@x|/:,@@|/::8|/:,@!|/:!!!|/:xx|/:bye|/:wipe|/:dig|/:handclap|/:&-\\(|/:B-\\)|/:<@|/:@>|/::-O|/:>-\\||/:P-\\(|/::'\\||/:X-\\)|/::\\*|/:@x|/:8\\*|/:pd|/:<W>|/:beer|/:basketb|/:oo|/:coffee|/:eat|/:pig|/:rose|/:fade|/:showlove|/:heart|/:break|/:cake|/:li|/:bome|/:kn|/:footb|/:ladybug|/:shit|/:moon|/:sun|/:gift|/:hug|/:strong|/:weak|/:share|/:v|/:@\\)|/:jj|/:@@|/:bad|/:lvu|/:no|/:ok|/:love|/:<L>|/:jump|/:shake|/:<O>|/:circle|/:kotow|/:turn|/:skip|/:oY|/:#-0|/:hiphot|/:kiss|/:<&|/:&>"
+        match = re.search(msg['Content'], qqface)
+        content = set_content(request)
         if msg['Content'] in content.keys():
-          echostr = textTpl % (
-                           msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
-                           content[msg['Content']])
-          return echostr    
+            echostr = textReplyTpl % (
+                             msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
+                             content[msg['Content']])
+            return echostr    
+        elif match:
+            echostr = textReplyTpl % (
+                             msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
+                             msg['Content'])
+            return echostr
+        elif msg['Content'] == u"图片" or msg['Content'] == u"墙纸":
+            pics = set_pic(request)
+            picid = randint(0,len(pics)-1)
+            echopic = picReplyTpl % (
+                            msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
+                            pics[picid])
+            return echopic
+        elif msg['Content'] == u"花式" or msg['Content'] == u"花式台球":
+            videos = set_video(request)
+            videoid = randint(0,len(videos)-1)
+            echopictext = newsReplyTpl % (
+                             msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1,
+                             (newsItemTpl %(videos[videoid]['title'], videos[videoid]['description'], videos[videoid]['plink'], videos[videoid]['vlink'])))         
+            return echopictext
+        elif msg['Content'] == u"中式八球" or msg['Content'] == u"中式" or msg['Content'] == u"zsbq":
+            videos = set_zsbq_video(request)
+            videoid = randint(0,len(videos)-1)
+            echopictext = newsReplyTpl % (
+                             msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1,
+                             (newsItemTpl %(videos[videoid]['title'], videos[videoid]['description'], videos[videoid]['plink'], videos[videoid]['vlink'])))        
+            return echopictext
+        elif msg['Content'] == u"团购" or msg['Content'] == u"找便宜" or msg['Content'] == u"优惠":
+            coupon = Coupon.objects.filter(getCouponCriteria()).order_by('?')[:1]
+            if len(coupon) > 0:
+                recordUserActivity(msg['FromUserName'], 'text', {'content': msg['Content']}, msg['CreateTime'], 
+                               {'count': len(coupon), 'coupon': True})
+                return getCouponText(coupon)
+            else:
+                echostr = textReplyTpl % (
+                             msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
+                             '暂时没有俱乐部有"优惠"或"团购"。')
+                recordUserActivity(msg['FromUserName'], 'text', {'content': msg['Content']}, msg['CreateTime'], 
+                               None)
+                return echostr
+        elif msg['Content'] == u"云川" or msg['Content'] == u"yunchuan" or msg['Content'] == u"yc":
+            coupon = Coupon.objects.filter(getCouponCriteria()).filter(poolroom__in=Poolroom.objects.filter(name__startswith=u'北京云川')).order_by('?')[:1]
+            if len(coupon) > 0:
+                recordUserActivity(msg['FromUserName'], 'text', {'content': msg['Content']}, msg['CreateTime'], 
+                               {'count': len(coupon), 'yunchuan_coupon': True})
+                return getCouponText(coupon)
+            else:
+                echostr = textReplyTpl % (
+                             msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
+                             '云川俱乐部暂没有优惠。请输入"优惠"或"团购“查找其他俱乐部的优惠。')
+                recordUserActivity(msg['FromUserName'], 'text', {'content': msg['Content']}, msg['CreateTime'], 
+                               None)
+                return echostr
+        elif msg['Content'] == u"活动":
+            nativetime = datetime.datetime.utcfromtimestamp(float(msg['CreateTime']))
+            localtz = pytz.timezone(settings.TIME_ZONE)
+            starttime = localtz.localize(nativetime)
+            acts, starttime, endtime = getMatchByRequest(request, starttime, deltadays=7)
+            acts = acts.filter(type=2)
+            count = acts.count()
+            if count > 0:
+                def getActsText(acts):
+                    text = []
+                    for act in acts:
+                        picurl = buildPoolroomImageURL(act.poolroom)
+                        text.append(newsItemTpl %(act.title, u"活动开始时间: %s" %(getNativeTime(act.starttime)), picurl, buildAbsoluteURI(request, reverse('activity_detail', args=(act.pk,)))))
+                    return ''.join(text)
+                echopictext = newsReplyTpl % (
+                                 msg['FromUserName'], msg['ToUserName'], str(int(time.time())), count,
+                                 getActsText(acts))
+                recordUserActivity(msg['FromUserName'], 'text', {'content': msg['Content']}, msg['CreateTime'], 
+                               {'count': count, 'activity': True})
+                return echopictext
+            else:
+                echostr = textReplyTpl % (
+                             msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
+                             '最近7天内没有被收录的爱好者活动')
+                recordUserActivity(msg['FromUserName'], 'text', {'content': msg['Content']}, msg['CreateTime'], 
+                               None)
+                return echostr
+        elif msg['Content'] == u"比赛":
+            nativetime = datetime.datetime.utcfromtimestamp(float(msg['CreateTime']))
+            localtz = pytz.timezone(settings.TIME_ZONE)
+            starttime = localtz.localize(nativetime)
+            matches, starttime, endtime = getMatchByRequest(request, starttime, deltadays=7)
+            matches = matches.filter(type=1)
+            count = matches.count()
+            if count > 0:
+                def getMatchesText(matches):
+                    text = []
+                    for match in matches:
+                        picurl = buildPoolroomImageURL(match.poolroom)
+                        text.append(newsItemTpl %(match.title, u"比赛开始时间: %s" %(getNativeTime(match.starttime)), picurl, buildAbsoluteURI(request, reverse('match_detail', args=(match.pk,)))))
+                    return ''.join(text)
+                echopictext = newsReplyTpl % (
+                                 msg['FromUserName'], msg['ToUserName'], str(int(time.time())), count,
+                                 getMatchesText(matches))
+                recordUserActivity(msg['FromUserName'], 'text', {'content': msg['Content']}, msg['CreateTime'], 
+                               {'count': count, 'match': True})       
+                return echopictext
+            else:
+                echostr = textReplyTpl % (
+                             msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
+                             '最近7天内没有被收录的比赛')
+                recordUserActivity(msg['FromUserName'], 'text', {'content': msg['Content']}, msg['CreateTime'], 
+                               None)
+                return echostr
         else:
-          echostr = textTpl % (
-                           msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
-                           '您输入的文字信息不在我们的信息库里,请输入单词拼音的首字母，或者您还可以发送文字，语音，图片，视频，位置与我们一起互动')
-          return echostr
+            helpmessage = content['?']
+            echostr = textReplyTpl % (
+                             msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
+                             helpmessage)
+            recordUserActivity(msg['FromUserName'], 'text', {'content': msg['Content']}, msg['CreateTime'], 
+                               None)
+            return echostr
     #response unsupported message
     else:
-      echostr = textTpl % (
-                           msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
-                           '您发送的内容我们无法识别')
-      return echostr
+        echostr = textReplyTpl % (
+                             msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
+                             '您发送的内容我们无法识别，请发送其他类型的消息')
+        return echostr
+    
+def recordUserActivity(userid, event, message, recivedtime, reply):
+    if event in settings.WECHAT_ACTIVITY_TRACE:
+        nativetime = datetime.datetime.utcfromtimestamp(float(recivedtime))
+        localtz = pytz.timezone(settings.TIME_ZONE)
+        newactivity = WechatActivity.objects.create_activity(userid, event, simplejson.dumps(message), nativetime.replace(tzinfo=timezone.utc).astimezone(tz=localtz), None if reply == None else simplejson.dumps(reply))
+        newactivity.save()
 
+def buildAbsoluteURI(request, relativeURI):
+    try:
+        if 'pktaiqiu.com' in request.META['HTTP_HOST']:
+            return request.build_absolute_uri(relativeURI)
+    except KeyError:
+        pass
+    return "http://www.pktaiqiu.com%s" %(relativeURI)
+
+def buildPoolroomImageURL(poolroom):
+    if poolroom.images.count() > 0:
+        coverimage = poolroom.images.filter(iscover=1)
+        if len(coverimage) > 0:
+            return "%s%s" %(settings.MEDIA_ROOT, PoolroomImage.getThumbnailPath(coverimage[0].imagepath.name, 300))
+        return "%s%s" %(settings.MEDIA_ROOT, PoolroomImage.getThumbnailPath(poolroom.images[:1][0].imagepath.name, 300))
+    lng_baidu = str(poolroom.lng_baidu)
+    lat_baidu = str(poolroom.lat_baidu)
+    return "http://api.map.baidu.com/staticimage?center=%s,%s&width=450&height=300&zoom=18&scale=2&markers=%s,%s&markerStyles=-1,http://billiardsalbum.bcs.duapp.com/2014/01/marker-2.png" %(lng_baidu, lat_baidu, lng_baidu, lat_baidu)
+            
+def getNativeTime(utctime):
+    localtz = pytz.timezone(settings.TIME_ZONE)
+    return utctime.astimezone(localtz)
+
+def getCouponsText(coupons):
+    text = []
+    for coupon in coupons:
+        picurl = buildPoolroomImageURL(coupon.poolroom)
+        text.append(newsItemTpl %(coupon.title, coupon.description, picurl, coupon.url))
+    return ''.join(text)
 
 @csrf_exempt
 def weixin(request):
@@ -209,8 +432,6 @@ def weixin(request):
         response=HttpResponse(checkSignature(request))
         return response
     elif request.method=='POST':
-        xmlstr = smart_str(request.body)
         return HttpResponse(response_msg(request),content_type="application/xml")
     else:
         return HttpResponse("hello world")
-

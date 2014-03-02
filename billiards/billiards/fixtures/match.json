@@ -1,0 +1,86 @@
+[
+    {
+        "pk": 81, 
+        "model": "billiards.match", 
+        "fields": {
+            "status": "approved", 
+            "description": "\u5929\u5929\u591c\u65f6\u5c1a\uff0c\u591c\u591c\u73a9\u5230\u5e95\uff0c\u6bcf\u665a8\u70b9\uff0c\u76f8\u7ea6\u591c\u65f6\u5c1a\u62a4\u56fd\u5bfa\u5e97\u3002", 
+            "title": "\u7ea2\u725b\u676f\u7f8e\u5973\u64c2\u53f0\u8d5b", 
+            "bonus": 0.0, 
+            "bonusdetail": "20\u5143\u4e24\u5c0f\u65f6\u4ee3\u91d1\u5238\u4e00\u5f20\r\n\r\n\u7ea2\u725b\u996e\u6599\u4e00\u7f50", 
+            "rule": "\u7537\u8ba9\u5973\u540e\u4e00\uff0c\u56fd\u9645\u89c4\u5219\uff0c\u6311\u6218\u6210\u529f\uff0c\u83b7\u5f9720\u5143\u4e24\u5c0f\u65f6\u4ee3\u91d1\u5238\u4e00\u5f20\uff1b\u6311\u6218\u5931\u8d25\uff0c\u7ed9\u7f8e\u5973\u4e70\u7ea2\u725b\u996e\u6599\u4e00\u7f50", 
+            "otherprize": "\u7ea2\u725b", 
+            "enrollfocal": "010-52427963", 
+            "rechargeablecard": 0.0, 
+            "starttime": "2014-03-09T12:00:00Z", 
+            "flags": "0", 
+            "organizer": 1, 
+            "type": 1, 
+            "enrollfee": "0", 
+            "poolroom": 15
+        }
+    }, 
+    {
+        "pk": 82, 
+        "model": "billiards.match", 
+        "fields": {
+            "status": "approved", 
+            "description": "14:30-22\u70b9(\u968f\u65f6\u53bb\u968f\u65f6\u8d70\uff0c\u5230\u573a\u5148\u627e\u7ec4\u7ec7\u8005\u5f00\u53f0\uff0c\u767b\u8bb0\u5f00\u53f0\u65f6\u95f4)\r\n\r\n\u4e0b\u534818\u70b9-18\u70b930\u5f00\u59cb\u7fa4\u5185\u5c0f\u6bd4\u8d5b\uff0c\u5a31\u4e50\u6027\u8d28\u3002\u7b2c\u4e00100\u5143\u50a8\u503c\u5361\uff0c\u7b2c\u4e8c50\u5143\u50a8\u503c\u5361\u3002\u53ea\u53c2\u52a0\u6bd4\u8d5b\uff0c\u6309\u7fa4\u6d3b\u52a8\u4ef7\u683c\u4ea4\u6d3b\u52a8\u8d39\uff0c\u6ca1\u6709\u62a5\u540d\u8d39", 
+            "title": "\u5317\u4eac\u9ad8\u6821\u53f0\u7403\u8054\u76df\u7fa4\u6d3b\u52a8", 
+            "bonus": 0.0, 
+            "bonusdetail": "\u7b2c\u4e00100\u5143\u50a8\u503c\u5361\uff0c\u7b2c\u4e8c50\u5143\u50a8\u503c\u5361", 
+            "rule": "\u56fd\u9645\u53f0\u8054\u89c4\u5219\u3002", 
+            "otherprize": "\u5317\u4eac\u9ad8\u6821\u53f0\u7403\u8054\u76df\u7fa4\u6d3b\u52a8", 
+            "enrollfocal": "13552730674", 
+            "rechargeablecard": 0.0, 
+            "starttime": "2014-03-11T06:30:00Z", 
+            "flags": "0", 
+            "organizer": 2, 
+            "type": 2, 
+            "enrollfee": "6\u5143\u6bcf\u5c0f\u65f6\u6bcf\u4eba", 
+            "poolroom": 15
+        }
+    }, 
+    {
+        "pk": 83, 
+        "model": "billiards.match", 
+        "fields": {
+            "status": "approved", 
+            "description": "\u968f\u5230\u968f\u6253", 
+            "title": "\u5317\u4eac\u9ad8\u6821\u8054\u76df\u7fa4\u6d3b\u52a8", 
+            "bonus": 0.0, 
+            "bonusdetail": "none", 
+            "rule": "\u4e2d\u516b\u89c4\u5219", 
+            "otherprize": "none", 
+            "enrollfocal": "\u968f\u5230\u968f\u6253", 
+            "rechargeablecard": 0.0, 
+            "starttime": "2014-03-01T04:00:00Z", 
+            "flags": "0", 
+            "organizer": 1, 
+            "type": 1, 
+            "enrollfee": "20\u5143\u7545\u62533\u5c0f\u65f6", 
+            "poolroom": 20
+        }
+    }, 
+    {
+        "pk": 84, 
+        "model": "billiards.match", 
+        "fields": {
+            "status": "approved", 
+            "description": "\u968f\u5230\u968f\u6253", 
+            "title": "\u6d4b\u8bd5\u6d3b\u52a8", 
+            "bonus": 0.0, 
+            "bonusdetail": "none", 
+            "rule": "\u4e2d\u516b\u89c4\u5219", 
+            "otherprize": "none", 
+            "enrollfocal": "\u65e0", 
+            "rechargeablecard": 0.0, 
+            "starttime": "2014-03-09T11:00:00Z", 
+            "flags": "0", 
+            "organizer": 2, 
+            "type": 2, 
+            "enrollfee": "\u514d\u8d39", 
+            "poolroom": 15
+        }
+    }
+]

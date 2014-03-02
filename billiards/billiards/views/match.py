@@ -22,6 +22,7 @@ from StringIO import StringIO
 from django.core.exceptions import PermissionDenied
 import pytz
 from django.db.models.query import QuerySet, ValuesQuerySet
+from billiards import settings
 
 def updateMatchJsonStrEnrollInfo(matchjsonstr, user, matchArray):
     enrolledMatch = MatchEnroll.objects.filter(Q(match__in=matchArray) & Q(user__exact=user))
@@ -56,25 +57,38 @@ def tojson(data, fields = None):
     return stream.getvalue()
 
 datefmt = "%Y-%m-%d"
+def set_to_midnight(dt):
+    midnight = datetime.time(0)
+    localtz = pytz.timezone(settings.TIME_ZONE)
+    return localtz.localize(datetime.datetime.combine(dt.date(), midnight))
+
 def getQueryCriteria(starttime, endtime):
-    return Q(starttime__gte=starttime.strftime(datefmt)) & Q(status='approved') & Q(starttime__lt=endtime.strftime(datefmt))
-    
-def index(request, view = None):
-    starttime = datetime.datetime.today()
-    try:
-        if request.GET.get('starttime') is not None:
-            starttime = datetime.datetime.utcfromtimestamp(float(request.GET.get('starttime'))/1000)
-    except Exception:
-        pass
-    endtime = starttime + relativedelta(days=1)
-    try:
-        if request.GET.get('endtime') is not None:
-            endtime = datetime.datetime.utcfromtimestamp(float(request.GET.get('endtime'))/1000)
-    except Exception:
-        pass
+    return Q(starttime__gte=set_to_midnight(starttime)) & Q(status='approved') & Q(starttime__lt=set_to_midnight(endtime))
+
+def getMatchByRequest(request, starttime = None, endtime = None, deltadays = 1):
+    if starttime == None:
+        starttimenative = datetime.datetime.today()
+        localtz = pytz.timezone(settings.TIME_ZONE)
+        starttime = localtz.localize(starttimenative)
+        try:
+            if request.GET.get('starttime') is not None:
+                starttime = datetime.datetime.utcfromtimestamp(float(request.GET.get('starttime')))
+        except Exception:
+            pass
+    if endtime == None:
+        endtime = starttime + relativedelta(days=deltadays)
+        try:
+            if request.GET.get('endtime') is not None:
+                endtime = datetime.datetime.utcfromtimestamp(float(request.GET.get('endtime')))
+        except Exception:
+            pass
 
     query = getQueryCriteria(starttime, endtime)
     matches = Match.objects.filter(query).order_by('starttime')
+    return matches, starttime, endtime
+    
+def index(request, view = None):
+    matches, starttime, endtime = getMatchByRequest(request)
                   
     if request.GET.get('f') == 'json':
         jsonstr = tojson(matches, match_fields)

@@ -7,7 +7,7 @@ Created on 2013年10月21日
 '''
 from billiards.models import Poolroom, Match, PoolroomEquipment, User,\
     MatchEnroll, Challenge, ChallengeApply, PoolroomUser,\
-    PoolroomUserApply, PoolroomImage, Group, Coupon
+    PoolroomUserApply, PoolroomImage, Group, Coupon, WechatActivity
 from django.contrib import admin
 from bitfield import BitField
 from bitfield.forms import BitFieldCheckboxSelectMultiple
@@ -88,6 +88,16 @@ class PoolroomImageAdmin(admin.ModelAdmin):
             return self.readonly_fields + ('imagetag',)
         return self.readonly_fields
           
+class WechatActivityAdmin(admin.ModelAdmin):
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+    
+    def get_readonly_fields(self, request, obj=None):
+        return self.readonly_fields + ('userid', 'eventtype', 'message', 'receivedtime', 'reply')
+    
 admin.site.register(Poolroom, PoolroomAdmin)
 admin.site.register(PoolroomEquipment)
 admin.site.register(Match, MatchAdmin)
@@ -101,3 +111,4 @@ admin.site.register(PoolroomUser, PoolroomUserAdmin)
 admin.site.register(PoolroomUserApply)
 admin.site.register(Group)
 admin.site.register(Coupon)
+admin.site.register(WechatActivity, WechatActivityAdmin)

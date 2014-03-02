@@ -21,6 +21,9 @@ import os
 from django.db.models.query_utils import Q
 from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
+import sys
+from django.db.models.fields import CharField
+from billiards import settings
 
 def toDict(bitfield):
     flag_dict = {}
@@ -179,6 +182,8 @@ class ChoiceTypeField(models.CharField):
         
     def value_to_string(self, obj):
         value = self._get_val_from_obj(obj)
+        if sys._getframe(2).f_code.co_name == 'serialize':
+            return value
         return force_unicode(dict(self.flatchoices).get(value, value), strings_only=True)
     
     def json_use_value(self):
@@ -545,7 +550,41 @@ class Coupon(models.Model):
             (4, u'无效')
         ), default=1, jsonUseValue=False)
     
+    def __unicode__(self):
+        return u'[%s] \'%s\'-%s(从%s至%s)' %(self.get_type_display(), self.poolroom, self.title, self.startdate, self.enddate)
+                
     class Meta:
         db_table = 'coupon'
         verbose_name = '折扣信息'
-        verbose_name_plural = '折扣信息'
+        verbose_name_plural = '折扣信息'   
+        
+class WechatActivityManager(models.Manager):
+    def create_activity(self, userid, event, message, recivedtime, reply):
+        activity = self.create(userid=userid, eventtype=event, message=message, receivedtime=recivedtime, reply=reply)
+        # do something with the book
+        return activity
+    
+class WechatActivity(models.Model):
+    id = models.AutoField(primary_key=True)
+    userid = models.CharField(max_length=30, verbose_name='用户id')
+    eventtype = ChoiceTypeField(max_length=10, choices=(
+            ('text', u'文本消息'),
+            ('image', u'图片消息'),
+            ('location', u'地理位置消息'),
+            ('link', u'链接消息'),
+            ('event', u'事件推送'),
+        ), verbose_name='消息类型')
+    message = CharField(max_length=500, verbose_name='消息内容')
+    receivedtime = models.DateTimeField(verbose_name='发送时间')
+    reply = CharField(max_length=500, null=True, blank=True, verbose_name='自定义回复概要')
+    
+    objects = WechatActivityManager()
+    
+    def __unicode__(self):
+        localtz = pytz.timezone(settings.TIME_ZONE)
+        return u'[%s] 用户\'%s\' %s发送' %(self.eventtype, self.userid, self.receivedtime.astimezone(localtz))
+      
+    class Meta:
+        db_table = 'wechat_activity'
+        verbose_name = '微信用户互动信息'
+        verbose_name_plural = '微信用户互动信息'

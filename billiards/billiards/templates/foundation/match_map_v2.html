@@ -31,7 +31,7 @@
 						{% for k,v in matchsummary.items %}
 						summary['{{ k }}'] = {{ v }};
 						{% endfor %}
-						var m = moment();
+						var m = moment.utc([starttime.year(), starttime.month(), starttime.dates(), starttime.hour(), starttime.minute(), starttime.second()]);
 						var thismonth = m.month();
 						addMonth(m.lang('zh_CN').format('MMM'));
 						daysItem = jQuery('<dl/>', {class : 'sub-nav'});
@@ -45,7 +45,7 @@
 							var dayItem = jQuery('<dd/>', {});
 							if (m.date() == starttime.date() && m.month() == starttime.month())
 								dayItem.attr('class', 'active');
-							contentTemplate = "<h3><a href=\"javascript:void(0);\" timestamp=\"" + m.valueOf() + "\">" + m.format('DD') + " " + m.format('dddd');
+							contentTemplate = "<h3><a href=\"javascript:void(0);\" timestamp=\"" + m.unix() + "\">" + m.format('DD') + " " + m.format('dddd');
 		 					var formattedday = m.format("YYYY-MM-DD");
 							if (formattedday in summary) {
 								contentTemplate += "<sub><span data-tooltip=\"\" class=\"has-tip tip-top noradius\" title=\"当日比赛场数\">" + summary[formattedday] + "</span></sub>";
@@ -136,7 +136,7 @@
 			selecteddate = moment(timestamp);
 			$.ajax({
 				url : "{% url match_map 'map' %}",
-				data : {'f':'json', 'starttime':timestamp, 'endtime': selecteddate.add('days', 1).valueOf()},
+				data : {'f':'json', 'starttime':timestamp, 'endtime': selecteddate.add('days', 1).unix()},
 				dataType : 'json',
 				success : function(data)
 				{

@@ -1,0 +1,202 @@
+[
+    {
+        "pk": 15, 
+        "model": "billiards.poolroom", 
+        "fields": {
+            "rating": 5, 
+            "tel": "010-52427963", 
+            "name": "\u5317\u4eac\u591c\u65f6\u5c1a\u62a4\u56fd\u5bfa\u5e97", 
+            "review": "", 
+            "lng_baidu": "116.3797641", 
+            "flags": "54", 
+            "businesshours": "10:00AM\u2014\u20143:00AM", 
+            "address": "\u5317\u4eac\u5e02\u897f\u57ce\u533a\u62a4\u56fd\u5bfa\u5927\u8857137\u53f7\u6cca\u946b\u5bbe\u9986\u5730\u4e0b\u4e00\u5c42 ", 
+            "lat": "39.9349310", 
+            "lat_baidu": "39.9409848", 
+            "lng": "116.3733030", 
+            "size": 1000
+        }
+    }, 
+    {
+        "pk": 20, 
+        "model": "billiards.poolroom", 
+        "fields": {
+            "rating": null, 
+            "tel": "010-82965625 ", 
+            "name": "\u5317\u4eac\u6d69\u5929\u53f0\u7403\u4ff1\u4e50\u90e8", 
+            "review": null, 
+            "lng_baidu": "116.3266917", 
+            "flags": "0", 
+            "businesshours": "24\u5c0f\u65f6", 
+            "address": "\u5317\u4eac\u5e02 \u660c\u5e73\u533a \u56de\u9f99\u89c2 \u65b0\u9f99\u57ce\u4e16\u7eaa\u534e\u8054\u8d85\u5e02\u4e8c\u697c ", 
+            "lat": "40.0715040", 
+            "lat_baidu": "40.0773245", 
+            "lng": "116.3201390", 
+            "size": 600
+        }
+    }, 
+    {
+        "pk": 137, 
+        "model": "billiards.poolroom", 
+        "fields": {
+            "rating": 3, 
+            "tel": "010-80752885", 
+            "name": "\u5317\u4eac98\u53f0\u7403\u4ff1\u4e50\u90e8", 
+            "review": "", 
+            "lng_baidu": "116.3647790", 
+            "flags": "0", 
+            "businesshours": "24\u5c0f\u65f6", 
+            "address": "\u5317\u4eac\u660c\u5e73\u533a\u56de\u9f99\u89c2\u548c\u8c10\u5bb6\u56ed\u4e8c\u533a\u897f\u95e8", 
+            "lat": "40.0823690", 
+            "lat_baidu": "40.0881677", 
+            "lng": "116.3582070", 
+            "size": 700
+        }
+    }, 
+    {
+        "pk": 148, 
+        "model": "billiards.poolroom", 
+        "fields": {
+            "rating": 2, 
+            "tel": "18911796160", 
+            "name": "\u5317\u4eac\u9ed1\u68438\u649e\u7403\u9986\u4e0a\u5761\u5bb6\u56ed\u5e97", 
+            "review": "", 
+            "lng_baidu": "116.3702907", 
+            "flags": "0", 
+            "businesshours": "10:00AM\u2014\u20142:00AM", 
+            "address": "\u5317\u4eac\u660c\u5e73\u533a\u6d4e\u8fdc\u8857\u4e0e\u9f99\u95263\u8857\u4ea4\u53c9\u8def\u53e3\u4e1c\u884c20\u7c73\u8def\u5357B1\u5c42", 
+            "lat": "40.0840640", 
+            "lat_baidu": "40.0899531", 
+            "lng": "116.3637480", 
+            "size": 500
+        }
+    }, 
+    {
+        "pk": 187, 
+        "model": "billiards.poolroom", 
+        "fields": {
+            "rating": 2, 
+            "tel": "010-64906446", 
+            "name": "\u5317\u4eac\u4e91\u5ddd\u53f0\u7403\u4ff1\u4e50\u90e8\u5927\u5c6f\u5e97", 
+            "review": "", 
+            "lng_baidu": "116.4153867", 
+            "flags": "0", 
+            "businesshours": "10:00AM\u2014\u20142:00AM", 
+            "address": "\u5317\u4eac\u5e02\u671d\u9633\u533a\u4e9a\u8fd0\u6751\u5b89\u7acb\u8def66\u53f7\u5b89\u7acb\u82b1\u56ed1\u53f7\u697c", 
+            "lat": "40.0030810", 
+            "lat_baidu": "40.0093974", 
+            "lng": "116.4089790", 
+            "size": 800
+        }
+    }, 
+    {
+        "pk": 31, 
+        "model": "billiards.poolroomimage", 
+        "fields": {
+            "status": 1, 
+            "imagepath": "/resources/poolroom/a3bfb2de20859c18a93f3514be879_IMG_1138.JPG", 
+            "description": "\u5427\u53f0", 
+            "iscover": false, 
+            "poolroom": 15
+        }
+    }, 
+    {
+        "pk": 32, 
+        "model": "billiards.poolroomimage", 
+        "fields": {
+            "status": 1, 
+            "imagepath": "/resources/poolroom/f3100fe948a1ff838b63d50fbb11b9_IMG_1109.JPG", 
+            "description": "\u591c\u65f6\u5c1a", 
+            "iscover": true, 
+            "poolroom": 15
+        }
+    }, 
+    {
+        "pk": 33, 
+        "model": "billiards.poolroomimage", 
+        "fields": {
+            "status": 1, 
+            "imagepath": "/resources/poolroom/d0b621f3dae32773ce639f9672d381f4_IMG_1110.JPG", 
+            "description": "\u5305\u623f", 
+            "iscover": false, 
+            "poolroom": 15
+        }
+    }, 
+    {
+        "pk": 34, 
+        "model": "billiards.poolroomimage", 
+        "fields": {
+            "status": 1, 
+            "imagepath": "/resources/poolroom/9dbf19fede5c6282477f2937bda21_IMG_1123.JPG", 
+            "description": "\u5927\u5385\uff0d1", 
+            "iscover": false, 
+            "poolroom": 15
+        }
+    }, 
+    {
+        "pk": 35, 
+        "model": "billiards.poolroomimage", 
+        "fields": {
+            "status": 1, 
+            "imagepath": "/resources/poolroom/52c3fca3cad6611ea537fcd8e59e055_IMG_1118.JPG", 
+            "description": "\u5927\u5385\uff0d2", 
+            "iscover": false, 
+            "poolroom": 15
+        }
+    }, 
+    {
+        "pk": 36, 
+        "model": "billiards.poolroomimage", 
+        "fields": {
+            "status": 1, 
+            "imagepath": "/resources/poolroom/f457e1bbae7e149b8e237bc7581c8549_IMG_1131.JPG", 
+            "description": "\u8d5b\u53f0", 
+            "iscover": false, 
+            "poolroom": 15
+        }
+    }, 
+    {
+        "pk": 53, 
+        "model": "billiards.poolroomimage", 
+        "fields": {
+            "status": 1, 
+            "imagepath": "/resources/poolroom/226643b8219e7ffd81a0a972cae7e2d6_\u52a9\u6559\u4f73\u4f731_1.jpg", 
+            "description": "\u52a9\u6559\u4f73\u4f731", 
+            "iscover": false, 
+            "poolroom": 15
+        }
+    }, 
+    {
+        "pk": 54, 
+        "model": "billiards.poolroomimage", 
+        "fields": {
+            "status": 1, 
+            "imagepath": "/resources/poolroom/770a081831bb9d6228d3e917ab792_\u52a9\u6559\u4f73\u4f732_2.jpg", 
+            "description": "\u52a9\u6559\u4f73\u4f732", 
+            "iscover": false, 
+            "poolroom": 15
+        }
+    }, 
+    {
+        "pk": 55, 
+        "model": "billiards.poolroomimage", 
+        "fields": {
+            "status": 1, 
+            "imagepath": "/resources/poolroom/781d42bcf6a322466f5fdc560394268_\u52a9\u6559\u4f73\u4f733_3.jpg", 
+            "description": "\u52a9\u6559\u4f73\u4f733", 
+            "iscover": false, 
+            "poolroom": 15
+        }
+    }, 
+    {
+        "pk": 56, 
+        "model": "billiards.poolroomimage", 
+        "fields": {
+            "status": 1, 
+            "imagepath": "/resources/poolroom/98f35377e6f1a1a9587d2b918b55bbb_\u52a9\u6559\u4f73\u4f734_4.jpg", 
+            "description": "\u52a9\u6559\u4f73\u4f734", 
+            "iscover": false, 
+            "poolroom": 15
+        }
+    }
+]
