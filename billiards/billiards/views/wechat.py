@@ -195,7 +195,7 @@ def response_msg(request):
             pkid = unicode(poolroom.pk)
             businesshours = poolroom.businesshours
             picurl = buildPoolroomImageURL(poolroom)
-            originContent = request.build_absolute_uri(reverse('poolroom_detail', args=(pkid,)))
+            originContent = buildAbsoluteURI(request, reverse('poolroom_detail', args=(pkid,)))
             title = club
             discription = u"地址：%s\r\n营业面积：%s平方米\r\n营业时间：%s\r\n电话：%s" %(address, size, businesshours, tel)
             coupons = poolroom.coupons
@@ -254,7 +254,7 @@ def response_msg(request):
         def getCouponText(coupons):
             coupon = coupons[0]
             picurl = buildPoolroomImageURL(coupon.poolroom)
-            weblink = request.build_absolute_uri(reverse('poolroom_detail', args=(coupon.poolroom.pk,)))
+            weblink = buildAbsoluteURI(request, reverse('poolroom_detail', args=(coupon.poolroom.pk,)))
             echopictext = newsReplyTpl % (
                                         msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 2,
                                         getCouponsText((coupons)) + (newsItemTpl %(u"俱乐部详情", coupon.poolroom.name, picurl, weblink)))      
@@ -322,7 +322,7 @@ def response_msg(request):
                     text = []
                     for act in acts:
                         picurl = buildPoolroomImageURL(act.poolroom)
-                        text.append(newsItemTpl %(act.title, u"活动开始时间: %s" %(getNativeTime(act.starttime)), picurl, request.build_absolute_uri(reverse('activity_detail', args=(act.pk,)))))
+                        text.append(newsItemTpl %(act.title, u"活动开始时间: %s" %(getNativeTime(act.starttime)), picurl, buildAbsoluteURI(request, reverse('activity_detail', args=(act.pk,)))))
                     return ''.join(text)
                 echopictext = newsReplyTpl % (
                                  msg['FromUserName'], msg['ToUserName'], str(int(time.time())), acts.count(),
@@ -344,7 +344,7 @@ def response_msg(request):
                     text = []
                     for match in matches:
                         picurl = buildPoolroomImageURL(match.poolroom)
-                        text.append(newsItemTpl %(match.title, u"比赛开始时间: %s" %(getNativeTime(match.starttime)), picurl, request.build_absolute_uri(reverse('match_detail', args=(match.pk,)))))
+                        text.append(newsItemTpl %(match.title, u"比赛开始时间: %s" %(getNativeTime(match.starttime)), picurl, buildAbsoluteURI(request, reverse('match_detail', args=(match.pk,)))))
                     return ''.join(text)
                 echopictext = newsReplyTpl % (
                                  msg['FromUserName'], msg['ToUserName'], str(int(time.time())), matches.count(),
@@ -367,6 +367,14 @@ def response_msg(request):
                              msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
                              '您发送的内容我们无法识别，请发送其他类型的消息')
         return echostr
+
+def buildAbsoluteURI(request, relativeURI):
+    try:
+        if 'pktaiqiu.com' in request.META['HTTP_HOST']:
+            return request.build_absolute_uri(relativeURI)
+    except KeyError:
+        pass
+    return "http://www.pktaiqiu.com%s" %(relativeURI)
 
 def buildPoolroomImageURL(poolroom):
     if poolroom.images.count() > 0:
