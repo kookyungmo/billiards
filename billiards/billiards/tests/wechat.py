@@ -11,7 +11,8 @@ from django.core.urlresolvers import reverse
 from django.utils.encoding import smart_str
 from xml.etree import ElementTree as ET
 from billiards.models import Match, WechatActivity
-from django.utils import simplejson
+from django.utils import simplejson, timezone
+import datetime
 
 def parse_tree(root):
     msg = {}
@@ -71,7 +72,7 @@ class WechatTest(TestCase):
         <xml>
         <ToUserName><![CDATA[toUser]]></ToUserName>
         <FromUserName><![CDATA[fromUser]]></FromUserName>
-        <CreateTime>1351776360</CreateTime>
+        <CreateTime>1393804800</CreateTime>
         <MsgType><![CDATA[location]]></MsgType>
         <Location_X>40.094799793619</Location_X>
         <Location_Y>116.36137302268</Location_Y>
@@ -95,6 +96,8 @@ class WechatTest(TestCase):
         reply = simplejson.loads(activity.reply)
         self.assertEqual(u'北京黑桃8撞球馆上坡家园店', reply['name'])
         self.assertEqual(148, reply['id'])
+        utctime = datetime.datetime.utcfromtimestamp(1393804800)
+        self.assertEqual(utctime.replace(tzinfo=timezone.utc), activity.receivedtime)
         # the poolroom has coupon
         data = """
         <xml>

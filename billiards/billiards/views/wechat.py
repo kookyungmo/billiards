@@ -15,7 +15,7 @@ from billiards.views.match import getMatchByRequest
 import datetime
 from billiards import settings
 import pytz
-from django.utils import simplejson
+from django.utils import simplejson, timezone
 
 
 def checkSignature(request):
@@ -399,7 +399,7 @@ def recordUserActivity(userid, event, message, recivedtime, reply):
     if event in settings.WECHAT_ACTIVITY_TRACE:
         nativetime = datetime.datetime.utcfromtimestamp(float(recivedtime))
         localtz = pytz.timezone(settings.TIME_ZONE)
-        newactivity = WechatActivity.objects.create_activity(userid, event, simplejson.dumps(message), localtz.localize(nativetime), None if reply == None else simplejson.dumps(reply))
+        newactivity = WechatActivity.objects.create_activity(userid, event, simplejson.dumps(message), nativetime.replace(tzinfo=timezone.utc).astimezone(tz=localtz), None if reply == None else simplejson.dumps(reply))
         newactivity.save()
 
 def buildAbsoluteURI(request, relativeURI):
