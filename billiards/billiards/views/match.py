@@ -72,14 +72,14 @@ def getMatchByRequest(request, starttime = None, endtime = None, deltadays = 1):
         starttime = localtz.localize(starttimenative)
         try:
             if request.GET.get('starttime') is not None:
-                starttime = datetime.datetime.utcfromtimestamp(float(request.GET.get('starttime'))/1000)
+                starttime = datetime.datetime.utcfromtimestamp(float(request.GET.get('starttime')))
         except Exception:
             pass
     if endtime == None:
         endtime = starttime + relativedelta(days=deltadays)
         try:
             if request.GET.get('endtime') is not None:
-                endtime = datetime.datetime.utcfromtimestamp(float(request.GET.get('endtime'))/1000)
+                endtime = datetime.datetime.utcfromtimestamp(float(request.GET.get('endtime')))
         except Exception:
             pass
 
