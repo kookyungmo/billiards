@@ -133,14 +133,14 @@ function addMatchToList_v2(match, point) {
 		if (match.fields.otherprize != null)
 			contentTemplate += "$otherprize</font></li>";
 		contentTemplate += ""
-				+ "<a href=\"#\" data-reveal-id=\"rule\"><font size=-1>比赛规则 &raquo</font></a>"
+				+ "<a href=\"#\" data-reveal-id=\"rule" + match.pk + "\"><font size=-1>比赛规则 &raquo</font></a>"
 				+ "&nbsp;&nbsp;&nbsp;&nbsp;"
-				+ "<li id=\"rule\" class=\"reveal-modal\" data-reveal>"
+				+ "<li id=\"rule" + match.pk + "\" class=\"reveal-modal\" data-reveal>"
 				+ " <p>$rule</p>"
 				+ " <a class=\"close-reveal-modal\">&#215;</a>"
 				+ "</li>"
-	            + "<a href=\"#\" data-reveal-id=\"bonusdetail\"><font size=-1>奖金设置 &raquo</font></a>"
-				+ "<li id=\"bonusdetail\" class=\"reveal-modal\" data-reveal>"
+	            + "<a href=\"#\" data-reveal-id=\"bonusdetail" + match.pk + "\"><font size=-1>奖金设置 &raquo</font></a>"
+				+ "<li id=\"bonusdetail" + match.pk + "\" class=\"reveal-modal\" data-reveal>"
 				+ " <p>$bonusdetail</p>"
 				+ " <a class=\"close-reveal-modal\">&#215;</a>"
 				+ "</li></ul>";
@@ -171,8 +171,8 @@ function addMatchToList_v2(match, point) {
 		}
 	} else {
 		contentTemplate += "$enrollfee</font></li>";
-		contentTemplate += "<a href=\"#\" data-reveal-id=\"details\"><font size=-1>活动详情 &raquo</font></a>"
-			+ "<li id=\"details\" class=\"reveal-modal\" data-reveal>"
+		contentTemplate += "<a href=\"#\" data-reveal-id=\"details" + match.pk + "\"><font size=-1>活动详情 &raquo</font></a>"
+			+ "<li id=\"details" + match.pk + "\" class=\"reveal-modal\" data-reveal>"
 			+ " <p>$description</p>"
 			+ " <a class=\"close-reveal-modal\">&#215;</a>"
 			+ "</li>"
