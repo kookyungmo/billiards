@@ -55,6 +55,7 @@ urlpatterns += patterns('billiards.views.challenge',
 
 urlpatterns += patterns('billiards.views.utility',
     url(r'^unsupportedbrowser$', 'unsupportedbrowser', name='unsupportedbrowser'),
+    url(r'^coupon/(?P<couponid>\d+)$', 'coupon', name='coupontracker')
 )
 
 urlpatterns += patterns('billiards.views.club',
