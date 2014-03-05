@@ -16,6 +16,7 @@ import datetime
 from billiards import settings
 import pytz
 from django.utils import simplejson, timezone
+import urllib
 
 
 def checkSignature(request):
@@ -200,7 +201,7 @@ def response_msg(request):
             if coupons.count() > 0:
                 echopictext = newsReplyTpl % (
                                  msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1 + coupons.count(),
-                                 (newsItemTpl %(title, discription, picurl, originContent) + getCouponsText(coupons))) 
+                                 (newsItemTpl %(title, discription, picurl, originContent) + getCouponsText(request, coupons))) 
             else:
                 echopictext = newsReplyTpl % (
                          msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1,
@@ -259,7 +260,7 @@ def response_msg(request):
             weblink = buildAbsoluteURI(request, reverse('poolroom_detail', args=(coupon.poolroom.pk,)))
             echopictext = newsReplyTpl % (
                                         msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 2,
-                                        getCouponsText((coupons)) + (newsItemTpl %(u"俱乐部详情", coupon.poolroom.name, picurl, weblink)))      
+                                        getCouponsText(request, (coupons)) + (newsItemTpl %(u"俱乐部详情", coupon.poolroom.name, picurl, weblink)))      
             return echopictext
         qqface = "/::\\)|/::~|/::B|/::\\||/:8-\\)|/::<|/::$|/::X|/::Z|/::'\\(|/::-\\||/::@|/::P|/::D|/::O|/::\\(|/::\\+|/:--b|/::Q|/::T|/:,@P|/:,@-D|/::d|/:,@o|/::g|/:\\|-\\)|/::!|/::L|/::>|/::,@|/:,@f|/::-S|/:\\?|/:,@x|/:,@@|/::8|/:,@!|/:!!!|/:xx|/:bye|/:wipe|/:dig|/:handclap|/:&-\\(|/:B-\\)|/:<@|/:@>|/::-O|/:>-\\||/:P-\\(|/::'\\||/:X-\\)|/::\\*|/:@x|/:8\\*|/:pd|/:<W>|/:beer|/:basketb|/:oo|/:coffee|/:eat|/:pig|/:rose|/:fade|/:showlove|/:heart|/:break|/:cake|/:li|/:bome|/:kn|/:footb|/:ladybug|/:shit|/:moon|/:sun|/:gift|/:hug|/:strong|/:weak|/:share|/:v|/:@\\)|/:jj|/:@@|/:bad|/:lvu|/:no|/:ok|/:love|/:<L>|/:jump|/:shake|/:<O>|/:circle|/:kotow|/:turn|/:skip|/:oY|/:#-0|/:hiphot|/:kiss|/:<&|/:&>"
         match = re.search(msg['Content'], qqface)
@@ -419,11 +420,12 @@ def getNativeTime(utctime):
     localtz = pytz.timezone(settings.TIME_ZONE)
     return utctime.astimezone(localtz)
 
-def getCouponsText(coupons):
+def getCouponsText(request, coupons):
     text = []
     for coupon in coupons:
         picurl = buildPoolroomImageURL(coupon.poolroom)
-        text.append(newsItemTpl %(coupon.title, coupon.description, picurl, coupon.url))
+        couponurl = buildAbsoluteURI(request, reverse('coupontracker', args=(coupon.id,)))
+        text.append(newsItemTpl %(coupon.title, coupon.description, picurl, couponurl))
     return ''.join(text)
 
 @csrf_exempt

@@ -110,7 +110,7 @@
 			    {% endif %}
 			 <div class="row">
 					<h3 class="subheader">
-						<a href="{{ coupon.url }}">{{ coupon.title }}</a>
+						<a href="{% url 'coupontracker' coupon.id %}">{{ coupon.title }}</a>
 					</h3>
 			    {% if not forloop.last %}
 			    <hr>
