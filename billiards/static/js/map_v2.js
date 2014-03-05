@@ -373,8 +373,9 @@ function addPoolroomToList(poolroom, point) {
 	if (coupons.length > 0) {
 		contentTemplate += "<div class=\"row\"><h5><b>优惠信息</b></h5></div>";
 		for (var i in coupons) {
-			coupon = poolroom.fields.coupons[coupons[i]]
-			contentTemplate += "<div class=\"row\"><h6><a href=\"" + coupon.fields.url + "\">" + coupon.fields.title + "</a></h6></div>";
+			coupon = poolroom.fields.coupons[coupons[i]];
+			couponurl = COUPON_URL;
+			contentTemplate += "<div class=\"row\"><h6><a href=\"" + couponurl.replace(/000/g, coupon.pk) + "\">" + coupon.fields.title + "</a></h6></div>";
 		}
 	}
 	contentTemplate += "</div></div></div>";
