@@ -254,8 +254,8 @@ def club_apply(request):
     
     if request.method == 'POST':
         poolroomid = request.POST['club']
-        if int(poolroomid) == 0:
-            # use other for satisfying db design
+        if int(poolroomid) <= 0:
+            # use any one for satisfying db design
             poolroomid = Poolroom.objects.all()[:1][0].id
         data = {
            'poolroom': poolroomid,
