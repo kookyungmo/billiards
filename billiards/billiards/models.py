@@ -582,7 +582,8 @@ class WechatActivity(models.Model):
     
     def __unicode__(self):
         localtz = pytz.timezone(settings.TIME_ZONE)
-        return u'[%s] 用户\'%s\' %s发送' %(self.eventtype, self.userid, self.receivedtime.astimezone(localtz))
+        return u'[%s] 用户\'%s\' %s发送 %s - %s' %(self.eventtype, self.userid, self.receivedtime.astimezone(localtz), 
+                                               self.get_eventtype_display(), self.message)
       
     class Meta:
         db_table = 'wechat_activity'

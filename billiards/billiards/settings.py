@@ -204,3 +204,5 @@ BAE_IMAGE = {
 THUMBNAIL_WIDTH = [100, 200, 300, 400]
 
 WECHAT_ACTIVITY_TRACE = ('text', 'image', 'location', 'link', 'event')
+
+NOTIFICATION_EMAIL = ['42470522@qq.com', 'kane.mx@gmail.com', 'xuhao2610@gmail.com', '21079619@qq.com']
