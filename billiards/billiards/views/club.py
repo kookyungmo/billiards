@@ -18,6 +18,8 @@ from django.utils.timezone import pytz
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.views.decorators.csrf import ensure_csrf_cookie
+from billiards.bcms import mail
+from billiards import settings
 
 def index(request):
     poolroomusers = getPoolroom(request.user, (1|2))
@@ -256,7 +258,10 @@ def club_apply(request):
         poolroomid = request.POST['club']
         if int(poolroomid) <= 0:
             # use any one for satisfying db design
-            poolroomid = Poolroom.objects.all()[:1][0].id
+            poolroom = Poolroom.objects.all()[:1][0]
+            poolroomid = poolroom.id
+        else:
+            poolroom = get_object_or_404(Poolroom, pk=poolroomid)
         data = {
            'poolroom': poolroomid,
            'poolroomname_userinput': 'null' if request.POST['club_userinput'] == '' else request.POST['club_userinput'],
@@ -271,6 +276,8 @@ def club_apply(request):
         newapply = PoolroomUserApplyForm(data)
         if newapply.is_valid():
             newapply.save()
+            mail(settings.NOTIFICATION_EMAIL, 'New club application', '%s(%s) apply %s\'s %s.\r\n Justification: %s.' 
+                 %(unicode(request.user), request.POST['realname'], poolroom.name, 'owner' if request.POST['club'] != -1 else 'group owner', request.POST['justification']))
             return HttpResponse(json.dumps({'rt': 1, 'msg': 'created'}), content_type="application/json")
         return HttpResponse(json.dumps(dict({'rt': 0}.items() + newapply.errors.items())), content_type="application/json")
     clubs = Poolroom.objects.all()
