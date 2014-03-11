@@ -79,6 +79,7 @@ urlpatterns += patterns('billiards.views.club',
 
 urlpatterns += patterns('billiards.views.wechat',
     url(r'^wechatkb$', 'weixin', name='weixin'),
+    url(r'^wechat/report/newuser$', 'activity_report_newuser', name='wechat_activity_report_newuser'),
 )
 urlpatterns += staticfiles_urlpatterns()
 handler403 = 'billiards.views.exceptions.handler403'

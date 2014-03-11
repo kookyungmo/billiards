@@ -16,6 +16,14 @@ import datetime
 from billiards import settings
 import pytz
 from django.utils import simplejson, timezone
+from django.core.exceptions import PermissionDenied
+from django.shortcuts import render_to_response
+from billiards.settings import TEMPLATE_ROOT, TIME_ZONE
+from django.template.context import RequestContext
+from django.db.models.query_utils import Q
+from django.core import serializers
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from StringIO import StringIO
 
 def checkSignature(request):
     signature=request.GET.get('signature','')
@@ -177,7 +185,7 @@ def response_msg(request):
         echostr = textReplyTpl % (
                              msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
                              '欢迎您关注我为台球狂官方微信，获取更多身边俱乐部信息，请访问：http://www.pktaiqiu.com，与我们更多互动，发送您的位置信息给我们，为您推荐身边的台球俱乐部。发送 ？，帮助，获取帮助手册。')
-        recordUserActivity(msg['FromUserName'], 'event', {'event': msg['Event'], 'eventkey': msg['EventKey']}, msg['CreateTime'], None)
+        recordUserActivity(msg['FromUserName'], 'event', msg['Event'], {'event': msg['Event'], 'eventkey': msg['EventKey']}, msg['CreateTime'], None)
         return echostr
     #response location message
     elif msg['MsgType'] == "location":
@@ -209,7 +217,7 @@ def response_msg(request):
                 echopictext = newsReplyTpl % (
                          msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1,
                          (newsItemTpl %(title, discription, picurl, originContent)))
-            recordUserActivity(msg['FromUserName'], 'location', {'lat': lat, 'lng': lng, 'scale': msg['Scale'], 'label': ['Label']}, msg['CreateTime'], 
+            recordUserActivity(msg['FromUserName'], 'location', club, {'lat': lat, 'lng': lng, 'scale': msg['Scale'], 'label': ['Label']}, msg['CreateTime'], 
                                {'id': poolroom.id, 'name': poolroom.name, 'distance': poolroom.distance})
             return echopictext
         else:
@@ -217,7 +225,7 @@ def response_msg(request):
             echostr = textReplyTpl % (
                              msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
                              data)
-            recordUserActivity(msg['FromUserName'], 'location', {'lat': lat, 'lng': lng, 'scale': msg['Scale'], 'label': ['Label']}, msg['CreateTime'], 
+            recordUserActivity(msg['FromUserName'], 'location', '', {'lat': lat, 'lng': lng, 'scale': msg['Scale'], 'label': ['Label']}, msg['CreateTime'], 
                                None)
             return echostr
     #response voice message
@@ -302,27 +310,27 @@ def response_msg(request):
         elif msg['Content'] == u"团购" or msg['Content'] == u"找便宜" or msg['Content'] == u"优惠":
             coupon = Coupon.objects.filter(getCouponCriteria()).order_by('?')[:1]
             if len(coupon) > 0:
-                recordUserActivity(msg['FromUserName'], 'text', {'content': msg['Content']}, msg['CreateTime'], 
+                recordUserActivity(msg['FromUserName'], 'text', 'coupon', {'content': msg['Content']}, msg['CreateTime'], 
                                {'count': len(coupon), 'coupon': True})
                 return getCouponText(coupon)
             else:
                 echostr = textReplyTpl % (
                              msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
                              '暂时没有俱乐部有"优惠"或"团购"。')
-                recordUserActivity(msg['FromUserName'], 'text', {'content': msg['Content']}, msg['CreateTime'], 
+                recordUserActivity(msg['FromUserName'], 'text', 'nocoupon', {'content': msg['Content']}, msg['CreateTime'], 
                                None)
                 return echostr
         elif msg['Content'] == u"云川" or msg['Content'] == u"yunchuan" or msg['Content'] == u"yc":
             coupon = Coupon.objects.filter(getCouponCriteria()).filter(poolroom__in=Poolroom.objects.filter(name__startswith=u'北京云川')).order_by('?')[:1]
             if len(coupon) > 0:
-                recordUserActivity(msg['FromUserName'], 'text', {'content': msg['Content']}, msg['CreateTime'], 
+                recordUserActivity(msg['FromUserName'], 'text', 'yunchuan', {'content': msg['Content']}, msg['CreateTime'], 
                                {'count': len(coupon), 'yunchuan_coupon': True})
                 return getCouponText(coupon)
             else:
                 echostr = textReplyTpl % (
                              msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
                              '云川俱乐部暂没有优惠。请输入"优惠"或"团购“查找其他俱乐部的优惠。')
-                recordUserActivity(msg['FromUserName'], 'text', {'content': msg['Content']}, msg['CreateTime'], 
+                recordUserActivity(msg['FromUserName'], 'text', 'noyunchuan', {'content': msg['Content']}, msg['CreateTime'], 
                                None)
                 return echostr
         elif msg['Content'] == u"活动":
@@ -342,14 +350,14 @@ def response_msg(request):
                 echopictext = newsReplyTpl % (
                                  msg['FromUserName'], msg['ToUserName'], str(int(time.time())), count,
                                  getActsText(acts))
-                recordUserActivity(msg['FromUserName'], 'text', {'content': msg['Content']}, msg['CreateTime'], 
+                recordUserActivity(msg['FromUserName'], 'text', 'activity', {'content': msg['Content']}, msg['CreateTime'], 
                                {'count': count, 'activity': True})
                 return echopictext
             else:
                 echostr = textReplyTpl % (
                              msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
                              '最近7天内没有被收录的爱好者活动')
-                recordUserActivity(msg['FromUserName'], 'text', {'content': msg['Content']}, msg['CreateTime'], 
+                recordUserActivity(msg['FromUserName'], 'text', 'noactivity', {'content': msg['Content']}, msg['CreateTime'], 
                                None)
                 return echostr
         elif msg['Content'] == u"比赛":
@@ -369,14 +377,14 @@ def response_msg(request):
                 echopictext = newsReplyTpl % (
                                  msg['FromUserName'], msg['ToUserName'], str(int(time.time())), count,
                                  getMatchesText(matches))
-                recordUserActivity(msg['FromUserName'], 'text', {'content': msg['Content']}, msg['CreateTime'], 
+                recordUserActivity(msg['FromUserName'], 'text', 'match', {'content': msg['Content']}, msg['CreateTime'], 
                                {'count': count, 'match': True})       
                 return echopictext
             else:
                 echostr = textReplyTpl % (
                              msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
                              '最近7天内没有被收录的比赛')
-                recordUserActivity(msg['FromUserName'], 'text', {'content': msg['Content']}, msg['CreateTime'], 
+                recordUserActivity(msg['FromUserName'], 'text', 'nomatch', {'content': msg['Content']}, msg['CreateTime'], 
                                None)
                 return echostr
         else:
@@ -384,7 +392,7 @@ def response_msg(request):
             echostr = textReplyTpl % (
                              msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
                              helpmessage)
-            recordUserActivity(msg['FromUserName'], 'text', {'content': msg['Content']}, msg['CreateTime'], 
+            recordUserActivity(msg['FromUserName'], 'text', 'unknown', {'content': msg['Content']}, msg['CreateTime'], 
                                None)
             return echostr
     #response unsupported message
@@ -394,11 +402,11 @@ def response_msg(request):
                              '您发送的内容我们无法识别，请发送其他类型的消息')
         return echostr
     
-def recordUserActivity(userid, event, message, recivedtime, reply):
+def recordUserActivity(userid, event, keyword, message, recivedtime, reply):
     if event in settings.WECHAT_ACTIVITY_TRACE:
         nativetime = datetime.datetime.utcfromtimestamp(float(recivedtime))
         localtz = pytz.timezone(settings.TIME_ZONE)
-        newactivity = WechatActivity.objects.create_activity(userid, event, simplejson.dumps(message).decode('unicode-escape'), nativetime.replace(tzinfo=timezone.utc).astimezone(tz=localtz), None if reply == None else simplejson.dumps(reply).decode('unicode-escape'))
+        newactivity = WechatActivity.objects.create_activity(userid, event, keyword, simplejson.dumps(message).decode('unicode-escape'), nativetime.replace(tzinfo=timezone.utc).astimezone(tz=localtz), None if reply == None else simplejson.dumps(reply).decode('unicode-escape'))
         newactivity.save()
 
 def buildAbsoluteURI(request, relativeURI):
@@ -440,3 +448,52 @@ def weixin(request):
         return HttpResponse(response_msg(request),content_type="application/xml")
     else:
         return HttpResponse("hello world")
+    
+
+def updateUserInfo(jsonstr):
+    userObjs = simplejson.loads(jsonstr)
+    for user in userObjs:
+        user['fields']['firstjoin'] = True if WechatActivity.objects.filter(
+            Q(receivedtime__lt=user['fields']['receivedtime']) & Q(keyword='unsubscribe') & Q(userid=user['fields']['userid'])).count() == 0 else False
+        unsubEvents = WechatActivity.objects.filter(
+            Q(receivedtime__gt=user['fields']['receivedtime']) & Q(keyword='unsubscribe') & Q(userid=user['fields']['userid']))
+        if unsubEvents.count() == 0:
+            user['fields']['unsubscribed'] = False
+        else:
+            user['fields']['unsubscribed'] = True
+            user['fields']['unsubscribedDate'] = unsubEvents.order_by('-receivedtime')[:1][0].receivedtime
+    return simplejson.dumps(userObjs)
+
+def activity_report_newuser(request):
+    if not request.user.is_authenticated() or not request.user.is_staff:
+        raise PermissionDenied
+    if request.method == 'POST':
+        startdate = datetime.datetime.fromtimestamp(float(request.POST['startdate'])/1000, pytz.timezone(TIME_ZONE))
+        enddate = datetime.datetime.fromtimestamp(float(request.POST['enddate'])/1000, pytz.timezone(TIME_ZONE))
+        subscribeEvents = WechatActivity.objects.filter(Q(receivedtime__gte=startdate) & Q(receivedtime__lt=enddate) & Q(eventtype='event')
+                & Q(keyword='subscribe')).distinct()
+        
+        paginator = Paginator(subscribeEvents, 25)
+        page = 1
+        try:
+            page = request.GET.get('page')
+        except Exception:
+            pass
+        try:
+            subscribers = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            subscribers = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            subscribers = paginator.page(paginator.num_pages)
+        json_serializer = serializers.get_serializer("json")()
+        stream = StringIO()
+        json_serializer.serialize(subscribers, fields=('userid', 'keyword', 'receivedtime'), stream=stream,
+            ensure_ascii=False, use_natural_keys=True)
+        jsonstr = stream.getvalue()
+        jsonstr = updateUserInfo(jsonstr)
+        return HttpResponse(jsonstr, mimetype="application/json")
+    return render_to_response(TEMPLATE_ROOT + 'wechat/newuser.html', 
+                              {},
+                              context_instance=RequestContext(request))

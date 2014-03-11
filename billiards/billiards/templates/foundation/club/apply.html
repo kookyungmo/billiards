@@ -2,7 +2,7 @@
 {% block right %}
 <h1>申请管理您的俱乐部</h1>
 <hr>
-<form id="applyform" data-abide>
+<form id="applyform" data-abide="ajax">
   <fieldset>
   	<legend>申请管理俱乐部</legend>
     
@@ -72,8 +72,7 @@
 {% endblock %}
 {% block script %}
 <script>
-$("#applyform").submit(function (e) {
-  		e.preventDefault();
+$("#applyform").on('valid', function() {
   		$("#errorMsg").addClass("hide");
    		$.ajax({
 			data : {'club': $("#club").val(),
