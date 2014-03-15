@@ -23,6 +23,7 @@ encoding//billiards/templatetags/extras.py=utf-8
 encoding//billiards/tests/wechat.py=utf-8
 encoding//billiards/views/challenge.py=utf-8
 encoding//billiards/views/club.py=utf-8
+encoding//billiards/views/event.py=utf-8
 encoding//billiards/views/exceptions.py=utf-8
 encoding//billiards/views/match.py=utf-8
 encoding//billiards/views/poolroom.py=utf-8

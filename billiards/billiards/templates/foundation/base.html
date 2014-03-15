@@ -39,6 +39,7 @@
 </script>
 <div class="off-canvas-wrap doc-wrap">
    <div class="inner-wrap">
+    {% block header-nav %}
 	 <!-- Header and Nav -->
 	 <nav class="top-bar hide-for-small">
 	    <ul class="title-area">
@@ -131,7 +132,16 @@
 	  </ul>
 	</aside>
 	<a class="exit-off-canvas" href="#"></a>
-	  <!-- End Header and Nav -->
+	<div id="quickLogin" class="reveal-modal small" data-reveal>
+	  <h2>完成操作前请先登录</h2>
+	  <a href="{{ qqurl }}" class="radius button">QQ</a>
+	  <a href="{{ weibourl }}" class="radius button">新浪微博</a>
+	  <a class="close-reveal-modal">&#215;</a>
+	</div>
+	{% endwith %}
+	{% endwith %}
+	{% endblock %}
+	<!-- End Header and Nav -->
 	
 	    <!-- Main Feed -->
 		<section role="main">
@@ -166,12 +176,7 @@
 		</section>
 	</div>
 </div>
-<div id="quickLogin" class="reveal-modal small" data-reveal>
-  <h2>完成操作前请先登录</h2>
-  <a href="{{ qqurl }}" class="radius button">QQ</a>
-  <a href="{{ weibourl }}" class="radius button">新浪微博</a>
-  <a class="close-reveal-modal">&#215;</a>
-</div>
+
 <div id="userInfoForm" class="reveal-modal medium" data-reveal>
   <h3>请完善您的联系方式，方便我们更好的为您提供服务。</h3>
   <h4>您的联系方式确定一定以及肯定只用于俱乐部与您确认报名信息。</h4>
@@ -205,8 +210,6 @@
   </form>
   <a class="close-reveal-modal">&#215;</a>
 </div>
-	  {% endwith %}
-	  {% endwith %}
   <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.min.js"></script>
   <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/vendor/custom.modernizr.min.js"></script>
   <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.offcanvas.min.js"></script>

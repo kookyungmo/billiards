@@ -590,3 +590,14 @@ class WechatActivity(models.Model):
         db_table = 'wechat_activity'
         verbose_name = '微信用户互动信息'
         verbose_name_plural = '微信用户互动信息'
+        
+class Event(models.Model):
+    id = models.AutoField(primary_key=True)
+    year = models.IntegerField(verbose_name='年份')
+    month = models.IntegerField(verbose_name='月份')
+    title = models.CharField(max_length=30, null=True, blank=True, verbose_name='标题缩写(用于url)')
+    
+    class Meta:
+        db_table = 'event'
+        verbose_name = '推广活动'
+        verbose_name_plural = '推广活动'
