@@ -22,7 +22,15 @@
 {% block header %}{% endblock %}
 {% load url from future %} 
 </head>
-
+{% url 'match_map' 'map' as mapurl %}
+{% url 'poolroom_nearby' as nearby %}
+{% url 'challenge_list' as challenge %}
+{% url 'login_3rd' 'qq' as qq %}
+{% url 'login_3rd' 'weibo' as weibo %}
+{% url 'event_year_month_name' '2014' '03' 'my-favorite-club' as latest_event %}
+{% with qq|add:'?returnurl='|add:request.get_full_path as qqurl %}
+{% with weibo|add:'?returnurl='|add:request.get_full_path as weibourl %}
+{% url 'user_logout' as user_logout %}
 <body>
 <script>
 	{% if user.is_authenticated %}
@@ -57,11 +65,9 @@
 	      <!-- Left Nav Section -->
 	      <ul class="left">
 	        <li class="divider"></li>
-	        {% url 'match_map' 'map' as mapurl %}
 	        <li {% if request.path == mapurl %} class="active" {% endif %}><a href="{{ mapurl }}">赛事活动</a></li>
-	        {% url 'poolroom_nearby' as nearby %}
 	        <li {% if request.path == nearby %} class="active" {% endif %}><a href="{{ nearby }}">附近球房</a></li>
-	        {% url 'challenge_list' as challenge %}
+	        <li><a style="color: #fd8d2a;" href="{{ latest_event }}"><b>免费打球!</b></a></li>
 	        <li {% if request.path == challenge %} class="active" {% endif %}><a href="{{ challenge }}">约球公告</a></li>
 </ul>
 		
@@ -69,11 +75,6 @@
 	      <!-- Right Nav Section -->
 	      <ul class="right">
 	        <li class="divider"></li>
-	        {% url 'login_3rd' 'qq' as qq %}
-	        {% url 'login_3rd' 'weibo' as weibo %}
-	        {% with qq|add:'?returnurl='|add:request.get_full_path as qqurl %}
-	        {% with weibo|add:'?returnurl='|add:request.get_full_path as weibourl %}
-	        {% url 'user_logout' as user_logout %}
 	        {% if user.is_authenticated %}
 	        	{% if groups %}
 	        	<li><a href="{% url 'club_index' %}">欢迎你,{{ groups.0.group.name }}</a></li>
@@ -108,6 +109,7 @@
 	  <ul class="off-canvas-list">
 	    <li><a href="{{ mapurl }}">赛事活动</a></li>
 	    <li><a href="{{ nearby }}">附近球房</a></li>
+	    <li><a style="color: #fd8d2a;" href="{{ latest_event }}"><b>免费打球!</b></a></li>
 	    <li><a href="{{ challenge }}">约球公告</a></li>
 	    {% if user.is_authenticated %}
 	    {% if poolroomuser %}
@@ -138,8 +140,6 @@
 	  <a href="{{ weibourl }}" class="radius button">新浪微博</a>
 	  <a class="close-reveal-modal">&#215;</a>
 	</div>
-	{% endwith %}
-	{% endwith %}
 	{% endblock %}
 	<!-- End Header and Nav -->
 	
@@ -270,4 +270,6 @@
 
   {% block script %}{% endblock %}
 </body>
+{% endwith %}
+{% endwith %}
 </html>

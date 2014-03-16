@@ -1,22 +1,22 @@
 {% extends "foundation/base.html" %}
-{% load url from future %} 
 {% block content %}
 <div id="circlefeatures">
                    <ul class="ch-grid">
 			<br>
 			<br>
                     <li id="leftcircle">
-                        <div class="ch-item ch-img-">
+                    	<div class="ch-item ch-img-">
                             <div class="ch-info">
-                                <a href="{% url 'poolroom_nearby' %}" title="nearby"><p class="circle_project">发现附近<br>NEARBY</p>
-                                <p class="view_project">俱乐部球房<br>BILLIARD CLUB</p></a>
+                                <a href="{{ latest_event }}" title="my-favorite-club"><p class="circle_project">免费打球!<br>Free!</p>
+                                <p class="view_project">我最爱的球房<br>My favorite club!</p></a>
                             </div>
                         </div>
+                        
                     </li>
                     <li id="centrecircle">
                         <div class="ch-item ch-img-">
                             <div class="ch-info">
-                                <a href="{% url 'match_map' 'map' %}" title="poolroom match"><p class="circle_project">俱乐部赛事<br>CLUB MATCH</p>
+                                <a href="{{ mapurl }}" title="poolroom match"><p class="circle_project">俱乐部赛事<br>CLUB MATCH</p>
                                 <p class="view_project">信息<br>INFOMATION</p></a>
                             </div>
                         </div>
@@ -24,13 +24,13 @@
                     <li id="rightcircle">
                         <div class="ch-item ch-img-">
                             <div class="ch-info">
-                                <a href="{% url 'challenge_list' %}" title="match date"><p class="circle_project">约球服务<br>RESERVATION SERVICE</p>
-                                <p class="view_project">为你服务<br>TRY IT!</p></a>
+                                <a href="{{ nearby }}" title="nearby"><p class="circle_project">发现附近<br>NEARBY</p>
+                                <p class="view_project">俱乐部球房<br>BILLIARD CLUB</p></a>
                             </div>
                         </div>
                     </li>
                 </ul>
-                                <h1><strong>BILLIARD PRO</strong></h1>
+                <h1><strong>BILLIARD PRO</strong></h1>
             </div>
 {% endblock %}
 {% block foundationscript %}

@@ -7,7 +7,7 @@ Created on 2013年10月21日
 '''
 from billiards.models import Poolroom, Match, PoolroomEquipment, User,\
     MatchEnroll, Challenge, ChallengeApply, PoolroomUser,\
-    PoolroomUserApply, PoolroomImage, Group, Coupon, WechatActivity
+    PoolroomUserApply, PoolroomImage, Group, Coupon, WechatActivity, Event
 from django.contrib import admin
 from bitfield import BitField
 from bitfield.forms import BitFieldCheckboxSelectMultiple
@@ -113,3 +113,4 @@ admin.site.register(PoolroomUserApply)
 admin.site.register(Group)
 admin.site.register(Coupon)
 admin.site.register(WechatActivity, WechatActivityAdmin)
+admin.site.register(Event)

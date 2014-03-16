@@ -597,6 +597,9 @@ class Event(models.Model):
     month = models.IntegerField(verbose_name='月份')
     title = models.CharField(max_length=30, null=True, blank=True, verbose_name='标题缩写(用于url)')
     
+    def __unicode__(self):
+        return u'[%s-%s] %s' %(self.year, self.month, self.title)
+    
     class Meta:
         db_table = 'event'
         verbose_name = '推广活动'
