@@ -1,0 +1,29 @@
+{% extends "foundation/base.html" %} 
+{% block header %} 
+{% load staticfiles %}
+<script src="{% static "js/moment-with-langs.min.js" %}"></script>
+<script src="{% static "js/moment-timezone.min.js" %}"></script>
+<script src="{% static "js/map.js" %}?{{buildid}}"></script>
+{% endblock %} 
+{% load extras %} 
+{% load url from future %} 
+{% block content %}
+<div class="large-3 medium-4 columns">
+	<div class="hide-for-small">
+		<div class="sidebar">
+			<nav>
+				<ul class="side-nav">
+					<li class="heading">用户微信互动统计</li>
+					{% url 'wechat_activity_report_newuser' as newuser %}
+					<li {% if request.path == newuser %} class="active" {% endif %}><a href="{{ newuser }}" data-search="newuser">新关注用户统计</a></li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<div class="large-9 medium-8 columns">
+{% block rightcontent %}{% endblock %}
+</div>
+{% endblock %} 
+{% block script %}
+{% endblock %}

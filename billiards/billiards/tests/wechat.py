@@ -63,6 +63,7 @@ class WechatTest(TestCase):
         self.assertEqual(1, activityquery.count())
         activity = activityquery[:1][0]
         self.assertEqual('newuser', activity.userid)
+        self.assertEqual('subscribe', activity.keyword)
         msg = simplejson.loads(activity.message)
         self.assertEqual('subscribe', msg['event'])
         self.assertEqual('subscribe', msg['eventkey'])
@@ -90,6 +91,7 @@ class WechatTest(TestCase):
         self.assertEqual(1, activityquery.count())
         activity = activityquery[:1][0]
         self.assertEqual('fromUser', activity.userid)
+        self.assertEqual(u'北京黑桃8撞球馆上坡家园店', activity.keyword)
         msg = simplejson.loads(activity.message)
         self.assertEqual(u'40.094799793619', msg['lat'])
         self.assertEqual(u'116.36137302268', msg['lng'])

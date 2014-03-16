@@ -1,0 +1,268 @@
+/* @group Tool List */
+
+	.tool-list {
+		margin-top: 27px;
+	}
+	.tool-list a {
+		float: left;
+		margin-left: 15px;
+	}
+	.tool-list a {
+		display: block;
+		text-align: center;
+		font-size: 14px;
+		color: #a7a7a7;
+	}
+	.tool-list a.active {
+		color: #565656;
+	}
+	.tool-list a:hover {
+		color: #299bfb;
+	}
+	.tool-list em {
+		display: block;
+		font-size: 27px;
+	}
+	#toolsDisplay {
+		clear: both;
+		padding-top: 25px;
+		margin-bottom: 10px;
+		height: 295px;
+	}
+ 	#tool-description {
+ 		float: right;
+ 		width: 240px;
+ 		height: 270px;
+ 		margin-left: -240px;
+ 		background-color: #444444;
+ 		position: relative;
+ 		z-index: 2;
+ 		overflow: hidden;
+ 	}
+ 	#tool-image {
+ 		height: 270px;
+		background-color: #4f4f4f;
+		overflow: hidden;
+ 	}
+ 	#tool-image li {
+ 		height: 270px;
+ 		width: 100%;
+ 		z-index: 1;
+ 		margin-bottom: -270px;
+ 		top: 270px;
+ 		position: relative;
+ 	}
+ 	#tool-image li.active {
+ 		top: 0px;
+ 	}
+ 	#tool-description li {
+		overflow: auto;
+		width: 240px;
+		height: 270px;
+		z-index: 2;
+		margin-bottom: -270px;
+ 		bottom: 270px;
+ 		position: relative;
+ 		overflow: hidden;
+ 	}
+ 	#tool-description li.active {
+ 		bottom: 0px;
+ 	}
+	#tool-description li.active {
+		display: block;
+	}
+
+	.tool-description {
+		padding: 15px;
+		color: #ffffff;
+		margin-bottom: 20px;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.35);
+	}
+	.tool-description a {
+		display: block;
+		text-align: center;
+		padding-top: 15px;
+		padding-bottom: 18px;
+		font-size: 16px;
+		background: url(http://www.nextstepu.com/Portals/_Default/Skins/NextStep/images/pngs/30.png) repeat;
+		margin-right: 0;
+	}
+	.tool-description em {
+		display: block;
+		text-align: center;
+		padding-top: 10px;
+		padding-bottom: 15px;
+	}
+	
+	.tool-description a:hover {
+		background: url(http://www.nextstepu.com/Portals/_Default/Skins/NextStep/images/pngs/40.png) repeat;
+	}
+	.tool-description h3 {
+		color: #ffffff;
+		text-align: center;
+		margin-bottom: 8px;
+	}
+	.tool-description p {
+		color: #ffffff;
+	}
+
+	/* @group Homepage Header */
+		#homePageTop {
+			background-color: #ffffff;
+		}
+		#homeHeader {
+			background: url(http://ppcdn.500px.org/32947093/7ce34cfb615050cae72691d16071dd733fd3eec5/2048.jpg) center center / cover no-repeat; 
+			 -webkit-background-size: cover;
+			 -moz-background-size: cover;
+			 -o-background-size: cover;
+			margin-bottom: -65px;
+			padding-bottom: 40px;
+			/* Internet exploder 8 fixed background */
+			filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://ppcdn.500px.org/4174525/4ad3d0754d7b2e57867931e5672ce90a94693ef4/5.jpg', sizingMethod='scale');
+			-ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://ppcdn.500px.org/4174525/4ad3d0754d7b2e57867931e5672ce90a94693ef4/5.jpg', sizingMethod='scale')";
+		}
+		
+		#homeHeader .collegeSearchWidget {
+			margin-top: 28px;
+			box-shadow: 0 0 20px rgba(0, 0, 0, 0.55);
+		}
+		#homeheader h1 {
+			color: #ffffff;
+			text-shadow: 2px 2px rgba(0, 0, 0, 0.28);
+			font-size: 55px;
+			padding-top: 0;
+		}
+		#homeheader h2 {
+			color: #ffffff;
+			text-shadow: 2px 2px rgba(0, 0, 0, 0.25);
+			font-size: 39px;
+		}
+		#homeHeader .collegeSearchWidget .dark-gray.label {
+			font-size: 20px;
+			/*background-color: transparent;*/
+			line-height: 43px;
+			height: 46px;
+			padding-bottom: 0;
+		}
+		.collegeSearchWidget div.alert-box.alert {
+			margin: 15px 15px 0;
+		}
+		.collegeSearchWidget .label em img {
+			width: 20px !important;
+			margin-top: -5px;
+		}
+		#homeHeader .collegeSearchWidget .button.purple.flat {
+			font-size: 16px;
+			padding: 8px 14px;
+			margin-top: 20px;
+			width: 100%;
+			margin-right: 0px;
+			/*background: url(http://www.nextstepu.com/Portals/_Default/Skins/NextStep/images/pngs/20.png) transparent;*/
+		}
+		#homeHeader .collegeSearchWidget div.collegeSearchTool {
+			padding: 9px 15px 7px !important;
+		}
+		
+		
+		@media only screen and (min-width: 600px) {
+			#collegeWidgetA, #collegeWidgetB {
+				width: 38%; float: left;
+				margin-right: 2%;
+			}
+			#collegeWidgetC {
+				width: 20%; float: left;
+			}
+		}
+	/* @end */
+
+/* @group Responsive Tools */
+
+@media only screen and (max-width: 670px) {
+
+	.tool-description em {
+		display: block;
+		float: left;
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+	.tool-description em img {
+		width: 30px;
+		margin-top: -2px;
+	}
+	.tool-description h3 {
+		text-align: left;
+		padding-left: 39px;
+	}
+	
+}
+
+/* @end */
+
+/* @group Homepage Tools Responsive Styling */
+		@media only screen and (max-width: 570px) {
+			#homeheader h1 {
+				font-size: 24px;
+			}
+			#homeheader h2 {
+				font-size: 20px;
+				color: #ffffff;
+			}
+			#homepageRegister {
+				font-size: 20px;
+				line-height: 23px;
+				margin-top: 10px;
+				margin-bottom: 0;
+			}
+			.tool-list {
+				width: 87px;
+				float: left;
+				margin-left: -15px;
+				background-color: #f2f2f2;
+				clear: both;
+				margin-top: 15px;
+				height: 271px;
+			}
+			.tool-list em {
+				display: block;
+				font-size: 27px;
+				padding-top: 14px;
+			}
+			.tool-list a {
+				float: none;
+				display: block;
+				width: 100%;
+				margin-left: 0;
+				
+				font-size: 12px;
+				height: 67px;
+			}
+			.tool-list a:last-child {
+				height: 69px;
+			}
+			.tool-list a.active {
+				background-color: #444444;
+				color: #ffffff;
+			}
+			#toolsDisplay {
+				clear: none;
+				padding-top: 0;
+				margin-left: 72px;
+				margin-right: -15px;
+				margin-top: 71px;
+			}
+			.tool-description {
+				width: 100%;
+			}
+			#tool-description {
+				width: 100% ;
+			}
+			#tool-description ul li {
+				width: 100%;
+			}
+			#tool-image {
+				display: none;
+			}
+		}
+	/* @end */
+
+/* @end */

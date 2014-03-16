@@ -22,7 +22,15 @@
 {% block header %}{% endblock %}
 {% load url from future %} 
 </head>
-
+{% url 'match_map' 'map' as mapurl %}
+{% url 'poolroom_nearby' as nearby %}
+{% url 'challenge_list' as challenge %}
+{% url 'login_3rd' 'qq' as qq %}
+{% url 'login_3rd' 'weibo' as weibo %}
+{% url 'event_year_month_name' '2014' '03' 'my-favorite-club' as latest_event %}
+{% with qq|add:'?returnurl='|add:request.get_full_path as qqurl %}
+{% with weibo|add:'?returnurl='|add:request.get_full_path as weibourl %}
+{% url 'user_logout' as user_logout %}
 <body>
 <script>
 	{% if user.is_authenticated %}
@@ -39,6 +47,7 @@
 </script>
 <div class="off-canvas-wrap doc-wrap">
    <div class="inner-wrap">
+    {% block header-nav %}
 	 <!-- Header and Nav -->
 	 <nav class="top-bar hide-for-small">
 	    <ul class="title-area">
@@ -56,11 +65,9 @@
 	      <!-- Left Nav Section -->
 	      <ul class="left">
 	        <li class="divider"></li>
-	        {% url 'match_map' 'map' as mapurl %}
 	        <li {% if request.path == mapurl %} class="active" {% endif %}><a href="{{ mapurl }}">赛事活动</a></li>
-	        {% url 'poolroom_nearby' as nearby %}
 	        <li {% if request.path == nearby %} class="active" {% endif %}><a href="{{ nearby }}">附近球房</a></li>
-	        {% url 'challenge_list' as challenge %}
+	        <li><a style="color: #fd8d2a;" href="{{ latest_event }}"><b>免费打球!</b></a></li>
 	        <li {% if request.path == challenge %} class="active" {% endif %}><a href="{{ challenge }}">约球公告</a></li>
 </ul>
 		
@@ -68,11 +75,6 @@
 	      <!-- Right Nav Section -->
 	      <ul class="right">
 	        <li class="divider"></li>
-	        {% url 'login_3rd' 'qq' as qq %}
-	        {% url 'login_3rd' 'weibo' as weibo %}
-	        {% with qq|add:'?returnurl='|add:request.get_full_path as qqurl %}
-	        {% with weibo|add:'?returnurl='|add:request.get_full_path as weibourl %}
-	        {% url 'user_logout' as user_logout %}
 	        {% if user.is_authenticated %}
 	        	{% if groups %}
 	        	<li><a href="{% url 'club_index' %}">欢迎你,{{ groups.0.group.name }}</a></li>
@@ -107,6 +109,7 @@
 	  <ul class="off-canvas-list">
 	    <li><a href="{{ mapurl }}">赛事活动</a></li>
 	    <li><a href="{{ nearby }}">附近球房</a></li>
+	    <li><a style="color: #fd8d2a;" href="{{ latest_event }}"><b>免费打球!</b></a></li>
 	    <li><a href="{{ challenge }}">约球公告</a></li>
 	    {% if user.is_authenticated %}
 	    {% if poolroomuser %}
@@ -131,7 +134,14 @@
 	  </ul>
 	</aside>
 	<a class="exit-off-canvas" href="#"></a>
-	  <!-- End Header and Nav -->
+	<div id="quickLogin" class="reveal-modal small" data-reveal>
+	  <h2>完成操作前请先登录</h2>
+	  <a href="{{ qqurl }}" class="radius button">QQ</a>
+	  <a href="{{ weibourl }}" class="radius button">新浪微博</a>
+	  <a class="close-reveal-modal">&#215;</a>
+	</div>
+	{% endblock %}
+	<!-- End Header and Nav -->
 	
 	    <!-- Main Feed -->
 		<section role="main">
@@ -166,12 +176,7 @@
 		</section>
 	</div>
 </div>
-<div id="quickLogin" class="reveal-modal small" data-reveal>
-  <h2>完成操作前请先登录</h2>
-  <a href="{{ qqurl }}" class="radius button">QQ</a>
-  <a href="{{ weibourl }}" class="radius button">新浪微博</a>
-  <a class="close-reveal-modal">&#215;</a>
-</div>
+
 <div id="userInfoForm" class="reveal-modal medium" data-reveal>
   <h3>请完善您的联系方式，方便我们更好的为您提供服务。</h3>
   <h4>您的联系方式确定一定以及肯定只用于俱乐部与您确认报名信息。</h4>
@@ -205,8 +210,6 @@
   </form>
   <a class="close-reveal-modal">&#215;</a>
 </div>
-	  {% endwith %}
-	  {% endwith %}
   <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.min.js"></script>
   <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/vendor/custom.modernizr.min.js"></script>
   <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.offcanvas.min.js"></script>
@@ -278,4 +281,6 @@
   {% block trackingscript %}{% endblock %}
   </script>
 </body>
+{% endwith %}
+{% endwith %}
 </html>

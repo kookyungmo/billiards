@@ -559,8 +559,8 @@ class Coupon(models.Model):
         verbose_name_plural = '折扣信息'   
         
 class WechatActivityManager(models.Manager):
-    def create_activity(self, userid, event, message, recivedtime, reply):
-        activity = self.create(userid=userid, eventtype=event, message=message, receivedtime=recivedtime, reply=reply)
+    def create_activity(self, userid, event, keyword, message, recivedtime, reply):
+        activity = self.create(userid=userid, eventtype=event, keyword=keyword, message=message, receivedtime=recivedtime, reply=reply)
         # do something with the book
         return activity
     
@@ -574,6 +574,7 @@ class WechatActivity(models.Model):
             ('link', u'链接消息'),
             ('event', u'事件推送'),
         ), verbose_name='消息类型')
+    keyword = CharField(max_length=40, verbose_name='消息类型关键词')
     message = CharField(max_length=500, verbose_name='消息内容')
     receivedtime = models.DateTimeField(verbose_name='发送时间')
     reply = CharField(max_length=500, null=True, blank=True, verbose_name='自定义回复概要')
@@ -589,3 +590,17 @@ class WechatActivity(models.Model):
         db_table = 'wechat_activity'
         verbose_name = '微信用户互动信息'
         verbose_name_plural = '微信用户互动信息'
+        
+class Event(models.Model):
+    id = models.AutoField(primary_key=True)
+    year = models.IntegerField(verbose_name='年份')
+    month = models.IntegerField(verbose_name='月份')
+    title = models.CharField(max_length=30, null=True, blank=True, verbose_name='标题缩写(用于url)')
+    
+    def __unicode__(self):
+        return u'[%s-%s] %s' %(self.year, self.month, self.title)
+    
+    class Meta:
+        db_table = 'event'
+        verbose_name = '推广活动'
+        verbose_name_plural = '推广活动'
