@@ -1,0 +1,16 @@
+{% extends "foundation/wechat/base.html" %}
+{% load url from future %} 
+{% block rightcontent %}
+<div class="small-12 columns">
+<h1>{{REPORT_TITLE}}</h1>
+<hr>
+<div class="row">
+  <div class="large-6 columns">
+  		<a href="{{ newuser }}" class="button radius">新关注用户统计</a>
+  </div>
+  <div class="large-6 columns">
+  		<a href="{{ message }}" class="button radius">用户消息统计</a>
+  </div>
+</div>
+</div>
+{% endblock %}

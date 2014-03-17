@@ -4,6 +4,9 @@
 <script src="{% static "js/moment-with-langs.min.js" %}"></script>
 <script src="{% static "js/moment-timezone.min.js" %}"></script>
 <script src="{% static "js/map.js" %}?{{buildid}}"></script>
+{% load staticfiles %}
+<script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}"; var MEDIA_URL = "{{ MEDIA_URL }}";</script>
+<script src="{% static "js/report.js" %}"></script>
 {% endblock %} 
 {% load extras %} 
 {% load url from future %} 
@@ -15,14 +18,56 @@
 				<ul class="side-nav">
 					<li class="heading">用户微信互动统计</li>
 					{% url 'wechat_activity_report_newuser' as newuser %}
+					{% url 'wechat_activity_report_message' as message %}
 					<li {% if request.path == newuser %} class="active" {% endif %}><a href="{{ newuser }}" data-search="newuser">新关注用户统计</a></li>
+					<li {% if request.path == message %} class="active" {% endif %}><a href="{{ message }}" data-search="message">用户消息统计</a></li>
 				</ul>
 			</nav>
 		</div>
 	</div>
 </div>
 <div class="large-9 medium-8 columns">
-{% block rightcontent %}{% endblock %}
+{% block rightcontent %}
+<div class="small-12 columns">
+<h1>{{REPORT_TITLE}}</h1>
+<hr>
+<form id="reportForm" data-abide="ajax">
+  <fieldset>
+  	<legend>设置报表时间范围</legend>
+    
+    <div class="row">
+      <div class="medium-6 columns">
+		<label for="startdate">开始日期<small>*</small></label>
+        <input type="date" id="startdate" placeholder="2014-01-30" required>
+        <small class="error">请输入有效的日期</small>
+      </div>
+      <div class="medium-6 columns">
+		<label for="enddate">结束日期<small>*</small></label>
+        <input type="date" id="enddate" placeholder="2014-01-30" required>
+        <small class="error">请输入有效的日期</small>
+      </div>
+    </div>
+
+    <div class="row">
+      <div id="errorMsg" class="large-12 columns hide">
+       	<div data-alert class="alert-box warning round">
+		</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-12 columns">
+        <button type="submit" class="medium button green">查询</button>
+      </div>
+    </div>
+  </fieldset>
+</form>
+<div id="reporttable">
+{% block reportresult %}
+{% endblock %}
+</div>
+</div>
+{% endblock %}
 </div>
 {% endblock %} 
 {% block script %}

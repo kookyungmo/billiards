@@ -2,8 +2,8 @@
 {% load url from future %} 
 {% block script %}
 <script>
-REPORT_URL = "{% url 'wechat_activity_report_newuser' %}";
+REPORT_URL = "{% url 'wechat_activity_report_message' %}";
 TIMEZONE = "{{ TIME_ZONE }}";
-hookReportForm(refreshUserData);
+hookReportForm(refreshMessageData);
 </script>
 {% endblock %}

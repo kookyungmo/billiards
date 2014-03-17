@@ -1,7 +1,7 @@
 # coding=utf-8
 from django.http import HttpResponse
 from django.utils.encoding import smart_str
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 import hashlib, time, re
 from random import randint
 from xml.etree import ElementTree as ET
@@ -458,6 +458,7 @@ def updateUserInfo(jsonstr):
             user['fields']['unsubscribedDate'] = unsubEvents.order_by('-receivedtime')[:1][0].receivedtime
     return simplejson.dumps(userObjs)
 
+@ensure_csrf_cookie
 def activity_report_newuser(request):
     if not request.user.is_authenticated() or not request.user.is_staff:
         raise PermissionDenied
@@ -489,5 +490,44 @@ def activity_report_newuser(request):
         jsonstr = updateUserInfo(jsonstr)
         return HttpResponse(jsonstr, mimetype="application/json")
     return render_to_response(TEMPLATE_ROOT + 'wechat/newuser.html', 
-                              {},
+                              {'REPORT_TITLE' : u'新用户统计'},
+                              context_instance=RequestContext(request))
+    
+@ensure_csrf_cookie
+def activity_report_message(request):
+    if not request.user.is_authenticated() or not request.user.is_staff:
+        raise PermissionDenied
+    if request.method == 'POST':
+        startdate = datetime.datetime.fromtimestamp(float(request.POST['startdate'])/1000, pytz.timezone(TIME_ZONE))
+        enddate = datetime.datetime.fromtimestamp(float(request.POST['enddate'])/1000, pytz.timezone(TIME_ZONE))
+        messageEvents = WechatActivity.objects.filter(Q(receivedtime__gte=startdate) & Q(receivedtime__lt=enddate) & ~Q(eventtype='event'))
+        paginator = Paginator(messageEvents, 25)
+        page = 1
+        try:
+            page = request.GET.get('page')
+        except Exception:
+            pass
+        try:
+            messages = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            messages = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            messages = paginator.page(paginator.num_pages)
+        json_serializer = serializers.get_serializer("json")()
+        stream = StringIO()
+        json_serializer.serialize(messages, fields=('userid', 'eventtype', 'keyword', 'receivedtime', 'message'), stream=stream,
+            ensure_ascii=False, use_natural_keys=True)
+        jsonstr = stream.getvalue()
+        return HttpResponse(jsonstr, mimetype="application/json")
+    return render_to_response(TEMPLATE_ROOT + 'wechat/message.html', 
+                              {'REPORT_TITLE': u'用户消息统计'},
+                              context_instance=RequestContext(request))
+
+def activity_report(request):
+    if not request.user.is_authenticated() or not request.user.is_staff:
+        raise PermissionDenied
+    return render_to_response(TEMPLATE_ROOT + 'wechat/report.html', 
+                              {'REPORT_TITLE': u'微信用户消息统计'},
                               context_instance=RequestContext(request))
