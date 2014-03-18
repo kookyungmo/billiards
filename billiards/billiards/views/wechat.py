@@ -24,6 +24,8 @@ from django.db.models.query_utils import Q
 from django.core import serializers
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from StringIO import StringIO
+from collections import namedtuple
+from dateutil.relativedelta import relativedelta
 
 def checkSignature(request):
     signature=request.GET.get('signature','')
@@ -465,10 +467,11 @@ def activity_report_newuser(request):
     if request.method == 'POST':
         startdate = datetime.datetime.fromtimestamp(float(request.POST['startdate'])/1000, pytz.timezone(TIME_ZONE))
         enddate = datetime.datetime.fromtimestamp(float(request.POST['enddate'])/1000, pytz.timezone(TIME_ZONE))
+        enddate = relativedelta(days=1) + enddate
         subscribeEvents = WechatActivity.objects.filter(Q(receivedtime__gte=startdate) & Q(receivedtime__lt=enddate) & Q(eventtype='event')
                 & Q(keyword='subscribe')).distinct()
         
-        paginator = Paginator(subscribeEvents, 25)
+        paginator = Paginator(subscribeEvents, 10)
         page = 1
         try:
             page = request.GET.get('page')
@@ -488,11 +491,22 @@ def activity_report_newuser(request):
             ensure_ascii=False, use_natural_keys=True)
         jsonstr = stream.getvalue()
         jsonstr = updateUserInfo(jsonstr)
+        jsonstr = updatePageInfo(jsonstr, subscribers)
         return HttpResponse(jsonstr, mimetype="application/json")
     return render_to_response(TEMPLATE_ROOT + 'wechat/newuser.html', 
                               {'REPORT_TITLE' : u'新用户统计'},
                               context_instance=RequestContext(request))
     
+def updatePageInfo(jsonstr, paging):
+    objs = simplejson.loads(jsonstr)
+    class Activity(object):
+        pass
+    activity = Activity()
+    setattr(activity, 'page', paging.number)
+    setattr(activity, 'count', paging.paginator.num_pages)
+    setattr(activity, 'data', objs)
+    return simplejson.dumps(activity.__dict__)
+
 @ensure_csrf_cookie
 def activity_report_message(request):
     if not request.user.is_authenticated() or not request.user.is_staff:
@@ -500,8 +514,9 @@ def activity_report_message(request):
     if request.method == 'POST':
         startdate = datetime.datetime.fromtimestamp(float(request.POST['startdate'])/1000, pytz.timezone(TIME_ZONE))
         enddate = datetime.datetime.fromtimestamp(float(request.POST['enddate'])/1000, pytz.timezone(TIME_ZONE))
+        enddate = relativedelta(days=1) + enddate
         messageEvents = WechatActivity.objects.filter(Q(receivedtime__gte=startdate) & Q(receivedtime__lt=enddate) & ~Q(eventtype='event'))
-        paginator = Paginator(messageEvents, 25)
+        paginator = Paginator(messageEvents, 10)
         page = 1
         try:
             page = request.GET.get('page')
@@ -520,6 +535,7 @@ def activity_report_message(request):
         json_serializer.serialize(messages, fields=('userid', 'eventtype', 'keyword', 'receivedtime', 'message'), stream=stream,
             ensure_ascii=False, use_natural_keys=True)
         jsonstr = stream.getvalue()
+        jsonstr = updatePageInfo(jsonstr, messages)
         return HttpResponse(jsonstr, mimetype="application/json")
     return render_to_response(TEMPLATE_ROOT + 'wechat/message.html', 
                               {'REPORT_TITLE': u'用户消息统计'},
