@@ -1,5 +1,6 @@
-function refreshUserData(data) {
+function refreshUserData(url, startdate, enddate, messages) {
 	$("#reporttable").children().remove();
+	data = messages.data;
 	if (data.length > 0) {
 		var tableobj = jQuery('<table/>', {
 		});
@@ -28,6 +29,23 @@ function refreshUserData(data) {
 		contentTemplate += "</tbody>";
 		tableobj.append(contentTemplate);
 		tableobj.appendTo('#reporttable');
+		var ulobj = jQuery('<ul/>', {
+			class : 'pagination'
+		});
+		contentTemplate = "";
+		for (i = 1; i <= messages.count; i++) {
+			contentTemplate += "<li ";
+			if (messages.page == i) {
+				contentTemplate += "class=\"current\"";
+			}
+			contentTemplate += "><a href=\"javascript:void(0);\">" + i + "</a></li>";
+		}
+		ulobj.append(contentTemplate);
+		ulobj.appendTo('#reporttable');
+		$('#reporttable ul li a').click(function(){
+			pageurl = setGetParameter(url, 'page', $(this).text());
+			getReportData(pageurl, startdate, enddate, refreshUserData);
+		});
 	} else {
 		var preobj = jQuery('<pre/>', {
 		});
@@ -37,8 +55,28 @@ function refreshUserData(data) {
 	}
 }
 
-function refreshMessageData(data) {
+function setGetParameter(url, paramName, paramValue)
+{
+    if (url.indexOf(paramName + "=") >= 0)
+    {
+        var prefix = url.substring(0, url.indexOf(paramName));
+        var suffix = url.substring(url.indexOf(paramName)).substring(url.indexOf("=") + 1);
+        suffix = (suffix.indexOf("&") >= 0) ? suffix.substring(suffix.indexOf("&")) : "";
+        url = prefix + paramName + "=" + paramValue + suffix;
+    }
+    else
+    {
+    if (url.indexOf("?") < 0)
+        url += "?" + paramName + "=" + paramValue;
+    else
+        url += "&" + paramName + "=" + paramValue;
+    }
+    return url;
+}
+
+function refreshMessageData(url, startdate, enddate, messages) {
 	$("#reporttable").children().remove();
+	data = messages.data;
 	if (data.length > 0) {
 		var tableobj = jQuery('<table/>', {
 		});
@@ -68,6 +106,23 @@ function refreshMessageData(data) {
 		contentTemplate += "</tbody>";
 		tableobj.append(contentTemplate);
 		tableobj.appendTo('#reporttable');
+		var ulobj = jQuery('<ul/>', {
+			class : 'pagination'
+		});
+		contentTemplate = "";
+		for (i = 1; i <= messages.count; i++) {
+			contentTemplate += "<li ";
+			if (messages.page == i) {
+				contentTemplate += "class=\"current\"";
+			}
+			contentTemplate += "><a href=\"javascript:void(0);\">" + i + "</a></li>";
+		}
+		ulobj.append(contentTemplate);
+		ulobj.appendTo('#reporttable');
+		$('#reporttable ul li a').click(function(){
+			pageurl = setGetParameter(url, 'page', $(this).text());
+			getReportData(pageurl, startdate, enddate, refreshMessageData);
+		});
 	} else {
 		var preobj = jQuery('<pre/>', {
 		});
@@ -97,7 +152,7 @@ function getReportData(url, startdate, enddate, callback) {
 			type: 'POST',
 		dataType : 'json',
 		success : function(data) {
-			callback(data);
+			callback(url, startdate, enddate, data);
 		},
 		error : function(jqXHR, textStatus, errorThrown) {
 			console.log(textStatus, errorThrown);
