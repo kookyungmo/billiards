@@ -24,8 +24,8 @@ from django.db.models.query_utils import Q
 from django.core import serializers
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from StringIO import StringIO
-from collections import namedtuple
 from dateutil.relativedelta import relativedelta
+from billiards.bcms import mail
 
 def checkSignature(request):
     signature=request.GET.get('signature','')
@@ -187,7 +187,11 @@ def response_msg(request):
         echostr = textReplyTpl % (
                              msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
                              '欢迎您关注我为台球狂官方微信，获取更多身边俱乐部信息，请访问：http://www.pktaiqiu.com，与我们更多互动，发送您的位置信息给我们，为您推荐身边的台球俱乐部。发送 ？，帮助，获取帮助手册。')
-        recordUserActivity(msg['FromUserName'], 'event', msg['Event'], {'event': msg['Event'], 'eventkey': msg['EventKey']}, msg['CreateTime'], None)
+        try:
+            eventkey = msg['EventKey']
+        except KeyError:
+            eventkey = None
+        recordUserActivity(msg['FromUserName'], 'event', msg['Event'], {'event': msg['Event'], 'eventkey': eventkey}, msg['CreateTime'], None)
         return echostr
     #response location message
     elif msg['MsgType'] == "location":
@@ -404,12 +408,16 @@ def response_msg(request):
                              '您发送的内容我们无法识别，请发送其他类型的消息')
         return echostr
     
-def recordUserActivity(userid, event, keyword, message, recivedtime, reply):
+def recordUserActivity(userid, event, keyword, message, receivedtime, reply):
     if event in settings.WECHAT_ACTIVITY_TRACE:
-        nativetime = datetime.datetime.utcfromtimestamp(float(recivedtime))
+        nativetime = datetime.datetime.utcfromtimestamp(float(receivedtime))
         localtz = pytz.timezone(settings.TIME_ZONE)
         newactivity = WechatActivity.objects.create_activity(userid, event, keyword, simplejson.dumps(message).decode('unicode-escape'), nativetime.replace(tzinfo=timezone.utc).astimezone(tz=localtz), None if reply == None else simplejson.dumps(reply).decode('unicode-escape'))
         newactivity.save()
+        
+    if event in settings.WECHAT_ACTIVITY_NOTIFICATION:
+        mail(settings.NOTIFICATION_EMAIL, u'New wechat activity -- %s' %(receivedtime), 
+             u'[%s] The "%s" message %s was received at %s.' %(event, keyword, simplejson.dumps(message).decode('unicode-escape'), receivedtime))
 
 def buildAbsoluteURI(request, relativeURI):
     try:
