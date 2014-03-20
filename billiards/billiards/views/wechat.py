@@ -10,7 +10,7 @@ from billiards.location_convertor import gcj2bd
 from billiards.views.poolroom import getNearbyPoolrooms
 from django.core.urlresolvers import reverse
 from billiards.models import Coupon, getCouponCriteria, Poolroom, PoolroomImage,\
-    WechatActivity
+    WechatActivity, EventCode
 from billiards.views.match import getMatchByRequest
 from billiards import settings
 import pytz
@@ -172,6 +172,7 @@ newsItemTpl = """<item>
          <Url><![CDATA[%s]]></Url>
          </item>"""
          
+CLUB_NAMES = {'22': (u'北京慧聚台球俱乐部', u'慧聚台球', u'慧聚', u'慧聚台球俱乐部')}
 HELP_KEYWORDS = (u"帮助", u"?", u"？", u'help')
 
 LOGO_IMG_URL = 'http://bcs.duapp.com/billiardsalbum/2014/03/website_logo1.png'
@@ -421,6 +422,17 @@ def response_msg(request):
             specialEvent = getSpecialEventItem(request, msg['CreateTime'])
             return newsReplyTpl %(msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1 + (1 if specialEvent != None else 0),
                                   (specialEvent if specialEvent != None else '') + NEWS_HELP)
+        elif msg['Content'] in CLUB_NAMES['22'] and hasSpecialEvent(msg['CreateTime']):
+            # like 'huiju' that is our partner
+            code, created = EventCode.objects.get_or_create(poolroom_id=22, event_id=1, userid=msg['FromUserName'])
+            if code != None:
+                poolroom = Poolroom.objects.get(id=22)
+                picurl = buildPoolroomImageURL(poolroom)
+                originContent = buildAbsoluteURI(request, reverse('poolroom_detail', args=(poolroom.id,)))
+                title = u'感谢你选择"%s"' %(poolroom.name)
+                discription = u"你的专属优惠码为'%s',可减免一小时台费，请在结账前出示。" %(code.chargecode)
+                return newsReplyTpl %(msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1, 
+                        newsItemTpl %(title, discription, picurl, originContent))
         else:
             specialEvent = getSpecialEventItem(request, msg['CreateTime'])
             if specialEvent == None:
