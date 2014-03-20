@@ -244,3 +244,24 @@ class WechatTest(TestCase):
         self.assertTrue('ArticleCount' in msg)
         self.assertEqual(1, int(msg['ArticleCount']))
         
+    def test_location_specialevent_event(self):
+        data = """
+        <xml>
+        <ToUserName><![CDATA[toUser]]></ToUserName>
+        <FromUserName><![CDATA[fromUser]]></FromUserName>
+        <CreateTime>1395446400</CreateTime>
+        <MsgType><![CDATA[location]]></MsgType>
+        <Location_X>40.094799793619</Location_X>
+        <Location_Y>116.36137302268</Location_Y>
+        <Scale>20</Scale>
+        <Label><![CDATA[位置信息]]></Label>
+        <MsgId>1234567890123456</MsgId>
+        </xml> 
+        """
+        msg = self._send_wechat_message(data)
+        self.assertTrue('ArticleCount' in msg)
+        self.assertEqual(2, int(msg['ArticleCount']))
+        self.assertEqual(u'北京黑桃8撞球馆上坡家园店', msg['Articles']['item'][1]['Title'])
+        self.assertTrue(msg['Articles']['item'][1]['PicUrl'].startswith('http://api.map.baidu.com/staticimage'))
+        self.assertEqual(u'台球免费打', msg['Articles']['item'][0]['Title'])
+        self.assertTrue(msg['Articles']['item'][0]['PicUrl'].startswith('http://bcs.duapp.com/billiardsalbum/2014/03/activity.jpg'))

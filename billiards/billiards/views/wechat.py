@@ -12,7 +12,6 @@ from django.core.urlresolvers import reverse
 from billiards.models import Coupon, getCouponCriteria, Poolroom, PoolroomImage,\
     WechatActivity
 from billiards.views.match import getMatchByRequest
-import datetime
 from billiards import settings
 import pytz
 from django.utils import simplejson, timezone
@@ -26,6 +25,8 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from StringIO import StringIO
 from dateutil.relativedelta import relativedelta
 from billiards.bcms import mail
+from datetime import timedelta
+from datetime import datetime
 
 def checkSignature(request):
     signature=request.GET.get('signature','')
@@ -95,7 +96,6 @@ def set_pic(request):
     return pics
   
 def set_content(request):
-    help_msg = "您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、输入“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。\r\n4、输入“找便宜”，“团购”获取超值台球团购。\r\n5、输入“比赛”，“活动”获取俱乐部比赛活动信息。\r\n祝各位球友们玩得开心，愉快，谢谢关注。"
     content = {
       #English content
       "hi":"Hello",
@@ -129,13 +129,6 @@ def set_content(request):
       u"我美吗":"您是我见过的世界上最美丽的容颜！",
       u"好玩":"好玩您就多玩会儿吧",
       u"新春快乐":"祝您马年马到成功，吉祥如意，吉星高照，大吉大利",
-
-      #face mark
-      #"/::)":"/:,@-D",
-      #marks
-      u"帮助": help_msg,
-      u"?": help_msg,
-      u"？": help_msg,
 }
     return content
   
@@ -178,21 +171,53 @@ newsItemTpl = """<item>
          <PicUrl><![CDATA[%s]]></PicUrl>
          <Url><![CDATA[%s]]></Url>
          </item>"""
-             
+         
+HELP_KEYWORDS = (u"帮助", u"?", u"？", u'help')
+
+LOGO_IMG_URL = 'http://bcs.duapp.com/billiardsalbum/2014/03/website_logo1.png'
+
+NEWS_HELP = newsItemTpl %(u'"我为台球狂"微信帮助手册', u'"我为台球狂"微信帮助手册', LOGO_IMG_URL, 'http://mp.weixin.qq.com/s?__biz=MzA3MzE5MTEyOA==&mid=200093832&idx=1&sn=16041cf184f816bb2ae37db15847e621#rd')
+
+def getNotFoundResponse(msg, specialEvent, data):
+    if specialEvent == None:
+        return textReplyTpl % (msg['FromUserName'], msg['ToUserName'], str(int(time.time())), data)
+    return  newsReplyTpl % (
+            msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 2,
+            specialEvent + newsItemTpl %(data, data, LOGO_IMG_URL, ''))
+
+def hasSpecialEvent(receivedtime):
+    nativetime = datetime.utcfromtimestamp(float(receivedtime))
+    localtz = pytz.timezone(settings.TIME_ZONE)
+    localnow = localtz.localize(nativetime)
+    startdate = localtz.localize(datetime.strptime("2014-03-21", "%Y-%m-%d"))
+    enddate = localtz.localize(datetime.strptime("2014-04-01", "%Y-%m-%d"))
+    if ((localnow - startdate) > timedelta(seconds = 1)) and (enddate - localnow) > timedelta(seconds = 1):
+        return True
+    return False
+
+def getSpecialEventItem(request, receivedtime):
+    if hasSpecialEvent(receivedtime):
+        return newsItemTpl %(u'台球免费打', u'你打球，我买单。', 'http://bcs.duapp.com/billiardsalbum/2014/03/activity.jpg', 
+            buildAbsoluteURI(request, reverse('event_year_month_name', args=('2014', '03', 'my-favorite-club',))))
+    return None
+
 def response_msg(request):
     msg = parse_msg(request)
     
     #response event message
     if msg['MsgType'] == "event":
-        echostr = textReplyTpl % (
-                             msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
-                             '欢迎您关注我为台球狂官方微信，获取更多身边俱乐部信息，请访问：http://www.pktaiqiu.com，与我们更多互动，发送您的位置信息给我们，为您推荐身边的台球俱乐部。发送 ？，帮助，获取帮助手册。')
-        try:
-            eventkey = msg['EventKey']
-        except KeyError:
-            eventkey = None
-        recordUserActivity(msg['FromUserName'], 'event', msg['Event'], {'event': msg['Event'], 'eventkey': eventkey}, msg['CreateTime'], None)
-        return echostr
+        if msg['Event'] == 'subscribe' or msg['Event'] == 'scan':
+            echostr = textReplyTpl % (
+                                 msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
+                                 '欢迎您关注我为台球狂官方微信，获取更多身边俱乐部信息，请访问：http://www.pktaiqiu.com，与我们更多互动，发送您的位置信息给我们，为您推荐身边的台球俱乐部。发送 ？，帮助，获取帮助手册。')
+            try:
+                eventkey = msg['EventKey']
+            except KeyError:
+                eventkey = None
+            recordUserActivity(msg['FromUserName'], 'event', msg['Event'], {'event': msg['Event'], 'eventkey': eventkey}, msg['CreateTime'], None)
+            return echostr
+        else:
+            recordUserActivity(msg['FromUserName'], 'event', msg['Event'], {'event': msg['Event']}, msg['CreateTime'], None)
     #response location message
     elif msg['MsgType'] == "location":
         lat = msg['Location_X']
@@ -202,6 +227,7 @@ def response_msg(request):
         baidu_loc_lng = unicode(baidu_loc[1])
         nearbyPoolrooms = getNearbyPoolrooms(baidu_loc_lat, baidu_loc_lng, 3)[:1]
         
+        specialEvent = getSpecialEventItem(request, msg['CreateTime'])
         if len(nearbyPoolrooms) > 0:
             poolroom = nearbyPoolrooms[0]
             club = poolroom.name
@@ -217,20 +243,18 @@ def response_msg(request):
             coupons = poolroom.coupons
             if coupons.count() > 0:
                 echopictext = newsReplyTpl % (
-                                 msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1 + coupons.count(),
-                                 (newsItemTpl %(title, discription, picurl, originContent) + getCouponsText(request, coupons))) 
+                                 msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1 + coupons.count() + (1 if specialEvent != None else 0),
+                                 (specialEvent if specialEvent != None else '') + newsItemTpl %(title, discription, picurl, originContent) + getCouponsText(request, coupons)) 
             else:
                 echopictext = newsReplyTpl % (
-                         msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1,
-                         (newsItemTpl %(title, discription, picurl, originContent)))
+                         msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1 + (1 if specialEvent != None else 0),
+                         (specialEvent if specialEvent != None else '') + newsItemTpl %(title, discription, picurl, originContent))
             recordUserActivity(msg['FromUserName'], 'location', club, {'lat': lat, 'lng': lng, 'scale': msg['Scale'], 'label': ['Label']}, msg['CreateTime'], 
                                {'id': poolroom.id, 'name': poolroom.name, 'distance': poolroom.distance})
             return echopictext
         else:
-            data = "在您附近3公里以内，没有推荐的台球俱乐部，去其他地方试试吧"
-            echostr = textReplyTpl % (
-                             msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
-                             data)
+            data = u"在您附近3公里以内，没有推荐的台球俱乐部，去其他地方试试吧"
+            echostr = getNotFoundResponse(msg, specialEvent, data)
             recordUserActivity(msg['FromUserName'], 'location', '', {'lat': lat, 'lng': lng, 'scale': msg['Scale'], 'label': ['Label']}, msg['CreateTime'], 
                                None)
             return echostr
@@ -271,13 +295,13 @@ def response_msg(request):
         return echostr
     #response text message
     elif msg['MsgType'] == "text":
-        def getCouponText(coupons):
+        def getCouponText(coupons, specialEvent = None):
             coupon = coupons[0]
             picurl = buildPoolroomImageURL(coupon.poolroom)
             weblink = buildAbsoluteURI(request, reverse('poolroom_detail', args=(coupon.poolroom.pk,)))
             echopictext = newsReplyTpl % (
-                                        msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 2,
-                                        getCouponsText(request, (coupons)) + (newsItemTpl %(u"俱乐部详情", coupon.poolroom.name, picurl, weblink)))      
+                                        msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 2 + (1 if specialEvent != None else 0),
+                                        (specialEvent if specialEvent != None else '') + getCouponsText(request, (coupons)) + (newsItemTpl %(u"俱乐部详情", coupon.poolroom.name, picurl, weblink)))      
             return echopictext
         qqface = "/::\\)|/::~|/::B|/::\\||/:8-\\)|/::<|/::$|/::X|/::Z|/::'\\(|/::-\\||/::@|/::P|/::D|/::O|/::\\(|/::\\+|/:--b|/::Q|/::T|/:,@P|/:,@-D|/::d|/:,@o|/::g|/:\\|-\\)|/::!|/::L|/::>|/::,@|/:,@f|/::-S|/:\\?|/:,@x|/:,@@|/::8|/:,@!|/:!!!|/:xx|/:bye|/:wipe|/:dig|/:handclap|/:&-\\(|/:B-\\)|/:<@|/:@>|/::-O|/:>-\\||/:P-\\(|/::'\\||/:X-\\)|/::\\*|/:@x|/:8\\*|/:pd|/:<W>|/:beer|/:basketb|/:oo|/:coffee|/:eat|/:pig|/:rose|/:fade|/:showlove|/:heart|/:break|/:cake|/:li|/:bome|/:kn|/:footb|/:ladybug|/:shit|/:moon|/:sun|/:gift|/:hug|/:strong|/:weak|/:share|/:v|/:@\\)|/:jj|/:@@|/:bad|/:lvu|/:no|/:ok|/:love|/:<L>|/:jump|/:shake|/:<O>|/:circle|/:kotow|/:turn|/:skip|/:oY|/:#-0|/:hiphot|/:kiss|/:<&|/:&>"
         match = re.search(msg['Content'], qqface)
@@ -315,32 +339,33 @@ def response_msg(request):
             return echopictext
         elif msg['Content'] == u"团购" or msg['Content'] == u"找便宜" or msg['Content'] == u"优惠":
             coupon = Coupon.objects.filter(getCouponCriteria()).order_by('?')[:1]
+            specialEvent = getSpecialEventItem(request, msg['CreateTime'])
             if len(coupon) > 0:
                 recordUserActivity(msg['FromUserName'], 'text', 'coupon', {'content': msg['Content']}, msg['CreateTime'], 
                                {'count': len(coupon), 'coupon': True})
-                return getCouponText(coupon)
+                return getCouponText(coupon, specialEvent)
             else:
-                echostr = textReplyTpl % (
-                             msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
-                             '暂时没有俱乐部有"优惠"或"团购"。')
+                data = u'暂时没有俱乐部有"优惠"或"团购"。'
+                echostr = getNotFoundResponse(msg, specialEvent, data)
                 recordUserActivity(msg['FromUserName'], 'text', 'nocoupon', {'content': msg['Content']}, msg['CreateTime'], 
                                None)
                 return echostr
         elif msg['Content'] == u"云川" or msg['Content'] == u"yunchuan" or msg['Content'] == u"yc":
+            specialEvent = getSpecialEventItem(request, msg['CreateTime'])
             coupon = Coupon.objects.filter(getCouponCriteria()).filter(poolroom__in=Poolroom.objects.filter(name__startswith=u'北京云川')).order_by('?')[:1]
             if len(coupon) > 0:
                 recordUserActivity(msg['FromUserName'], 'text', 'yunchuan', {'content': msg['Content']}, msg['CreateTime'], 
                                {'count': len(coupon), 'yunchuan_coupon': True})
-                return getCouponText(coupon)
+                return getCouponText(coupon, specialEvent)
             else:
-                echostr = textReplyTpl % (
-                             msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
-                             '云川俱乐部暂没有优惠。请输入"优惠"或"团购“查找其他俱乐部的优惠。')
+                data = u'云川俱乐部暂没有优惠。请输入"优惠"或"团购“查找其他俱乐部的优惠。'
+                echostr = getNotFoundResponse(msg, specialEvent, data)
                 recordUserActivity(msg['FromUserName'], 'text', 'noyunchuan', {'content': msg['Content']}, msg['CreateTime'], 
                                None)
                 return echostr
         elif msg['Content'] == u"活动":
-            nativetime = datetime.datetime.utcfromtimestamp(float(msg['CreateTime']))
+            specialEvent = getSpecialEventItem(request, msg['CreateTime'])
+            nativetime = datetime.utcfromtimestamp(float(msg['CreateTime']))
             localtz = pytz.timezone(settings.TIME_ZONE)
             starttime = localtz.localize(nativetime)
             acts, starttime, endtime = getMatchByRequest(request, starttime, deltadays=7)
@@ -354,20 +379,20 @@ def response_msg(request):
                         text.append(newsItemTpl %(act.title, u"活动开始时间: %s" %(getNativeTime(act.starttime)), picurl, buildAbsoluteURI(request, reverse('activity_detail', args=(act.pk,)))))
                     return ''.join(text)
                 echopictext = newsReplyTpl % (
-                                 msg['FromUserName'], msg['ToUserName'], str(int(time.time())), count,
-                                 getActsText(acts))
+                                 msg['FromUserName'], msg['ToUserName'], str(int(time.time())), count + (1 if specialEvent != None else 0),
+                                 (specialEvent if specialEvent != None else '') + getActsText(acts))
                 recordUserActivity(msg['FromUserName'], 'text', 'activity', {'content': msg['Content']}, msg['CreateTime'], 
                                {'count': count, 'activity': True})
                 return echopictext
             else:
-                echostr = textReplyTpl % (
-                             msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
-                             '最近7天内没有被收录的爱好者活动')
+                data = u'最近7天内没有被收录的爱好者活动'
+                echostr = getNotFoundResponse(msg, specialEvent, data)
                 recordUserActivity(msg['FromUserName'], 'text', 'noactivity', {'content': msg['Content']}, msg['CreateTime'], 
                                None)
                 return echostr
         elif msg['Content'] == u"比赛":
-            nativetime = datetime.datetime.utcfromtimestamp(float(msg['CreateTime']))
+            specialEvent = getSpecialEventItem(request, msg['CreateTime'])
+            nativetime = datetime.utcfromtimestamp(float(msg['CreateTime']))
             localtz = pytz.timezone(settings.TIME_ZONE)
             starttime = localtz.localize(nativetime)
             matches, starttime, endtime = getMatchByRequest(request, starttime, deltadays=7)
@@ -381,36 +406,42 @@ def response_msg(request):
                         text.append(newsItemTpl %(match.title, u"比赛开始时间: %s" %(getNativeTime(match.starttime)), picurl, buildAbsoluteURI(request, reverse('match_detail', args=(match.pk,)))))
                     return ''.join(text)
                 echopictext = newsReplyTpl % (
-                                 msg['FromUserName'], msg['ToUserName'], str(int(time.time())), count,
-                                 getMatchesText(matches))
+                                 msg['FromUserName'], msg['ToUserName'], str(int(time.time())), count + (1 if specialEvent != None else 0),
+                                  (specialEvent if specialEvent != None else '') + getMatchesText(matches))
                 recordUserActivity(msg['FromUserName'], 'text', 'match', {'content': msg['Content']}, msg['CreateTime'], 
                                {'count': count, 'match': True})       
                 return echopictext
             else:
-                echostr = textReplyTpl % (
-                             msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
-                             '最近7天内没有被收录的比赛')
+                data = '最近7天内没有被收录的比赛'
+                echostr = getNotFoundResponse(msg, specialEvent, data)
                 recordUserActivity(msg['FromUserName'], 'text', 'nomatch', {'content': msg['Content']}, msg['CreateTime'], 
                                None)
                 return echostr
+        elif msg['Content'] in HELP_KEYWORDS:
+            specialEvent = getSpecialEventItem(request, msg['CreateTime'])
+            return newsReplyTpl %(msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1 + (1 if specialEvent != None else 0),
+                                  (specialEvent if specialEvent != None else '') + NEWS_HELP)
         else:
-            helpmessage = content['?']
-            echostr = textReplyTpl % (
-                             msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
-                             helpmessage)
-            recordUserActivity(msg['FromUserName'], 'text', 'unknown', {'content': msg['Content']}, msg['CreateTime'], 
-                               None)
-            return echostr
+            specialEvent = getSpecialEventItem(request, msg['CreateTime'])
+            if specialEvent == None:
+                echostr = newsReplyTpl %(msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1, NEWS_HELP)
+                recordUserActivity(msg['FromUserName'], 'text', 'unknown', {'content': msg['Content']}, msg['CreateTime'], 
+                                   None)
+                return echostr
+            else:
+                echostr = newsReplyTpl %(msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 2, 
+                        (specialEvent + newsItemTpl %(u'感谢参与免费打球活动', u'你发送的球房名称核对有效后，24小时内你将收到免费打球邀请。谢谢参与，欢迎转发。', LOGO_IMG_URL, '')))
+                recordUserActivity(msg['FromUserName'], 'text', msg['Content'], {'content': msg['Content']}, msg['CreateTime'], 
+                                   None)
+                return echostr
     #response unsupported message
     else:
-        echostr = textReplyTpl % (
-                             msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
-                             '您发送的内容我们无法识别，请发送其他类型的消息')
+        echostr = newsReplyTpl %(msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1, NEWS_HELP)
         return echostr
     
 def recordUserActivity(userid, event, keyword, message, receivedtime, reply):
     if event in settings.WECHAT_ACTIVITY_TRACE:
-        nativetime = datetime.datetime.utcfromtimestamp(float(receivedtime))
+        nativetime = datetime.utcfromtimestamp(float(receivedtime))
         localtz = pytz.timezone(settings.TIME_ZONE)
         newactivity = WechatActivity.objects.create_activity(userid, event, keyword, simplejson.dumps(message).decode('unicode-escape'), nativetime.replace(tzinfo=timezone.utc).astimezone(tz=localtz), None if reply == None else simplejson.dumps(reply).decode('unicode-escape'))
         newactivity.save()
@@ -479,8 +510,8 @@ def activity_report_newuser(request):
     if not request.user.is_authenticated() or not request.user.is_staff:
         raise PermissionDenied
     if request.method == 'POST':
-        startdate = datetime.datetime.fromtimestamp(float(request.POST['startdate'])/1000, pytz.timezone(TIME_ZONE))
-        enddate = datetime.datetime.fromtimestamp(float(request.POST['enddate'])/1000, pytz.timezone(TIME_ZONE))
+        startdate = datetime.fromtimestamp(float(request.POST['startdate'])/1000, pytz.timezone(TIME_ZONE))
+        enddate = datetime.fromtimestamp(float(request.POST['enddate'])/1000, pytz.timezone(TIME_ZONE))
         enddate = relativedelta(days=1) + enddate
         subscribeEvents = WechatActivity.objects.filter(Q(receivedtime__gte=startdate) & Q(receivedtime__lt=enddate) & Q(eventtype='event')
                 & Q(keyword='subscribe')).distinct()
@@ -526,8 +557,8 @@ def activity_report_message(request):
     if not request.user.is_authenticated() or not request.user.is_staff:
         raise PermissionDenied
     if request.method == 'POST':
-        startdate = datetime.datetime.fromtimestamp(float(request.POST['startdate'])/1000, pytz.timezone(TIME_ZONE))
-        enddate = datetime.datetime.fromtimestamp(float(request.POST['enddate'])/1000, pytz.timezone(TIME_ZONE))
+        startdate = datetime.fromtimestamp(float(request.POST['startdate'])/1000, pytz.timezone(TIME_ZONE))
+        enddate = datetime.fromtimestamp(float(request.POST['enddate'])/1000, pytz.timezone(TIME_ZONE))
         enddate = relativedelta(days=1) + enddate
         messageEvents = WechatActivity.objects.filter(Q(receivedtime__gte=startdate) & Q(receivedtime__lt=enddate) & ~Q(eventtype='event'))
         paginator = Paginator(messageEvents, 10)
