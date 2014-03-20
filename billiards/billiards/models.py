@@ -24,6 +24,7 @@ from django.dispatch.dispatcher import receiver
 import sys
 from django.db.models.fields import CharField
 from billiards import settings
+from billiards.id import generator
 
 def toDict(bitfield):
     flag_dict = {}
@@ -604,3 +605,18 @@ class Event(models.Model):
         db_table = 'event'
         verbose_name = '推广活动'
         verbose_name_plural = '推广活动'
+        
+class EventCode(models.Model):
+    id = models.AutoField(primary_key=True)
+    poolroom = models.ForeignKey(Poolroom, verbose_name='台球厅')
+    event = models.ForeignKey(Event, verbose_name='推广活动')
+    userid = models.CharField(max_length=30, verbose_name='用户id')
+    createdtime = models.DateTimeField(verbose_name='创建时间', default=datetime.datetime.now())
+    chargecode = models.CharField(max_length=10, verbose_name='消费唯一码', default=generator())
+    usedtime = models.DateTimeField(verbose_name='创建时间', blank=True, null=True)
+    used = models.BooleanField(verbose_name='使用没有', default=False)
+    
+    class Meta:
+        db_table = 'eventcode'
+        verbose_name = '推广活动消费码'
+        verbose_name_plural = '推广活动消费码'
