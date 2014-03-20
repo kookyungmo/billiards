@@ -111,15 +111,15 @@
 			background-color: #ffffff;
 		}
 		#homeHeader {
-			background: url(http://ppcdn.500px.org/32947093/7ce34cfb615050cae72691d16071dd733fd3eec5/2048.jpg) center center / cover no-repeat; 
+			background: url(http://bcs.duapp.com/billiardsalbum/2014/03/2048.jpg) center center / cover no-repeat; 
 			 -webkit-background-size: cover;
 			 -moz-background-size: cover;
 			 -o-background-size: cover;
 			margin-bottom: -65px;
 			padding-bottom: 40px;
 			/* Internet exploder 8 fixed background */
-			filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://ppcdn.500px.org/4174525/4ad3d0754d7b2e57867931e5672ce90a94693ef4/5.jpg', sizingMethod='scale');
-			-ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://ppcdn.500px.org/4174525/4ad3d0754d7b2e57867931e5672ce90a94693ef4/5.jpg', sizingMethod='scale')";
+			filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://bcs.duapp.com/billiardsalbum/2014/03/2048.jpg', sizingMethod='scale');
+			-ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://bcs.duapp.com/billiardsalbum/2014/03/2048.jpg', sizingMethod='scale')";
 		}
 		
 		#homeHeader .collegeSearchWidget {
