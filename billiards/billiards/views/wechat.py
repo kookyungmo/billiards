@@ -479,7 +479,7 @@ def recordUserActivity(userid, event, keyword, message, receivedtime, reply):
         
     if event in settings.WECHAT_ACTIVITY_NOTIFICATION or keyword in settings.WECHAT_ACTIVITY_NOTIFICATION_KEYWORDS:
         mail(settings.NOTIFICATION_EMAIL, u'New wechat activity -- %s' %(localtime), 
-             u'[%s] The "%s" message %s from "%s" was received at %s.' %(event, keyword, userid, simplejson.dumps(message).decode('unicode-escape'), localtime))
+             u'[%s] The "%s" message %s from "%s" was received at %s.' %(event, keyword, simplejson.dumps(message).decode('unicode-escape'), userid, localtime))
 
 def buildAbsoluteURI(request, relativeURI):
     try:
