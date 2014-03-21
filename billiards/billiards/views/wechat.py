@@ -184,7 +184,7 @@ def getNotFoundResponse(msg, specialEvent, data):
 def hasSpecialEvent(receivedtime):
     nativetime = datetime.utcfromtimestamp(float(receivedtime))
     localtz = pytz.timezone(settings.TIME_ZONE)
-    localnow = localtz.localize(nativetime)
+    localnow = nativetime.replace(tzinfo=timezone.utc).astimezone(tz=localtz)
     startdate = localtz.localize(datetime.strptime("2014-03-21", "%Y-%m-%d"))
     enddate = localtz.localize(datetime.strptime("2014-04-01", "%Y-%m-%d"))
     if ((localnow - startdate) > timedelta(seconds = 1)) and (enddate - localnow) > timedelta(seconds = 1):
@@ -235,16 +235,16 @@ def response_msg(request):
             picurl = buildPoolroomImageURL(poolroom)
             originContent = buildAbsoluteURI(request, reverse('poolroom_detail', args=(pkid,)))
             title = club
-            discription = u"地址：%s\r\n营业面积：%s平方米\r\n营业时间：%s\r\n电话：%s" %(address, size, businesshours, tel)
+            description = u"地址：%s\r\n营业面积：%s平方米\r\n营业时间：%s\r\n电话：%s" %(address, size, businesshours, tel)
             coupons = poolroom.coupons
             if coupons.count() > 0:
                 echopictext = newsReplyTpl % (
                                  msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1 + coupons.count() + (1 if specialEvent != None else 0),
-                                 (specialEvent if specialEvent != None else '') + newsItemTpl %(title, discription, picurl, originContent) + getCouponsText(request, coupons)) 
+                                 (specialEvent if specialEvent != None else '') + newsItemTpl %(title, description, picurl, originContent) + getCouponsText(request, coupons)) 
             else:
                 echopictext = newsReplyTpl % (
                          msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1 + (1 if specialEvent != None else 0),
-                         (specialEvent if specialEvent != None else '') + newsItemTpl %(title, discription, picurl, originContent))
+                         (specialEvent if specialEvent != None else '') + newsItemTpl %(title, description, picurl, originContent))
             recordUserActivity(msg['FromUserName'], 'location', club, {'lat': lat, 'lng': lng, 'scale': msg['Scale'], 'label': ['Label']}, msg['CreateTime'], 
                                {'id': poolroom.id, 'name': poolroom.name, 'distance': poolroom.distance})
             return echopictext
@@ -417,7 +417,7 @@ def response_msg(request):
             specialEvent = getSpecialEventItem(request, msg['CreateTime'])
             return newsReplyTpl %(msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1 + (1 if specialEvent != None else 0),
                                   (specialEvent if specialEvent != None else '') + NEWS_HELP)
-        elif msg['Content'] in CLUB_NAMES['22'] and hasSpecialEvent(msg['CreateTime']):
+        elif hasSpecialEvent(msg['CreateTime']) and msg['Content'] in CLUB_NAMES['22'] :
             # like 'huiju' that is our partner
             code, created = EventCode.objects.get_or_create(poolroom_id=22, event_id=1, userid=msg['FromUserName'])
             if code != None:
@@ -425,9 +425,27 @@ def response_msg(request):
                 picurl = buildPoolroomImageURL(poolroom)
                 originContent = buildAbsoluteURI(request, reverse('poolroom_detail', args=(poolroom.id,)))
                 title = u'感谢你选择"%s"' %(poolroom.name)
-                discription = u"你的专属优惠码为'%s',可减免一小时台费，请在结账前出示。" %(code.chargecode)
+                description = u"你的专属优惠码为'%s',可减免一小时台费，请在结账前出示。" %(code.chargecode)
+                recordUserActivity(msg['FromUserName'], 'text', 'club_huiju', {'message': msg['Content']}, msg['CreateTime'], {'reply': description})
                 return newsReplyTpl %(msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1, 
-                        newsItemTpl %(title, discription, picurl, originContent))
+                        newsItemTpl %(title, description, picurl, originContent))
+        elif (msg['Content'].startswith(u'慧聚验证') or msg['Content'].startswith(u'慧聚消费')):
+            code = msg['Content'][4:]
+            try:
+                eventcode = EventCode.objects.get(chargecode=code, event_id=1, poolroom_id=22)
+                if eventcode.used:
+                    echostr = textReplyTpl % (msg['FromUserName'], msg['ToUserName'], str(int(time.time())), u'你提交消费码已使用')
+                elif msg['Content'].startswith(u'慧聚验证'):
+                    echostr = textReplyTpl % (msg['FromUserName'], msg['ToUserName'], str(int(time.time())), u'你提交的消费码正常，可以使用')
+                elif msg['Content'].startswith(u'慧聚消费'):
+                    eventcode.used = True
+                    eventcode.usedtime = datetime.now()
+                    eventcode.save()
+                    recordUserActivity(msg['FromUserName'], 'text', 'club_huiju_charge', {'message': msg['Content']}, msg['CreateTime'], {'reply': 'charged'})
+                    echostr = textReplyTpl % (msg['FromUserName'], msg['ToUserName'], str(int(time.time())), u'你提交的消费码正常，已记录为消费。请为持有者免1小时台费。')
+            except EventCode.DoesNotExist:
+                echostr = textReplyTpl % (msg['FromUserName'], msg['ToUserName'], str(int(time.time())), u'你提交的消费码不存在，请验证你的输入')
+            return echostr
         else:
             specialEvent = getSpecialEventItem(request, msg['CreateTime'])
             if specialEvent == None:
@@ -447,15 +465,16 @@ def response_msg(request):
         return echostr
     
 def recordUserActivity(userid, event, keyword, message, receivedtime, reply):
+    nativetime = datetime.utcfromtimestamp(float(receivedtime))
+    localtz = pytz.timezone(settings.TIME_ZONE)
+    localtime = nativetime.replace(tzinfo=timezone.utc).astimezone(tz=localtz)
     if event in settings.WECHAT_ACTIVITY_TRACE:
-        nativetime = datetime.utcfromtimestamp(float(receivedtime))
-        localtz = pytz.timezone(settings.TIME_ZONE)
-        newactivity = WechatActivity.objects.create_activity(userid, event, keyword, simplejson.dumps(message).decode('unicode-escape'), nativetime.replace(tzinfo=timezone.utc).astimezone(tz=localtz), None if reply == None else simplejson.dumps(reply).decode('unicode-escape'))
+        newactivity = WechatActivity.objects.create_activity(userid, event, keyword, simplejson.dumps(message).decode('unicode-escape'), localtime, None if reply == None else simplejson.dumps(reply).decode('unicode-escape'))
         newactivity.save()
         
-    if event in settings.WECHAT_ACTIVITY_NOTIFICATION:
-        mail(settings.NOTIFICATION_EMAIL, u'New wechat activity -- %s' %(receivedtime), 
-             u'[%s] The "%s" message %s was received at %s.' %(event, keyword, simplejson.dumps(message).decode('unicode-escape'), receivedtime))
+    if event in settings.WECHAT_ACTIVITY_NOTIFICATION or keyword in settings.WECHAT_ACTIVITY_NOTIFICATION_KEYWORDS:
+        mail(settings.NOTIFICATION_EMAIL, u'New wechat activity -- %s' %(localtime), 
+             u'[%s] The "%s" message %s from "%s" was received at %s.' %(event, keyword, userid, simplejson.dumps(message).decode('unicode-escape'), localtime))
 
 def buildAbsoluteURI(request, relativeURI):
     try:
@@ -508,7 +527,7 @@ def updateUserInfo(jsonstr):
             user['fields']['unsubscribed'] = False
         else:
             user['fields']['unsubscribed'] = True
-            user['fields']['unsubscribedDate'] = unsubEvents.order_by('-receivedtime')[:1][0].receivedtime
+            user['fields']['unsubscribedDate'] = unsubEvents.order_by('-receivedtime')[:1][0].receivedtime.strftime('%b %d %Y %H:%M:%S %Z')
     return simplejson.dumps(userObjs)
 
 @ensure_csrf_cookie

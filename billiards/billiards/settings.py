@@ -207,4 +207,6 @@ WECHAT_ACTIVITY_TRACE = ('text', 'image', 'location', 'link', 'event')
 
 WECHAT_ACTIVITY_NOTIFICATION = ('event')
 
+WECHAT_ACTIVITY_NOTIFICATION_KEYWORDS = ('club_huiju')
+
 NOTIFICATION_EMAIL = ['42470522@qq.com', 'kane.mx@gmail.com', 'xuhao2610@gmail.com', '21079619@qq.com']

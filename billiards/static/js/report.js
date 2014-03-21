@@ -19,7 +19,7 @@ function refreshUserData(url, startdate, enddate, messages) {
 				+ "<td>" + (data[idx].fields.firstjoin ? "是" : "否") + "</td>";
 			if (data[idx].fields.unsubscribed == true) {
 				contentTemplate += "<td>是</td>"
-					+ "<td>" + data[idx].fields.unsubscribedDate + "</td>";
+					+ "<td>" + getFormattedTimeToDate(data[idx].fields.unsubscribedDate) + "</td>";
 			} else {
 				contentTemplate += "<td>否</td>"
 					+ "<td>" + '' + "</td>";
