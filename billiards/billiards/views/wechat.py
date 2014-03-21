@@ -422,7 +422,7 @@ def response_msg(request):
             specialEvent = getSpecialEventItem(request, msg['CreateTime'])
             return newsReplyTpl %(msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1 + (1 if specialEvent != None else 0),
                                   (specialEvent if specialEvent != None else '') + NEWS_HELP)
-        elif msg['Content'] in CLUB_NAMES['22'] and hasSpecialEvent(msg['CreateTime']):
+        elif hasSpecialEvent(msg['CreateTime']) and msg['Content'] in CLUB_NAMES['22'] :
             # like 'huiju' that is our partner
             code, created = EventCode.objects.get_or_create(poolroom_id=22, event_id=1, userid=msg['FromUserName'])
             if code != None:
@@ -433,6 +433,22 @@ def response_msg(request):
                 discription = u"你的专属优惠码为'%s',可减免一小时台费，请在结账前出示。" %(code.chargecode)
                 return newsReplyTpl %(msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1, 
                         newsItemTpl %(title, discription, picurl, originContent))
+        elif (msg['Content'].startswith(u'慧聚验证') or msg['Content'].startswith(u'慧聚消费')):
+            code = msg['Content'][4:]
+            try:
+                eventcode = EventCode.objects.get(chargecode=code, event_id=1, poolroom_id=22)
+                if eventcode.used:
+                    echostr = textReplyTpl % (msg['FromUserName'], msg['ToUserName'], str(int(time.time())), u'你提交消费码已使用')
+                elif msg['Content'].startswith(u'慧聚验证'):
+                    echostr = textReplyTpl % (msg['FromUserName'], msg['ToUserName'], str(int(time.time())), u'你提交的消费码正常，可以使用')
+                elif msg['Content'].startswith(u'慧聚消费'):
+                    eventcode.used = True
+                    eventcode.usedtime = datetime.now()
+                    eventcode.save()
+                    echostr = textReplyTpl % (msg['FromUserName'], msg['ToUserName'], str(int(time.time())), u'你提交的消费码正常，已记录为消费。请为持有者免1小时台费。')
+            except EventCode.DoesNotExist:
+                echostr = textReplyTpl % (msg['FromUserName'], msg['ToUserName'], str(int(time.time())), u'你提交的消费码不存在，请验证你的输入')
+            return echostr
         else:
             specialEvent = getSpecialEventItem(request, msg['CreateTime'])
             if specialEvent == None:
@@ -452,15 +468,16 @@ def response_msg(request):
         return echostr
     
 def recordUserActivity(userid, event, keyword, message, receivedtime, reply):
+    nativetime = datetime.utcfromtimestamp(float(receivedtime))
+    localtz = pytz.timezone(settings.TIME_ZONE)
+    localtime = nativetime.replace(tzinfo=timezone.utc).astimezone(tz=localtz)
     if event in settings.WECHAT_ACTIVITY_TRACE:
-        nativetime = datetime.utcfromtimestamp(float(receivedtime))
-        localtz = pytz.timezone(settings.TIME_ZONE)
-        newactivity = WechatActivity.objects.create_activity(userid, event, keyword, simplejson.dumps(message).decode('unicode-escape'), nativetime.replace(tzinfo=timezone.utc).astimezone(tz=localtz), None if reply == None else simplejson.dumps(reply).decode('unicode-escape'))
+        newactivity = WechatActivity.objects.create_activity(userid, event, keyword, simplejson.dumps(message).decode('unicode-escape'), localtime, None if reply == None else simplejson.dumps(reply).decode('unicode-escape'))
         newactivity.save()
         
     if event in settings.WECHAT_ACTIVITY_NOTIFICATION:
-        mail(settings.NOTIFICATION_EMAIL, u'New wechat activity -- %s' %(receivedtime), 
-             u'[%s] The "%s" message %s was received at %s.' %(event, keyword, simplejson.dumps(message).decode('unicode-escape'), receivedtime))
+        mail(settings.NOTIFICATION_EMAIL, u'New wechat activity -- %s' %(localtime), 
+             u'[%s] The "%s" message %s was received at %s.' %(event, keyword, simplejson.dumps(message).decode('unicode-escape'), localtime))
 
 def buildAbsoluteURI(request, relativeURI):
     try:
