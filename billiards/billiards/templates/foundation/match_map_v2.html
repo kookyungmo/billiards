@@ -11,56 +11,66 @@
 {% endblock %}
 {% load extras %}
 {% block content %}
-	<div id="calendar" class="medium-2 columns">
-					<script>
-						function addMonth(monthstr) {
-							var monthItem = jQuery('<div/>', {class : 'row'});
-							monthItem.append("<h3><strong>赛事日程表</strong></h3>")
-							monthItem.append("<h3><strong>" + monthstr + "</strong></h3>");
-							monthItem.appendTo($("#calendar"));
-						}
-
-						var starttime = moment("{{ startdate|date:"D d M Y" }}");
-						var endtime = moment("{{ enddate|date:"D d M Y" }}");
-						var bonussummary = {};
-						var bonusobj = eval('{{ bonussummary|safe }}');
-						for (var idx in bonusobj) {
-							bonussummary[bonusobj[idx].starttime] = bonusobj[idx].bonus;
-						}
-						var summary = {};
-						{% for k,v in matchsummary.items %}
-						summary['{{ k }}'] = {{ v }};
-						{% endfor %}
-						var m = moment.utc([starttime.year(), starttime.month(), starttime.dates(), starttime.hour(), starttime.minute(), starttime.second()]);
-						var thismonth = m.month();
-						addMonth(m.lang('zh_CN').format('MMM'));
-						daysItem = jQuery('<dl/>', {class : 'sub-nav'});
-						for (var i = 0; i < {{ intervals }}; i++) {
-							if (m.month() != thismonth) {
-								daysItem.appendTo($("#calendar"));
-								addMonth(m.lang('zh_CN').format('MMM'));
-								thismonth = m.month();
-								daysItem = jQuery('<dl/>', {class : 'sub-nav'});
-							}
-							var dayItem = jQuery('<dd/>', {});
-							if (m.date() == starttime.date() && m.month() == starttime.month())
-								dayItem.attr('class', 'active');
-							contentTemplate = "<h3><a href=\"javascript:void(0);\" timestamp=\"" + m.unix() + "\">" + m.format('DD') + " " + m.format('dddd');
-		 					var formattedday = m.format("YYYY-MM-DD");
-							if (formattedday in summary) {
-								contentTemplate += "<sub><span data-tooltip=\"\" class=\"has-tip tip-top noradius\" title=\"当日比赛场数\">" + summary[formattedday] + "</span></sub>";
-							}
-							if (formattedday in bonussummary) {
-								contentTemplate += "<span data-tooltip=\"\" class=\"has-tip tip-top noradius\" title=\"奖金最高的比赛\"><sup><img src=\"{% static "images/bonus.jpeg" %}\"><sup></span>";
-							}
-							contentTemplate += "</a>" + "</h3>";
-							dayItem.append(contentTemplate);
-							dayItem.appendTo(daysItem);
-							m.add('days', 1);
-						}
-						daysItem.appendTo($("#calendar"));
-						</script>
+	<div id="calendar" class="medium-2 small-10 small-centered medium-uncentered columns">
+		<h3><strong>赛事日程表</strong></h3>
+		<div class="row hide-for-small-only"></div>
+		<div class="row show-for-small-only"></div>
 	</div>
+	<script>
+		function addMonth(monthstr, calendar) {
+			var monthItem = jQuery('<h3/>', {});
+			monthItem.append("<strong>" + monthstr + "</strong>");
+			monthItem.appendTo(calendar);
+		}
+		
+		calendarlarge = $("#calendar div[class='row hide-for-small-only']");
+	
+		var starttime = moment("{{ startdate|date:"D d M Y" }}");
+		var endtime = moment("{{ enddate|date:"D d M Y" }}");
+		var bonussummary = {};
+		var bonusobj = eval('{{ bonussummary|safe }}');
+		for (var idx in bonusobj) {
+			bonussummary[bonusobj[idx].starttime] = bonusobj[idx].bonus;
+		}
+		var summary = {};
+		{% for k,v in matchsummary.items %}
+		summary['{{ k }}'] = {{ v }};
+		{% endfor %}
+		var m = moment.utc([starttime.year(), starttime.month(), starttime.dates(), starttime.hour(), starttime.minute(), starttime.second()]);
+		var thismonth = m.month();
+		addMonth(m.lang('zh_CN').format('MMM'), calendarlarge);
+		daysItem = jQuery('<dl/>', {class : 'sub-nav'});
+		contentTemplate2 = "<select id=\"calendar-select\" class=\"large\">";
+		for (var i = 0; i < {{ intervals }}; i++) {
+			if (m.month() != thismonth) {
+				daysItem.appendTo(calendarlarge);
+				addMonth(m.lang('zh_CN').format('MMM'), calendarlarge);
+				thismonth = m.month();
+				daysItem = jQuery('<dl/>', {class : 'sub-nav'});
+			}
+			var dayItem = jQuery('<dd/>', {});
+			if (m.date() == starttime.date() && m.month() == starttime.month())
+				dayItem.attr('class', 'active');
+			contentTemplate = "<h3><a href=\"javascript:void(0);\" timestamp=\"" + m.unix() + "\">" + m.format('DD') + " " + m.format('dddd');
+			contentTemplate2 += "<h3><option value=\"" + m.unix() + "\">" + m.lang('zh_CN').format('MMMDD dddd');
+				var formattedday = m.format("YYYY-MM-DD");
+			if (formattedday in summary) {
+				contentTemplate += "<sub><span data-tooltip=\"\" class=\"has-tip tip-top noradius\" title=\"当日比赛场数\">" + summary[formattedday] + "</span></sub>";
+				contentTemplate2 += " (" + summary[formattedday] + ")";
+			}
+			if (formattedday in bonussummary) {
+				contentTemplate += "<span data-tooltip=\"\" class=\"has-tip tip-top noradius\" title=\"奖金最高的比赛\"><sup><img src=\"{% static "images/bonus.jpeg" %}\"><sup></span>";
+			}
+			contentTemplate += "</a>" + "</h3>";
+			contentTemplate2 += "</option></h3>";
+			dayItem.append(contentTemplate);
+			dayItem.appendTo(daysItem);
+			m.add('days', 1);
+		}
+		contentTemplate2 += "</select>";
+		daysItem.appendTo(calendarlarge);
+		$("#calendar div[class='row show-for-small-only']").append(contentTemplate2);
+	</script>
 	<div id="map_matches" class="medium-8 columns">
 		<br>
 		<div class="row show-for-medium-up">
@@ -92,8 +102,8 @@
 					<div class="row"><h3><font size =+1><strong>最新俱乐部赛事动态</strong></font></h3></div>
 					<div class="row"><br></div>
 					<div class="row"><p>关注微信公众帐号(pktaiqiu)，3月21日至3月31日期间参与活动，获取免费打球券，叫上你的朋友一起免费打台球。微博转发本次活动，并且@我为台球狂网_pktaiqiu，还有更多惊喜等着您。</p></div>
-					<div class="row"><br/><br/><img src="http://billiardsalbum.bcs.duapp.com/2014/03/qrcode_for_logo.jpg">
-					<a href="#" data-dropdown="drop2">欢迎关注“我为台球狂”微信公众帐号:pktaiqiu</a>
+					<div class="row"><br/><br/><img src="http://billiardsalbum.bcs.duapp.com/2014/03/qrcode_for_logo.jpg"></div>
+					<div class="row"><a href="#" data-dropdown="drop2">欢迎关注“我为台球狂”微信公众帐号:pktaiqiu</a></div>
 					<div id="drop2" data-dropdown-content class="f-dropdown content">
   					<p>登录微信->进入“发现”菜单页面->点击“扫一扫”</p>
 					</div>
@@ -148,5 +158,18 @@
 				}
 			});
 		});
+		$('#calendar-select').change(function(){
+			timestamp = $('#calendar-select').val();
+			selecteddate = moment(timestamp);
+			$.ajax({
+				url : "{% url match_map 'map' %}",
+				data : {'f':'json', 'starttime':timestamp, 'endtime': selecteddate.add('days', 1).unix()},
+				dataType : 'json',
+				success : function(data)
+				{
+					addMatchItems_v2(data);
+				}
+			});
+	    });
 	</script>
 {% endblock %}
