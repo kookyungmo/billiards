@@ -27,6 +27,8 @@ from dateutil.relativedelta import relativedelta
 from billiards.bcms import mail
 from datetime import timedelta
 from datetime import datetime
+from urlparse import urlsplit, parse_qs, urlunsplit
+from urllib import urlencode
 
 def checkSignature(request):
     signature=request.GET.get('signature','')
@@ -481,13 +483,29 @@ def recordUserActivity(userid, event, keyword, message, receivedtime, reply):
         mail(settings.NOTIFICATION_EMAIL, u'New wechat activity -- %s' %(localtime), 
              u'[%s] The "%s" message %s from "%s" was received at %s.' %(event, keyword, simplejson.dumps(message).decode('unicode-escape'), userid, localtime))
 
+def set_query_parameter(url, param_name, param_value):
+    """Given a URL, set or replace a query parameter and return the
+    modified URL.
+
+    >>> set_query_parameter('http://example.com?foo=bar&biz=baz', 'foo', 'stuff')
+    'http://example.com?foo=stuff&biz=baz'
+
+    """
+    scheme, netloc, path, query_string, fragment = urlsplit(url)
+    query_params = parse_qs(query_string)
+
+    query_params[param_name] = [param_value]
+    new_query_string = urlencode(query_params, doseq=True)
+
+    return urlunsplit((scheme, netloc, path, new_query_string, fragment))
+
 def buildAbsoluteURI(request, relativeURI):
     try:
         if 'pktaiqiu.com' in request.META['HTTP_HOST']:
-            return request.build_absolute_uri(relativeURI)
+            return set_query_parameter(request.build_absolute_uri(relativeURI), 'from', 'wechat')
     except KeyError:
         pass
-    return "http://www.pktaiqiu.com%s" %(relativeURI)
+    return set_query_parameter("http://www.pktaiqiu.com%s" %(relativeURI), 'from', 'wechat')
 
 def buildPoolroomImageURL(poolroom):
     if poolroom.images.count() > 0:
