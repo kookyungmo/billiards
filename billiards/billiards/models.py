@@ -582,7 +582,7 @@ class WechatActivity(models.Model):
     target = IntegerChoiceTypeField(verbose_name=u'目标公众帐号', choices=(
             (1, u'我为台球狂'),
             (2, u'北京高校联盟'),
-        ), default=1, jsonUseValue=False)
+        ), default=1)
     
     
     objects = WechatActivityManager()

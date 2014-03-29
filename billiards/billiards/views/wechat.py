@@ -10,7 +10,7 @@ from billiards.location_convertor import gcj2bd
 from billiards.views.poolroom import getNearbyPoolrooms
 from django.core.urlresolvers import reverse
 from billiards.models import Coupon, getCouponCriteria, Poolroom, PoolroomImage,\
-    WechatActivity, EventCode
+    WechatActivity, EventCode, DisplayNameJsonSerializer
 from billiards.views.match import getMatchByRequest
 from billiards import settings
 import pytz
@@ -584,9 +584,9 @@ def activity_report_newuser(request):
         except EmptyPage:
             # If page is out of range (e.g. 9999), deliver last page of results.
             subscribers = paginator.page(paginator.num_pages)
-        json_serializer = serializers.get_serializer("json")()
+        json_serializer = DisplayNameJsonSerializer()
         stream = StringIO()
-        json_serializer.serialize(subscribers, fields=('userid', 'keyword', 'receivedtime'), stream=stream,
+        json_serializer.serialize(subscribers, fields=('userid', 'keyword', 'receivedtime', 'target'), stream=stream,
             ensure_ascii=False, use_natural_keys=True)
         jsonstr = stream.getvalue()
         jsonstr = updateUserInfo(jsonstr)
@@ -629,9 +629,9 @@ def activity_report_message(request):
         except EmptyPage:
             # If page is out of range (e.g. 9999), deliver last page of results.
             messages = paginator.page(paginator.num_pages)
-        json_serializer = serializers.get_serializer("json")()
+        json_serializer = DisplayNameJsonSerializer()
         stream = StringIO()
-        json_serializer.serialize(messages, fields=('userid', 'eventtype', 'keyword', 'receivedtime', 'message'), stream=stream,
+        json_serializer.serialize(messages, fields=('userid', 'eventtype', 'keyword', 'receivedtime', 'message', 'target'), stream=stream,
             ensure_ascii=False, use_natural_keys=True)
         jsonstr = stream.getvalue()
         jsonstr = updatePageInfo(jsonstr, messages)
@@ -663,6 +663,8 @@ def response_msg_bj_university_association(request):
             except KeyError:
                 eventkey = None
             recordUserActivity(msg['FromUserName'], 'event', msg['Event'], {'event': msg['Event'], 'eventkey': eventkey}, msg['CreateTime'], None, 2)
+        else:
+            recordUserActivity(msg['FromUserName'], 'event', msg['Event'], {'event': msg['Event']}, msg['CreateTime'], None, 2)
     elif msg['MsgType'] == "text":
         if msg['Content'] == u"活动":
             nativetime = datetime.utcfromtimestamp(float(msg['CreateTime']))
