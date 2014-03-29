@@ -2,6 +2,7 @@
 # encoding: utf-8
 # Django settings for billiards project.
 import os
+import sys
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -11,6 +12,8 @@ ADMINS = (
 )
 
 MANAGERS = ADMINS
+
+TESTING = 'test' in sys.argv
 
 try:
     from bae.core import const
