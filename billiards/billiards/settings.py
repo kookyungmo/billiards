@@ -2,7 +2,6 @@
 # encoding: utf-8
 # Django settings for billiards project.
 import os
-import sys
 
 DEBUG = False
 TEMPLATE_DEBUG = False
@@ -13,7 +12,7 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-TESTING = 'test' in sys.argv
+TESTING = False
 
 DATABASES = {
 'default': {
