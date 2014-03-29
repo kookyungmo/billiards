@@ -3,7 +3,6 @@
 {% block script %}
 <script>
 REPORT_URL = "{% url 'wechat_activity_report_newuser' %}";
-TIMEZONE = "{{ TIME_ZONE }}";
 hookReportForm(refreshUserData);
 </script>
 {% endblock %}

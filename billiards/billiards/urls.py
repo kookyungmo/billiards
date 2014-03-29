@@ -82,6 +82,7 @@ urlpatterns += patterns('billiards.views.wechat',
     url(r'^wechat/report$', 'activity_report', name='wechat_activity_report'),
     url(r'^wechat/report/newuser$', 'activity_report_newuser', name='wechat_activity_report_newuser'),
     url(r'^wechat/report/message$', 'activity_report_message', name='wechat_activity_report_message'),
+    url(r'^wechat/bj-university-association$', 'bj_university_association', name='wechat_bj_university_association'),
 )
 
 urlpatterns += patterns('billiards.views.event',

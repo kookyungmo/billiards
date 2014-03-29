@@ -10,7 +10,7 @@ from billiards.location_convertor import gcj2bd
 from billiards.views.poolroom import getNearbyPoolrooms
 from django.core.urlresolvers import reverse
 from billiards.models import Coupon, getCouponCriteria, Poolroom, PoolroomImage,\
-    WechatActivity, EventCode
+    WechatActivity, EventCode, DisplayNameJsonSerializer
 from billiards.views.match import getMatchByRequest
 from billiards import settings
 import pytz
@@ -30,14 +30,11 @@ from datetime import datetime
 from urlparse import urlsplit, parse_qs, urlunsplit
 from urllib import urlencode
 
-def checkSignature(request):
+def checkSignature(request, token="pktaiqiu"):
     signature=request.GET.get('signature','')
     timestamp=request.GET.get('timestamp','')
     nonce=request.GET.get('nonce','')
     echostr=request.GET.get('echostr','')
-    #这里的token我放在setting，可以根据自己需求修改
-    token="pktaiqiu"
-
     tmplist=[token,timestamp,nonce]
     tmplist.sort()
     tmpstr="%s%s%s"%tuple(tmplist)
@@ -199,6 +196,32 @@ def getSpecialEventItem(request, receivedtime):
             buildAbsoluteURI(request, reverse('event_year_month_name', args=('2014', '03', 'my-favorite-club',))))
     return None
 
+
+def getActNewsText(request, msg, acts, count, specialEvent):
+    def getActsText(acts):
+        text = []
+        for act in acts:
+            picurl = buildPoolroomImageURL(act.poolroom)
+            text.append(newsItemTpl %(act.title, u"活动开始时间: %s" %(getNativeTime(act.starttime)), picurl, buildAbsoluteURI(request, reverse('activity_detail', args=(act.pk,)))))
+        return ''.join(text)
+    return newsReplyTpl % (
+         msg['FromUserName'], msg['ToUserName'], str(int(time.time())), count + (1 if specialEvent != None else 0),
+         (specialEvent if specialEvent != None else '') + getActsText(acts))
+
+def getNewsPoolroomsText(request, poolrooms):
+    newstext = ''
+    for poolroom in poolrooms:
+        address = poolroom.address
+        tel = poolroom.tel
+        size = str(poolroom.size)
+        pkid = unicode(poolroom.pk)
+        businesshours = poolroom.businesshours
+        picurl = buildPoolroomImageURL(poolroom)
+        originContent = buildAbsoluteURI(request, reverse('poolroom_detail', args=(pkid,)))
+        description = u"地址：%s\r\n营业面积：%s平方米\r\n营业时间：%s\r\n电话：%s" %(address, size, businesshours, tel)
+        newstext = '%s%s' %(newstext, newsItemTpl %(poolroom.name, description, picurl, originContent))
+    return newstext
+                
 def response_msg(request):
     msg = parse_msg(request)
     
@@ -228,26 +251,17 @@ def response_msg(request):
         specialEvent = getSpecialEventItem(request, msg['CreateTime'])
         if len(nearbyPoolrooms) > 0:
             poolroom = nearbyPoolrooms[0]
-            club = poolroom.name
-            address = poolroom.address
-            tel = poolroom.tel
-            size = str(poolroom.size)
-            pkid = unicode(poolroom.pk)
-            businesshours = poolroom.businesshours
-            picurl = buildPoolroomImageURL(poolroom)
-            originContent = buildAbsoluteURI(request, reverse('poolroom_detail', args=(pkid,)))
-            title = club
-            description = u"地址：%s\r\n营业面积：%s平方米\r\n营业时间：%s\r\n电话：%s" %(address, size, businesshours, tel)
+            newsPoolroomText = getNewsPoolroomsText(request, nearbyPoolrooms)
             coupons = poolroom.coupons
             if coupons.count() > 0:
                 echopictext = newsReplyTpl % (
                                  msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1 + coupons.count() + (1 if specialEvent != None else 0),
-                                 (specialEvent if specialEvent != None else '') + newsItemTpl %(title, description, picurl, originContent) + getCouponsText(request, coupons)) 
+                                 (specialEvent if specialEvent != None else '') + newsPoolroomText + getCouponsText(request, coupons)) 
             else:
                 echopictext = newsReplyTpl % (
                          msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1 + (1 if specialEvent != None else 0),
-                         (specialEvent if specialEvent != None else '') + newsItemTpl %(title, description, picurl, originContent))
-            recordUserActivity(msg['FromUserName'], 'location', club, {'lat': lat, 'lng': lng, 'scale': msg['Scale'], 'label': ['Label']}, msg['CreateTime'], 
+                         (specialEvent if specialEvent != None else '') + newsPoolroomText)
+            recordUserActivity(msg['FromUserName'], 'location', poolroom.name, {'lat': lat, 'lng': lng, 'scale': msg['Scale'], 'label': ['Label']}, msg['CreateTime'], 
                                {'id': poolroom.id, 'name': poolroom.name, 'distance': poolroom.distance})
             return echopictext
         else:
@@ -370,15 +384,7 @@ def response_msg(request):
             acts = acts.filter(type=2)
             count = acts.count()
             if count > 0:
-                def getActsText(acts):
-                    text = []
-                    for act in acts:
-                        picurl = buildPoolroomImageURL(act.poolroom)
-                        text.append(newsItemTpl %(act.title, u"活动开始时间: %s" %(getNativeTime(act.starttime)), picurl, buildAbsoluteURI(request, reverse('activity_detail', args=(act.pk,)))))
-                    return ''.join(text)
-                echopictext = newsReplyTpl % (
-                                 msg['FromUserName'], msg['ToUserName'], str(int(time.time())), count + (1 if specialEvent != None else 0),
-                                 (specialEvent if specialEvent != None else '') + getActsText(acts))
+                echopictext = getActNewsText(request, msg, acts, count, specialEvent)
                 recordUserActivity(msg['FromUserName'], 'text', 'activity', {'content': msg['Content']}, msg['CreateTime'], 
                                {'count': count, 'activity': True})
                 return echopictext
@@ -466,17 +472,17 @@ def response_msg(request):
         echostr = newsReplyTpl %(msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1, NEWS_HELP)
         return echostr
     
-def recordUserActivity(userid, event, keyword, message, receivedtime, reply):
+def recordUserActivity(userid, event, keyword, message, receivedtime, reply, target = 1):
     nativetime = datetime.utcfromtimestamp(float(receivedtime))
     localtz = pytz.timezone(settings.TIME_ZONE)
     localtime = nativetime.replace(tzinfo=timezone.utc).astimezone(tz=localtz)
     if event in settings.WECHAT_ACTIVITY_TRACE:
-        newactivity = WechatActivity.objects.create_activity(userid, event, keyword, simplejson.dumps(message).decode('unicode-escape'), localtime, None if reply == None else simplejson.dumps(reply).decode('unicode-escape'))
+        newactivity = WechatActivity.objects.create_activity(userid, event, keyword, simplejson.dumps(message).decode('unicode-escape'), localtime, None if reply == None else simplejson.dumps(reply).decode('unicode-escape'), target)
         newactivity.save()
         
-    if event in settings.WECHAT_ACTIVITY_NOTIFICATION or keyword in settings.WECHAT_ACTIVITY_NOTIFICATION_KEYWORDS:
+    if not settings.TESTING and (event in settings.WECHAT_ACTIVITY_NOTIFICATION or keyword in settings.WECHAT_ACTIVITY_NOTIFICATION_KEYWORDS):
         mail(settings.NOTIFICATION_EMAIL, u'New wechat activity -- %s' %(localtime), 
-             u'[%s] The "%s" message %s from "%s" was received at %s.' %(event, keyword, simplejson.dumps(message).decode('unicode-escape'), userid, localtime))
+             u'[%s][%s] The "%s" message %s from "%s" was received at %s.' %(WechatActivity.getTargetDisplay(target), event, keyword, simplejson.dumps(message).decode('unicode-escape'), userid, localtime))
 
 def set_query_parameter(url, param_name, param_value):
     """Given a URL, set or replace a query parameter and return the
@@ -573,9 +579,9 @@ def activity_report_newuser(request):
         except EmptyPage:
             # If page is out of range (e.g. 9999), deliver last page of results.
             subscribers = paginator.page(paginator.num_pages)
-        json_serializer = serializers.get_serializer("json")()
+        json_serializer = DisplayNameJsonSerializer()
         stream = StringIO()
-        json_serializer.serialize(subscribers, fields=('userid', 'keyword', 'receivedtime'), stream=stream,
+        json_serializer.serialize(subscribers, fields=('userid', 'keyword', 'receivedtime', 'target'), stream=stream,
             ensure_ascii=False, use_natural_keys=True)
         jsonstr = stream.getvalue()
         jsonstr = updateUserInfo(jsonstr)
@@ -618,9 +624,9 @@ def activity_report_message(request):
         except EmptyPage:
             # If page is out of range (e.g. 9999), deliver last page of results.
             messages = paginator.page(paginator.num_pages)
-        json_serializer = serializers.get_serializer("json")()
+        json_serializer = DisplayNameJsonSerializer()
         stream = StringIO()
-        json_serializer.serialize(messages, fields=('userid', 'eventtype', 'keyword', 'receivedtime', 'message'), stream=stream,
+        json_serializer.serialize(messages, fields=('userid', 'eventtype', 'keyword', 'receivedtime', 'message', 'target'), stream=stream,
             ensure_ascii=False, use_natural_keys=True)
         jsonstr = stream.getvalue()
         jsonstr = updatePageInfo(jsonstr, messages)
@@ -635,3 +641,65 @@ def activity_report(request):
     return render_to_response(TEMPLATE_ROOT + 'wechat/report.html', 
                               {'REPORT_TITLE': u'微信用户消息统计'},
                               context_instance=RequestContext(request))
+    
+def response_msg_bj_university_association(request):
+    msg = parse_msg(request)
+    
+    helpmsg = u"发送'俱乐部'或'球房'查找高校台球联盟的合作球房。发送'活动'获取一周内高校台球联盟活动详情。"
+    echostr = None
+    #response event message
+    if msg['MsgType'] == "event":
+        if msg['Event'] == 'subscribe' or msg['Event'] == 'scan':
+            echostr = textReplyTpl % (
+                    msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
+                    '欢迎您关注北京高校台球联盟微信。发送 ？，帮助，获取帮助手册。')
+            try:
+                eventkey = msg['EventKey']
+            except KeyError:
+                eventkey = None
+            recordUserActivity(msg['FromUserName'], 'event', msg['Event'], {'event': msg['Event'], 'eventkey': eventkey}, msg['CreateTime'], None, 2)
+        else:
+            recordUserActivity(msg['FromUserName'], 'event', msg['Event'], {'event': msg['Event']}, msg['CreateTime'], None, 2)
+    elif msg['MsgType'] == "text":
+        if msg['Content'] == u"活动":
+            nativetime = datetime.utcfromtimestamp(float(msg['CreateTime']))
+            localtz = pytz.timezone(settings.TIME_ZONE)
+            starttime = localtz.localize(nativetime)
+            acts, starttime, endtime = getMatchByRequest(request, starttime, deltadays=7)
+            acts = acts.filter(Q(type=2) & Q(organizer=2))
+            count = acts.count()
+            if count > 0:
+                echostr = getActNewsText(request, msg, acts, count, None)
+                recordUserActivity(msg['FromUserName'], 'text', 'activity', {'content': msg['Content']}, msg['CreateTime'], 
+                               {'count': count, 'activity': True}, 2)
+            else:
+                data = u'最近7天内没有被收录的北京高校台球联盟活动'
+                echostr = getNotFoundResponse(msg, None, data)
+                recordUserActivity(msg['FromUserName'], 'text', 'noactivity', {'content': msg['Content']}, msg['CreateTime'], 
+                               None, 2)
+        elif msg['Content'] == u"俱乐部" or msg['Content'] == u"球房":
+            poolrooms = Poolroom.objects.filter(poolroomuser__group=2).order_by('?')[:10]
+            if len(poolrooms) > 0:
+                echostr = newsReplyTpl % (
+                    msg['FromUserName'], msg['ToUserName'], str(int(time.time())), poolrooms.count(), getNewsPoolroomsText(request, poolrooms))
+                recordUserActivity(msg['FromUserName'], 'text', 'poolroom', {'content': msg['Content']}, msg['CreateTime'], 
+                               {'count': len(poolrooms)}, 2)
+            else:
+                echostr = getNotFoundResponse(msg, None, u'暂时没有收录的北京高校台球联盟合作球房')
+                recordUserActivity(msg['FromUserName'], 'text', 'nopoolroom', {'content': msg['Content']}, msg['CreateTime'], 
+                               None, 2)
+        elif msg['Content'] in HELP_KEYWORDS:
+            echostr = textReplyTpl % (msg['FromUserName'], msg['ToUserName'], str(int(time.time())), helpmsg)
+        else:
+            recordUserActivity(msg['FromUserName'], 'text', 'unknown', {'content': msg['Content']}, msg['CreateTime'], None, 2)
+    if echostr is None:
+        echostr = textReplyTpl % (msg['FromUserName'], msg['ToUserName'], str(int(time.time())), '%s%s' %(u'感谢您发送的消息。', helpmsg))
+    return echostr
+        
+@csrf_exempt
+def bj_university_association(request):
+    if request.method=='GET':
+        response=HttpResponse(checkSignature(request, token='pktaiqiu.com'))
+        return response
+    elif request.method=='POST':
+        return HttpResponse(response_msg_bj_university_association(request),content_type="application/xml")

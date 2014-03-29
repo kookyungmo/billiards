@@ -560,8 +560,8 @@ class Coupon(models.Model):
         verbose_name_plural = '折扣信息'   
         
 class WechatActivityManager(models.Manager):
-    def create_activity(self, userid, event, keyword, message, recivedtime, reply):
-        activity = self.create(userid=userid, eventtype=event, keyword=keyword, message=message, receivedtime=recivedtime, reply=reply)
+    def create_activity(self, userid, event, keyword, message, recivedtime, reply, target = 1):
+        activity = self.create(userid=userid, eventtype=event, keyword=keyword, message=message, receivedtime=recivedtime, reply=reply, target=target)
         # do something with the book
         return activity
     
@@ -579,18 +579,27 @@ class WechatActivity(models.Model):
     message = CharField(max_length=500, verbose_name='消息内容')
     receivedtime = models.DateTimeField(verbose_name='发送时间')
     reply = CharField(max_length=500, null=True, blank=True, verbose_name='自定义回复概要')
+    target = IntegerChoiceTypeField(verbose_name=u'目标公众帐号', choices=(
+            (1, u'我为台球狂'),
+            (2, u'北京高校联盟'),
+        ), default=1)
+    
     
     objects = WechatActivityManager()
     
     def __unicode__(self):
         localtz = pytz.timezone(settings.TIME_ZONE)
-        return u'[%s] 用户\'%s\' %s发送 %s - %s' %(self.eventtype, self.userid, self.receivedtime.astimezone(localtz), 
+        return u'[%s][%s] 用户\'%s\' %s发送 %s - %s' %(self.get_target_display(), self.eventtype, self.userid, self.receivedtime.astimezone(localtz), 
                                                self.get_eventtype_display(), self.message)
       
     class Meta:
         db_table = 'wechat_activity'
         verbose_name = '微信用户互动信息'
         verbose_name_plural = '微信用户互动信息'
+        
+    @staticmethod
+    def getTargetDisplay(target):
+        return force_unicode(dict(WechatActivity.target.flatchoices).get(target, target), strings_only=True)
         
 class Event(models.Model):
     id = models.AutoField(primary_key=True)

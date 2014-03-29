@@ -5,7 +5,7 @@
 <script src="{% static "js/moment-timezone.min.js" %}"></script>
 <script src="{% static "js/map.js" %}?{{buildid}}"></script>
 {% load staticfiles %}
-<script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}"; var MEDIA_URL = "{{ MEDIA_URL }}";</script>
+<script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}"; var MEDIA_URL = "{{ MEDIA_URL }}"; TIMEZONE = "{{ TIME_ZONE }}";</script>
 <script src="{% static "js/report.js" %}?{{buildid}}"></script>
 {% endblock %} 
 {% load extras %} 
@@ -38,12 +38,12 @@
     <div class="row">
       <div class="medium-6 columns">
 		<label for="startdate">开始日期<small>*</small></label>
-        <input type="date" id="startdate" placeholder="2014-01-30" required>
+        <input type="date" id="startdate" required>
         <small class="error">请输入有效的日期</small>
       </div>
       <div class="medium-6 columns">
 		<label for="enddate">结束日期(包括)<small>*</small></label>
-        <input type="date" id="enddate" placeholder="2014-01-30" required>
+        <input type="date" id="enddate" required>
         <small class="error">请输入有效的日期</small>
       </div>
     </div>
@@ -62,6 +62,12 @@
     </div>
   </fieldset>
 </form>
+<script>
+	initialMomentTZ();
+	var today = moment().tz(TIMEZONE).format('YYYY-MM-DD');
+	$("#startdate").val(today);
+	$("#enddate").val(today);
+</script>
 <div id="reporttable">
 {% block reportresult %}
 {% endblock %}

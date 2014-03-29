@@ -6,6 +6,7 @@ function refreshUserData(url, startdate, enddate, messages) {
 		});
 		contentTemplate ="<thead>"
 			+ "<tr>"
+			+ "<th width=\"200\">微信帐号</th>"
 			+ "<th width=\"200\">用户id</th>"
 			+ "<th width=\"300\">关注日期</th>"
 			+ "<th width=\"300\">是否首次关注</th>"
@@ -14,6 +15,7 @@ function refreshUserData(url, startdate, enddate, messages) {
 			+ "</tr></thead><tbody>";
 		for (idx in data) {
 			contentTemplate += "<tr>"
+				+ "<td>" + data[idx].fields.target + "</td>"
 				+ "<td>" + data[idx].fields.userid + "</td>"
 				+ "<td>" + getFormattedTimeToDate(data[idx].fields.receivedtime) + "</td>"
 				+ "<td>" + (data[idx].fields.firstjoin ? "是" : "否") + "</td>";
@@ -82,6 +84,7 @@ function refreshMessageData(url, startdate, enddate, messages) {
 		});
 		contentTemplate ="<thead>"
 			+ "<tr>"
+			+ "<th width=\"200\">微信帐号</th>"
 			+ "<th width=\"200\">用户id</th>"
 			+ "<th width=\"500\">发送日期</th>"
 			+ "<th width=\"400\">消息类别</th>"
@@ -90,15 +93,10 @@ function refreshMessageData(url, startdate, enddate, messages) {
 			+ "</tr></thead><tbody>";
 		for (idx in data) {
 			contentTemplate += "<tr>"
+				+ "<td>" + data[idx].fields.target + "</td>"
 				+ "<td>" + data[idx].fields.userid + "</td>"
 				+ "<td>" + getFormattedTimeToDate(data[idx].fields.receivedtime) + "</td>";
-			if (data[idx].fields.eventtype == 'location')
-				type = "地理位置";
-			else if (data[idx].fields.eventtype == 'text')
-				type = "文字消息";
-			else
-				type = "其他消息";
-			contentTemplate += "<td>" + type + "</td>"
+			contentTemplate += "<td>" + data[idx].fields.eventtype + "</td>"
 				+ "<td>" + (data[idx].fields.keyword !== "" ? data[idx].fields.keyword : "&nbsp;") + "</td>"
 				+ "<td>" + data[idx].fields.message + "</td>";
 			contentTemplate += "</tr>";
