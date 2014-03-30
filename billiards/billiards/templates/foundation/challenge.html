@@ -7,18 +7,18 @@
 <script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}"; var MEDIA_URL = "{{ MEDIA_URL }}";</script>
 <script src="{% static "js/map.js" %}?{{buildid}}"></script>
 <script src="{% static "js/map_v2.js" %}?{{buildid}}"></script>
+<link rel="stylesheet" href="{% static "css/map.css" %}?{{buildid}}">
 {% endblock %}
 {% load extras %}
 {% block content %}
 	<div class="medium-12 columns">
 		<div class="row">
 		<div class="small-12 large-10 large-centered columns">
-			<h2>约球信息</h2><h4>(请联系俱乐部工作人员发布约球信息)</h4>
-		</div></div>
-		<hr>
+			<h2>约球信息</h2><h4><b>抢台费</b>新玩法，发送你的位置到"我为台球狂"微信帐号发起抢台费。</h4>
+		</div><hr></div>
 		<div id="content" class="row">
                 <div class="small-12 large-10 large-centered columns">
-			<script type="text/javascript">createInfo("正在获取您的位置...");</script>
+			<script type="text/javascript">createInfo("正在加载约球信息...");</script>
 		</div></div>
 	</div>
 
@@ -29,23 +29,38 @@
 {% load url from future %} 
 {% block script %}
 	<script>
+	{% if lat != None %}
+	var mypoint = new BMap.Point({{lng}}, {{lat}});
+	{% else %}
 	var mypoint = null;
+	{% endif %}
 	CHALLENGE_URL = "{% url 'challenge_list' %}";
 	CHALLENGE_WITH_DISTANCE_URL = "{% url 'challenge_with_distance' '00.00' '11.11' %}";
 	POOLROOM_URL = "{% url 'poolroom_detail' '000' %}";
 	CHALLENGE_APPLY_URL = "{% url 'apply_challenge' '000' %}";
-	$(document).ready(
-			function() {
-			    var geolocation = new BMap.Geolocation();
-			    geolocation.getCurrentPosition(function(r){
-			        if(this.getStatus() == BMAP_STATUS_SUCCESS){
-                       	mypoint = r.point;
-			            getChallenges(mypoint);
-			        }
-			        else {
-			        	getChallenges(null);
-			        }
-			    },{enableHighAccuracy: false});
-			});
+	getChallenges(mypoint);
+	if (mypoint == null) {
+		$(document).ready(
+				function() {
+				    var geolocation = new BMap.Geolocation();
+				    geolocation.getCurrentPosition(function(r){
+				        if(this.getStatus() == BMAP_STATUS_SUCCESS){
+	                       	// update distance
+				        	mypoint = r.point;
+	                       	$("div[id=challenge]").each(function() {
+	                       		var distancetext = $(this).find(".pricing-table .price");
+	                       		var pointstr = distancetext.attr("point").split(",");
+	                       		var point = new BMap.Point(pointstr[0], pointstr[1]);
+	                       		distancetext.text(formatDistance(distance(mypoint, point)));
+	                       	});
+				        }
+				        else {
+				        	$("#challenge").each(function() {
+	                       		$(this).find(".pricing-table .price").text('无法获取你当前的位置');
+	                       	});
+				        }
+				    },{enableHighAccuracy: false});
+				});
+	}
 	</script>
 {% endblock %}	

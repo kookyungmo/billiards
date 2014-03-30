@@ -7,7 +7,7 @@ Created on 2014年1月4日
 '''
 import datetime
 from billiards.models import Challenge, ChallengeApply,\
-    DisplayNameJsonSerializer
+    DisplayNameJsonSerializer, Poolroom
 from django.shortcuts import render_to_response
 from billiards.settings import TEMPLATE_ROOT, TIME_ZONE
 from django.template.context import RequestContext
@@ -20,6 +20,9 @@ from billiards.location_convertor import bd2gcj, distance
 from django.db import transaction
 import pytz
 from django.core.exceptions import PermissionDenied
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
+from billiards.views.poolroom import getNearbyPoolrooms
+from billiards.views.club import challenge, saveChallenge
 
 def updateChallengeJsonStrApplyInfo(jsonstr, user, challenges):
     appliedChallenges = ChallengeApply.objects.filter(Q(challenge__in=challenges) & Q(user__exact=user))
@@ -60,7 +63,7 @@ def index(request, lat = None, lng = None):
         return HttpResponse(jsonstr)
         
     return render_to_response(TEMPLATE_ROOT + 'challenge.html',
-                              {},
+                              {'lat': lat, 'lng': lng},
                               context_instance=RequestContext(request))
 
 @transaction.commit_on_success
@@ -87,3 +90,41 @@ def applyChallenge(request, challengeid):
         return HttpResponse(json.dumps(msg.items()), content_type="application/json")
     except Challenge.DoesNotExist:
         raise Http404
+    
+@csrf_exempt
+def publish(request, lat = None, lng = None, distance = 3):
+    if request.method == 'POST':
+        try:
+            poolroomid = int(request.POST['poolroom'])
+            location = None
+            if poolroomid == -1:
+                location = "{0},{1}".format(lat, lng)
+                poolroomid = Poolroom.objects.all()[:1].get().id
+            elif poolroomid == 0:
+                location = u"{0},{1}:{2}".format(lat, lng, request.POST['location'])
+                poolroomid = Poolroom.objects.all()[:1].get().id
+            else:
+                try:
+                    Poolroom.objects.get(id=poolroomid)
+                except Poolroom.DoesNotExist:
+                    location = "{0},{1}".format(lat, lng)
+                    poolroomid = 1
+            username = 'unknown'
+            if request.user.is_authenticated():
+                username = request.user.username
+            else:
+                try:
+                    username = request.POST['user']
+                except KeyError:
+                    pass
+            return saveChallenge(request, 'wechat:%s' %(username), poolroomid, None, 2, location)
+        except Exception:
+            return HttpResponse(json.dumps({'rt': 0, 'msg': u'Invalid Arguments.'}), content_type="application/json")
+    nearbypoolrooms = getNearbyPoolrooms(lat, lng, distance)
+    username = 'unknown'
+    try:
+        username = request.GET['uid']
+    except KeyError:
+        pass
+    return render_to_response(TEMPLATE_ROOT + 'challenge_application.html', 
+                                  {'poolrooms': nearbypoolrooms, 'lat': lat, 'lng': lng, 'username': username}, context_instance=RequestContext(request))

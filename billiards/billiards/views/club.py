@@ -20,6 +20,7 @@ from django.db import transaction
 from django.views.decorators.csrf import ensure_csrf_cookie
 from billiards.bcms import mail
 from billiards import settings
+from django.db.models.query_utils import Q
 
 def index(request):
     poolroomusers = getPoolroom(request.user, (1|2))
@@ -141,7 +142,7 @@ def challenge(request):
     poolrooms = []
     for pu in poolroomusers:
         poolrooms.append(pu.poolroom)
-    publishedChallenges = Challenge.objects.filter(issuer__in=poolrooms).order_by('-starttime', 'status')
+    publishedChallenges = Challenge.objects.filter(Q(poolroom__in=poolrooms) & Q(source=1)).order_by('-starttime', 'status')
     return render_to_response(TEMPLATE_ROOT + 'club/challenge.html', 
                               combinePageVariables({'challenges': publishedChallenges}, poolroomusers),
                               context_instance=RequestContext(request))
@@ -150,7 +151,7 @@ class ChallengeForm(ModelForm):
     class Meta:
         model = Challenge
         
-def saveChallenge(request, poolroomid, challenge = None):
+def saveChallenge(request, issuer, poolroomid, challenge = None, source = 1, location = None):
     starttime = datetime.datetime.fromtimestamp(float(request.POST['starttime'])/1000, pytz.timezone(TIME_ZONE))
     expiredtime = datetime.datetime.fromtimestamp(float(request.POST['expiredtime'])/1000, pytz.timezone(TIME_ZONE))
     data = {       
@@ -160,14 +161,19 @@ def saveChallenge(request, poolroomid, challenge = None):
            'rule': request.POST['rule'],
            'starttime': starttime,
            'expiretime': expiredtime,
+           'source': source,
+           'issuer': issuer,
+           'issuer_contact': request.POST['contact'],
            }
+    if location is not None:
+        data['location'] = location
     if challenge is None:
-        data['issuer'] = poolroomid
+        data['poolroom'] = poolroomid
         data['status'] = 'waiting'
         newchallenge = ChallengeForm(data)
     else:
         data['status'] = request.POST['status']
-        data['issuer'] = challenge.issuer.id
+        data['poolroom'] = challenge.poolroom.id
         newchallenge = ChallengeForm(data=data, instance=challenge)
     if newchallenge.is_valid():
         newchallenge.save()
@@ -179,7 +185,7 @@ def challenge_add(request):
     poolroomusers = getPoolroom(request.user)
     if request.method == 'POST':
         try:
-            return saveChallenge(request, list(poolroomusers)[0].poolroom.id)
+            return saveChallenge(request, request.user.username, list(poolroomusers)[0].poolroom.id)
         except Exception:
             return HttpResponse(json.dumps({'rt': 0, 'msg': u'Invalid Arguments.'}), content_type="application/json")
     return render_to_response(TEMPLATE_ROOT + 'club/challenge_edit.html', 
@@ -190,7 +196,7 @@ def checkPoolroomUserByChallenge(user, challengeid):
     poolroomusers = getPoolroom(user)
     challenge = get_object_or_404(Challenge, pk=challengeid)
     for pu in poolroomusers:
-        if pu.poolroom.id == challenge.issuer.id and (pu.type & 1 > 0):
+        if pu.poolroom.id == challenge.poolroom.id and (pu.type & 1 > 0):
             return poolroomusers, challenge
     raise PermissionDenied
 
@@ -199,7 +205,7 @@ def challenge_edit(request, challengeid):
     poolroomusers, challenge = checkPoolroomUserByChallenge(request.user, challengeid)
     if request.method == 'POST':
         try:
-            return saveChallenge(request, list(poolroomusers)[0].poolroom.id, challenge)
+            return saveChallenge(request, request.user.username, list(poolroomusers)[0].poolroom.id, challenge)
         except Exception:     
             return HttpResponse(json.dumps({'rt': 0, 'msg': u'Invalid Arguments.'}), content_type="application/json")
     return render_to_response(TEMPLATE_ROOT + 'club/challenge_edit.html', 

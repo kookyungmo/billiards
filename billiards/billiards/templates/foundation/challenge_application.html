@@ -1,0 +1,214 @@
+{% extends "foundation/base.html" %} 
+{% block header %} 
+{% load staticfiles %}
+<script src="{% static "js/moment-with-langs.min.js" %}"></script>
+<script src="{% static "js/moment-timezone.min.js" %}"></script>
+{% endblock %} 
+{% load extras %} 
+{% load url from future %} 
+{% block content %}
+<h1>发起抢台费</h1>
+<hr>
+<form id="challengeForm" data-abide="ajax">
+  <fieldset>
+    <legend>发布新的抢台费</legend>
+    
+    <div class="row">
+	  <div class="medium-6 columns">
+        <label for="poolroom">期望球房<small>*</small></label>
+        <select id="poolroom" class="medium" required>
+        	{% for poolroom in poolrooms %}
+        		<option value="{{ poolroom.id }}">{{ poolroom.name }}</option>
+        	{% endfor %}
+        	<option value="-1">我当前的位置</option>
+        	<option value="0">我要指定其他球房或附近标志物</option>
+        </select>
+      </div>
+	  <div class="medium-6 columns">
+        <label for="address">指定其他球房或附近标志物</label>
+        <input type="text" id="address" placeholder="" disabled>
+        <small class="error">请输入球房名称或附近标志物</small>
+      </div>    	
+    </div>
+    
+    <div class="row">
+	  <div class="medium-6 columns">
+        <label for="nickname">发起者称呼<small>*</small></label>
+        <input type="text" id="nickname" placeholder="美女小茜" required>
+        <small class="error">请输入发起者称呼</small>
+      </div>
+	  <div class="medium-6 columns">
+	  	<div class="row collapse">
+	        <label for="contact">联系方式<small>*</small></label>
+	        	<div class="small-3 large-2 columns">
+		        	<select id="contactinfo" class="medium">
+		        		<option value="tel">电话</option>
+		        		<option value="qq">QQ</option>
+		        		<option value="wechat">微信</option>
+		        	</select>
+        		</div>
+        		<div class="small-9 large-10 columns">
+        			<input type="text" id="contact" pattern="^(1(([35][0-9])|(47)|[8][01236789]))\d{8}$" placeholder="18601012345" required>
+        			<small class="error">请输入你正确的联系方式</small>
+        		</div>
+        </div>
+      </div>
+    </div>
+       
+    <div class="row">
+      <div class="medium-6 columns">
+        <label for="level">发起者台球水平<small>*</small></label>
+        <select id="level" class="medium" required>
+            <option value="amateur">初级球友</option>
+            <option value="professional" selected>专业高手</option>
+            <option value="master">职业球手</option>
+            <option value="companion">陪练</option>
+        </select>
+      </div>
+      <div class="medium-6 columns">
+        <label for="tabletype">球台类型<small>*</small></label>
+        <select id="tabletype" class="medium" required>
+        	<option value="pocket">十六彩(美式落袋)</option>
+            <option value="nine-ball">花式九球</option>
+            <option value="snooker">斯诺克 snooker</option>
+            <option value="any">不限</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="medium-4 columns">
+		<label for="startdate">抢台费日期<small>*</small></label>
+        <input type="date" id="startdate" required>
+        <small class="error">请输入有效的抢台费日期</small>
+      </div>
+      <div class="medium-4 columns">
+		<label for="starttime">抢台费起始时间<small>*</small></label>
+        <input type="text" pattern="time" id="starttime" placeholder="20:00:00" required>
+        <small class="error">请输入有效的抢台费起始时间</small>
+      </div>
+      <div class="medium-4 columns">
+		<label for="expiredtime">抢台费过期时间<small>*</small></label>
+        <input type="text" pattern="time" id="expiredtime" placeholder="20:00:00" required>
+        <small class="error">请输入有效的抢台费过期时间</small>
+      </div>
+    </div>
+      
+    <div class="row">
+      <div class="large-12 columns">
+        <div class="row collapse">
+        	<input type="hidden" id="status" value="waiting" readonly>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div id="errorMsg" class="large-12 columns hide">
+       	<div data-alert class="alert-box warning round">
+		</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-12 columns">
+        <button type="submit" class="medium button green">发布</button>
+      </div>
+    </div>
+  </fieldset>
+</form>
+{% endblock %}
+{% block script %}
+<script>
+$("#poolroom").change(function(e) {
+	if ($('#poolroom').val() == 0) {
+		$("#address").removeAttr("disabled");
+		$('#address').attr("required", "");
+	} else {
+		$('#address').attr("disabled", "disabled");
+		$("#address").removeAttr("required");
+	}
+});
+$("#contactinfo").change(function(){
+	if ($('#contactinfo').val() == 'tel') {
+		$('#contact').attr("pattern", "^(1(([35][0-9])|(47)|[8][01236789]))\\d{8}$");
+		$('#contact').attr("placeholder", "18601012345");
+	} else if ($('#contactinfo').val() == 'qq') {
+		$('#contact').attr("pattern", "^\\d{5,13}$");
+		$('#contact').attr("placeholder", "4247000");
+	} else if ($('#contactinfo').val() == 'wechat') {
+		$('#contact').removeAttr("pattern");
+		$('#contact').attr("placeholder", "pktaiqiu");
+	}
+});
+$("#challengeForm").on('valid', function() {
+	$("#errorMsg").addClass("hide");
+ 	starttime = moment($("#startdate").val() + " " + $("#starttime").val()).tz("{{ TIME_ZONE }}");
+	expiredtime = moment($("#startdate").val() + " " + $("#expiredtime").val()).tz("{{ TIME_ZONE }}");
+	poolroomid = $('#poolroom').val();
+	address = null;
+	if (poolroomid == 0) {
+		address = $("#address").val();
+	} else if (poolroomid == -1){
+		address = '';
+	}
+	url = document.URL;
+	$.ajax({
+		data : {'nickname': $("#nickname").val(),
+			'contact': $('#contactinfo').val() + "://" + $('#contact').val(),
+			'poolroom': poolroomid,
+			'location': address,
+			'level': $("#level").val(),
+			'tabletype': $("#tabletype").val(),
+			'rule': "bbb",
+			'status': $('#status').val(),
+			'starttime': starttime.valueOf(),
+			'expiredtime': expiredtime.valueOf()},
+			'user': '{{ username }}',
+			url : url,
+			type: 'POST',
+		dataType : 'json',
+		success : function(data) {
+			if (data.rt == 1) {
+				window.location = "{% url 'challenge_with_distance' lat lng %}";
+			} else {
+				if (data.msg != null)
+					$("#errorMsg .alert-box").text(data.msg);
+				else {
+					var errorText = "";
+					for (var property in data) {
+					    if (data.hasOwnProperty(property) && property != 'rt') {
+					    	errorText += property + ":" + data[property] + " ";
+					    }
+					}
+					$("#errorMsg .alert-box").text(errorText);
+				}
+				$("#errorMsg").removeClass("hide");
+			}
+		},
+		error : function(jqXHR, textStatus, errorThrown) {
+			console.log(textStatus, errorThrown);
+			$("#errorMsg .alert-box").text("网络错误，请重试。");
+			$("#errorMsg").removeClass("hide");
+		}
+	});
+});
+moment.tz.add({
+    "zones": {
+        "Asia/Chongqing": [
+            "7:6:20 - LMT 1928 7:6:20",
+            "7 - LONT 1980_4 7",
+            "8 PRC C%sT"
+        ]
+    },
+    "rules": {
+        "PRC": [
+            "1986 1986 4 4 7 0 0 1 D",
+            "1986 1991 8 11 0 0 0 0 S",
+            "1987 1991 3 10 0 0 0 1 D"
+        ]
+    },
+    "links": {}
+});
+var today = moment().tz('{{TIME_ZONE}}').format('YYYY-MM-DD');
+$("#startdate").val(today);
+</script>
+{% endblock %}

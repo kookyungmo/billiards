@@ -35,12 +35,18 @@
     {% endif %}
     
     <div class="row">
-	  <div class="large-12 columns">
+	  <div class="medium-6 columns">
         <label for="nickname">发起者昵称<small>*</small></label>
         <input type="text" id="nickname" placeholder="美女小茜" required
          {% if ch != None %} value="{{ ch.issuer_nickname }}" {% if readonly %} readonly {% endif %} {% endif %}>
         <small class="error">请输入发起者昵称</small>
       </div>
+	  <div class="medium-6 columns">
+        <label for="contact">发起者联系方式<small>*</small></label>
+        <input type="text" id="contact" placeholder="18601012345" required
+         {% if ch != None %} value="{{ ch.issuer_contact }}" {% if readonly %} readonly {% endif %} {% endif %}>
+        <small class="error">请输入发起者联系方式</small>
+      </div>      
     </div>
        
     <div class="row">
@@ -155,6 +161,7 @@ $("#challengeForm").submit(function (e) {
   		expiredtime = moment($("#expireddate").val() + " " + $("#expiredtime").val()).tz("{{ TIME_ZONE }}");
    		$.ajax({
 			data : {'nickname': $("#nickname").val(),
+				'contact': $("#contact").val(),
 				'level': $("#level").val(),
 				'tabletype': $("#tabletype").val(),
 				'rule': $("#rule").val(),
