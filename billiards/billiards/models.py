@@ -406,8 +406,15 @@ class MatchEnroll(models.Model):
 
 class Challenge(models.Model):
     id = models.AutoField(primary_key=True)
-    issuer = models.ForeignKey(Poolroom, verbose_name='发起俱乐部')
-    issuer_nickname = models.CharField(max_length=20, null=True, blank=True, verbose_name="发起者的昵称")
+    source = IntegerChoiceTypeField(verbose_name=u'发起者', choices=(
+            (1, u'俱乐部'),
+            (2, u'用户')
+        ), default=1, jsonUseValue=False)
+    poolroom = models.ForeignKey(Poolroom, db_column='poolroom', verbose_name=u'期望俱乐部')
+    location = models.CharField(max_length=50, null=True, blank=True, verbose_name=u'非球房地址')
+    issuer = models.CharField(max_length=50, verbose_name=u'发起人Id')
+    issuer_nickname = models.CharField(max_length=50, verbose_name="发起者的昵称")
+    issuer_contact = models.CharField(max_length=50, verbose_name="发起者的联系方式")
     starttime = models.DateTimeField(verbose_name='开始时间')
     expiretime = models.DateTimeField(verbose_name='过期时间')
     level = ChoiceTypeField(max_length=12, choices=(

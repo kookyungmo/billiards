@@ -534,97 +534,135 @@ function addChallengeToList(challenge, point, mypoint) {
 		id : 'challenge'
 	});
 	url = POOLROOM_URL;
-	detail_url = url.replace(/000/g, challenge.fields.issuer.id);
+	detail_url = url.replace(/000/g, challenge.fields.poolroom.id);
 	contentTemplate = "<div class=\"small-12 columns\">"
 			+ "<div class=\"row\">"
-			+ "<div class=\"small-4 large-2 columns\">"
+			+ "<div class=\"small-6 medium-uncentered medium-2 columns\">"
 			+ "<ul class=\"pricing-table\">"
 			+ "<li class=\"title\"><font size=+1><strong>距离我：</strong></font></li>"
-			+ "<li class=\"price\">$distance</li>"
+			+ "<li class=\"price\" point=\"$point\">$distance</li>"
 			+ "</ul></div>"
-			+ "<div class=\"small-8 large-10 columns panel\">"
+			+ "<div class=\"small-6 medium-3 columns\">"
 			+ "<div class=\"row\">"
-			+ "<div class=\"small-5 medium-4 center columns\">"
+			+ "<div class=\"small-8 medium-centered columns\">"
+			+ "<div class=\"row\">"
 			+ "<ul class=\"clearing-thumbs clearing-feature\" data-clearing>";
-	images = Object.getOwnPropertyNames(challenge.fields.issuer.images);
-	if (images.length > 0) {
-		for (var idx in images) {
-			image = challenge.fields.issuer.images[images[idx]]
-	        contentTemplate += "<li ";
-			if ( image.iscover)
-				contentTemplate += "class=\"clearing-featured-img\"";
-			contentTemplate += "><a href=\"" + MEDIA_URL + image.imagepath
-	    		+ "\"><img src=\"" + MEDIA_URL + getThumbnail(image.imagepath, '300') + "\"></a></li>";
-	    }
-	} else
+	if (challenge.fields.source == 2 && challenge.fields.location != '') {
+		locationdata = challenge.fields.location.split(":");
+		latlng = locationdata[0].split(",");
+		point = new BMap.Point(latlng[1], latlng[0]);
 		contentTemplate += " <li class=\"clearing-featured-img\"><a class=\"th\" href=\"http://api.map.baidu.com/staticimage?center=$point&width=900&height=600&zoom=18&scale=2&markers=$point&markerStyles=-1,http://billiardsalbum.bcs.duapp.com/2014/01/marker-2.png\"><img data-caption=\"MapShot\" src=\"http://api.map.baidu.com/staticimage?center=$point&width=100&height=62&zoom=16&scale=2&markers=$point&markerStyles=-1\"></a></li>";
-	contentTemplate += "</ul>"
+		desc = "球友所在的位置";
+		if (locationdata.length > 1)
+			desc += "(" + locationdata[1] + ")";
+		contentTemplate += "</ul>"
             + "</div>"
-			+ "<div class=\"small-7 medium-8 columns\">"
-			+ "<h5><span name=\"title\" point=\"$point\"><u><a href=\"" + detail_url + "\">$poolroomname</a></u></span></h5>"
 			+ "<div class=\"row\">"
-	equipment = "";
-	if (challenge.fields.issuer.flags.wifi)
-		equipment += "<span class=\"ico_wifi\" title=\"公共区域WIFI\"></span>";
-	if (challenge.fields.issuer.flags.wifi_free)
-		equipment += "<span class=\"ico_free_wifi\" title=\"公共区域WIFI\"></span>";
-	if (challenge.fields.issuer.flags.parking || challenge.fields.issuer.flags.parking_free)
-		equipment += "<span class=\"ico_parking\" title=\"停车场\"></span>";
-	if (challenge.fields.issuer.flags.cafeteria)
-		equipment += "<span class=\"ico_restaurant\" title=\"餐饮服务\"></span>";
-	if (challenge.fields.issuer.flags.subway)
-		equipment += "<span class=\"ico_bus\" title=\"地铁周边\"></span>";
-	if (equipment != "") {
-		contentTemplate += "<span class=\"icon_list\">";
-		contentTemplate += "<div class=\"ico_none\">球房设施: </div>";
-		contentTemplate += equipment;
-		contentTemplate += "</span>";
+			+ "<h5><span name=\"title\">" + desc + "</span></h5>"
+			+ "</div>";
+	} else {
+		images = Object.getOwnPropertyNames(challenge.fields.poolroom.images);
+		if (images.length > 0) {
+			for (var idx in images) {
+				image = challenge.fields.poolroom.images[images[idx]]
+		        contentTemplate += "<li ";
+				if ( image.iscover)
+					contentTemplate += "class=\"clearing-featured-img\"";
+				contentTemplate += "><a href=\"" + MEDIA_URL + image.imagepath
+		    		+ "\"><img src=\"" + MEDIA_URL + getThumbnail(image.imagepath, '300') + "\"></a></li>";
+		    }
+		} else
+			contentTemplate += " <li class=\"clearing-featured-img\"><a class=\"th\" href=\"http://api.map.baidu.com/staticimage?center=$point&width=900&height=600&zoom=18&scale=2&markers=$point&markerStyles=-1,http://billiardsalbum.bcs.duapp.com/2014/01/marker-2.png\"><img data-caption=\"MapShot\" src=\"http://api.map.baidu.com/staticimage?center=$point&width=100&height=62&zoom=16&scale=2&markers=$point&markerStyles=-1\"></a></li>";
+		contentTemplate += "</ul>"
+	            + "</div>"
+				+ "<div class=\"row\">"
+				+ "<h5><span name=\"title\"><u><a href=\"" + detail_url + "\">$poolroomname</a></u></span></h5>"
+				+ "</div><div class=\"row\">"
+		equipment = "";
+		if (challenge.fields.poolroom.flags.wifi)
+			equipment += "<span class=\"ico_wifi\" title=\"公共区域WIFI\"></span>";
+		if (challenge.fields.poolroom.flags.wifi_free)
+			equipment += "<span class=\"ico_free_wifi\" title=\"公共区域WIFI\"></span>";
+		if (challenge.fields.poolroom.flags.parking || challenge.fields.poolroom.flags.parking_free)
+			equipment += "<span class=\"ico_parking\" title=\"停车场\"></span>";
+		if (challenge.fields.poolroom.flags.cafeteria)
+			equipment += "<span class=\"ico_restaurant\" title=\"餐饮服务\"></span>";
+		if (challenge.fields.poolroom.flags.subway)
+			equipment += "<span class=\"ico_bus\" title=\"地铁周边\"></span>";
+		if (equipment != "") {
+			contentTemplate += "<span class=\"icon_list\">";
+			contentTemplate += "<div class=\"ico_none\">球房设施: </div>";
+			contentTemplate += equipment;
+			contentTemplate += "</span>";
+		}
+		contentTemplate += "</div>";
 	}
 	contentTemplate += "</div></div></div>";
-	contentTemplate += "<hr><div class=\"row\">"
-		+ "<div class=\"small-5 medium-2 columns\">" 
+	contentTemplate += "<div class=\"small-12 medium-7 columns\">"
+		+ "<div class=\"small-5 medium-3 columns\">"
 		+ "<ul class=\"pricing-table\"><li class=\"title\">开始时间</li><li class=\"bullet-item\">$starttime</li>"
 		+ "<li class=\"title\">过期时间</li><li class=\"bullet-item\">$endtime</li></ul>"
 		+ "</div>"
-		+ "<div class=\"small-7 medium-10 columns\">"
-		+ "<p>一名<code>$level $nick</code>发起约球</p>"
-		+ "<div class=\"row\">" 
-		+ "<div class=\"small-12 medium-4 columns\">"
-		+ "<p>比赛类型: <code>$tabletype</code></p></div>"
-		+ "<div class=\"small-12 medium-8 columns\"><p>比赛方式: <code>$rule</code></p></div></div>";
-	
-	if (challenge.fields.applied) {
-		if (challenge.fields.applystatus == 'accepted')
-			contentTemplate += "<a class=\"button radius disabled\">您的申请已经被俱乐部接受，请您按时去俱乐部应战。</a>";
-		else if (challenge.fields.applystatus == 'rejected')
-			contentTemplate += "<a class=\"button radius disabled\">您的申请已经被俱乐部拒绝。</a>";
-		else
-			contentTemplate += "<a class=\"button radius disabled\">您已经申请, 请等待俱乐部的确认。</a>";
-	} else {
-		if (challenge.fields.status == 'waiting') {
-			if (isAuth()) {
-				if (needInfo())
-					contentTemplate += "<a href=\"javascript:completeInfo();\" class=\"button radius\">我要应战</a>";
-				else
-					contentTemplate += "<a id=\"enroll\" challenge=\"" + challenge.pk + "\" class=\"button radius\">我要应战</a>";
-			} else
-				contentTemplate += "<a href=\"javascript:loginFirst();\" class=\"button radius\">我要应战</a>";
-		} else if (challenge.fields.status == 'matched')
-			contentTemplate += "<a class=\"button radius disabled\">已经匹配</a>";
-		else if (challenge.fields.status == 'expired') {
-			contentTemplate += "<a class=\"button radius disabled\">已经过期</a>";
+		+ "<div class=\"small-7 medium-8 medium-offset-1 columns\">"
+		+ "<div class=\"row\">";
+	if (challenge.fields.source == 1)
+		contentTemplate += "<p>$club为一名<code>$level $nick</code>发起约球</p></div>";
+	else
+		contentTemplate += "<p>一名<code>$level $nick</code>发起约球</p></div>";
+	contentTemplate += "<div class=\"row\"><p>$contactmethod: <code>$contactinfo</code></p></div>"
+		+ "<div class=\"row\"><p>球台类型: <code>$tabletype</code></p></div>";
+	if (challenge.fields.source == 1)
+		contentTemplate += "<div class=\"row\"><p>比赛方式: <code>$rule</code></p></div>";
+	contentTemplate += "<div class=\"row\">";
+	if (challenge.fields.source == 1) {
+		if (challenge.fields.applied) {
+			if (challenge.fields.applystatus == 'accepted')
+				contentTemplate += "<a class=\"button radius disabled\">您的申请已经被俱乐部接受，请您按时去俱乐部应战。</a>";
+			else if (challenge.fields.applystatus == 'rejected')
+				contentTemplate += "<a class=\"button radius disabled\">您的申请已经被俱乐部拒绝。</a>";
+			else
+				contentTemplate += "<a class=\"button radius disabled\">您已经申请, 请等待俱乐部的确认。</a>";
+		} else {
+			if (challenge.fields.status == 'waiting') {
+				if (isAuth()) {
+					if (needInfo())
+						contentTemplate += "<a href=\"javascript:completeInfo();\" class=\"button radius\">我要应战</a>";
+					else
+						contentTemplate += "<a id=\"enroll\" challenge=\"" + challenge.pk + "\" class=\"button radius\">我要应战</a>";
+				} else
+					contentTemplate += "<a href=\"javascript:loginFirst();\" class=\"button radius\">我要应战</a>";
+			} else if (challenge.fields.status == 'matched')
+				contentTemplate += "<a class=\"button radius disabled\">已经匹配</a>";
+			else if (challenge.fields.status == 'expired') {
+				contentTemplate += "<a class=\"button radius disabled\">已经过期</a>";
+			}
 		}
 	}
-	contentTemplate += "</div></div></div>";
-
+	contentTemplate += "</div></div></div><br/>";
+	var protocols = [["tel://", "电话"], ["qq://", "QQ"], ["wechat://", "微信"]];
+	for (idx in protocols) {
+		protocol = protocols[idx];
+		if (challenge.fields.issuer_contact.indexOf(protocol[0]) == 0) {
+			method = protocol[1];
+			contactinfo = challenge.fields.issuer_contact.substring(protocol[0].length);
+			break;
+		}
+	}
+	if (method == undefined) {
+		method = "联系方式";
+		contactinfo = challenge.fields.issuer_contact;
+	}
 	contentTemplate = contentTemplate.replace(/\$point/g, point.lng + "," + point.lat)
-			.replace(/\$distance/g, (mypoint == null ? "无法获取你的位置" : formatDistance(distance(mypoint, point))))
-			.replace(/\$poolroomname/g, challenge.fields.issuer.name)
+			.replace(/\$distance/g, (mypoint == null ? "正在计算距离你的距离" : formatDistance(distance(mypoint, point))))
+			.replace(/\$poolroomname/g, challenge.fields.poolroom.name)
+			.replace(/\$club/g, challenge.fields.poolroom.name)
 			.replace(/\$starttime/g, getSmartTime(challenge.fields.starttime))
 			.replace(/\$endtime/g, getSmartTime(challenge.fields.expiretime))
 			.replace(/\$level/g, challenge.fields.level)
 			.replace(/\$nick/g, (challenge.fields.issuer_nickname == null ? "" : challenge.fields.issuer_nickname))
 			.replace(/\$tabletype/g, challenge.fields.tabletype)
+			.replace(/\$contactinfo/g, contactinfo)
+			.replace(/\$contactmethod/g, method)
 			.replace(/\$rule/g, challenge.fields.rule);
 	challengeobj.append(contentTemplate);
 	challengeobj.appendTo('#content');
@@ -636,15 +674,15 @@ function addChallengeToList(challenge, point, mypoint) {
 
 function getSmartTime(datetime) {
 	if (moment(datetime).format("MM-DD-YYYY") == moment().format("MM-DD-YYYY")) {
-		return getFormattedTime2(datetime);
+		return "今天 " + getFormattedTime2(datetime);
 	}
 	return getFormattedTimeToDate(datetime);
 }
 
 function addChallenges(challenges, mypoint) {
 	for ( var idx in challenges) {
-		point = new BMap.Point(challenges[idx].fields.issuer.lng,
-				challenges[idx].fields.issuer.lat);
+		point = new BMap.Point(challenges[idx].fields.poolroom.lng,
+				challenges[idx].fields.poolroom.lat);
 		addChallengeToList(challenges[idx], point, mypoint);
 	}
 	$(document).foundation();
