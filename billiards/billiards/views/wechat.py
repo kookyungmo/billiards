@@ -20,7 +20,6 @@ from django.shortcuts import render_to_response
 from billiards.settings import TEMPLATE_ROOT, TIME_ZONE
 from django.template.context import RequestContext
 from django.db.models.query_utils import Q
-from django.core import serializers
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from StringIO import StringIO
 from dateutil.relativedelta import relativedelta
@@ -173,12 +172,14 @@ LOGO_IMG_URL = 'http://bcs.duapp.com/billiardsalbum/2014/03/website_logo1.png'
 
 NEWS_HELP = newsItemTpl %(u'"我为台球狂"微信帮助手册', u'"我为台球狂"微信帮助手册', LOGO_IMG_URL, 'http://mp.weixin.qq.com/s?__biz=MzA3MzE5MTEyOA==&mid=200093832&idx=1&sn=16041cf184f816bb2ae37db15847e621#rd')
 
-def getNotFoundResponse(msg, specialEvent, data):
+def getNotFoundResponse(msg, specialEvent, data, newsSize = 0, news = ''):
     if specialEvent == None:
-        return textReplyTpl % (msg['FromUserName'], msg['ToUserName'], str(int(time.time())), data)
+        return newsReplyTpl % (
+            msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1 + newsSize,
+            newsItemTpl %(data, data, LOGO_IMG_URL, '') + news)
     return  newsReplyTpl % (
-            msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 2,
-            specialEvent + newsItemTpl %(data, data, LOGO_IMG_URL, ''))
+            msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 2 + newsSize,
+            specialEvent + newsItemTpl %(data, data, LOGO_IMG_URL, '') + news)
 
 def hasSpecialEvent(receivedtime):
     nativetime = datetime.utcfromtimestamp(float(receivedtime))
@@ -221,7 +222,12 @@ def getNewsPoolroomsText(request, poolrooms):
         description = u"地址：%s\r\n营业面积：%s平方米\r\n营业时间：%s\r\n电话：%s" %(address, size, businesshours, tel)
         newstext = '%s%s' %(newstext, newsItemTpl %(poolroom.name, description, picurl, originContent))
     return newstext
-                
+
+def getChallengeNews(request, msg, lat, lng):
+    publishlink = set_query_parameter(buildAbsoluteURI(request, reverse('challenge_publish', args=(lat, lng, 3,))), 'uid', msg['FromUserName'])
+    challlengelink = buildAbsoluteURI(request, reverse('challenge_with_distance', args=(lat, lng,)))
+    return u'%s%s' %(newsItemTpl %(u"我要找人抢台费", u"找球打，新玩法--抢台费", LOGO_IMG_URL, publishlink), newsItemTpl %(u"看看别人的抢台费", u"查看已有的约球信息", LOGO_IMG_URL, challlengelink))
+
 def response_msg(request):
     msg = parse_msg(request)
     
@@ -247,26 +253,26 @@ def response_msg(request):
         baidu_loc_lat = unicode(baidu_loc[0])
         baidu_loc_lng = unicode(baidu_loc[1])
         nearbyPoolrooms = getNearbyPoolrooms(baidu_loc_lat, baidu_loc_lng, 3)[:1]
-        
         specialEvent = getSpecialEventItem(request, msg['CreateTime'])
+        challengenews = getChallengeNews(request, msg, baidu_loc_lat, baidu_loc_lng)
         if len(nearbyPoolrooms) > 0:
             poolroom = nearbyPoolrooms[0]
             newsPoolroomText = getNewsPoolroomsText(request, nearbyPoolrooms)
             coupons = poolroom.coupons
             if coupons.count() > 0:
                 echopictext = newsReplyTpl % (
-                                 msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1 + coupons.count() + (1 if specialEvent != None else 0),
-                                 (specialEvent if specialEvent != None else '') + newsPoolroomText + getCouponsText(request, coupons)) 
+                                 msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1 + coupons.count() + (1 if specialEvent != None else 0) + 2,
+                                 (specialEvent if specialEvent != None else '') + newsPoolroomText + getCouponsText(request, coupons) + challengenews) 
             else:
                 echopictext = newsReplyTpl % (
-                         msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1 + (1 if specialEvent != None else 0),
-                         (specialEvent if specialEvent != None else '') + newsPoolroomText)
+                         msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1 + (1 if specialEvent != None else 0) + 2,
+                         (specialEvent if specialEvent != None else '') + newsPoolroomText + challengenews)
             recordUserActivity(msg['FromUserName'], 'location', poolroom.name, {'lat': lat, 'lng': lng, 'scale': msg['Scale'], 'label': ['Label']}, msg['CreateTime'], 
                                {'id': poolroom.id, 'name': poolroom.name, 'distance': poolroom.distance})
             return echopictext
         else:
             data = u"在您附近3公里以内，没有推荐的台球俱乐部，去其他地方试试吧"
-            echostr = getNotFoundResponse(msg, specialEvent, data)
+            echostr = getNotFoundResponse(msg, specialEvent, data, 2, challengenews)
             recordUserActivity(msg['FromUserName'], 'location', '', {'lat': lat, 'lng': lng, 'scale': msg['Scale'], 'label': ['Label']}, msg['CreateTime'], 
                                None)
             return echostr
