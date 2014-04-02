@@ -12,5 +12,5 @@ from billiards.models import Event
 
 def detail(request, year, month, title=None):
     get_object_or_404(Event, year=year, month=int(month))
-    return render_to_response(TEMPLATE_ROOT + 'event/nextstepu.html', {},
+    return render_to_response(TEMPLATE_ROOT + 'event/nextstepu_qiang.html', {},
         context_instance=RequestContext(request))

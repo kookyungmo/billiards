@@ -27,7 +27,7 @@
 {% url 'challenge_list' as challenge %}
 {% url 'login_3rd' 'qq' as qq %}
 {% url 'login_3rd' 'weibo' as weibo %}
-{% url 'event_year_month_name' '2014' '03' 'my-favorite-club' as latest_event %}
+{% url 'event_year_month_name' '2014' '04' 'qiang-tai-fei-yue-qiu' as latest_event %}
 {% with qq|add:'?returnurl='|add:request.get_full_path as qqurl %}
 {% with weibo|add:'?returnurl='|add:request.get_full_path as weibourl %}
 {% url 'user_logout' as user_logout %}
@@ -67,6 +67,7 @@
 	        <li class="divider"></li>
 	        <li {% if request.path == mapurl %} class="active" {% endif %}><a href="{{ mapurl }}">赛事活动</a></li>
 	        <li {% if request.path == nearby %} class="active" {% endif %}><a href="{{ nearby }}">附近球房</a></li>
+                <li><a style="color: #fd8d2a;" href="{{ latest_event }}"><b>发布抢台费信息，送手机话费！</b></a></li>
 	        <li {% if request.path == challenge %} class="active" {% endif %}><a href="{{ challenge }}">约球公告</a></li>
 	        {% if user.is_authenticated and user.is_staff %}
 			<li><a href="{% url 'wechat_activity_report' %}">微信用户互动统计</a></li>
