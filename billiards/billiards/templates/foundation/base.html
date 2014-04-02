@@ -67,7 +67,6 @@
 	        <li class="divider"></li>
 	        <li {% if request.path == mapurl %} class="active" {% endif %}><a href="{{ mapurl }}">赛事活动</a></li>
 	        <li {% if request.path == nearby %} class="active" {% endif %}><a href="{{ nearby }}">附近球房</a></li>
-	        <li><a style="color: #fd8d2a;" href="{{ latest_event }}"><b>免费打球!</b></a></li>
 	        <li {% if request.path == challenge %} class="active" {% endif %}><a href="{{ challenge }}">约球公告</a></li>
 	        {% if user.is_authenticated and user.is_staff %}
 			<li><a href="{% url 'wechat_activity_report' %}">微信用户互动统计</a></li>
@@ -110,7 +109,6 @@
 	  <ul class="off-canvas-list">
 	    <li><a href="{{ mapurl }}">赛事活动</a></li>
 	    <li><a href="{{ nearby }}">附近球房</a></li>
-	    <li><a style="color: #fd8d2a;" href="{{ latest_event }}"><b>免费打球!</b></a></li>
 	    <li><a href="{{ challenge }}">约球公告</a></li>
 	    {% if user.is_authenticated %}
 	    {% if poolroomuser %}
