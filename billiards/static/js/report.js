@@ -6,12 +6,12 @@ function refreshUserData(url, startdate, enddate, messages) {
 		});
 		contentTemplate ="<thead>"
 			+ "<tr>"
-			+ "<th width=\"200\">微信帐号</th>"
-			+ "<th width=\"200\">用户id</th>"
-			+ "<th width=\"300\">关注日期</th>"
-			+ "<th width=\"300\">是否首次关注</th>"
-			+ "<th width=\"300\">是否已取消关注</th>"
-			+ "<th width=\"300\">取消关注日期</th>"
+			+ "<th width=\"150\">微信帐号</th>"
+			+ "<th>用户id</th>"
+			+ "<th width=\"200\">关注日期</th>"
+			+ "<th width=\"50\">是否首次关注</th>"
+			+ "<th width=\"50\">是否已取消关注</th>"
+			+ "<th width=\"100\">取消关注日期</th>"
 			+ "</tr></thead><tbody>";
 		for (idx in data) {
 			contentTemplate += "<tr>"
@@ -84,12 +84,12 @@ function refreshMessageData(url, startdate, enddate, messages) {
 		});
 		contentTemplate ="<thead>"
 			+ "<tr>"
-			+ "<th width=\"200\">微信帐号</th>"
-			+ "<th width=\"200\">用户id</th>"
-			+ "<th width=\"500\">发送日期</th>"
-			+ "<th width=\"400\">消息类别</th>"
-			+ "<th width=\"400\">消息内容</th>"
-			+ "<th width=\"800\">Raw消息内容</th>"
+			+ "<th width=\"100\">微信帐号</th>"
+			+ "<th>用户id</th>"
+			+ "<th width=\"300\">发送日期</th>"
+			+ "<th width=\"200\">消息类别</th>"
+			+ "<th width=\"200\">消息内容</th>"
+			+ "<th>Raw消息内容</th>"
 			+ "</tr></thead><tbody>";
 		for (idx in data) {
 			contentTemplate += "<tr>"

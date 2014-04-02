@@ -84,9 +84,9 @@ class WechatTest(TestCase):
         """
         msg = self._send_wechat_message(data)
         self.assertTrue('ArticleCount' in msg)
-        self.assertEqual(1, int(msg['ArticleCount']))
-        self.assertEqual(u'北京黑桃8撞球馆上坡家园店', msg['Articles']['item']['Title'])
-        self.assertTrue(msg['Articles']['item']['PicUrl'].startswith('http://api.map.baidu.com/staticimage'))
+        self.assertEqual(3, int(msg['ArticleCount']))
+        self.assertEqual(u'北京黑桃8撞球馆上坡家园店', msg['Articles']['item'][0]['Title'])
+        self.assertTrue(msg['Articles']['item'][0]['PicUrl'].startswith('http://api.map.baidu.com/staticimage'))
         activityquery = WechatActivity.objects.filter(eventtype='location')
         self.assertEqual(1, activityquery.count())
         activity = activityquery[:1][0]
@@ -116,7 +116,7 @@ class WechatTest(TestCase):
         """
         msg = self._send_wechat_message(data)
         self.assertTrue('ArticleCount' in msg)
-        self.assertEqual(2, int(msg['ArticleCount']))
+        self.assertEqual(4, int(msg['ArticleCount']))
         self.assertEqual(u'北京98台球俱乐部', msg['Articles']['item'][0]['Title'])
         # the poolroom has imgaes
         data = """
@@ -134,9 +134,9 @@ class WechatTest(TestCase):
         """
         msg = self._send_wechat_message(data)
         self.assertTrue('ArticleCount' in msg)
-        self.assertEqual(1, int(msg['ArticleCount']))
-        self.assertEqual(u'北京夜时尚护国寺店', msg['Articles']['item']['Title'])
-        self.assertTrue(msg['Articles']['item']['PicUrl'].startswith('http://billiardsalbum.bcs.duapp.com/resources/poolroom'))
+        self.assertEqual(3, int(msg['ArticleCount']))
+        self.assertEqual(u'北京夜时尚护国寺店', msg['Articles']['item'][0]['Title'])
+        self.assertTrue(msg['Articles']['item'][0]['PicUrl'].startswith('http://billiardsalbum.bcs.duapp.com/resources/poolroom'))
         
     def _send_wechat_message(self, data):
         response = self.client.post(reverse('weixin'), data, "application/xml")
@@ -182,7 +182,9 @@ class WechatTest(TestCase):
         </xml>
         """
         msg = self._send_wechat_message(data)
-        self.assertTrue('ArticleCount' not in msg)
+        self.assertTrue('ArticleCount' in msg)
+        self.assertEqual(1, int(msg['ArticleCount']))
+        self.assertEqual(u'最近7天内没有被收录的爱好者活动', msg['Articles']['item']['Title'])
         
         # two activities in 7 days, submitted on 2014-03-05
         data = u"""
@@ -260,7 +262,7 @@ class WechatTest(TestCase):
         """
         msg = self._send_wechat_message(data)
         self.assertTrue('ArticleCount' in msg)
-        self.assertEqual(2, int(msg['ArticleCount']))
+        self.assertEqual(4, int(msg['ArticleCount']))
         self.assertEqual(u'北京黑桃8撞球馆上坡家园店', msg['Articles']['item'][1]['Title'])
         self.assertTrue(msg['Articles']['item'][1]['PicUrl'].startswith('http://api.map.baidu.com/staticimage'))
         self.assertEqual(u'台球免费打', msg['Articles']['item'][0]['Title'])
