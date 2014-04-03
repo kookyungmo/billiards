@@ -613,6 +613,7 @@ class Event(models.Model):
     year = models.IntegerField(verbose_name='年份')
     month = models.IntegerField(verbose_name='月份')
     title = models.CharField(max_length=30, null=True, blank=True, verbose_name='标题缩写(用于url)')
+    pagename = models.CharField(max_length=50, verbose_name='实现页面文件名')
     
     def __unicode__(self):
         return u'[%s-%s] %s' %(self.year, self.month, self.title)
