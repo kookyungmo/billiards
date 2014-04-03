@@ -612,10 +612,16 @@ class Event(models.Model):
     id = models.AutoField(primary_key=True)
     year = models.IntegerField(verbose_name='年份')
     month = models.IntegerField(verbose_name='月份')
-    title = models.CharField(max_length=30, null=True, blank=True, verbose_name='标题缩写(用于url)')
+    titleabbrev = models.CharField(max_length=30, null=True, blank=True, verbose_name='活动英文缩写(用于url)')
+    title = models.CharField(max_length=30, null=True, blank=True, verbose_name='标题(用于微信等)')
+    description = models.CharField(max_length=255, verbose_name='活动简介(用于微信等)')
+    picAD = models.CharField(max_length=255, null=True, blank=True, verbose_name='活动宣传图片(用于微信等)')
+    pagename = models.CharField(max_length=50, verbose_name='实现页面文件名')
+    startdate = models.DateField(verbose_name='开始日期(包含)')
+    enddate = models.DateField(verbose_name='结束日期(包含)')
     
     def __unicode__(self):
-        return u'[%s-%s] %s' %(self.year, self.month, self.title)
+        return u'[%s-%s-%s] %s(%s)' %(self.year, self.month, self.titleabbrev, self.title, self.description)
     
     class Meta:
         db_table = 'event'
