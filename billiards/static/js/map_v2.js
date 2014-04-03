@@ -516,7 +516,7 @@ function getChallenges(point) {
 		success : function(data)
 		{
 			if (data.length == 0) {
-				$("#info .subheader").text("真遗憾，暂时没有俱乐部发布的约球信息。");
+				$("#info .subheader").text("真遗憾，暂时没有球友和俱乐部发布的约球信息。");
 			} else {
 				$("#info").remove();
 				addChallenges(data, point);

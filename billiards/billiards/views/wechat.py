@@ -17,7 +17,7 @@ import pytz
 from django.utils import simplejson, timezone
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render_to_response
-from billiards.settings import TEMPLATE_ROOT, TIME_ZONE
+from billiards.settings import TEMPLATE_ROOT, TIME_ZONE, SITE_LOGO_URL
 from django.template.context import RequestContext
 from django.db.models.query_utils import Q
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -172,7 +172,7 @@ newsItemTpl = """<item>
 CLUB_NAMES = {'22': (u'北京慧聚台球俱乐部', u'慧聚台球', u'慧聚', u'慧聚台球俱乐部')}
 HELP_KEYWORDS = (u"帮助", u"?", u"？", u'help')
 
-LOGO_IMG_URL = 'http://bcs.duapp.com/billiardsalbum/2014/03/website_logo1.png'
+LOGO_IMG_URL = SITE_LOGO_URL
 
 NEWS_HELP = newsItemTpl %(u'"我为台球狂"微信帮助手册', u'"我为台球狂"微信帮助手册', LOGO_IMG_URL, 'http://mp.weixin.qq.com/s?__biz=MzA3MzE5MTEyOA==&mid=200093832&idx=1&sn=16041cf184f816bb2ae37db15847e621#rd')
 

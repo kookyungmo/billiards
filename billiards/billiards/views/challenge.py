@@ -8,7 +8,7 @@ Created on 2014年1月4日
 import datetime
 from billiards.models import Challenge, ChallengeApply,\
     DisplayNameJsonSerializer, Poolroom
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from billiards.settings import TEMPLATE_ROOT, TIME_ZONE
 from django.template.context import RequestContext
 from StringIO import StringIO
@@ -23,6 +23,7 @@ from django.core.exceptions import PermissionDenied
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from billiards.views.poolroom import getNearbyPoolrooms
 from billiards.views.club import challenge, saveChallenge
+from urlparse import urlparse
 
 def updateChallengeJsonStrApplyInfo(jsonstr, user, challenges):
     appliedChallenges = ChallengeApply.objects.filter(Q(challenge__in=challenges) & Q(user__exact=user))
@@ -128,3 +129,17 @@ def publish(request, lat = None, lng = None, distance = 3):
         pass
     return render_to_response(TEMPLATE_ROOT + 'challenge_application.html', 
                                   {'poolrooms': nearbypoolrooms, 'lat': lat, 'lng': lng, 'username': username}, context_instance=RequestContext(request))
+    
+def detail(request, challengeid):
+    challenge = get_object_or_404(Challenge, pk=challengeid)
+    location = "%s,%s" %(challenge.poolroom.lng_baidu, challenge.poolroom.lat_baidu)
+    locationtext = None
+    if challenge.source == 2 and challenge.location != '':
+        locationtexts = challenge.location.split(':')
+        if len(locationtexts) > 1:
+            locationtext = locationtexts[1]
+        latlng = locationtexts[0].split(",")
+        location = "%s,%s" %(latlng[1], latlng[2])
+    return render_to_response(TEMPLATE_ROOT + 'challenge_detail.html', {'cha': challenge, 'location': location, 'locationtext': locationtext,
+                                'contact': urlparse(challenge.issuer_contact)},
+                              context_instance=RequestContext(request))

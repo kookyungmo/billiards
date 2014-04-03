@@ -441,6 +441,14 @@ class Challenge(models.Model):
         ), default='waiting', verbose_name='状态', jsonUseValue=False)
 
     @property
+    def tabletype_display(self):
+        return self.get_tabletype_display()
+    
+    @property
+    def level_display(self):
+        return self.get_level_display()
+
+    @property
     def is_expired(self):
         return is_expired(self.expiretime)
 

@@ -52,6 +52,7 @@ urlpatterns += patterns('billiards.views.challenge',
     url(r'^challenge/(?P<lat>\d+.\d+),(?P<lng>\d+.\d+)$', 'index', name='challenge_with_distance'),
     url(r'^challenge/(?P<challengeid>\d+)/apply$', 'applyChallenge', name='apply_challenge'),
     url(r'^challenge/publish/(?P<lat>\d+.\d+),(?P<lng>\d+.\d+)/(?P<distance>\d+)', 'publish', name="challenge_publish"),
+    url(r'^challenge/(?P<challengeid>\d+)$', 'detail', name='challenge_detail'),
 )
 
 urlpatterns += patterns('billiards.views.utility',
