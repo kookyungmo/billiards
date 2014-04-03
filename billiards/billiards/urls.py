@@ -87,7 +87,7 @@ urlpatterns += patterns('billiards.views.wechat',
 )
 
 urlpatterns += patterns('billiards.views.event',
-    url(r'^event/(?P<year>\d{4})/(?P<month>\d{02})/(?:(?P<title>[\w-]+))?$', 'detail', name='event_year_month_name'),
+    url(r'^event/(?P<year>\d{4})/(?P<month>\d{02})/(?:(?P<titleabbrev>[\w-]+))?$', 'detail', name='event_year_month_name'),
 )
 urlpatterns += staticfiles_urlpatterns()
 handler403 = 'billiards.views.exceptions.handler403'

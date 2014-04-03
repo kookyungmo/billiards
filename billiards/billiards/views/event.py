@@ -11,10 +11,10 @@ from django.template.context import RequestContext
 from billiards.models import Event
 from django.core.exceptions import MultipleObjectsReturned
 
-def detail(request, year, month, title=None):
+def detail(request, year, month, titleabbrev=None):
     try:
         event = get_object_or_404(Event, year=year, month=int(month))
     except MultipleObjectsReturned:
-        event = get_object_or_404(Event, year=year, month=int(month), title=title)
+        event = get_object_or_404(Event, year=year, month=int(month), titleabbrev=titleabbrev)
     return render_to_response(TEMPLATE_ROOT + 'event/%s' %(event.pagename), {},
         context_instance=RequestContext(request))
