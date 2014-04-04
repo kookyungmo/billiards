@@ -34,11 +34,12 @@ def toDict(bitfield):
 
 poolroom_fields = ('id', 'name', 'address', 'tel', 'lat_baidu', 'lng_baidu', 'flags', 'businesshours', 'size', 'rating')
 
-def getCouponCriteria():
+def getCouponCriteria(theday = None):
     datefmt = "%Y-%m-%d"
-    starttime = datetime.datetime.today()
-    return Q(startdate__lte=starttime.strftime(datefmt)) & \
-        (Q(enddate__isnull=True) | Q(enddate__gte=starttime.strftime(datefmt))) & \
+    if theday == None:
+        theday = datetime.datetime.today()
+    return Q(startdate__lte=theday.strftime(datefmt)) & \
+        (Q(enddate__isnull=True) | Q(enddate__gte=theday.strftime(datefmt))) & \
         Q(status=1)
         
 class Poolroom(models.Model):
@@ -93,8 +94,11 @@ class Poolroom(models.Model):
     
     @property
     def coupons(self):
-        return Coupon.objects.filter(Q(poolroom=self) & getCouponCriteria())
-
+        return self.getCoupons(datetime.datetime.today())
+    
+    def getCoupons(self, date):
+        return Coupon.objects.filter(Q(poolroom=self) & getCouponCriteria(date))
+    
 UPLOAD_TO_POOLROOM = UPLOAD_TO + 'poolroom/'
 poolroomimage_fields = ('imagepath', 'description', 'iscover')
 poolroomcoupon_fields = ('title', 'description', 'discount', 'url')
