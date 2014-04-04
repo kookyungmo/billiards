@@ -726,7 +726,7 @@ def response_msg_bj_university_association(request):
 @csrf_exempt
 def bj_university_association(request):
     if request.method=='GET':
-        response=HttpResponse(checkSignature(request, token='pktaiqiu.com'))
+        response=HttpResponse(checkSignature(request, token='pktaiqiucom'))
         return response
     elif request.method=='POST':
         return HttpResponse(response_msg_bj_university_association(request),content_type="application/xml")
