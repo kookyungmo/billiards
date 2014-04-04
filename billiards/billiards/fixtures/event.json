@@ -1,0 +1,32 @@
+[
+    {
+        "pk": 1, 
+        "model": "billiards.event", 
+        "fields": {
+            "startdate": "2014-03-21", 
+            "enddate": "2014-03-31", 
+            "description": "\u4f60\u6253\u7403\uff0c\u6211\u4e70\u5355\u3002", 
+            "title": "\u53f0\u7403\u514d\u8d39\u6253", 
+            "picAD": "http://bcs.duapp.com/billiardsalbum/2014/03/activity.jpg", 
+            "titleabbrev": "my-favorite-club", 
+            "month": 3, 
+            "year": 2014, 
+            "pagename": "nextstepu.html"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "billiards.event", 
+        "fields": {
+            "startdate": "2014-04-05", 
+            "enddate": "2014-04-20", 
+            "description": "\u53c2\u4e0e\u62a2\u53f0\u8d39\uff0c\u8d62\u624b\u673a\u8bdd\u8d39", 
+            "title": "\u62a2\u53f0\u8d39\u9001\u8bdd\u8d39", 
+            "picAD": "", 
+            "titleabbrev": "qiang-tai-fei-yue-qiu", 
+            "month": 4, 
+            "year": 2014, 
+            "pagename": "nextstepu_qiang.html"
+        }
+    }
+]

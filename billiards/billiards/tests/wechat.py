@@ -41,7 +41,7 @@ def parse_msg(content):
 
 class WechatTest(TestCase):
     
-    fixtures = ['poolroom.json', 'match.json', 'group.json', 'coupon.json']
+    fixtures = ['poolroom.json', 'match.json', 'group.json', 'coupon.json', 'event.json']
     
     def setUp(self):
         self.client = Client()
@@ -267,3 +267,20 @@ class WechatTest(TestCase):
         self.assertTrue(msg['Articles']['item'][1]['PicUrl'].startswith('http://api.map.baidu.com/staticimage'))
         self.assertEqual(u'台球免费打', msg['Articles']['item'][0]['Title'])
         self.assertTrue(msg['Articles']['item'][0]['PicUrl'].startswith('http://bcs.duapp.com/billiardsalbum/2014/03/activity.jpg'))
+    
+    def test_extend_date_special_event(self):
+        data = u"""
+        <xml>
+        <ToUserName><![CDATA[toUser]]></ToUserName>
+        <FromUserName><![CDATA[fromUser]]></FromUserName> 
+        <CreateTime>1396577902</CreateTime>
+        <MsgType><![CDATA[text]]></MsgType>
+        <Content><![CDATA[yunchuan]]></Content>
+        <MsgId>1234567890123456</MsgId>
+        </xml>
+        """
+        msg = self._send_wechat_message(data)
+        self.assertTrue('ArticleCount' in msg)
+        self.assertEqual(2, int(msg['ArticleCount']))
+        self.assertEqual(u'抢台费送话费', msg['Articles']['item'][0]['Title'])
+        self.assertTrue(msg['Articles']['item'][0]['Url'].startswith('http://www.pktaiqiu.com/event/2014/04/qiang-tai-fei-yue-qiu'))

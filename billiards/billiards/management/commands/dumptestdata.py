@@ -6,7 +6,8 @@ A utility tool to create test data from product db.
 '''
 from django.core import serializers
 from django.db.models.query_utils import Q
-from billiards.models import Poolroom, Match, Group, Coupon, PoolroomImage
+from billiards.models import Poolroom, Match, Group, Coupon, PoolroomImage,\
+    Event
 from django.core.management.base import NoArgsCommand
 import billiards
 import os
@@ -39,5 +40,11 @@ class Command(NoArgsCommand):
         couponTestDataQuery = Coupon.objects.filter(Q(poolroom=137) | Q(poolroom=187))
         data = serializers.serialize("json", couponTestDataQuery, indent=4)
         out = open("%s/fixtures/coupon.json" %(self.apppath), "w")
+        out.write(data)
+        out.close()
+        
+        eventTestDataQuery = Event.objects.filter(Q(id__lte=2))
+        data = serializers.serialize("json", eventTestDataQuery, indent=4)
+        out = open("%s/fixtures/event.json" %(self.apppath), "w")
         out.write(data)
         out.close()
