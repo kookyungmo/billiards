@@ -118,7 +118,8 @@ def publish(request, lat = None, lng = None, distance = 3):
                     username = request.POST['user']
                 except KeyError:
                     pass
-            return saveChallenge(request, 'wechat:%s' %(username), poolroomid, None, 2, location)
+                username = 'wechat:%s' %(username)
+            return saveChallenge(request, username, poolroomid, None, 2, location)
         except Exception:
             return HttpResponse(json.dumps({'rt': 0, 'msg': u'Invalid Arguments.'}), content_type="application/json")
     nearbypoolrooms = getNearbyPoolrooms(lat, lng, distance)
