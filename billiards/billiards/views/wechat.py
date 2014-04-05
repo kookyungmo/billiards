@@ -101,7 +101,6 @@ def set_content(request):
       "nh":"你好啊，朋友",
       "bz":"您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、输入“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。\r\n4、输入“找便宜”，“团购”获取超值台球团购。\r\n5、输入“比赛”，“活动”获取俱乐部比赛活动信息。\r\n祝各位球友们玩得开心，愉快，谢谢关注。",
       "zf":"送祝福啦，祝您马年吉祥，身体健康，马到成功，财源滚滚来！",
-      "help":"您好，需要帮助吗？\r\n1、发送您的位置信息，获取附近台球俱乐部信息。\r\n2、输入“中式八球”，“花式台球”获取我们精选的台球视频集锦。\r\n3、发送相片，图片，一起和身边的朋友们交换互动。\r\n4、输入“找便宜”，“团购”获取超值台球团购。\r\n5、输入“比赛”，“活动”获取俱乐部比赛活动信息。\r\n祝各位球友们玩得开心，愉快，谢谢关注。",
       "yeah":"oh,yeah,我们一起为您欢呼",
 
       #Chinese content
@@ -174,6 +173,8 @@ HELP_KEYWORDS = (u"帮助", u"?", u"？", u'help')
 
 LOGO_IMG_URL = SITE_LOGO_URL
 
+MAX_NEWSITEM = 10
+
 NEWS_HELP = newsItemTpl %(u'"我为台球狂"微信帮助手册', u'"我为台球狂"微信帮助手册', LOGO_IMG_URL, 'http://mp.weixin.qq.com/s?__biz=MzA3MzE5MTEyOA==&mid=200093832&idx=1&sn=16041cf184f816bb2ae37db15847e621#rd')
 
 def getNotFoundResponse(msg, specialEvent, data, newsSize = 0, news = ''):
@@ -213,8 +214,9 @@ def getActNewsText(request, msg, acts, count, specialEvent):
             picurl = buildPoolroomImageURL(act.poolroom)
             text.append(newsItemTpl %(act.title, u"活动开始时间: %s" %(getNativeTime(act.starttime)), picurl, buildAbsoluteURI(request, reverse('activity_detail', args=(act.pk,)))))
         return ''.join(text)
+    acts = acts[:MAX_NEWSITEM - (0 if specialEvent is None else specialEvent[0])]
     return newsReplyTpl % (
-         msg['FromUserName'], msg['ToUserName'], str(int(time.time())), count + (specialEvent[0] if specialEvent != None else 0),
+         msg['FromUserName'], msg['ToUserName'], str(int(time.time())), len(acts) + (specialEvent[0] if specialEvent != None else 0),
          (specialEvent[1] if specialEvent != None else '') + getActsText(acts))
 
 def getNewsPoolroomsText(request, poolrooms):
@@ -242,9 +244,16 @@ def response_msg(request):
     #response event message
     if msg['MsgType'] == "event":
         if msg['Event'] == 'subscribe' or msg['Event'] == 'scan':
-            echostr = textReplyTpl % (
-                                 msg['FromUserName'], msg['ToUserName'], str(int(time.time())),
-                                 '欢迎您关注我为台球狂官方微信，获取更多身边俱乐部信息，请访问：http://www.pktaiqiu.com，与我们更多互动，发送您的位置信息给我们，为您推荐身边的台球俱乐部。发送 ？，帮助，获取帮助手册。')
+            specialEvent = getSpecialEventItem(request, msg['CreateTime'])
+            respTitle = u'欢迎您关注我为台球狂官方微信'
+            respDesc = u'获取更多身边俱乐部信息，请访问：http://www.pktaiqiu.com，与我们更多互动，发送您的位置信息给我们，为您推荐身边的台球俱乐部。发送 ？，帮助，获取帮助手册。'
+            response = newsItemTpl %(respTitle, respDesc, LOGO_IMG_URL, '')
+            if specialEvent == None:
+                echostr = newsReplyTpl %(msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1, response)
+            else:
+                echostr = newsReplyTpl %(msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1 + specialEvent[0], 
+                        (specialEvent[1] + response))
+               
             try:
                 eventkey = msg['EventKey']
             except KeyError:
@@ -436,8 +445,9 @@ def response_msg(request):
                         picurl = buildPoolroomImageURL(match.poolroom)
                         text.append(newsItemTpl %(match.title, u"比赛开始时间: %s" %(getNativeTime(match.starttime)), picurl, buildAbsoluteURI(request, reverse('match_detail', args=(match.pk,)))))
                     return ''.join(text)
+                matches = matches[:MAX_NEWSITEM - eventCount]
                 echopictext = newsReplyTpl % (
-                                 msg['FromUserName'], msg['ToUserName'], str(int(time.time())), count + eventCount,
+                                 msg['FromUserName'], msg['ToUserName'], str(int(time.time())), len(matches) + eventCount,
                                   eventText + getMatchesText(matches))
                 recordUserActivity(msg['FromUserName'], 'text', 'match', {'content': msg['Content']}, msg['CreateTime'], 
                                {'count': count, 'match': True})       
@@ -490,7 +500,7 @@ def response_msg(request):
                 return echostr
             else:
                 echostr = newsReplyTpl %(msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1 + specialEvent[0], 
-                        (specialEvent[1] + newsItemTpl %(u'感谢参与免费打球活动', u'你发送的球房名称核对有效后，24小时内你将收到免费打球邀请。谢谢参与，欢迎转发。', LOGO_IMG_URL, '')))
+                        (specialEvent[1] + NEWS_HELP))
                 recordUserActivity(msg['FromUserName'], 'text', msg['Content'], {'content': msg['Content']}, msg['CreateTime'], 
                                    None)
                 return echostr
