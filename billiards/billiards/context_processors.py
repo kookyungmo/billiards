@@ -18,4 +18,5 @@ def siteconf(request):
             'rev': REV,
             'STATIC_URL': STATIC_URL,
             'SITE_LOGO_URL': SITE_LOGO_URL,
+            'FOUNDATION_VER': '5.2.1'
     }
