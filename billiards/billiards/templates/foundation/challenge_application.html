@@ -153,6 +153,7 @@ $("#challengeForm").on('valid', function() {
 	url = document.URL;
 	$.ajax({
 		data : {'nickname': $("#nickname").val(),
+			'user': '{{username}}',
 			'contact': $('#contactinfo').val() + "://" + $('#contact').val(),
 			'poolroom': poolroomid,
 			'location': address,
@@ -162,7 +163,6 @@ $("#challengeForm").on('valid', function() {
 			'status': $('#status').val(),
 			'starttime': starttime.valueOf(),
 			'expiredtime': expiredtime.valueOf()},
-			'user': '{{ username }}',
 			url : url,
 			type: 'POST',
 		dataType : 'json',
