@@ -529,6 +529,24 @@ function getChallenges(point) {
 	});
 }
 
+function resolve(url, base_url) {
+	  var doc      = document
+	    , old_base = doc.getElementsByTagName('base')[0]
+	    , old_href = old_base && old_base.href
+	    , doc_head = doc.head || doc.getElementsByTagName('head')[0]
+	    , our_base = old_base || doc_head.appendChild(doc.createElement('base'))
+	    , resolver = doc.createElement('a')
+	    , resolved_url
+	    ;
+	  our_base.href = base_url;
+	  resolver.href = url;
+	  resolved_url  = resolver.href; // browser magic at work here
+
+	  if (old_base) old_base.href = old_href;
+	  else doc_head.removeChild(our_base);
+	  return resolved_url;
+}
+
 function addChallengeToList(challenge, point, mypoint) {
 	var challengeobj = jQuery('<div/>', {
 		class : 'row',
@@ -536,6 +554,8 @@ function addChallengeToList(challenge, point, mypoint) {
 	});
 	url = POOLROOM_URL;
 	detail_url = url.replace(/000/g, challenge.fields.poolroom.id);
+	url = CHALLENGE_DETAIL_URL;
+	cdetail_url = url.replace(/000/g, challenge.pk);
 	contentTemplate = "<div class=\"small-12 columns\">"
 			+ "<div class=\"row\">"
 			+ "<div class=\"small-6 medium-uncentered medium-2 columns\">"
@@ -614,6 +634,13 @@ function addChallengeToList(challenge, point, mypoint) {
 		+ "<div class=\"row\"><p>球台类型: <code>$tabletype</code></p></div>";
 	if (challenge.fields.source == 1)
 		contentTemplate += "<div class=\"row\"><p>比赛方式: <code>$rule</code></p></div>";
+	methodparas = "('$nick在我为台球狂发起的" + (challenge.fields.source == 1 ? "约赛" : "抢台费") + "', '', '" + resolve(cdetail_url, document.URL) + "', '" + LOGO_URL + "')";
+	contentTemplate += "<div class=\"row show-for-touch\">";
+	contentTemplate += "<a href=\"javascript:weixinShareTimeline" + methodparas;
+	contentTemplate += ";\" class=\"button radius\">分享到朋友圈</a></div>";
+	contentTemplate += "<div class=\"row show-for-touch\">";
+	contentTemplate += "<a href=\"javascript:weixinSendAppMessage" + methodparas;
+	contentTemplate += ";\" class=\"button radius\">发送给好友</a></div>";	
 	contentTemplate += "<div class=\"row\">";
 	if (challenge.fields.source == 1) {
 		if (challenge.fields.applied) {

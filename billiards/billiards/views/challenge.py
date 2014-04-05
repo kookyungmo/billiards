@@ -24,6 +24,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from billiards.views.poolroom import getNearbyPoolrooms
 from billiards.views.club import challenge, saveChallenge
 from urlparse import urlparse
+from django.core.urlresolvers import reverse
 
 def updateChallengeJsonStrApplyInfo(jsonstr, user, challenges):
     appliedChallenges = ChallengeApply.objects.filter(Q(challenge__in=challenges) & Q(user__exact=user))
@@ -141,6 +142,7 @@ def detail(request, challengeid):
             locationtext = locationtexts[1]
         latlng = locationtexts[0].split(",")
         location = "%s,%s" %(latlng[1], latlng[2])
-    return render_to_response(TEMPLATE_ROOT + 'challenge_detail.html', {'cha': challenge, 'location': location, 'locationtext': locationtext,
+    url = request.build_absolute_uri(reverse('challenge_detail', args=[challengeid]))
+    return render_to_response(TEMPLATE_ROOT + 'challenge_detail.html', {'cha': challenge, 'location': location, 'locationtext': locationtext, 'url': url,
                                 'contact': urlparse(challenge.issuer_contact)},
                               context_instance=RequestContext(request))
