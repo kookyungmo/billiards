@@ -21,9 +21,9 @@
 		<div class="small-6 columns">
 			<a href="{% url 'challenge_list' %}" class="button radius">查看更多约球信息</a>
 		</div>
-		<div id="shareToFriends" class="small-6 columns show-for-small-only">
-			<a href="javascript:weixinShareTimeline('{{ cha.issuer_nickname }}在"我为台球狂"发起的{% if cha.source == 1 %}约球{% else %}抢台费{% endif %}', '', '{% url 'challenge_detail' cha.id %}', '{{SITE_LOGO_URL}}');" class="button radius">分享到朋友圈</a>
-			<a href="javascript:weixinSendAppMessage('{{ cha.issuer_nickname }}在"我为台球狂"发起的{% if cha.source == 1 %}约球{% else %}抢台费{% endif %}', '', '{% url 'challenge_detail' cha.id %}', '{{SITE_LOGO_URL}}');" class="button radius">发送给好友</a>
+		<div id="shareToFriends" class="small-6 columns show-for-touch">
+			<a href="javascript:weixinShareTimeline('{{ cha.issuer_nickname }}在我为台球狂发起的{% if cha.source == 1 %}约球{% else %}抢台费{% endif %}', '', '{{url}}', '{{SITE_LOGO_URL}}');" class="button radius">分享到朋友圈</a>
+			<a href="javascript:weixinSendAppMessage('{{ cha.issuer_nickname }}在我为台球狂发起的{% if cha.source == 1 %}约球{% else %}抢台费{% endif %}', '', '{{url}}', '{{SITE_LOGO_URL}}');" class="button radius">发送给好友</a>
 		</div>		
 	</div>
 </div>
@@ -112,6 +112,10 @@
 			</div>
 		</div>
 	</div>
+</div>
+<div id="shareToWechat" class="reveal-modal medium" data-reveal>
+  <h3>请先通过微信搜索 pktaiqiu 添加我为台球狂为好友，通过微信分享抢台费 :)</h3>
+  <a class="close-reveal-modal">&#215;</a>
 </div>
 {% endblock %}
 {% block foundationscript %}

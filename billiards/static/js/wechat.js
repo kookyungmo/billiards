@@ -10,6 +10,8 @@ function weixinShare(messageType, title, desc, link, imgUrl) {
 		    "desc":desc, 
 		    "title":title 
 		}); 
+	} else {
+		$('#shareToWechat').foundation('reveal', 'open');
 	}
 }
 
