@@ -175,7 +175,7 @@ LOGO_IMG_URL = SITE_LOGO_URL
 
 MAX_NEWSITEM = 10
 
-NEWS_HELP = newsItemTpl %(u'"我为台球狂"微信帮助手册', u'"我为台球狂"微信帮助手册', LOGO_IMG_URL, 'http://mp.weixin.qq.com/s?__biz=MzA3MzE5MTEyOA==&mid=200093832&idx=1&sn=16041cf184f816bb2ae37db15847e621#rd')
+NEWS_HELP = newsItemTpl %(u'"我为台球狂"微信帮助手册', u'"我为台球狂"微信帮助手册', LOGO_IMG_URL, 'http://mp.weixin.qq.com/s?__biz=MzA3MzE5MTEyOA==&mid=200093857&idx=1&sn=05527c469c9ba83c320262f3b7744125#rd')
 
 def getNotFoundResponse(msg, specialEvent, data, newsSize = 0, news = ''):
     if specialEvent == None:
@@ -247,7 +247,7 @@ def response_msg(request):
             specialEvent = getSpecialEventItem(request, msg['CreateTime'])
             respTitle = u'欢迎您关注我为台球狂官方微信'
             respDesc = u'获取更多身边俱乐部信息，请访问：http://www.pktaiqiu.com，与我们更多互动，发送您的位置信息给我们，为您推荐身边的台球俱乐部。发送 ？，帮助，获取帮助手册。'
-            response = newsItemTpl %(respTitle, respDesc, LOGO_IMG_URL, '')
+            response = newsItemTpl %(respTitle, respDesc, LOGO_IMG_URL, 'http://mp.weixin.qq.com/s?__biz=MzA3MzE5MTEyOA==&mid=200093832&idx=1&sn=16041cf184f816bb2ae37db15847e621#rd')
             if specialEvent == None:
                 echostr = newsReplyTpl %(msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1, response)
             else:
