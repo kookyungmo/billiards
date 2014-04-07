@@ -513,13 +513,13 @@ def recordUserActivity(userid, event, keyword, message, receivedtime, reply, tar
     nativetime = datetime.utcfromtimestamp(float(receivedtime))
     localtz = pytz.timezone(settings.TIME_ZONE)
     localtime = nativetime.replace(tzinfo=timezone.utc).astimezone(tz=localtz)
+    newactivity = WechatActivity.objects.create_activity(userid, event, keyword, simplejson.dumps(message).decode('unicode-escape'), localtime, None if reply == None else simplejson.dumps(reply).decode('unicode-escape'), target)
     if event in settings.WECHAT_ACTIVITY_TRACE:
-        newactivity = WechatActivity.objects.create_activity(userid, event, keyword, simplejson.dumps(message).decode('unicode-escape'), localtime, None if reply == None else simplejson.dumps(reply).decode('unicode-escape'), target)
         newactivity.save()
         
     if not settings.TESTING and (event in settings.WECHAT_ACTIVITY_NOTIFICATION or keyword in settings.WECHAT_ACTIVITY_NOTIFICATION_KEYWORDS):
         mail(settings.NOTIFICATION_EMAIL, u'New wechat activity -- %s' %(localtime), 
-             u'[%s][%s] The "%s" message %s from "%s" was received at %s.' %(WechatActivity.getTargetDisplay(target), event, keyword, simplejson.dumps(message).decode('unicode-escape'), userid, localtime))
+             u'[%s][%s] The "%s" message %s from "%s" was received at %s.' %(newactivity.get_target_display(), event, keyword, simplejson.dumps(message).decode('unicode-escape'), userid, localtime))
 
 def set_query_parameter(url, param_name, param_value):
     """Given a URL, set or replace a query parameter and return the

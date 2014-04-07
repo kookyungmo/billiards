@@ -616,10 +616,6 @@ class WechatActivity(models.Model):
         verbose_name = '微信用户互动信息'
         verbose_name_plural = '微信用户互动信息'
         
-    @staticmethod
-    def getTargetDisplay(target):
-        return force_unicode(dict(WechatActivity.target.flatchoices).get(target, target), strings_only=True)
-        
 class Event(models.Model):
     id = models.AutoField(primary_key=True)
     year = models.IntegerField(verbose_name='年份')
