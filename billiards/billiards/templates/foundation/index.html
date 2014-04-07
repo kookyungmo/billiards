@@ -1,4 +1,8 @@
 {% extends "foundation/base.html" %}
+{% block header %}
+{% load staticfiles %}
+<link rel="stylesheet" href="{% static "css/index.css" %}?{{buildid}}">
+{% endblock %}
 {% block content %}
 <div id="circlefeatures">
                    <ul class="ch-grid">
