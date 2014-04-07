@@ -1,17 +1,18 @@
-{% extends "foundation/base.html" %} 
+{% extends "foundation/base.html" %}
+{% load url from future %}
 {% block header %} 
 {% load staticfiles %}
 <script type="text/javascript"
 	src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>
 <script src="{% static "js/moment-with-langs.min.js" %}"></script>
-<script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}";</script>
+<script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}"; var WECHAT_SHARE_URL="{% url 'wechat_share_help' %}";</script>
 <script src="{% static "js/map.js" %}?{{buildid}}"></script>
 <script src="{% static "js/map_v2.js" %}?{{buildid}}"></script>
+<script src="{% static "js/WeixinApi.js" %}?{{buildid}}"></script>
 <script src="{% static "js/wechat.js" %}?{{buildid}}"></script>
 <link rel="stylesheet" href="{% static "css/map.css" %}?{{buildid}}">
 {% endblock %} 
 {% load extras %} 
-{% load url from future %}
 {% block content %}
 <div class="large-12 columns">
 	<div class="row">
@@ -113,9 +114,7 @@
 		</div>
 	</div>
 </div>
-<div id="shareToWechat" class="reveal-modal medium" data-reveal>
-  <h3>请先通过微信搜索 pktaiqiu 添加我为台球狂为好友，通过微信分享抢台费 :)</h3>
-  <a class="close-reveal-modal">&#215;</a>
+<div id="shareToWechat" class="reveal-modal" data-reveal>
 </div>
 {% endblock %}
 {% block foundationscript %}

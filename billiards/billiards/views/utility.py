@@ -24,3 +24,8 @@ def coupon(request, couponid):
     return render_to_response(TEMPLATE_ROOT + 'coupon_tracker.html',
                               {'coupon': coupon},
                               context_instance=RequestContext(request))
+    
+def wechatsharehelp(request):
+    return render_to_response(TEMPLATE_ROOT + 'wechatsharehelp.html',
+                              {'text': request.GET['text']},
+                              context_instance=RequestContext(request))
