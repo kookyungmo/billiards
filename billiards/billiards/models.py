@@ -25,6 +25,7 @@ import sys
 from django.db.models.fields import CharField
 from billiards import settings
 from billiards.id import generator
+from billiards.citydistrict import CITY_DISTRICT
 
 def toDict(bitfield):
     flag_dict = {}
@@ -66,6 +67,13 @@ class Poolroom(models.Model):
     size = models.IntegerField(max_length=8,null=True,verbose_name='球馆面积(平米)')
     rating = models.IntegerField(max_length=2,null=True,verbose_name='球房总评分')
     review = models.CharField(max_length=255,null=True,blank=True,verbose_name='球房点评')
+    city = models.IntegerField(verbose_name=u'城市', choices=CITY_DISTRICT.values(), default=10,)
+    district = models.CharField(verbose_name=u'行政区', max_length=10)
+    exist = models.IntegerField(verbose_name=u'是否还存在', choices=(
+            (1, u'正常'),
+            (2, u'已倒闭'),
+            (3, u'暂时停业'),
+        ), default=1,)
 
     class Meta:
         db_table = 'poolroom'
