@@ -90,6 +90,20 @@ def nearby(request, lat = None, lng = None, distance = 10):
         return HttpResponse(jsonstr)
     return render_to_response(TEMPLATE_ROOT + 'poolroom_nearby.html', {'defaultDistance': 5},
                               context_instance=RequestContext(request))
+def nearby2(request, lat = None, lng = None, distance = 10):
+    if lat is not None and lng is not None:
+        nearby_poolrooms = getNearbyPoolrooms(lat, lng, distance)
+        json_serializer = serializers.get_serializer("json")()
+        stream = StringIO()
+        json_serializer.serialize(nearby_poolrooms, fields=poolroom_fields, ensure_ascii=False, stream=stream, indent=2, use_natural_keys=True)
+        jsonstr = stream.getvalue()
+        if len(nearby_poolrooms) > 0:
+            jsonstr = updateJsonStrWithDistance(jsonstr, nearby_poolrooms)
+            jsonstr = updateJsonStrWithImages(jsonstr, nearby_poolrooms)
+            jsonstr = updateJsonStrWithCoupons(jsonstr, nearby_poolrooms)
+        return HttpResponse(jsonstr)
+    return render_to_response(TEMPLATE_ROOT + 'poolroom_nearby2.html', {'defaultDistance': 5},
+                              context_instance=RequestContext(request))
     
 def updateBaiduLocation(request):
     if request.user.is_authenticated() and request.user.is_superuser:

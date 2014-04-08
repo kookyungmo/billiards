@@ -399,15 +399,15 @@ var poolroomInfo = function(marker, poolroom) {
 	(function() {
 		var info = {
 			open : function(type, target) {
-				var content = "<h6 style = color:#EB6100><strong>" + poolroom.fields.name + "</strong></h6>";
-				content += "<p><font size=-2>地址: <strong>"
+				var content = "<div class=\"mapBubbleInfo\"><h6>" + poolroom.fields.name + "</h6>";
+				content += "<p>地址: <strong>"
 					+ poolroom.fields.address
-					+ "</strong></font></p><p><font size=-2>营业时间: <strong>"
+					+ "</strong></p><p>营业时间: <strong>"
 					+ poolroom.fields.businesshours
-					+ "</strong></font></p>";
+					+ "</strong></p>";
 				if (poolroom.fields.distance != null) {
 					content += "<p>距离我: <strong>"
-						+ formatDistance(poolroom.fields.distance * 1000) + "</strong></p>";
+						+ formatDistance(poolroom.fields.distance * 1000) + "</strong></p></div>";
 				}
 				var infoWindow = new BMap.InfoWindow(content);
 				marker.openInfoWindow(infoWindow);
