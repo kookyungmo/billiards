@@ -1,0 +1,98 @@
+{% extends "foundation/base2.html" %}
+{% block header %}
+{% load staticfiles %}
+<script type="text/javascript"
+	src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>
+<script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}"; var MEDIA_URL = "{{ MEDIA_URL }}";</script>
+<script>
+function addMarker(point, iconpath) {
+	var icon = new BMap.Icon(iconpath, new BMap.Size(39, 55), {
+		anchor : new BMap.Size(15, 53),
+		infoWindowAnchor : new BMap.Size(15, 0)
+	});
+	var marker = new BMap.Marker(point, {
+		icon : icon
+	});
+	map.addOverlay(marker);
+	return marker;
+}
+function cleanNonLocationMarkers() {
+	var overlays = map.getOverlays();
+	for ( var m in overlays) {
+		if (overlays[m] instanceof BMap.Marker
+				&& overlays[m].getTitle() != '我的位置') {
+			map.removeOverlay(overlays[m]);
+		}
+	}
+}
+</script>
+<script src="{% static "js/map_v2.js" %}?{{buildid}}"></script>
+{% endblock %}
+{% load extras %}
+{% block content %}
+	<div id="poolroomlist" class="medium-9 medium-offset-1 columns">
+		<div class="row">
+			<h2>附近<font size = +5><span id="distance">{{defaultDistance}}</span>公里</font>内的球房</h2>
+		</div>
+		<div class="row">
+		<div class="row show-for-medium-up">
+			<div id="baidumap"
+						style="overflow: auto; margin: 0; height: 250px;"></div>
+		</div>
+		</div>
+		<hr>
+		<div class="row">
+			<dl class="sub-nav">
+				<dt><h3>距离:</h3></dt>
+				<dd {% if defaultDistance == 3 %} class="active" {% endif %} distance="3"><h3><a href="javascript:void(0);">3公里</a></h3></dd>
+				<dd {% if defaultDistance == 5 %} class="active" {% endif %} distance="5"><h3><a href="javascript:void(0);">5公里</a></h3></dd>
+				<dd {% if defaultDistance == 10 %} class="active" {% endif %} distance="10"><h3><a href="javascript:void(0);">10公里</a></h3></dd>
+			</dl>
+		</div>
+		<div id="content" class="row">
+			<script type="text/javascript">createInfo("正在获取您的位置...");</script>
+		</div>
+	</div>
+	
+{% endblock %}
+{% block foundationscript %}
+    <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.clearing.min.js"></script>
+    <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.dropdown.min.js"></script>
+{% endblock %}
+{% load url from future %} 
+{% block script %}
+	<script>
+	var map = initialMap("baidumap");
+	map.centerAndZoom('北京',12);
+	var mypoint = null;
+	NEARBY_URL = "{% url 'poolroom_nearby_point_distance' '00.00' '11.11' '00' %}";
+	POOLROOM_URL = "{% url 'poolroom_detail' '000' %}";
+	$(document).ready(
+			function() {
+			    var geolocation = new BMap.Geolocation();
+			    geolocation.getCurrentPosition(function(r){
+			        if(this.getStatus() == BMAP_STATUS_SUCCESS){
+                       	mypoint = r.point;
+			            addMyLocation(mypoint);
+                       	addCustomToolbar(map, mypoint);
+                       	if (map.getBounds().containsPoint(mypoint)) {
+			            	map.panTo(mypoint);
+                       	}
+			            loadingPoolroom('{{ defaultDistance }}', mypoint);
+			        }
+			        else {
+			        	$("#info .subheader").text("无法获取您当前的位置，请刷新页面重试。");
+			        }
+			    },{enableHighAccuracy: false});
+			});
+	$("dl dd").click(function() {
+		cleanNonLocationMarkers();
+		$("#poolroomlist").children("#poolroom").remove();
+		$("dl dd[class=active]").removeClass("active");
+		$(this).addClass("active");
+		distance = $(this).attr("distance");
+		$("#distance").text(distance);
+		loadingPoolroom(distance, mypoint);
+	});
+	</script>
+{% endblock %}	
