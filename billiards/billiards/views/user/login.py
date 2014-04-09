@@ -16,23 +16,21 @@ from datetime import datetime
 from billiards.models import PoolroomUser
 import copy
 
+# because social site is singleton that has different behavior on different environment
 def getSocialSite(request, site_name):
     hostname = u"%s://%s" %("https" if request.is_secure() else "http", request.get_host())
     sites = copy.deepcopy(SOCIALOAUTH_SITES)
     for item in sites:
-        if item[0] == site_name:
-            origurl = item[3]['redirect_uri']
-            item[3]['redirect_uri'] = origurl.replace('$hostname', hostname)
-            if 'returnurl' in request.GET:
-                baseurl = item[3]['redirect_uri']
-                item[3]['redirect_uri'] = u"%s?returnurl=%s" %(baseurl, request.GET['returnurl'])
-            break
+        origurl = item[3]['redirect_uri']
+        item[3]['redirect_uri'] = origurl.replace('$hostname', hostname)
     return sites
 
 def login_3rd(request, site_name):
     socialsites = SocialSites(getSocialSite(request, site_name))
     if site_name in socialsites._sites_name_list:
         _s = socialsites.get_site_object_by_name(site_name)
+        if 'returnurl' in request.GET:
+            _s.REDIRECT_URI = u"%s?returnurl=%s" %(_s.REDIRECT_URI, request.GET['returnurl'])
         url = _s.authorize_url
         return HttpResponseRedirect(url)
     else:
