@@ -16,10 +16,11 @@
       <link href="http://fonts.googleapis.com/css?family=Nobile" rel="stylesheet" type="text/css">
   <!-- <link rel="stylesheet" href="//cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/css/normalize.min.css">
   <link rel="stylesheet" href="//cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/css/foundation.min.css"> -->
-  <link rel="stylesheet" href="{% static 'css/docs.css' %}?{{buildid}}">
+  <link rel="stylesheet" href="{% static 'css/docs.css' %}?{{FOUNDATION_VER}}">
   <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/vendor/modernizr.min.js"></script>
   <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/vendor/jquery.min.js"></script>
   <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/vendor/fastclick.min.js"></script>
+  <script src="{% static "js/app.js" %}?{{buildid}}"></script>
   <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
 {% block header %}{% endblock %}
 {% load url from future %} 
@@ -30,8 +31,6 @@
 {% url 'login_3rd' 'qq' as qq %}
 {% url 'login_3rd' 'weibo' as weibo %}
 {% url 'event_year_month_name' '2014' '03' 'my-favorite-club' as latest_event %}
-{% with qq|add:'?returnurl='|add:request.get_full_path as qqurl %}
-{% with weibo|add:'?returnurl='|add:request.get_full_path as weibourl %}
 {% url 'user_logout' as user_logout %}
 <body>
 <script>
@@ -88,9 +87,9 @@
 	        <li class="divider"></li>
 	        <li><a href="{{ user_logout }}">登出</a></li>
 	        {% else %}
-	        <li><a href="{{ qqurl }}"><img src="{% static 'images/logo_qq.png' %}" >QQ登录</a></li>
+	        <li><a href="javascript:dologin('{{ qq }}');"><img src="{% static 'images/logo_qq.png' %}" >QQ登录</a></li>
 	        <li class="divider"></li>
-	        <li><a href="{{ weibourl }}"><img src="{% static 'images/logo_weibo.png' %}" >weibo登录</a></li>
+	        <li><a href="javascript:dologin('{{ weibo }}');"><img src="{% static 'images/logo_weibo.png' %}" >weibo登录</a></li>
 	        {% endif %}
 	      </ul>
 	    </section>
@@ -126,8 +125,8 @@
 	    <li><a href="{{ user_logout }}">登出</a></li>
 	    {% else %}
 	    <li><label>用户登录</label></li>
-	    <li><a href="{{ qqurl }}">QQ登录</a></li>
-		<li><a href="{{ weibourl }}">微博登录</a></li>
+	    <li><a href="javascript:dologin('{{ qq }}');">QQ登录</a></li>
+		<li><a href="javascript:dologin('{{ weibo }}');">微博登录</a></li>
 	    {% endif %}
 	    <li><label>关于我为台球狂</label></li>
 		<li><a href="{% url 'about' %}">关于我们</font></a></li>
@@ -139,8 +138,8 @@
 	<a class="exit-off-canvas" href="#"></a>
 	<div id="quickLogin" class="reveal-modal small" data-reveal>
 	  <h2>完成操作前请先登录</h2>
-	  <a href="{{ qqurl }}" class="radius button">QQ</a>
-	  <a href="{{ weibourl }}" class="radius button">新浪微博</a>
+	  <a href="javascript:dologin('{{ qq }}');" class="radius button">QQ</a>
+	  <a href="javascript:dologin('{{ weibo }}');" class="radius button">新浪微博</a>
 	  <a class="close-reveal-modal">&#215;</a>
 	</div>
 	{% endblock %}
@@ -271,6 +270,4 @@
 
   {% block script %}{% endblock %}
 </body>
-{% endwith %}
-{% endwith %}
 </html>
