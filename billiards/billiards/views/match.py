@@ -72,9 +72,10 @@ def getMatchByRequest(request, starttime = None, endtime = None, deltadays = 1):
         starttime = localtz.localize(starttimenative)
         try:
             if request.GET.get('starttime') is not None:
-                starttime = datetime.datetime.utcfromtimestamp(float(request.GET.get('starttime')))
+                starttime = set_to_midnight(datetime.datetime.utcfromtimestamp(float(request.GET.get('starttime'))))
         except Exception:
             pass
+    
     if endtime == None:
         endtime = starttime + relativedelta(days=deltadays)
         try:
@@ -88,7 +89,20 @@ def getMatchByRequest(request, starttime = None, endtime = None, deltadays = 1):
     return matches, starttime, endtime
     
 def index(request, view = None):
-    matches, starttime, endtime = getMatchByRequest(request)
+    starttime = None
+    
+    intervals = 7
+    starttime2 = datetime.datetime.today()
+    endtime2 = starttime2 + relativedelta(days=intervals)
+    
+    if 's' in request.GET:
+        try:
+            starttimeS = datetime.datetime.utcfromtimestamp(float(request.GET.get('s')))
+            if set_to_midnight(starttime2) <= set_to_midnight(starttimeS) <= set_to_midnight(endtime2):
+                starttime = starttimeS
+        except Exception:
+            pass
+    matches, starttime, endtime = getMatchByRequest(request, starttime)
                   
     if request.GET.get('f') == 'json':
         jsonstr = tojson(matches, match_fields)
@@ -100,9 +114,7 @@ def index(request, view = None):
     else:
         page = 'match_list.html'
 
-    intervals = 7
-    starttime2 = datetime.datetime.today()
-    endtime2 = starttime2 + relativedelta(days=intervals)
+
     query2 = getQueryCriteria(starttime2, endtime2)
     matchCountSummary = dict()
     rt = Match.objects.filter(query2)
@@ -116,7 +128,7 @@ def index(request, view = None):
         return [{'bonus': item['bonus'], 'starttime': item['starttime'].strftime(datefmt)} for item in vqs]
     
     return render_to_response(TEMPLATE_ROOT + page,
-                              {'matches': matches, 'startdate': starttime, 'enddate': endtime,
+                              {'matches': matches, 'startdate': starttime2, 'enddate': endtime2,
                                'intervals': intervals, 'matchsummary': matchCountSummary, 'bonussummary': simplejson.dumps(ValuesQuerySetToDict(topOneBonusSummary)),
                               },
                               context_instance=RequestContext(request))

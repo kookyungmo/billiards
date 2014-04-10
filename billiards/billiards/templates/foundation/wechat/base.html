@@ -6,6 +6,7 @@
 <script src="{% static "js/map.js" %}?{{buildid}}"></script>
 {% load staticfiles %}
 <script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}"; var MEDIA_URL = "{{ MEDIA_URL }}"; TIMEZONE = "{{ TIME_ZONE }}";</script>
+<script src="{% static "js/app.js" %}?{{buildid}}"></script>
 <script src="{% static "js/report.js" %}?{{buildid}}"></script>
 {% endblock %} 
 {% load extras %} 
