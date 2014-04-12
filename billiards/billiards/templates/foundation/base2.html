@@ -5,19 +5,19 @@
 <!--[if gt IE 8]><!--> <html lang="en"> <!--<![endif]-->
 {% load staticfiles %}
 <head>
-  <meta charset="utf-8" />
+	<meta charset="utf-8" />
 
-  <!-- Set the viewport width to device width for mobile -->
-  <meta name="viewport" content="width=device-width" />
+<!-- Set the viewport width to device width for mobile -->
+<meta name="viewport" content="width=device-width" />
 
-  <title>我为台球狂</title>
-  <!--<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,700" />-->
-  <link href="http://fonts.googleapis.com/css?family=Corben:bold" rel="stylesheet" type="text/css">
-      <link href="http://fonts.googleapis.com/css?family=Nobile" rel="stylesheet" type="text/css">
-  <!-- <link rel="stylesheet" href="//cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/css/normalize.min.css">
-  <link rel="stylesheet" href="//cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/css/foundation.min.css"> -->
-  <!-- link rel="stylesheet" href="{% static 'css/docs.css' %}" -->
-  <link rel="stylesheet" href="{% static 'hamburger/css/app.css' %}">
+<title>我为台球狂</title>
+<!--<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,700" />-->
+<link href="http://fonts.googleapis.com/css?family=Corben:bold" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=Nobile" rel="stylesheet" type="text/css">
+<!-- <link rel="stylesheet" href="//cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/css/normalize.min.css">
+<link rel="stylesheet" href="//cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/css/foundation.min.css"> -->
+<!-- link rel="stylesheet" href="{% static 'css/docs.css' %}" -->
+<link rel="stylesheet" href="{% static 'css/app.css' %}">
 <style> 
 body {
 	background-color: #ececec;
@@ -51,8 +51,8 @@ body {
 }
 
 </style>
-  <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/vendor/jquery.min.js"></script>
-  <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
+<script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/vendor/jquery.min.js"></script>
+<link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
 {% block header %}{% endblock %}
 {% load url from future %} 
 </head>
@@ -80,134 +80,121 @@ body {
 	{% endif %}
 </script>
 <div class="off-canvas-wrap doc-wrap">
-   <div class="inner-wrap">
-    {% block header-nav %}
-	 <!-- Header and Nav -->
-	 <nav class="top-bar hide-for-small">
-	    <ul class="title-area">
-	      <!-- Title Area -->
-	      <li class="name">
-	        <h1>
-	          <a href="http://{{ request.get_host }}">
-	            我为台球狂
-	          </a>
-	        </h1>
-	      </li>
-	    </ul>
-	
-	   <section class="top-bar-section">
-	      <!-- Left Nav Section -->
-	      <ul class="left">
-	        <li class="divider"></li>
-	        <li {% if request.path == mapurl %} class="active" {% endif %}><a href="{{ mapurl }}">赛事活动</a></li>
-	        <li {% if request.path == nearby %} class="active" {% endif %}><a href="{{ nearby }}">附近球房</a></li>
-	        <li {% if request.path == challenge %} class="active" {% endif %}><a href="{{ challenge }}">约球公告</a></li>
-	        {% if user.is_authenticated and user.is_staff %}
-			<li><a href="{% url 'wechat_activity_report' %}">微信用户互动统计</a></li>
-			{% endif %}
-		  </ul>
-	      <!-- Right Nav Section -->
-	      <ul class="right">
-	        <li class="divider"></li>
-	        {% if user.is_authenticated %}
-	        	{% if groups %}
-	        	<li><a href="{% url 'club_index' %}">欢迎你,{{ groups.0.group.name }}</a></li>
-		        {% elif poolroomuser %}
-		        <li><a href="{% url 'club_index' %}">欢迎你,{{ poolroomuser.poolroom.name }}</a></li>
-		        {% else %}
-		        <li><a href="javascript:void(0);">{% if user.avatar != 'none' and user.avatar != None %}<img src="{{ user.avatar }}" width="30">{% endif %}&nbsp&nbsp{{ user.nickname }}</a></li>
-		        {% endif %}
-	        <li class="divider"></li>
-	        <li><a href="{{ user_logout }}">登出</a></li>
-	        {% else %}
-	        <li><a href="{{ qqurl }}"><img src="{% static 'images/logo_qq.png' %}" >QQ登录</a></li>
-	        <li class="divider"></li>
-	        <li><a href="{{ weibourl }}"><img src="{% static 'images/logo_weibo.png' %}" >weibo登录</a></li>
-	        {% endif %}
-	      </ul>
-	    </section>
+	<div class="inner-wrap">
+	{% block header-nav %}
+	<!-- Header and Nav -->
+	<nav class="top-bar hide-for-small">
+		<ul class="title-area">
+		<!-- Title Area -->
+			<li class="name">
+				<h1>
+					<a href="http://{{ request.get_host }}">我为台球狂</a>
+				</h1>
+			</li>
+		</ul>
+		<section class="top-bar-section">
+		<!-- Left Nav Section -->
+			<ul class="left">
+				<li class="divider"></li>
+				<li {% if request.path == mapurl %} class="active" {% endif %}><a href="{{ mapurl }}">赛事活动</a></li>
+				<li {% if request.path == nearby %} class="active" {% endif %}><a href="{{ nearby }}">附近球房</a></li>
+				<li {% if request.path == challenge %} class="active" {% endif %}><a href="{{ challenge }}">约球公告</a></li>
+				{% if user.is_authenticated and user.is_staff %}
+				<li><a href="{% url 'wechat_activity_report' %}">微信用户互动统计</a></li>
+				{% endif %}
+			</ul>
+			<!-- Right Nav Section -->
+			<ul class="right">
+				<li class="divider"></li>
+				{% if user.is_authenticated %}
+				{% if groups %}
+				<li><a href="{% url 'club_index' %}">欢迎你,{{ groups.0.group.name }}</a></li>
+				{% elif poolroomuser %}
+				<li><a href="{% url 'club_index' %}">欢迎你,{{ poolroomuser.poolroom.name }}</a></li>
+				{% else %}
+				<li><a href="javascript:void(0);">{% if user.avatar != 'none' and user.avatar != None %}<img src="{{ user.avatar }}" width="30">{% endif %}&nbsp&nbsp{{ user.nickname }}</a></li>
+				{% endif %}
+				<li class="divider"></li>
+				<li><a href="{{ user_logout }}">登出</a></li>
+				{% else %}
+				<li><a href="{{ qqurl }}"><img src="{% static 'images/logo_qq.png' %}" >QQ登录</a></li>
+				<li class="divider"></li>
+				<li><a href="{{ weibourl }}"><img src="{% static 'images/logo_weibo.png' %}" >weibo登录</a></li>
+				{% endif %}
+			</ul>
+		</section>
 	</nav>
 	<nav class="tab-bar show-for-small">
-	  <section class="left-small">
-        <a class="left-off-canvas-toggle menu-icon" ><span></span></a>
-      </section>
-	  <section class="middle tab-bar-section">
-        <h1 class="title">我为台球狂</h1>
-      </section>
+		<section class="left-small">
+			<a class="left-off-canvas-toggle menu-icon" ><span></span></a>
+		</section>
+		<section class="middle tab-bar-section">
+			<h1 class="title">我为台球狂</h1>
+		</section>
 	</nav>
 	<aside class="left-off-canvas-menu">
-	  <ul class="off-canvas-list">
-	    <li><label class="first">我为台球狂</label></li>
-	    <li><a href="http://{{ request.get_host }}">首页</a></li>
-	  </ul>
-	  <ul class="off-canvas-list">
-	    <li><a href="{{ mapurl }}">赛事活动</a></li>
-	    <li><a href="{{ nearby }}">附近球房</a></li>
-	    <li><a href="{{ challenge }}">约球公告</a></li>
-	    {% if user.is_authenticated %}
-	    {% if poolroomuser %}
-	    <li><label>俱乐部会员服务</label></li>
-		<li><a href="{% url 'club_match' %}">比赛</a></li>
-		<li><a href="{% url 'club_challenge' %}">约赛</a></li>
-		{% elif user.is_staff %}
-		<li><label>网站管理</label></li>
-		<li><a href="{% url 'wechat_activity_report' %}">微信用户互动统计</a></li>
-	    {% endif %}
-	    <li><label>用户中心</label></li>
-	    <li><a href="javascript:void(0);">{{ user.nickname }}</a></li>	    
-	    <li><a href="{{ user_logout }}">登出</a></li>
-	    {% else %}
-	    <li><label>用户登录</label></li>
-	    <li><a href="{{ qqurl }}">QQ登录</a></li>
-		<li><a href="{{ weibourl }}">微博登录</a></li>
-	    {% endif %}
-	  </ul>
+		<ul class="off-canvas-list">
+			<li><label class="first">我为台球狂</label></li>
+			<li><a href="http://{{ request.get_host }}">首页</a></li>
+		</ul>
+		<ul class="off-canvas-list">
+			<li><a href="{{ mapurl }}">赛事活动</a></li>
+			<li><a href="{{ nearby }}">附近球房</a></li>
+			<li><a href="{{ challenge }}">约球公告</a></li>
+			{% if user.is_authenticated %}
+				{% if poolroomuser %}
+			<li><label>俱乐部会员服务</label></li>
+			<li><a href="{% url 'club_match' %}">比赛</a></li>
+			<li><a href="{% url 'club_challenge' %}">约赛</a></li>
+				{% elif user.is_staff %}
+			<li><label>网站管理</label></li>
+			<li><a href="{% url 'wechat_activity_report' %}">微信用户互动统计</a></li>
+				{% endif %}
+			<li><label>用户中心</label></li>
+			<li><a href="javascript:void(0);">{{ user.nickname }}</a></li>	    
+			<li><a href="{{ user_logout }}">登出</a></li>
+			{% else %}
+			<li><label>用户登录</label></li>
+			<li><a href="{{ qqurl }}">QQ登录</a></li>
+			<li><a href="{{ weibourl }}">微博登录</a></li>
+			{% endif %}
+		</ul>
 	</aside>
 	<a class="exit-off-canvas" href="#"></a>
-	<div id="quickLogin" class="reveal-modal small" data-reveal>
-	  <h2>完成操作前请先登录</h2>
-	  <a href="{{ qqurl }}" class="radius button">QQ</a>
-	  <a href="{{ weibourl }}" class="radius button">新浪微博</a>
-	  <a class="close-reveal-modal">&#215;</a>
-	</div>
 	{% endblock %}
 	<!-- End Header and Nav -->
 	
-	    <!-- Main Feed -->
-		<section role="main">
-		  	<div id="mainContent" class="row">
-		  		{% block content %}{% endblock %}
-		  	</div>
-		</section>
-		
-		  <!-- Footer -->
-
-
-		<div id="share">
-			<div class="row">
-				<div class="medium-7 columns">关注微信公众帐号(pktaiqiu)，3月21日至3月31日期间参与活动，获取免费打球券，叫上你的朋友一起免费打台球。微博转发本次活动，并且@我为台球狂网_pktaiqiu，还有更多惊喜等着您。</div>
-				<div class="medium-pull-3 medium-2 columns"><img width="120" height="120" src="http://billiardsalbum.bcs.duapp.com/2014/03/qrcode_for_logo.jpg"></div>
+	<!-- Main Feed -->
+	<section role="main">
+		<div id="mainContent" class="row">
+			{% block content %}{% endblock %}
+		</div>
+	</section>
+	<div id="share">
+		<div class="row">
+			<div class="medium-7 columns">关注微信公众帐号(pktaiqiu)，3月21日至3月31日期间参与活动，获取免费打球券，叫上你的朋友一起免费打台球。微博转发本次活动，并且@我为台球狂网_pktaiqiu，还有更多惊喜等着您。</div>
+			<div class="medium-pull-3 medium-2 columns"><img width="120" height="120" src="http://billiardsalbum.bcs.duapp.com/2014/03/qrcode_for_logo.jpg"></div>
+		</div>
+	</div>
+	<footer id="footer">
+		<div class="row">
+			<div class="columns">
+				<ul class="inline-list">
+					<li><a href="{% url 'about' %}">关于我们</a></li>
+					<li><a href="{% url 'join' %}">加入我们</a></li>
+					<li><a href="{% url 'contact' %}">联系我们</a></li>
+					<li><a href="{% url 'partner' %}">关注俱乐部</a></li>
+				</ul>
+			</div>
+			<div class="columns">
+				<ul class="inline-list">
+					<li>&copy; 2014 我为台球狂 - All Rights Reserved</li>
+					<!-- li>rev {{rev}}</li -->
+					<li>京ICP备14001617号-1</li>
+				</ul>
 			</div>
 		</div>
-		<footer id="footer">
-		    <div class="row">
-		        <div class="columns">
-					<ul class="inline-list">
-		                <li><a href="{% url 'about' %}">关于我们</a></li>
-		                <li><a href="{% url 'join' %}">加入我们</a></li>
-		                <li><a href="{% url 'contact' %}">联系我们</a></li>
-		                <li><a href="{% url 'partner' %}">关注俱乐部</a></li>
-		            </ul>
-		        </div>		      
-		        <div class="columns">
-		          <ul class="inline-list">
-		          		<li>&copy; 2014 我为台球狂 - All Rights Reserved</li>
-						<!-- li>rev {{rev}}</li -->
-					<li>京ICP备14001617号-1</li>
-		            </ul>
-		        </div>
-		    </div>
-		</footer>
+	</footer>
 	</div>
 </div>
 
@@ -215,16 +202,12 @@ body {
 <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/vendor/custom.modernizr.min.js"></script>
 <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.offcanvas.min.js"></script>
 
-  {% block foundationscript %}{% endblock %}
+{% block foundationscript %}{% endblock %}
 <script>
-  	if ($(".off-canvas-wrap").outerHeight() < $(window).height()) {
-  		$("#mainContent").height($(window).height() - $("#footer").outerHeight() 
-  				- $(".top-bar.hide-for-small").outerHeight() - $(".top-bar.show-for-small").outerHeight());
-  	}
-    $(document).foundation();
+	$(document).foundation();
 </script>
 
-  {% block script %}{% endblock %}
+{% block script %}{% endblock %}
 </body>
 {% endwith %}
 {% endwith %}

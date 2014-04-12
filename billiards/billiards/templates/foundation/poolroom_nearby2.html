@@ -1,9 +1,11 @@
 {% extends "foundation/base2.html" %}
 {% block header %}
 {% load staticfiles %}
-<script type="text/javascript"
-	src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>
-<script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}"; var MEDIA_URL = "{{ MEDIA_URL }}";</script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>
+<script language="javascript">
+	var STATIC_URL = "{{ STATIC_URL|escapejs }}";
+	var MEDIA_URL = "{{ MEDIA_URL }}";
+</script>
 <script>
 function addMarker(point, iconpath) {
 	var icon = new BMap.Icon(iconpath, new BMap.Size(39, 55), {
@@ -26,7 +28,7 @@ function cleanNonLocationMarkers() {
 	}
 }
 </script>
-<script src="{% static "js/map_v2.js" %}?{{buildid}}"></script>
+<script src="{% static "js/map_ui2.js" %}?{{buildid}}"></script>
 {% endblock %}
 {% load extras %}
 {% block content %}
@@ -36,8 +38,7 @@ function cleanNonLocationMarkers() {
 		</div>
 		<div class="row">
 		<div class="row show-for-medium-up">
-			<div id="baidumap"
-						style="overflow: auto; margin: 0; height: 250px;"></div>
+			<div id="pkMap" style="overflow: auto; margin: 0; height: 250px;"></div>
 		</div>
 		</div>
 		<hr>
@@ -56,35 +57,39 @@ function cleanNonLocationMarkers() {
 	
 {% endblock %}
 {% block foundationscript %}
-    <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.clearing.min.js"></script>
-    <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.dropdown.min.js"></script>
+<script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.clearing.min.js"></script>
+<script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/5.0.2/js/foundation/foundation.dropdown.min.js"></script>
 {% endblock %}
 {% load url from future %} 
 {% block script %}
-	<script>
+<script>
+	var defaultZoom = 12;
+	var pkMap = new PKMap("pkMap", "北京", defaultZoom);
+	var pkLocation = new PKLocation();
+	pkLocation.consume(pkMap.markCurrentLocation);
+		
+	/*
 	var map = initialMap("baidumap");
-	map.centerAndZoom('北京',12);
+	map.centerAndZoom('北京', 12);
 	var mypoint = null;
 	NEARBY_URL = "{% url 'poolroom_nearby_point_distance' '00.00' '11.11' '00' %}";
 	POOLROOM_URL = "{% url 'poolroom_detail' '000' %}";
-	$(document).ready(
-			function() {
-			    var geolocation = new BMap.Geolocation();
-			    geolocation.getCurrentPosition(function(r){
-			        if(this.getStatus() == BMAP_STATUS_SUCCESS){
-                       	mypoint = r.point;
-			            addMyLocation(mypoint);
-                       	addCustomToolbar(map, mypoint);
-                       	if (map.getBounds().containsPoint(mypoint)) {
-			            	map.panTo(mypoint);
-                       	}
-			            loadingPoolroom('{{ defaultDistance }}', mypoint);
-			        }
-			        else {
-			        	$("#info .subheader").text("无法获取您当前的位置，请刷新页面重试。");
-			        }
-			    },{enableHighAccuracy: false});
-			});
+	$(document).ready(function() {
+		var geolocation = new BMap.Geolocation();
+		geolocation.getCurrentPosition(function(r){
+			if(this.getStatus() == BMAP_STATUS_SUCCESS){
+				mypoint = r.point;
+				addMyLocation(mypoint);
+				addCustomToolbar(map, mypoint);
+				//if (map.getBounds().containsPoint(mypoint)) {
+					//map.panTo(mypoint);
+				//}
+				loadingPoolroom('{{ defaultDistance }}', mypoint);
+			} else {
+				$("#info .subheader").text("无法获取您当前的位置，请刷新页面重试。");
+			}
+		}, {enableHighAccuracy: false});
+	});
 	$("dl dd").click(function() {
 		cleanNonLocationMarkers();
 		$("#poolroomlist").children("#poolroom").remove();
@@ -94,5 +99,6 @@ function cleanNonLocationMarkers() {
 		$("#distance").text(distance);
 		loadingPoolroom(distance, mypoint);
 	});
-	</script>
+	*/
+</script>
 {% endblock %}	
