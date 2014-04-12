@@ -27,6 +27,7 @@ from billiards.bcms import mail
 from datetime import datetime, timedelta
 from urlparse import urlsplit, parse_qs, urlunsplit
 from urllib import urlencode
+from billiards.views.challenge import getNearbyChallenges
 
 def checkSignature(request, token="pktaiqiu"):
     signature=request.GET.get('signature','')
@@ -238,6 +239,22 @@ def getChallengeNews(request, msg, lat, lng):
     challlengelink = buildAbsoluteURI(request, reverse('challenge_with_distance', args=(lat, lng,)))
     return u'%s%s' %(newsItemTpl %(u"我要找人抢台费", u"找球打，新玩法--抢台费", LOGO_IMG_URL, publishlink), newsItemTpl %(u"看看别人的抢台费", u"查看已有的约球信息", LOGO_IMG_URL, challlengelink))
 
+def getNearbyChallengeNews(request, nearbyChallenges):
+    news = ''
+    for challenge in nearbyChallenges:
+        challlengelink = buildAbsoluteURI(request, reverse('challenge_detail', args=(challenge.id,)))
+        loc = None
+        if challenge.location is not None:
+            locs = challenge.location.split(':')
+            if len(locs) > 1:
+                loc = locs[1]
+            else:
+                loc = u'球友目前所在的位置'
+        else:
+            loc = challenge.poolroom.name
+        news += newsItemTpl %(u"%s发起距离你%s公里的抢台费" %(challenge.issuer_nickname, "{0:.2f}".format(challenge.distance)), u"抢台费的地点: %s" %(loc), LOGO_IMG_URL, challlengelink)
+    return news
+
 def response_msg(request):
     msg = parse_msg(request)
     
@@ -281,20 +298,25 @@ def response_msg(request):
             localtz = pytz.timezone(settings.TIME_ZONE)
             localtime = localtz.localize(nativetime)
             coupons = poolroom.getCoupons(localtime)
-            if coupons.count() > 0:
+            couponCount = coupons.count()
+            newscount = 1 + couponCount + eventCount + 2
+            nearbyChallenges = getNearbyChallenges(lat, lng, 5, datetime.utcfromtimestamp(float(msg['CreateTime'])))[:MAX_NEWSITEM - newscount]
+            if couponCount > 0:
                 echopictext = newsReplyTpl % (
-                                 msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1 + coupons.count() + eventCount + 2,
-                                 eventText + newsPoolroomText + getCouponsText(request, coupons) + challengenews) 
+                                 msg['FromUserName'], msg['ToUserName'], str(int(time.time())), newscount + len(nearbyChallenges),
+                                 eventText + newsPoolroomText + getCouponsText(request, coupons) + challengenews + getNearbyChallengeNews(request, nearbyChallenges)) 
             else:
                 echopictext = newsReplyTpl % (
-                         msg['FromUserName'], msg['ToUserName'], str(int(time.time())), 1 + eventCount + 2,
-                         eventText + newsPoolroomText + challengenews)
+                         msg['FromUserName'], msg['ToUserName'], str(int(time.time())), newscount + len(nearbyChallenges),
+                         eventText + newsPoolroomText + challengenews + getNearbyChallengeNews(request, nearbyChallenges))
             recordUserActivity(msg['FromUserName'], 'location', poolroom.name, {'lat': lat, 'lng': lng, 'scale': msg['Scale'], 'label': ['Label']}, msg['CreateTime'], 
                                {'id': poolroom.id, 'name': poolroom.name, 'distance': poolroom.distance})
             return echopictext
         else:
+            newsCount = (0 if specialEvent == None else specialEvent[0]) + 1 + 2
+            nearbyChallenges = getNearbyChallenges(lat, lng, 5, datetime.utcfromtimestamp(float(msg['CreateTime'])))[:MAX_NEWSITEM - newsCount]
             data = u"在您附近3公里以内，没有推荐的台球俱乐部，去其他地方试试吧"
-            echostr = getNotFoundResponse(msg, specialEvent, data, 2, challengenews)
+            echostr = getNotFoundResponse(msg, specialEvent, data, 2 + len(nearbyChallenges), challengenews + getNearbyChallengeNews(request, nearbyChallenges))
             recordUserActivity(msg['FromUserName'], 'location', '', {'lat': lat, 'lng': lng, 'scale': msg['Scale'], 'label': ['Label']}, msg['CreateTime'], 
                                None)
             return echostr

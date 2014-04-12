@@ -424,6 +424,11 @@ class Challenge(models.Model):
         ), default=1, jsonUseValue=False)
     poolroom = models.ForeignKey(Poolroom, db_column='poolroom', verbose_name=u'期望俱乐部')
     location = models.CharField(max_length=50, null=True, blank=True, verbose_name=u'非球房地址')
+    lat = models.DecimalField(max_digits=11,decimal_places=7,null=True,verbose_name='纬度_google地图')
+    lng = models.DecimalField(max_digits=11,decimal_places=7,null=True,verbose_name='经度_google地图')
+    lat_baidu = models.DecimalField(max_digits=11,decimal_places=7,null=True,verbose_name='纬度_百度地图')
+    lng_baidu = models.DecimalField(max_digits=11,decimal_places=7,null=True,verbose_name='经度_百度地图')
+    username = models.CharField(max_length=50, verbose_name=u'用户Id', null=True, blank=True)
     issuer = models.CharField(max_length=50, verbose_name=u'发起人Id')
     issuer_nickname = models.CharField(max_length=50, verbose_name="发起者的昵称")
     issuer_contact = models.CharField(max_length=50, verbose_name="发起者的联系方式")
@@ -447,6 +452,7 @@ class Challenge(models.Model):
             ('matched', u'已经匹配'),
             ('expired', u'已经过期'),
         ), default='waiting', verbose_name='状态', jsonUseValue=False)
+    group = models.ForeignKey(Group, verbose_name='约球来源,默认值0代表pktaiqiu网站', db_column='group', default=1)
 
     @property
     def tabletype_display(self):

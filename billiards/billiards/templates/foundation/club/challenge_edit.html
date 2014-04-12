@@ -161,7 +161,7 @@ $("#challengeForm").submit(function (e) {
   		expiredtime = moment($("#expireddate").val() + " " + $("#expiredtime").val()).tz("{{ TIME_ZONE }}");
    		$.ajax({
 			data : {'nickname': $("#nickname").val(),
-				'contact': $("#contact").val(),
+				'contact': "tel://" + $("#contact").val(),
 				'level': $("#level").val(),
 				'tabletype': $("#tabletype").val(),
 				'rule': $("#rule").val(),
