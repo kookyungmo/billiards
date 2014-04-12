@@ -569,9 +569,7 @@ function addChallengeToList(challenge, point, mypoint) {
 			+ "<div class=\"row\">"
 			+ "<ul class=\"clearing-thumbs clearing-feature\" data-clearing>";
 	if (challenge.fields.source == 2 && challenge.fields.location != '') {
-		locationdata = challenge.fields.location.split(":");
-		latlng = locationdata[0].split(",");
-		point = new BMap.Point(latlng[1], latlng[0]);
+		point = new BMap.Point(challenge.fields.lng_baidu, challenge.fields.lat_baidu);
 		contentTemplate += " <li class=\"clearing-featured-img\"><a class=\"th\" href=\"http://api.map.baidu.com/staticimage?center=$point&width=900&height=600&zoom=18&scale=2&markers=$point&markerStyles=-1,http://billiardsalbum.bcs.duapp.com/2014/01/marker-2.png\"><img data-caption=\"MapShot\" src=\"http://api.map.baidu.com/staticimage?center=$point&width=100&height=62&zoom=16&scale=2&markers=$point&markerStyles=-1\"></a></li>";
 		desc = "球友所在的位置";
 		if (locationdata.length > 1)

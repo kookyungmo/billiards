@@ -16,7 +16,7 @@ from django.http import HttpResponse, Http404
 import json
 from django.utils import simplejson
 from django.db.models.query_utils import Q
-from billiards.location_convertor import bd2gcj, distance
+from billiards.location_convertor import bd2gcj, distance, gcj2bd
 from django.db import transaction
 import pytz
 from django.core.exceptions import PermissionDenied
@@ -48,11 +48,11 @@ def updateChallengeJsonStrDistance(jsonstr, lat, lng):
     jsonstr = simplejson.dumps(challenges)
     return jsonstr
 
-def index(request, lat = None, lng = None):
+def index(request, lat = None, lng = None, group = 1):
     if 'f' in request.GET and request.GET.get('f') == 'json':
         starttime = datetime.datetime.today()
         datefmt = "%Y-%m-%d"
-        challenges = Challenge.objects.filter(starttime__gte=starttime.strftime(datefmt)).order_by('starttime')
+        challenges = Challenge.objects.filter(Q(starttime__gte=starttime.strftime(datefmt)) & Q(group=group)).order_by('starttime')
         json_serializer = DisplayNameJsonSerializer()
         stream = StringIO()
         json_serializer.serialize(challenges, ensure_ascii=False, stream=stream, indent=2, use_natural_keys=True)
@@ -63,7 +63,10 @@ def index(request, lat = None, lng = None):
         if request.user.is_authenticated():
             jsonstr = updateChallengeJsonStrApplyInfo(jsonstr, request.user, challenges)
         return HttpResponse(jsonstr)
-        
+    if lat is not None and lng is not None:
+        baiduLocs = gcj2bd(float(lat), float(lng))
+        lat = baiduLocs[0]
+        lng = baiduLocs[1]
     return render_to_response(TEMPLATE_ROOT + 'challenge.html',
                               {'lat': lat, 'lng': lng},
                               context_instance=RequestContext(request))
@@ -101,26 +104,31 @@ def publish(request, lat = None, lng = None, distance = 3):
             location = None
             if poolroomid == -1:
                 location = "{0},{1}".format(lat, lng)
-                poolroomid = Poolroom.objects.all()[:1].get().id
+                poolroom = Poolroom.objects.all()[:1].get()
             elif poolroomid == 0:
                 location = u"{0},{1}:{2}".format(lat, lng, request.POST['location'])
-                poolroomid = Poolroom.objects.all()[:1].get().id
+                poolroom = Poolroom.objects.all()[:1].get()
             else:
                 try:
-                    Poolroom.objects.get(id=poolroomid)
+                    poolroom = Poolroom.objects.get(id=poolroomid)
                 except Poolroom.DoesNotExist:
                     location = "{0},{1}".format(lat, lng)
-                    poolroomid = 1
-            username = 'unknown'
+                    poolroom = Poolroom.objects.all()[:1].get()
+            username = None
             if request.user.is_authenticated():
                 username = request.user.username
-            else:
-                try:
-                    username = request.POST['user']
-                except KeyError:
-                    pass
-                username = 'wechat:%s' %(username)
-            return saveChallenge(request, username, poolroomid, None, 2, location)
+            issuer = 'unknown'
+            try:
+                issuer = request.POST['user']
+            except KeyError:
+                pass
+            issuer = 'wechat:%s' %(issuer)
+            group = 1
+            try:
+                group = int(request.POST['type'])
+            except KeyError:
+                pass
+            return saveChallenge(request, issuer, poolroom, None, 2, location, username, group)
         except Exception:
             return HttpResponse(json.dumps({'rt': 0, 'msg': u'Invalid Arguments.'}), content_type="application/json")
     nearbypoolrooms = getNearbyPoolrooms(lat, lng, distance)
@@ -146,3 +154,14 @@ def detail(request, challengeid):
     return render_to_response(TEMPLATE_ROOT + 'challenge_detail.html', {'cha': challenge, 'location': location, 'locationtext': locationtext, 'url': url,
                                 'contact': urlparse(challenge.issuer_contact)},
                               context_instance=RequestContext(request))
+    
+def getNearbyChallenges(lat, lng, distance, datetime, group = 1):
+    '''
+    radius distance
+    https://developers.google.com/maps/articles/phpsqlsearch_v3?csw=1#findnearsql
+    '''
+    haversine = '6371 * acos( cos( radians(%s) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(%s) ) + sin( radians(%s) )\
+         * sin( radians( lat ) ) )' %(lat, lng, lat)
+    where = "challenge.group = %s and challenge.expiretime > '%s' having distance <= %s" %(group, datetime, str(distance))
+    return Challenge.objects.extra(select={'distance' : haversine}).extra(order_by=['distance'])\
+        .extra(where=[where])

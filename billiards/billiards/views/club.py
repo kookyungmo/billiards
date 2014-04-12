@@ -21,6 +21,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from billiards.bcms import mail
 from billiards import settings
 from django.db.models.query_utils import Q
+from billiards.location_convertor import gcj2bd
 
 def index(request):
     poolroomusers = getPoolroom(request.user, (1|2))
@@ -151,7 +152,7 @@ class ChallengeForm(ModelForm):
     class Meta:
         model = Challenge
         
-def saveChallenge(request, issuer, poolroomid, challenge = None, source = 1, location = None):
+def saveChallenge(request, issuer, poolroom, challenge = None, source = 1, location = None, username = None, group = 1):
     starttime = datetime.datetime.fromtimestamp(float(request.POST['starttime'])/1000, pytz.timezone(TIME_ZONE))
     expiredtime = datetime.datetime.fromtimestamp(float(request.POST['expiredtime'])/1000, pytz.timezone(TIME_ZONE))
     data = {       
@@ -164,16 +165,34 @@ def saveChallenge(request, issuer, poolroomid, challenge = None, source = 1, loc
            'source': source,
            'issuer': issuer,
            'issuer_contact': request.POST['contact'],
+           'group': group,
+           'username': username,
            }
     if location is not None:
         data['location'] = location
     if challenge is None:
-        data['poolroom'] = poolroomid
+        data['poolroom'] = poolroom.id
+        if location is None:
+            data['lat'] = poolroom.lat
+            data['lng'] = poolroom.lng
+            data['lat_baidu'] = poolroom.lat_baidu
+            data['lng_baidu'] = poolroom.lng_baidu
+        else:
+            glocs = location.split(':')[0].split[',']
+            data['lat'] = glocs[0]
+            data['lng'] = glocs[1]
+            baidu_loc = gcj2bd(float(data['lat']),float(data['lng']))
+            data['lat_baidu'] = unicode(baidu_loc[0])
+            data['lag_baidu'] = unicode(baidu_loc[1])
         data['status'] = 'waiting'
         newchallenge = ChallengeForm(data)
     else:
         data['status'] = request.POST['status']
         data['poolroom'] = challenge.poolroom.id
+        data['lat'] = challenge.poolroom.lat
+        data['lng'] = challenge.poolroom.lng
+        data['lat_baidu'] = challenge.poolroom.lat_baidu
+        data['lng_baidu'] = challenge.poolroom.lng_baidu
         newchallenge = ChallengeForm(data=data, instance=challenge)
     if newchallenge.is_valid():
         newchallenge.save()
@@ -185,8 +204,8 @@ def challenge_add(request):
     poolroomusers = getPoolroom(request.user)
     if request.method == 'POST':
         try:
-            return saveChallenge(request, request.user.username, list(poolroomusers)[0].poolroom.id)
-        except Exception:
+            return saveChallenge(request, "wechat:unknown", list(poolroomusers)[0].poolroom, username=request.user.username)
+        except Exception, e:
             return HttpResponse(json.dumps({'rt': 0, 'msg': u'Invalid Arguments.'}), content_type="application/json")
     return render_to_response(TEMPLATE_ROOT + 'club/challenge_edit.html', 
                                   combinePageVariables({}, poolroomusers),
@@ -205,7 +224,7 @@ def challenge_edit(request, challengeid):
     poolroomusers, challenge = checkPoolroomUserByChallenge(request.user, challengeid)
     if request.method == 'POST':
         try:
-            return saveChallenge(request, request.user.username, list(poolroomusers)[0].poolroom.id, challenge)
+            return saveChallenge(request, "wechat:unknown", list(poolroomusers)[0].poolroom, challenge, username=request.user.username)
         except Exception:     
             return HttpResponse(json.dumps({'rt': 0, 'msg': u'Invalid Arguments.'}), content_type="application/json")
     return render_to_response(TEMPLATE_ROOT + 'club/challenge_edit.html', 

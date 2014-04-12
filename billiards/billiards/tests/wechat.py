@@ -41,7 +41,7 @@ def parse_msg(content):
 
 class WechatTest(TestCase):
     
-    fixtures = ['poolroom.json', 'match.json', 'group.json', 'coupon.json', 'event.json']
+    fixtures = ['poolroom.json', 'match.json', 'group.json', 'coupon.json', 'event.json', 'challenge.json']
     
     def setUp(self):
         self.client = Client()
@@ -284,3 +284,23 @@ class WechatTest(TestCase):
         self.assertEqual(2, int(msg['ArticleCount']))
         self.assertEqual(u'抢台费送话费', msg['Articles']['item'][0]['Title'])
         self.assertTrue(msg['Articles']['item'][0]['Url'].startswith('http://www.pktaiqiu.com/event/2014/04/qiang-tai-fei-yue-qiu'))
+        
+    def test_nearby_challenges(self):
+        data = """
+        <xml>
+        <ToUserName><![CDATA[toUser]]></ToUserName>
+        <FromUserName><![CDATA[fromUser]]></FromUserName>
+        <CreateTime>1397285999</CreateTime>
+        <MsgType><![CDATA[location]]></MsgType>
+        <Location_X>39.8894880</Location_X>
+        <Location_Y>116.466469</Location_Y>
+        <Scale>20</Scale>
+        <Label><![CDATA[位置信息]]></Label>
+        <MsgId>1234567890123456</MsgId>
+        </xml> 
+        """
+        msg = self._send_wechat_message(data)
+        self.assertTrue('ArticleCount' in msg)
+        self.assertEqual(5, int(msg['ArticleCount']))
+        self.assertTrue(msg['Articles']['item'][4]['Title'].startswith(u'小婷'))
+        

@@ -1,0 +1,74 @@
+[
+    {
+        "pk": 36, 
+        "model": "billiards.challenge", 
+        "fields": {
+            "username": "", 
+            "status": "waiting", 
+            "group": 1, 
+            "issuer_nickname": "\u6162", 
+            "rule": "\u968f\u610f", 
+            "lng_baidu": "116.4147791", 
+            "level": "amateur", 
+            "issuer_contact": "tel://13161690870", 
+            "tabletype": "pocket", 
+            "expiretime": "2014-04-12T15:00:00Z", 
+            "source": 1, 
+            "location": "", 
+            "starttime": "2014-04-12T14:00:00Z", 
+            "lat": "40.0072370", 
+            "lng": "116.4083760", 
+            "issuer": "kane", 
+            "lat_baidu": "40.0135572", 
+            "poolroom": 20
+        }
+    }, 
+    {
+        "pk": 37, 
+        "model": "billiards.challenge", 
+        "fields": {
+            "username": "kane", 
+            "status": "waiting", 
+            "group": 1, 
+            "issuer_nickname": "\u5c0f\u5a77", 
+            "rule": "bbb", 
+            "lng_baidu": "116.4658044", 
+            "level": "professional", 
+            "issuer_contact": "tel://13161690870", 
+            "tabletype": "pocket", 
+            "expiretime": "2014-04-12T15:00:00Z", 
+            "source": 2, 
+            "location": "", 
+            "starttime": "2014-04-12T14:00:00Z", 
+            "lat": "39.8696380", 
+            "lng": "116.4591660", 
+            "issuer": "wechat:unknown", 
+            "lat_baidu": "39.8752954", 
+            "poolroom": 20
+        }
+    }, 
+    {
+        "pk": 38, 
+        "model": "billiards.challenge", 
+        "fields": {
+            "username": "kane", 
+            "status": "waiting", 
+            "group": 1, 
+            "issuer_nickname": "kane", 
+            "rule": "\u968f\u610f", 
+            "lng_baidu": "116.4147791", 
+            "level": "amateur", 
+            "issuer_contact": "tel://13161690870", 
+            "tabletype": "pocket", 
+            "expiretime": "2014-04-13T15:00:00Z", 
+            "source": 1, 
+            "location": "", 
+            "starttime": "2014-04-13T14:00:00Z", 
+            "lat": "40.0072370", 
+            "lng": "116.4083760", 
+            "issuer": "wechat:unknown", 
+            "lat_baidu": "40.0135572", 
+            "poolroom": 20
+        }
+    }
+]
