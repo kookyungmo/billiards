@@ -117,6 +117,8 @@ var WeixinApi = (function () {
                         break;
                     // send_app_msg:fail　发送失败
                     case 'send_app_msg:fail':
+                    case 'system:access_denied':
+                    case 'access_control:not_allow':
                         callbacks.fail && callbacks.fail(resp);
                         break;
                     // send_app_msg:confirm 发送成功
