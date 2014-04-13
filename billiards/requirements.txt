@@ -3,3 +3,5 @@ MySQL-python == 1.2.5
 pytz == 2013.9
 pil
 bae_image
+WeRoBot == 0.5.3
+six

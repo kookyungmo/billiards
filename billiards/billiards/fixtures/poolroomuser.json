@@ -1,0 +1,22 @@
+[
+    {
+        "pk": 4, 
+        "model": "billiards.poolroomuser", 
+        "fields": {
+            "type": 1, 
+            "group": 1, 
+            "user": 23, 
+            "poolroom": 113
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "billiards.poolroomuser", 
+        "fields": {
+            "type": 2, 
+            "group": 2, 
+            "user": 24, 
+            "poolroom": 15
+        }
+    }
+]
