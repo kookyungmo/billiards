@@ -142,14 +142,18 @@ def publish(request, lat = None, lng = None, distance = 3):
     
 def detail(request, challengeid):
     challenge = get_object_or_404(Challenge, pk=challengeid)
-    location = "%s,%s" %(challenge.poolroom.lng_baidu, challenge.poolroom.lat_baidu)
+    if challenge.lng_baidu is not None:
+        location = "%s,%s" %(challenge.lng_baidu, challenge.lat_baidu)
+    else:
+        location = "%s,%s" %(challenge.poolroom.lng_baidu, challenge.poolroom.lat_baidu)
     locationtext = None
     if challenge.source == 2 and challenge.location != '':
         locationtexts = challenge.location.split(':')
         if len(locationtexts) > 1:
             locationtext = locationtexts[1]
-        latlng = locationtexts[0].split(",")
-        location = "%s,%s" %(latlng[1], latlng[2])
+            if challenge.lng_baidu is None:
+                latlng = locationtexts[0].split(",")
+                location = "%s,%s" %(latlng[1], latlng[2])
     url = request.build_absolute_uri(reverse('challenge_detail', args=[challengeid]))
     return render_to_response(TEMPLATE_ROOT + 'challenge_detail.html', {'cha': challenge, 'location': location, 'locationtext': locationtext, 'url': url,
                                 'contact': urlparse(challenge.issuer_contact)},
