@@ -17,7 +17,7 @@
 	<div class="medium-12 columns">
 		<div class="row">
 		<div class="small-12 large-10 large-centered columns">
-			<h2>约球信息</h2><h4><b>抢台费</b>新玩法，发送你的位置到"我为台球狂"微信帐号发起抢台费。</h4>
+			<h2>{% if group != None %}<code>{{group.name}}</code>群内{% endif %}约球信息</h2><h4><b>抢台费</b>新玩法，发送你的位置到"我为台球狂"微信帐号发起抢台费。</h4>
 		</div><hr></div>
 		<div id="content" class="row">
                 <div class="small-12 large-10 large-centered columns">
@@ -40,9 +40,9 @@
 	{% else %}
 	var mypoint = null;
 	{% endif %}
-	CHALLENGE_URL = "{% url 'challenge_list' %}";
+	CHALLENGE_URL = window.location.pathname;
 	CHALLENGE_DETAIL_URL = "{% url 'challenge_detail' '000' %}";
-	CHALLENGE_WITH_DISTANCE_URL = "{% url 'challenge_with_distance' '00.00' '11.11' %}";
+	CHALLENGE_WITH_DISTANCE_URL = "{% url 'challenge_with_distance' gid '00.00' '11.11' %}";
 	POOLROOM_URL = "{% url 'poolroom_detail' '000' %}";
 	CHALLENGE_APPLY_URL = "{% url 'apply_challenge' '000' %}";
 	getChallenges(mypoint);

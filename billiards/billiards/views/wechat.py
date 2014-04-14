@@ -233,8 +233,8 @@ class PKWechat(BaseRoBot):
         return reply
     
     def getChallengeReply(self, message, lat, lng):
-        publishlink = set_query_parameter(self.buildAbsoluteURI(reverse('challenge_publish', args=(lat, lng, 3,))), 'uid', message.source)
-        challlengelink = self.buildAbsoluteURI(reverse('challenge_with_distance', args=(lat, lng,)))
+        publishlink = set_query_parameter(self.buildAbsoluteURI(reverse('challenge_publish', args=(self.target, lat, lng, 3,))), 'uid', message.source)
+        challlengelink = self.buildAbsoluteURI(reverse('challenge_with_distance', args=(self.target, lat, lng,)))
         reply = []
         reply.append((u"我要找人抢台费", u"找球打，新玩法--抢台费", LOGO_IMG_URL, publishlink))
         reply.append((u"看看别人的抢台费", u"查看已有的约球信息", LOGO_IMG_URL, challlengelink))
@@ -510,7 +510,7 @@ def activity_report_newuser(request):
         enddate = datetime.fromtimestamp(float(request.POST['enddate'])/1000, pytz.timezone(TIME_ZONE))
         enddate = relativedelta(days=1) + enddate
         subscribeEvents = WechatActivity.objects.filter(Q(receivedtime__gte=startdate) & Q(receivedtime__lt=enddate) & Q(eventtype='event')
-                & Q(keyword='subscribe')).distinct()
+                & Q(keyword='subscribe')).distinct().order_by('receivedtime')
         
         paginator = Paginator(subscribeEvents, 10)
         page = 1
@@ -556,7 +556,7 @@ def activity_report_message(request):
         startdate = datetime.fromtimestamp(float(request.POST['startdate'])/1000, pytz.timezone(TIME_ZONE))
         enddate = datetime.fromtimestamp(float(request.POST['enddate'])/1000, pytz.timezone(TIME_ZONE))
         enddate = relativedelta(days=1) + enddate
-        messageEvents = WechatActivity.objects.filter(Q(receivedtime__gte=startdate) & Q(receivedtime__lt=enddate) & ~Q(eventtype='event'))
+        messageEvents = WechatActivity.objects.filter(Q(receivedtime__gte=startdate) & Q(receivedtime__lt=enddate) & ~Q(eventtype='event')).order_by('receivedtime')
         paginator = Paginator(messageEvents, 10)
         page = 1
         try:

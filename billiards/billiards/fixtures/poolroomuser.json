@@ -1,12 +1,38 @@
 [
     {
+        "pk": 23, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "6620BC9B95293AC8B7C5739FC17E5", 
+            "cellphone": null, 
+            "first_name": "", 
+            "last_name": "", 
+            "site_name": "qq", 
+            "access_token": "EF45C62D9D3DF125A0F19C605AAC5F3D", 
+            "gender": "m", 
+            "is_active": true, 
+            "is_superuser": false, 
+            "is_staff": false, 
+            "last_login": "2014-01-20T09:06:50Z", 
+            "avatar": "http://q.qlogo.cn/qqapp/100568693/6620BC9B95293AC8B7C5739FC17E562C/40", 
+            "groups": [], 
+            "expire_time": "2014-04-20T09:06:50Z", 
+            "user_permissions": [], 
+            "password": "pbkdf2_sha256$10000$w0If5qEibaQq$CY9asflcIMvbXdU2cMPg1EJniJa5ohMspPMq385CbrM=", 
+            "nickname": "    \u6c92\u516d\u5148\u751f", 
+            "email": "", 
+            "refresh_token": "ACFE92A22E182BBE9E92278A8A110FF4", 
+            "date_joined": "2014-01-20T08:50:15Z"
+        }
+    },
+    {
         "pk": 4, 
         "model": "billiards.poolroomuser", 
         "fields": {
             "type": 1, 
             "group": 1, 
             "user": 23, 
-            "poolroom": 113
+            "poolroom": 20
         }
     }, 
     {
@@ -15,8 +41,18 @@
         "fields": {
             "type": 2, 
             "group": 2, 
-            "user": 24, 
+            "user": 23, 
             "poolroom": 15
+        }
+    },
+    {
+        "pk": 6, 
+        "model": "billiards.poolroomuser", 
+        "fields": {
+            "type": 2, 
+            "group": 4, 
+            "user": 23, 
+            "poolroom": 20
         }
     }
 ]

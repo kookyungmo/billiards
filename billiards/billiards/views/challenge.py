@@ -7,7 +7,7 @@ Created on 2014年1月4日
 '''
 import datetime
 from billiards.models import Challenge, ChallengeApply,\
-    DisplayNameJsonSerializer, Poolroom
+    DisplayNameJsonSerializer, Poolroom, Group
 from django.shortcuts import render_to_response, get_object_or_404
 from billiards.settings import TEMPLATE_ROOT, TIME_ZONE
 from django.template.context import RequestContext
@@ -63,12 +63,15 @@ def index(request, lat = None, lng = None, group = 1):
         if request.user.is_authenticated():
             jsonstr = updateChallengeJsonStrApplyInfo(jsonstr, request.user, challenges)
         return HttpResponse(jsonstr)
+    gobj = None
+    if group is not None and int(group) != 1:
+        gobj = get_object_or_404(Group, id=group, status=1)
     if lat is not None and lng is not None:
         baiduLocs = gcj2bd(float(lat), float(lng))
         lat = baiduLocs[0]
         lng = baiduLocs[1]
     return render_to_response(TEMPLATE_ROOT + 'challenge.html',
-                              {'lat': lat, 'lng': lng},
+                              {'lat': lat, 'lng': lng, 'gid': group, 'group': gobj},
                               context_instance=RequestContext(request))
 
 @transaction.commit_on_success
@@ -97,7 +100,7 @@ def applyChallenge(request, challengeid):
         raise Http404
     
 @csrf_exempt
-def publish(request, lat = None, lng = None, distance = 3):
+def publish(request, group = None, lat = None, lng = None, distance = 3):
     if request.method == 'POST':
         try:
             poolroomid = int(request.POST['poolroom'])
@@ -131,6 +134,9 @@ def publish(request, lat = None, lng = None, distance = 3):
             return saveChallenge(request, issuer, poolroom, None, 2, location, username, group)
         except Exception:
             return HttpResponse(json.dumps({'rt': 0, 'msg': u'Invalid Arguments.'}), content_type="application/json")
+    gobj = None
+    if group is not None and int(group) != 1:
+        gobj = get_object_or_404(Group, id=group, status=1)
     nearbypoolrooms = getNearbyPoolrooms(lat, lng, distance)
     username = 'unknown'
     try:
@@ -138,7 +144,7 @@ def publish(request, lat = None, lng = None, distance = 3):
     except KeyError:
         pass
     return render_to_response(TEMPLATE_ROOT + 'challenge_application.html', 
-                                  {'poolrooms': nearbypoolrooms, 'lat': lat, 'lng': lng, 'username': username}, context_instance=RequestContext(request))
+                                  {'poolrooms': nearbypoolrooms, 'lat': lat, 'lng': lng, 'username': username, 'gid': group, 'group': gobj}, context_instance=RequestContext(request))
     
 def detail(request, challengeid):
     challenge = get_object_or_404(Challenge, pk=challengeid)
