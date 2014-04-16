@@ -5,4 +5,3 @@ pil
 bae_image
 WeRoBot == 0.5.3
 six
-pycrypto == 2.6.1
