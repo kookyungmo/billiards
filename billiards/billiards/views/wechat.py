@@ -31,8 +31,8 @@ from billiards.views.challenge import getNearbyChallenges
 from billiards.views.match import getMatchByRequest
 from billiards.views.poolroom import getNearbyPoolrooms
 from dateutil.relativedelta import relativedelta
-from Crypto.Random.random import randint
 from werobot.utils import to_text
+from random import randint
 
 def set_video():
     videos = [
