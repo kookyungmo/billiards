@@ -13,6 +13,7 @@ from xml.etree import ElementTree as ET
 from billiards.models import Match, WechatActivity
 from django.utils import simplejson, timezone
 import datetime
+from urlparse import parse_qsl, urlparse
 
 def parse_tree(root):
     msg = {}
@@ -41,7 +42,8 @@ def parse_msg(content):
 
 class WechatTest(TestCase):
     
-    fixtures = ['poolroom.json', 'match.json', 'group.json', 'coupon.json', 'event.json', 'challenge.json']
+    fixtures = ['poolroom.json', 'match.json', 'group.json', 'coupon.json', 'event.json', 
+                'challenge.json', 'poolroomuser.json']
     
     def setUp(self):
         self.client = Client()
@@ -59,6 +61,8 @@ class WechatTest(TestCase):
         msg = self._send_wechat_message(data)
         self.assertEqual("pktaiqiu", msg['FromUserName'])
         self.assertEqual("newuser", msg['ToUserName'])
+        self.assertTrue('ArticleCount' in msg)
+        self.assertEqual(1, int(msg['ArticleCount']))
         activityquery = WechatActivity.objects.filter(eventtype='event')
         self.assertEqual(1, activityquery.count())
         activity = activityquery[:1][0]
@@ -66,7 +70,6 @@ class WechatTest(TestCase):
         self.assertEqual('subscribe', activity.keyword)
         msg = simplejson.loads(activity.message)
         self.assertEqual('subscribe', msg['event'])
-        self.assertEqual('subscribe', msg['eventkey'])
         
     def test_location_event(self):
         data = """
@@ -93,8 +96,8 @@ class WechatTest(TestCase):
         self.assertEqual('fromUser', activity.userid)
         self.assertEqual(u'北京黑桃8撞球馆上坡家园店', activity.keyword)
         msg = simplejson.loads(activity.message)
-        self.assertEqual(u'40.094799793619', msg['lat'])
-        self.assertEqual(u'116.36137302268', msg['lng'])
+        self.assertEqual(40.094799793619, msg['lat'])
+        self.assertEqual(116.36137302268, msg['lng'])
         reply = simplejson.loads(activity.reply)
         self.assertEqual(u'北京黑桃8撞球馆上坡家园店', reply['name'])
         self.assertEqual(148, reply['id'])
@@ -138,8 +141,8 @@ class WechatTest(TestCase):
         self.assertEqual(u'北京夜时尚护国寺店', msg['Articles']['item'][0]['Title'])
         self.assertTrue(msg['Articles']['item'][0]['PicUrl'].startswith('http://billiardsalbum.bcs.duapp.com/resources/poolroom'))
         
-    def _send_wechat_message(self, data):
-        response = self.client.post(reverse('weixin'), data, "application/xml")
+    def _send_wechat_message(self, data, url = reverse('weixin')):
+        response = self.client.post(url, data, "application/xml")
         self.assertEqual(response.status_code, 200)
         msg = parse_msg(response.content)
         return msg
@@ -214,7 +217,7 @@ class WechatTest(TestCase):
         """
         msg = self._send_wechat_message(data)
         self.assertTrue('ArticleCount' in msg)
-        self.assertEqual(2, int(msg['ArticleCount']))
+        self.assertEqual(4, int(msg['ArticleCount']))
         
     def test_text_yunchuan_coupon_message(self):
         data = u"""
@@ -302,5 +305,77 @@ class WechatTest(TestCase):
         msg = self._send_wechat_message(data)
         self.assertTrue('ArticleCount' in msg)
         self.assertEqual(5, int(msg['ArticleCount']))
-        self.assertTrue(msg['Articles']['item'][4]['Title'].startswith(u'小婷'))
+        self.assertTrue(msg['Articles']['item'][3]['Title'].startswith(u'小婷'))
+        queries = parse_qsl(urlparse(msg['Articles']['item'][3]['Url'])[4])
+        self.assertTrue("wechat", queries[0][1])
+        
+    def test_image_message(self):
+        data = u"""
+        <xml>
+        <ToUserName><![CDATA[toUser]]></ToUserName>
+        <FromUserName><![CDATA[fromUser]]></FromUserName> 
+        <CreateTime>1396577902</CreateTime>
+        <MsgType><![CDATA[text]]></MsgType>
+        <Content><![CDATA[图片]]></Content>
+        <MsgId>1234567890123456</MsgId>
+        </xml>
+        """
+        msg = self._send_wechat_message(data)
+        self.assertTrue('MediaId' in msg['Image'])
+        
+    def test_text_help_event(self):
+        data = """
+        <xml>
+        <ToUserName><![CDATA[toUser]]></ToUserName>
+        <FromUserName><![CDATA[fromUser]]></FromUserName> 
+        <CreateTime>1391212800</CreateTime>
+        <MsgType><![CDATA[text]]></MsgType>
+        <Content><![CDATA[help]]></Content>
+        <MsgId>1234567890123456</MsgId>
+        </xml>
+        """
+        msg = self._send_wechat_message(data)
+        self.assertTrue('ArticleCount' in msg)
+        self.assertEqual(1, int(msg['ArticleCount']))
+        self.assertTrue(msg['Articles']['item']['Title'].startswith(u'"我为台球狂"微信帮助手册'))
+        
+    def test_wechat_bj_university_event(self):
+        data = """
+        <xml>
+        <ToUserName><![CDATA[toUser]]></ToUserName>
+        <FromUserName><![CDATA[fromUser]]></FromUserName> 
+        <CreateTime>1391212800</CreateTime>
+        <MsgType><![CDATA[text]]></MsgType>
+        <Content><![CDATA[球房]]></Content>
+        <MsgId>1234567890123456</MsgId>
+        </xml>
+        """
+        msg = self._send_wechat_message(data, reverse('wechat_bj_university_association'))
+        self.assertTrue('ArticleCount' in msg)
+        self.assertEqual(1, int(msg['ArticleCount']))
+        queries = parse_qsl(urlparse(msg['Articles']['item']['Url'])[4])
+        self.assertTrue("wechat-bj-university", queries[0][1])
+        
+    def test_dabengying_location_event(self):
+        data = """
+        <xml>
+        <ToUserName><![CDATA[toUser]]></ToUserName>
+        <FromUserName><![CDATA[fromUser]]></FromUserName>
+        <CreateTime>1393804800</CreateTime>
+        <MsgType><![CDATA[location]]></MsgType>
+        <Location_X>40.094799793619</Location_X>
+        <Location_Y>116.36137302268</Location_Y>
+        <Scale>20</Scale>
+        <Label><![CDATA[位置信息]]></Label>
+        <MsgId>1234567890123456</MsgId>
+        </xml> 
+        """
+        msg = self._send_wechat_message(data, reverse('wechat_bj_dabenying'))
+        self.assertTrue('ArticleCount' in msg)
+        self.assertTrue(msg['Articles']['item'][1]['Url'].startswith('http://www.pktaiqiu.com/challenge/publish/4/'))
+        self.assertTrue(msg['Articles']['item'][2]['Url'].startswith('http://www.pktaiqiu.com/challenge/4/'))
+        activityquery = WechatActivity.objects.filter(eventtype='location')
+        self.assertEqual(1, activityquery.count())
+        activity = activityquery[:1][0]
+        self.assertEqual(4, activity.target)
         

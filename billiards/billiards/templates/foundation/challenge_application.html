@@ -7,7 +7,7 @@
 {% load extras %} 
 {% load url from future %} 
 {% block content %}
-<h1>发起抢台费</h1>
+<h1>发起{% if group != None %}<code>{{group.name}}</code>群内{% endif %}抢台费</h1>
 <hr>
 <form id="challengeForm" data-abide="ajax">
   <fieldset>
@@ -162,13 +162,14 @@ $("#challengeForm").on('valid', function() {
 			'rule': "bbb",
 			'status': $('#status').val(),
 			'starttime': starttime.valueOf(),
+			'type': '{{gid}}',
 			'expiredtime': expiredtime.valueOf()},
 			url : url,
 			type: 'POST',
 		dataType : 'json',
 		success : function(data) {
 			if (data.rt == 1) {
-				window.location = "{% url 'challenge_with_distance' lat lng %}";
+				window.location = "{% url 'challenge_with_distance' gid lat lng %}";
 			} else {
 				if (data.msg != null)
 					$("#errorMsg .alert-box").text(data.msg);

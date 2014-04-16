@@ -96,7 +96,7 @@ class WechatActivityAdmin(admin.ModelAdmin):
         return False
     
     def get_readonly_fields(self, request, obj=None):
-        return self.readonly_fields + ('userid', 'eventtype', 'message', 'receivedtime', 'reply')
+        return self.readonly_fields + ('userid', 'eventtype', 'message', 'receivedtime', 'reply', 'target')
     
 admin.site.register(Poolroom, PoolroomAdmin)
 admin.site.register(PoolroomEquipment)

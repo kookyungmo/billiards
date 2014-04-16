@@ -63,7 +63,7 @@ def updateJsonStrWithCoupons(poolroomJsonStr, poolrooms):
                 break
     return simplejson.dumps(poolroomObjs)
     
-def getNearbyPoolrooms(lat, lng, distance):
+def getNearbyPoolrooms(lat, lng, distance, where = None):
     googles = bd2gcj(float(lat), float(lng))
     '''
     radius distance
@@ -71,7 +71,7 @@ def getNearbyPoolrooms(lat, lng, distance):
     '''
     haversine = '6371 * acos( cos( radians(%s) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(%s) ) + sin( radians(%s) )\
          * sin( radians( lat ) ) )' %(googles[0], googles[1], googles[0])
-    where = "1 having distance <= %s" %(str(distance))
+    where = "%s %s" %(1 if where is None else where, ("having distance <= %s" %(distance) if distance is not None else ""))
     return Poolroom.objects.extra(select={'distance' : haversine}).extra(order_by=['distance'])\
         .extra(where=[where])
     

@@ -612,10 +612,7 @@ class WechatActivity(models.Model):
     message = CharField(max_length=500, verbose_name='消息内容')
     receivedtime = models.DateTimeField(verbose_name='发送时间')
     reply = CharField(max_length=500, null=True, blank=True, verbose_name='自定义回复概要')
-    target = IntegerChoiceTypeField(verbose_name=u'目标公众帐号', choices=(
-            (1, u'我为台球狂'),
-            (2, u'北京高校联盟'),
-        ), default=1)
+    target = IntegerChoiceTypeField(verbose_name=u'目标公众帐号', default=1)
     
     
     objects = WechatActivityManager()
@@ -624,6 +621,14 @@ class WechatActivity(models.Model):
         localtz = pytz.timezone(settings.TIME_ZONE)
         return u'[%s][%s] 用户\'%s\' %s发送 %s - %s' %(self.get_target_display(), self.eventtype, self.userid, self.receivedtime.astimezone(localtz), 
                                                self.get_eventtype_display(), self.message)
+        
+    def get_target_display(self):
+        if self.target == 1:
+            return u'我为台球狂'
+        try:
+            return Group.objects.get(id=self.target).name
+        except:
+            return "unknown target"
       
     class Meta:
         db_table = 'wechat_activity'

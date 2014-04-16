@@ -34,4 +34,5 @@ encoding//billiards/views/user/login.py=utf-8
 encoding//billiards/views/user/manage.py=utf-8
 encoding//billiards/views/utility.py=utf-8
 encoding//billiards/views/wechat.py=utf-8
+encoding//billiards/views/wechatpartner.py=utf-8
 encoding/<project>=UTF-8

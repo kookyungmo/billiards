@@ -48,11 +48,12 @@ urlpatterns += patterns('billiards.views.us',
 )
 
 urlpatterns += patterns('billiards.views.challenge',
-    url(r'^challenge$', 'index', name='challenge_list'),
-    url(r'^challenge/(?P<lat>\d+.\d+),(?P<lng>\d+.\d+)$', 'index', name='challenge_with_distance'),
+    url(r'^challenge/(?:(?P<group>\d+)/)?(?P<lat>\d+.\d+),(?P<lng>\d+.\d+)$', 'index', name='challenge_with_distance'),
     url(r'^challenge/(?P<challengeid>\d+)/apply$', 'applyChallenge', name='apply_challenge'),
-    url(r'^challenge/publish/(?P<lat>\d+.\d+),(?P<lng>\d+.\d+)/(?P<distance>\d+)', 'publish', name="challenge_publish"),
+    url(r'^challenge/publish/(?:(?P<group>\d+)/)?(?P<lat>\d+.\d+),(?P<lng>\d+.\d+)/(?P<distance>\d+)', 'publish', name="challenge_publish"),
     url(r'^challenge/(?P<challengeid>\d+)$', 'detail', name='challenge_detail'),
+    url(r'^challenge/group/(?P<group>\d+)$', 'index', name='challenge_group_list'),
+    url(r'^challenge$', 'index', name='challenge_list'),
 )
 
 urlpatterns += patterns('billiards.views.utility',
@@ -85,7 +86,11 @@ urlpatterns += patterns('billiards.views.wechat',
     url(r'^wechat/report$', 'activity_report', name='wechat_activity_report'),
     url(r'^wechat/report/newuser$', 'activity_report_newuser', name='wechat_activity_report_newuser'),
     url(r'^wechat/report/message$', 'activity_report_message', name='wechat_activity_report_message'),
-    url(r'^wechat/bj-university-association$', 'bj_university_association', name='wechat_bj_university_association'),
+)
+
+urlpatterns += patterns('billiards.views.wechatpartner',
+     url(r'^wechat/bj-university-association$', 'bj_university_association', name='wechat_bj_university_association'),
+     url(r'^wechat/bj_dabenying$', 'bj_dabenying', name='wechat_bj_dabenying'),
 )
 
 urlpatterns += patterns('billiards.views.event',
