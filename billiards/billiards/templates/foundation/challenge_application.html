@@ -3,6 +3,11 @@
 {% load staticfiles %}
 <script src="{% static "js/moment-with-langs.min.js" %}"></script>
 <script src="{% static "js/moment-timezone.min.js" %}"></script>
+<link rel="stylesheet" href="{% static 'css/foundation_calendar.css' %}">
+<script src="http://cdnjscn.b0.upaiyun.com/libs/datejs/1.0/date.min.js"></script>
+<script src="{% static "js/foundation_calendar-min.js" %}"></script>
+<script src="{% static "js/date-helpers.js" %}"></script>
+<script src="{% static "js/string-helpers.js" %}"></script>
 {% endblock %} 
 {% load extras %} 
 {% load url from future %} 
@@ -48,7 +53,7 @@
 		        	</select>
         		</div>
         		<div class="small-9 large-10 columns">
-        			<input type="text" id="contact" pattern="^(1(([35][0-9])|(47)|[8][01236789]))\d{8}$" placeholder="18601012345" required>
+        			<input type="text" id="contact" pattern="^(1(([35][0-9])|(47)|[8][012356789]))\d{8}$" placeholder="18601012345" required>
         			<small class="error">请输入你正确的联系方式</small>
         		</div>
         </div>
@@ -84,12 +89,12 @@
       </div>
       <div class="medium-4 columns">
 		<label for="starttime">抢台费起始时间<small>*</small></label>
-        <input type="text" pattern="time" id="starttime" placeholder="20:00:00" required>
+        <input type="text" id="starttime" data-time data-value-format="%H:%M" value="18:00" required/>
         <small class="error">请输入有效的抢台费起始时间</small>
       </div>
       <div class="medium-4 columns">
 		<label for="expiredtime">抢台费过期时间<small>*</small></label>
-        <input type="text" pattern="time" id="expiredtime" placeholder="20:00:00" required>
+        <input type="text" id="expiredtime" data-time data-value-format="%H:%M" value="20:00" required/>
         <small class="error">请输入有效的抢台费过期时间</small>
       </div>
     </div>
@@ -129,7 +134,7 @@ $("#poolroom").change(function(e) {
 });
 $("#contactinfo").change(function(){
 	if ($('#contactinfo').val() == 'tel') {
-		$('#contact').attr("pattern", "^(1(([35][0-9])|(47)|[8][01236789]))\\d{8}$");
+		$('#contact').attr("pattern", "^(1(([35][0-9])|(47)|[8][012356789]))\\d{8}$");
 		$('#contact').attr("placeholder", "18601012345");
 	} else if ($('#contactinfo').val() == 'qq') {
 		$('#contact').attr("pattern", "^\\d{5,13}$");
@@ -139,57 +144,62 @@ $("#contactinfo").change(function(){
 		$('#contact').attr("placeholder", "pktaiqiu");
 	}
 });
-$("#challengeForm").on('valid', function() {
-	$("#errorMsg").addClass("hide");
- 	starttime = moment($("#startdate").val() + " " + $("#starttime").val()).tz("{{ TIME_ZONE }}");
-	expiredtime = moment($("#startdate").val() + " " + $("#expiredtime").val()).tz("{{ TIME_ZONE }}");
-	poolroomid = $('#poolroom').val();
-	address = null;
-	if (poolroomid == 0) {
-		address = $("#address").val();
-	} else if (poolroomid == -1){
-		address = '';
-	}
-	url = document.URL;
-	$.ajax({
-		data : {'nickname': $("#nickname").val(),
-			'user': '{{username}}',
-			'contact': $('#contactinfo').val() + "://" + $('#contact').val(),
-			'poolroom': poolroomid,
-			'location': address,
-			'level': $("#level").val(),
-			'tabletype': $("#tabletype").val(),
-			'rule': "bbb",
-			'status': $('#status').val(),
-			'starttime': starttime.valueOf(),
-			'type': '{{gid}}',
-			'expiredtime': expiredtime.valueOf()},
-			url : url,
-			type: 'POST',
-		dataType : 'json',
-		success : function(data) {
-			if (data.rt == 1) {
-				window.location = "{% url 'challenge_with_distance' gid lat lng %}";
-			} else {
-				if (data.msg != null)
-					$("#errorMsg .alert-box").text(data.msg);
-				else {
-					var errorText = "";
-					for (var property in data) {
-					    if (data.hasOwnProperty(property) && property != 'rt') {
-					    	errorText += property + ":" + data[property] + " ";
-					    }
-					}
-					$("#errorMsg .alert-box").text(errorText);
-				}
-				$("#errorMsg").removeClass("hide");
-			}
-		},
-		error : function(jqXHR, textStatus, errorThrown) {
-			console.log(textStatus, errorThrown);
-			$("#errorMsg .alert-box").text("网络错误，请重试。");
-			$("#errorMsg").removeClass("hide");
+$("#challengeForm").submit(function(e){
+	e.preventDefault();
+	$(this).on('valid', function() {
+		$("button[type=submit]").addClass("disabled");
+		$("#errorMsg").addClass("hide");
+	 	starttime = moment($("#startdate").val() + " " + $("#starttime").val() + ":00").tz("{{ TIME_ZONE }}");
+		expiredtime = moment($("#startdate").val() + " " + $("#expiredtime").val() + ":00").tz("{{ TIME_ZONE }}");
+		poolroomid = $('#poolroom').val();
+		address = null;
+		if (poolroomid == 0) {
+			address = $("#address").val();
+		} else if (poolroomid == -1){
+			address = '';
 		}
+		url = document.URL;
+		$.ajax({
+			data : {'nickname': $("#nickname").val(),
+				'user': '{{username}}',
+				'contact': $('#contactinfo').val() + "://" + $('#contact').val(),
+				'poolroom': poolroomid,
+				'location': address,
+				'level': $("#level").val(),
+				'tabletype': $("#tabletype").val(),
+				'rule': "bbb",
+				'status': $('#status').val(),
+				'starttime': starttime.valueOf(),
+				'type': '{{gid}}',
+				'expiredtime': expiredtime.valueOf()},
+				url : url,
+				type: 'POST',
+			dataType : 'json',
+			success : function(data) {
+				if (data.rt == 1) {
+					window.location = "{% url 'challenge_with_distance' gid lat lng %}";
+				} else {
+					if (data.msg != null)
+						$("#errorMsg .alert-box").text(data.msg);
+					else {
+						var errorText = "";
+						for (var property in data) {
+						    if (data.hasOwnProperty(property) && property != 'rt') {
+						    	errorText += property + ":" + data[property] + " ";
+						    }
+						}
+						$("#errorMsg .alert-box").text(errorText);
+					}
+					$("#errorMsg").removeClass("hide");
+				}
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				console.log(textStatus, errorThrown);
+				$("#errorMsg .alert-box").text("网络错误，请重试。");
+				$("#errorMsg").removeClass("hide");
+				$("button[type=submit]").removeClass("disabled");
+			}
+		});
 	});
 });
 moment.tz.add({

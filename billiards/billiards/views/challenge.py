@@ -71,7 +71,7 @@ def index(request, lat = None, lng = None, group = 1):
         lat = baiduLocs[0]
         lng = baiduLocs[1]
     return render_to_response(TEMPLATE_ROOT + 'challenge.html',
-                              {'lat': lat, 'lng': lng, 'gid': group, 'group': gobj},
+                              {'lat': lat, 'lng': lng, 'gid': group if group is not None else 1, 'group': gobj},
                               context_instance=RequestContext(request))
 
 @transaction.commit_on_success
@@ -144,7 +144,7 @@ def publish(request, group = None, lat = None, lng = None, distance = 3):
     except KeyError:
         pass
     return render_to_response(TEMPLATE_ROOT + 'challenge_application.html', 
-                                  {'poolrooms': nearbypoolrooms, 'lat': lat, 'lng': lng, 'username': username, 'gid': group, 'group': gobj}, context_instance=RequestContext(request))
+                                  {'poolrooms': nearbypoolrooms, 'lat': lat, 'lng': lng, 'username': username, 'gid': group if group is not None else 1, 'group': gobj}, context_instance=RequestContext(request))
     
 def detail(request, challengeid):
     challenge = get_object_or_404(Challenge, pk=challengeid)
