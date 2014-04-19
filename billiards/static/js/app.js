@@ -27,3 +27,18 @@ function getParameterByName(name) {
         results = regex.exec(location.search);
     return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
+
+abideOptions = {
+		patterns : {
+			cellphone: /^(1(([35][0-9])|(47)|[8][012356789]))\d{8}$/,
+			qq: /^\d{5,13}$/,
+		},
+		validators: {
+			greaterThan: function(el, required, parent) {
+				var from  = moment(document.getElementById(el.getAttribute(this.add_namespace('data-greaterThan'))).value, "hh:mm A"),
+				to    = moment(el.value, "hh:mm A"),
+				valid = (from < to);
+				return valid;
+			}
+		}
+};
