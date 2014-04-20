@@ -147,8 +147,8 @@ $("#challengeForm").on('valid', function(e) {
 	e.preventDefault();
 	$("button[type=submit]").addClass("disabled");
 	$("#errorMsg").addClass("hide");
- 	starttime = moment($("#startdate").val() + " " + $("#starttime").val()).tz("{{ TIME_ZONE }}");
-	expiredtime = moment($("#startdate").val() + " " + $("#expiredtime").val()).tz("{{ TIME_ZONE }}");
+ 	starttime = moment($("#startdate").val() + " " + $("#starttime").val(), 'YYYY-MM-DD hh:mm A').tz("{{ TIME_ZONE }}");
+	expiredtime = moment($("#startdate").val() + " " + $("#expiredtime").val(), 'YYYY-MM-DD hh:mm A').tz("{{ TIME_ZONE }}");
 	poolroomid = $('#poolroom').val();
 	address = null;
 	if (poolroomid == 0) {

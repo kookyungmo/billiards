@@ -438,7 +438,7 @@ class Challenge(models.Model):
             ('amateur', u'初级球友'),
             ('professional', u'专业高手'),
             ('master', u'职业球手'),
-            ('companion', u'陪练(70元/小时)')
+            ('companion', u'陪练')
         ), verbose_name='发起者水平')
     tabletype = ChoiceTypeField(max_length=10, choices=(
             ('snooker', u'斯诺克 snooker'),
