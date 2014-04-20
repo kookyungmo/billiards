@@ -1,0 +1,63 @@
+input[type="cellphone"], input[type="qq"] {
+  -webkit-appearance: none;
+  background-color: #fff;
+  font-family: inherit;
+  border: 1px solid #cccccc;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 0.75);
+  display: block;
+  font-size: 0.77778rem;
+  margin: 0 0 0.88889rem 0;
+  padding: 0.44444rem;
+  height: 2.05556rem;
+  width: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  transition: box-shadow 0.45s, border-color 0.45s ease-in-out; }
+  input[type="cellphone"]:focus, input[type="qq"]:focus {
+    box-shadow: 0 0 5px #999999;
+    border-color: #999999; }
+  input[type="cellphone"]:focus, input[type="qq"]:focus {
+    background: #fafafa;
+    border-color: #999999;
+    outline: none; }
+  input[type="cellphone"][disabled], fieldset[disabled] input[type="cellphone"], input[type="qq"][disabled], fieldset[disabled] input[type="qq"] {
+    background-color: #ddd; }
+  input[type="cellphone"].radius, input[type="qq"].radius {
+    border-radius: 3px; }
+    
+body {
+	background-color: #ececec;
+}
+
+#share {
+	background-color: #fff;
+	border-top: 1px solid #ddd;
+	padding: 20px 0;
+	font-size: 0.875rem;
+	line-height: 1.2rem;
+	position: relative;
+	z-index: 10;
+}
+
+#footer {
+	background-color: #333;
+	padding: 20px 0;
+	color: #fff;
+	position: relative;
+	z-index: 10;
+}
+#footer ul, #footer ol, #footer dl {
+	font-size: 0.8125rem;
+}
+#footer a {
+	color: #fff;
+}
+
+.mapBubbleInfo h6 {
+	color: #eb6100;
+}
+.mapBubbleInfo p {
+	font-size: 0.8125rem;
+}    
