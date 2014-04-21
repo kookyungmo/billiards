@@ -29,3 +29,7 @@ def wechatsharehelp(request):
     return render_to_response(TEMPLATE_ROOT + 'wechatsharehelp.html',
                               {'text': request.GET['text']},
                               context_instance=RequestContext(request))
+    
+def survey_redbull(request):
+    return render_to_response(TEMPLATE_ROOT + 'survey_redbull.html',
+                              {}, context_instance=RequestContext(request))

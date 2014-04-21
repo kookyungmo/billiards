@@ -59,7 +59,8 @@ urlpatterns += patterns('billiards.views.challenge',
 urlpatterns += patterns('billiards.views.utility',
     url(r'^unsupportedbrowser$', 'unsupportedbrowser', name='unsupportedbrowser'),
     url(r'^coupon/(?P<couponid>\d+)$', 'coupon', name='coupontracker'),
-    url(r'^wechatshare', 'wechatsharehelp', name='wechat_share_help')
+    url(r'^wechatshare', 'wechatsharehelp', name='wechat_share_help'),
+    url(r'^survey/redbull', 'survey_redbull', name='survey_redbull_2014_04'),
 )
 
 urlpatterns += patterns('billiards.views.club',
