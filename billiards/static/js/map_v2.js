@@ -215,16 +215,6 @@ function MyLocaiton(){
     this.defaultOffset = new BMap.Size(10, 10);
 }
 
-function jsonescape(str) {
-	return str
-    .replace(/[\\]/g, '\\\\')
-    .replace(/[\/]/g, '\\/')
-    .replace(/[\b]/g, '\\b')
-    .replace(/[\f]/g, '\\f')
-    .replace(/[\n]/g, '\\n')
-    .replace(/[\r]/g, '\\r')
-    .replace(/[\t]/g, '\\t');
-}
 
 R=6370996.81;//地球半径
 function pi() {

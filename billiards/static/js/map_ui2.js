@@ -101,6 +101,10 @@ var PKMap = function(dom, center, zoom) {
 	this.setViewport = function(points) {
 		map.setViewport(points);
 	};
+	
+	this.innerMap = function() {
+		return map;
+	}
 };
 
 var PKPoolrooms = function(pkMap) {
@@ -229,18 +233,21 @@ var PKPoolrooms = function(pkMap) {
 		marker.addEventListener("click", function() {
 			poolroomInfo(marker, poolroom);
 		});
-		(function(){
-			$(obj).click(
-				function(event) {
-					var link = $(obj);
-					var clickingobj = $(event.target);
-					if (clickingobj[0].tagName == 'A') {
-						//TODO catch click event on link
-					} else {
-						poolroomInfo(marker, poolroom);
-					}
-				});
-		})();
+		if (obj == null) {
+			(function(){
+				$(obj).click(
+					function(event) {
+						var link = $(obj);
+						var clickingobj = $(event.target);
+						if (clickingobj[0].tagName == 'A') {
+							//TODO catch click event on link
+						} else {
+							poolroomInfo(marker, poolroom);
+						}
+					});
+			})();
+		}
+		return marker;
 	}
 
 	function renderPoolroom(poolroom, point) {
@@ -308,6 +315,19 @@ var PKPoolrooms = function(pkMap) {
 		marker.openInfoWindow(infoWindow);
 		infoWindow.redraw();
 	}
+	
+	this.createSinglePoolroomMarker = function(poolroom) {
+		point = new BMap.Point(poolroom.fields.lng_baidu,
+				poolroom.fields.lat_baidu);
+		marker = createPoolroomMarker(null, poolroom, point);
+		setTimeout(function(){
+			pkMap.innerMap().panTo(point);
+			marker.setAnimation(BMAP_ANIMATION_BOUNCE);
+			setTimeout(function(){
+				marker.setAnimation(null);
+			}, 3000);
+		}, 2500);
+	};
 };
 
 function createInfo(text) {

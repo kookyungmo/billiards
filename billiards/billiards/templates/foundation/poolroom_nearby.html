@@ -1,65 +1,6 @@
 {% extends "foundation/base.html" %}
 {% block header %}
-<style>
-#poolrooms.map .pic,
-#poolrooms.map .distance,
-#poolrooms.map .tel,
-#poolrooms.map .hour,
-#poolrooms.map .equip {
-	display: none;
-}
-
-.poolroom {
-	background-color: #fcfcfc;
-}
-
-#poolrooms.map .poolroom {
-	border: none;
-}
-#poolrooms.map .poolroom h5,
-#poolrooms.map .poolroom p {
-	font-size: 0.8125rem;
-}
-
-#pkMap {
-	overflow: auto;
-	margin: 0;
-	height: 500px;
-}
-
-#mapContainer {
-	position: relative;
-}
-
-#mapContainer.hidden {
-	position: absolute;
-	left: -9999px;
-}
-
-#viewSwitch {
-	margin-top: 1.5rem;
-	text-align: right;
-}
-#viewSwitch a {
-	color: #aaa;
-	margin-left: 1rem;
-	font-size: 0.825rem;
-}
-#viewSwitch a i {
-	font-size: 1rem;
-	vertical-align: middle;
-}
-#viewSwitch a.active {
-	color: #000;
-}
-#distanceSelect {
-	margin: 0;
-}
-hr {
-	margin-top: 0;
-}
-</style>
-<link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+<link href="http://cdnjscn.b0.upaiyun.com/libs/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
 {% load staticfiles %}
 {% endblock %}
 {% load extras %}
@@ -101,7 +42,7 @@ hr {
 
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>
 <script src="{% static "js/map_ui2.js" %}?{{buildid}}"></script>
-<script src="{% static "js/mustache.js" %}?{{buildid}}"></script>
+<script src="{% static "js/mustache.js" %}?0.8.1"></script>
 
 <script>
 	var STATIC_URL = "{{ STATIC_URL|escapejs }}";
