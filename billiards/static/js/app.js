@@ -39,6 +39,32 @@ function jsonescape(str) {
     .replace(/[\t]/g, '\\t');
 }
 
+function getFormattedTime(timestr) {
+	return moment(timestr).lang('zh_CN').format('MMM Do')
+}
+
+function getFormattedTime2(timestr) {
+	return moment(timestr).lang('zh_CN').format('h:mm a')
+}
+
+function getFormattedTimeToWeekDay(timestr) {
+	return moment(timestr).lang('zh_CN').format('dddd')
+}
+
+function getFormattedTimeToDate(timestr) {
+	if (moment(timestr).year() == moment().year())
+		return moment(timestr).lang('zh_CN').format('MMM Do dddd, h:mm a' )
+    else
+    	return moment(timestr).lang('zh_CN').format('YYYY MMM Do dddd, h:mm a' )
+}
+
+function getSmartTime(datetime) {
+	if (moment(datetime).format("MM-DD-YYYY") == moment().format("MM-DD-YYYY")) {
+		return "今天 " + getFormattedTime2(datetime);
+	}
+	return getFormattedTimeToDate(datetime);
+}
+
 abideOptions = {
 		patterns : {
 			cellphone: /^(1(([35][0-9])|(47)|[8][012356789]))\d{8}$/,

@@ -82,6 +82,22 @@ body {
 	font-size: 0.8125rem;
 }
 
+#challenges.map .optional {
+	display: none;
+}
+
+.challenge {
+	background-color: #fcfcfc;
+}
+
+#challenges.map .challenge {
+	border: none;
+}
+#challenges.map .challenge h5,
+#challenges.map .challenge p {
+	font-size: 0.8125rem;
+}
+
 #pkMap {
 	overflow: auto;
 	margin: 0;

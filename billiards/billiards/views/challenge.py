@@ -148,6 +148,7 @@ def publish(request, group = None, lat = None, lng = None, distance = 3):
     
 def detail(request, challengeid):
     challenge = get_object_or_404(Challenge, pk=challengeid)
+    group = challenge.group
     if challenge.lng_baidu is not None:
         location = "%s,%s" %(challenge.lng_baidu, challenge.lat_baidu)
     else:
@@ -162,7 +163,7 @@ def detail(request, challengeid):
                 location = "%s,%s" %(latlng[1], latlng[2])
     url = request.build_absolute_uri(reverse('challenge_detail', args=[challengeid]))
     return render_to_response(TEMPLATE_ROOT + 'challenge_detail.html', {'cha': challenge, 'location': location, 'locationtext': locationtext, 'url': url,
-                                'contact': urlparse(challenge.issuer_contact)},
+                                'contact': urlparse(challenge.issuer_contact), 'gid': group.id, 'group': group },
                               context_instance=RequestContext(request))
     
 def getNearbyChallenges(lat, lng, distance, datetime, group = 1):

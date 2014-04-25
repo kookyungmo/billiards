@@ -4,35 +4,38 @@
 {% load staticfiles %}
 <script type="text/javascript"
 	src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>
-<script src="{% static "js/moment-with-langs.min.js" %}"></script>	
+<script src="{% static "js/moment-with-langs.min.js" %}"></script>
+<script src="{% static "js/map_ui2.js" %}?{{buildid}}"></script>
+<script src="{% static "js/mustache.js" %}?0.8.1"></script>
 <script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}"; var MEDIA_URL = "{{ MEDIA_URL }}"; var LOGO_URL="{{ SITE_LOGO_URL }}"; var WECHAT_SHARE_URL="{% url 'wechat_share_help' %}";</script>
-<script src="{% static "js/map.js" %}?{{buildid}}"></script>
-<script src="{% static "js/map_v2.js" %}?{{buildid}}"></script>
 <script src="{% static "js/WeixinApi.js" %}?{{buildid}}"></script>
 <script src="{% static "js/wechat.js" %}?{{buildid}}"></script>
-<link rel="stylesheet" href="{% static "css/map.css" %}?{{buildid}}">
+<link href="http://cdnjscn.b0.upaiyun.com/libs/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
+<link href="{% static "foundation-icons/foundation-icons.css" %}" rel="stylesheet">
 {% endblock %}
 {% load extras %}
 {% block content %}
-	<div class="medium-12 columns">
-		<div class="row">
-		<div class="small-12 large-10 large-centered columns">
-			<h2>{% if group != None %}<code>{{group.name}}</code>群内{% endif %}约球信息</h2><h4><b>抢台费</b>新玩法，发送你的位置到"我为台球狂"微信帐号发起抢台费。</h4>
-		</div><hr></div>
-		<div id="content" class="row">
-                <div class="small-12 large-10 large-centered columns">
-			<script type="text/javascript">createInfo("正在加载约球信息...");</script>
-		</div></div>
+<div>
+	<div class="clearfix">
+		<div class="large-8 columns">
+			<h2>{% if group != None %}<code>{{group.name}}</code>群内{% endif %}约球信息</h2><h4><b>抢台费</b>新玩法，发送你的位置到"{{group.name|default:"我为台球狂"}}"微信帐号发起抢台费。</h4>
+		</div>
+		<div id="viewSwitch" class="large-4 columns show-for-medium-up">
+			<a href="#" class="active list"><i class="fa fa-th-large"></i> 列表</a> 
+			<a href="#" class="map"><i class="fa fa-globe"></i> 地图</a>
+		</div>
 	</div>
-
-{% endblock %}
-{% block foundationscript %}
-    <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/foundation/foundation.clearing.min.js"></script>
+	<hr>
+	<div id="content">
+	</div>
+	<div>
+		<div id="challenges"></div>
+		<div id="mapContainer" class="hidden medium-9 columns"><div id="pkMap"></div></div>
+	</div>
+</div>
 {% endblock %}
 {% block script %}
-<div id="shareToWechat" class="reveal-modal medium" data-reveal>
-  <h3>请先通过微信搜索 pktaiqiu 添加我为台球狂为好友，通过微信分享抢台费 :)</h3>
-  <a class="close-reveal-modal">&#215;</a>
+<div id="shareToWechat" class="reveal-modal xlarge" data-reveal>
 </div>
 	<script>
 	{% if lat != None %}
@@ -45,29 +48,47 @@
 	CHALLENGE_WITH_DISTANCE_URL = "{% url 'challenge_with_distance' gid '00.00' '11.11' %}";
 	POOLROOM_URL = "{% url 'poolroom_detail' '000' %}";
 	CHALLENGE_APPLY_URL = "{% url 'apply_challenge' '000' %}";
-	getChallenges(mypoint);
-	if (mypoint == null) {
-		$(document).ready(
-				function() {
-				    var geolocation = new BMap.Geolocation();
-				    geolocation.getCurrentPosition(function(r){
-				        if(this.getStatus() == BMAP_STATUS_SUCCESS){
-	                       	// update distance
-				        	mypoint = r.point;
-	                       	$("div[id=challenge]").each(function() {
-	                       		var distancetext = $(this).find(".pricing-table .price");
-	                       		var pointstr = distancetext.attr("point").split(",");
-	                       		var point = new BMap.Point(pointstr[0], pointstr[1]);
-	                       		distancetext.text(formatDistance(distance(mypoint, point)));
-	                       	});
-				        }
-				        else {
-				        	$("div[id=challenge]").each(function() {
-	                       		$(this).find(".pricing-table .price").text('无法获取你当前的位置');
-	                       	});
-				        }
-				    },{enableHighAccuracy: false});
-				});
-	}
+	
+	createInfo("正在加载约球信息...");
+	
+	var defaultZoom = 12;
+
+	var pkMap = new PKMap("pkMap", "北京", defaultZoom);
+	var pkLocation = new PKLocation(mypoint);
+	var pkChallenges = new PKChallenges(pkMap);
+	pkLocation.consume(
+		pkMap.markCurrentLocation,
+		pkChallenges.loadChallenges(mypoint)
+	);
+	
+	$('#viewSwitch a').click(function() {
+		if ($(this).hasClass('active')) {
+			return false;
+		}
+		if ($(this).hasClass('list')) {
+			$('#mapContainer').addClass('hidden');
+			$('#challenges').removeClass('map medium-3 columns').children('.challenge').addClass('medium-pull-1 medium-offset-1 medium-3');
+		} else if ($(this).hasClass('map')) {
+			$('#challenges').addClass('map medium-3 columns').children('.challenge').removeClass('medium-pull-1 medium-offset-1 medium-3');	
+			$('#mapContainer').removeClass('hidden');
+		}
+
+		$(this).addClass('active').siblings().removeClass('active');
+		return false;
+	});
+
+	$(window).scroll(function() {
+		if ($(window).scrollTop() > $('#mapContainer').offset().top) {
+			$('#pkMap').css({
+				'position': 'fixed',
+				'top': 0,
+				'width': $('#mapContainer').width()
+			});
+		} else {
+			$('#pkMap').css({
+				'position': 'relative'
+			});
+		}
+	});
 	</script>
 {% endblock %}	

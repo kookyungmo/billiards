@@ -5,143 +5,56 @@
 <script type="text/javascript"
 	src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>
 <script src="{% static "js/moment-with-langs.min.js" %}"></script>
-<script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}"; var WECHAT_SHARE_URL="{% url 'wechat_share_help' %}";</script>
-<script src="{% static "js/map.js" %}?{{buildid}}"></script>
-<script src="{% static "js/map_v2.js" %}?{{buildid}}"></script>
+<script src="{% static "js/map_ui2.js" %}"></script>
+<script src="{% static "js/mustache.js" %}?0.8.1"></script>
+<script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}"; var MEDIA_URL = "{{ MEDIA_URL }}"; var LOGO_URL="{{ SITE_LOGO_URL }}"; var WECHAT_SHARE_URL="{% url 'wechat_share_help' %}";</script>
 <script src="{% static "js/WeixinApi.js" %}?{{buildid}}"></script>
 <script src="{% static "js/wechat.js" %}?{{buildid}}"></script>
-<link rel="stylesheet" href="{% static "css/map.css" %}?{{buildid}}">
+<link href="http://cdnjscn.b0.upaiyun.com/libs/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
+<link href="{% static "foundation-icons/foundation-icons.css" %}" rel="stylesheet">
 {% endblock %} 
 {% load extras %} 
 {% block content %}
-<div class="large-12 columns">
-	<div class="row">
-		<h2>约球详情</h2>
-	</div>
-	<div class="row">
-		<div class="small-6 columns">
-			<a href="{% url 'challenge_list' %}" class="button radius">查看更多约球信息</a>
-		</div>
-		<div id="shareToFriends" class="small-6 columns show-for-touch">
-			<a href="javascript:weixinShareTimeline('{{ cha.issuer_nickname }}在我为台球狂发起的{% if cha.source == 1 %}约球{% else %}抢台费{% endif %}', '', '{{url}}', '{{SITE_LOGO_URL}}');" class="button radius">分享到朋友圈</a>
-			<a href="javascript:weixinSendAppMessage('{{ cha.issuer_nickname }}在我为台球狂发起的{% if cha.source == 1 %}约球{% else %}抢台费{% endif %}', '', '{{url}}', '{{SITE_LOGO_URL}}');" class="button radius">发送给好友</a>
-		</div>		
-	</div>
-</div>
-<hr>
-<div class="small-12 columns">
-	<div class="row">
-		<div class="small-6 medium-uncentered medium-2 columns">
-			<ul class="pricing-table">
-				<li class="title"><font size="+1"><strong>距离我：</strong></font></li>
-				<li class="price" point="{{ location }}">正在计算距离你的距离</li>
-			</ul>
-		</div>
-		<div class="small-6 medium-3 columns">
-			<div class="row">
-				<div class="small-8 medium-centered columns">
-					<div class="row">
-						<ul class="clearing-thumbs clearing-feature" data-clearing>
-					{% if cha.source == 2 %}
-							<li class="clearing-featured-img"><a class="th"
-								href="http://api.map.baidu.com/staticimage?center={{location}}&width=900&height=600&zoom=18&scale=2&markers={{location}}&markerStyles=-1,http://billiardsalbum.bcs.duapp.com/2014/01/marker-2.png">
-									<img data-caption="MapShot"
-									src="http://api.map.baidu.com/staticimage?center={{location}}&width=100&height=62&zoom=16&scale=2&markers=$point&markerStyles=-1">
-							</a></li>
-						</ul>
-					</div>
-					<div class="row">
-						<h5>
-							<span name="title"> {% if locationtext == None %} 球友所在的位置
-								{% else %} ({{ locationtext }}) {% endif %} </span>
-						</h5>
-					</div>
-					{% else %} 
-						{% if cha.poolroom.images|length > 0 %} 
-							{% for image in cha.poolroom.images %}
-						<li {% if image.iscover %} class="clearing-featured-img"{% endif %}><a href="{{MEDIA_URL}}{{image.imagepath}}"> <img
-							src="{{MEDIA_URL}}{{image.imagepath|thumbnail:"300"}}"></a></li> 
-							{% endfor %} 
-						{% else %}
-						<li class="clearing-featured-img"><a class="th"
-							href="http://api.map.baidu.com/staticimage?center={{location}}&width=900&height=600&zoom=18&scale=2&markers={{location}}&markerStyles=-1,http://billiardsalbum.bcs.duapp.com/2014/01/marker-2.png">
-							<img data-caption="MapShot"
-							src="http://api.map.baidu.com/staticimage?center={{location}}&width=100&height=62&zoom=16&scale=2&markers=$point&markerStyles=-1">
-						</a></li> 
-						{% endif %}
-						</ul>
-					</div>
-					<div class="row">
-						<h5>
-							<span name="title">
-								<u><a href="{% url 'poolroom_detail' '000' %}">{{ cha.poolroom.name }}</a></u></span>
-						</h5>
-					</div>
-					{% endif %}
-				</div>
-			</div>
-		</div>
-		<div class="small-12 medium-7 columns">
-			<div class="small-5 medium-3 columns">
-				<ul class="pricing-table">
-					<li class="title">开始时间</li>
-					<li class="bullet-item"><script>document.write(getSmartTime('{{ cha.starttime|date:"D d M Y, H:i" }}'));</script></li>
-					<li class="title">过期时间</li>
-					<li class="bullet-item"><script>document.write(getSmartTime('{{ cha.expiretime|date:"D d M Y, H:i" }}'));</script></li>
-				</ul>
-			</div>
-			<div class="small-7 medium-8 medium-offset-1 columns">
-				<div class="row">
-					<p>
-						一名
-						<code>{{ cha.level_display }} {{ cha.issuer_nickname }}</code>
-						发起{% if cha.source == 1 %} 约球 {% else %} 抢台费 {% endif %}
-					</p>
-				</div>
-				<div class="row">
-					<p>
-						{% if contact.scheme == 'tel' %} 电话 {% elif contact.scheme == 'qq' %} QQ {% elif contact.scheme == 'wechat' %} 微信 {% endif %}:
-						<code>{{ contact.netloc }}</code>
-					</p>
-				</div>
-				<div class="row">
-					<p>
-						球台类型:
-						<code>{{ cha.tabletype_display }}</code>
-					</p>
-				</div>
-			</div>
+<div>
+	<div class="clearfix">
+		<div class="large-8 columns">
+			<h2>{% if gid != 1 %}<code>{{group.name}}</code>群内{% endif %}约球信息</h2>
+			<a href="{% if gid == 1 %}{% url 'challenge_list' %}{% else %} {% url 'challenge_group_list' gid %}{% endif %}" class="button secondary small radius fi-list-thumbnails">  查看更多约球信息</a>
 		</div>
 	</div>
+	<hr>
+	<div id="content">
+	</div>
+	<div>
+		<div id="challenges"></div>
+		<div id="mapContainer" class="medium-9 columns"><div id="pkMap"></div></div>
+	</div>
 </div>
-<div id="shareToWechat" class="reveal-modal" data-reveal>
+<div id="shareToWechat" class="reveal-modal xlarge" data-reveal>
 </div>
-{% endblock %}
-{% block foundationscript %}
-    <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/foundation/foundation.clearing.min.js"></script>
 {% endblock %}
 {% block script %}
 	<script>
-	$(document).ready(
-			function() {
-			    var geolocation = new BMap.Geolocation();
-			    geolocation.getCurrentPosition(function(r){
-			        if(this.getStatus() == BMAP_STATUS_SUCCESS){
-                       	// update distance
-			        	mypoint = r.point;
-                       	$("div[class='small-6 medium-uncentered medium-2 columns']").each(function() {
-                       		var distancetext = $(this).find(".pricing-table .price");
-                       		var pointstr = distancetext.attr("point").split(",");
-                       		var point = new BMap.Point(pointstr[0], pointstr[1]);
-                       		distancetext.text(formatDistance(distance(mypoint, point)));
-                       	});
-			        }
-			        else {
-			        	$("div[class='small-6 medium-uncentered medium-2 columns']").each(function() {
-                       		$(this).find(".pricing-table .price").text('无法获取你当前的位置');
-                       	});
-			        }
-			    },{enableHighAccuracy: false});
-			});
+	{% if lat != None %}
+	var mypoint = new BMap.Point({{lng}}, {{lat}});
+	{% else %}
+	var mypoint = null;
+	{% endif %}
+	CHALLENGE_URL = window.location.pathname;
+	CHALLENGE_DETAIL_URL = "{% url 'challenge_detail' '000' %}";
+	CHALLENGE_WITH_DISTANCE_URL = "{% url 'challenge_with_distance' gid '00.00' '11.11' %}";
+	POOLROOM_URL = "{% url 'poolroom_detail' '000' %}";
+	
+	var defaultZoom = 16;
+
+	var pkMap = new PKMap("pkMap", "北京", defaultZoom);
+	var pkLocation = new PKLocation(mypoint);
+	var pkChallenges = new PKChallenges(pkMap);
+	challenges = eval(jsonescape('{{ cha|tojson|safe }}'));
+	pkLocation.consume(
+		pkMap.markCurrentLocation,
+		pkChallenges.updateMyPosition(challenges[0])
+	);
+	pkChallenges.layChallenge(challenges);
 	</script>
 {% endblock %}

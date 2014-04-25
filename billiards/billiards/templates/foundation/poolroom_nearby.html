@@ -28,7 +28,7 @@
 		</div>
 		<div>
 			<div id="poolrooms"></div>
-			<div id="mapContainer" class="hidden large-9 columns"><div id="pkMap"></div></div>
+			<div id="mapContainer" class="hidden medium-9 columns"><div id="pkMap"></div></div>
 		</div>
 	</div>
 	
@@ -56,7 +56,7 @@
 	createInfo("正在获取您的位置...");
 
 	var pkMap = new PKMap("pkMap", "北京", defaultZoom);
-	var pkLocation = new PKLocation();
+	var pkLocation = new PKLocation(null);
 	var pkPoolrooms = new PKPoolrooms(pkMap);
 	pkLocation.consume(
 		pkMap.markCurrentLocation,
@@ -69,9 +69,9 @@
 		}
 		if ($(this).hasClass('list')) {
 			$('#mapContainer').addClass('hidden');
-			$('#poolrooms').removeClass('map large-3 columns').children('.poolroom').addClass('large-pull-1 large-offset-1 large-3');
+			$('#poolrooms').removeClass('map medium-3 columns').children('.poolroom').addClass('medium-pull-1 medium-offset-1 medium-3');
 		} else if ($(this).hasClass('map')) {
-			$('#poolrooms').addClass('map large-3 columns').children('.poolroom').removeClass('large-pull-1 large-offset-1 large-3');	
+			$('#poolrooms').addClass('map medium-3 columns').children('.poolroom').removeClass('medium-pull-1 medium-offset-1 medium-3');	
 			$('#mapContainer').removeClass('hidden');
 		}
 
