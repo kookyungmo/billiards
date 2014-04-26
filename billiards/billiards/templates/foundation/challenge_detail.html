@@ -4,8 +4,8 @@
 {% load staticfiles %}
 <script type="text/javascript"
 	src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>
-<script src="{% static "js/moment-with-langs.min.js" %}"></script>
-<script src="{% static "js/map_ui2.js" %}"></script>
+<script src="http://cdnjscn.b0.upaiyun.com/libs/moment.js/2.6.0/moment-with-langs.min.js"></script>
+<script src="{% static "js/map_ui2.js" %}?{{buildid}}"></script>
 <script src="{% static "js/mustache.js" %}?0.8.1"></script>
 <script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}"; var MEDIA_URL = "{{ MEDIA_URL }}"; var LOGO_URL="{{ SITE_LOGO_URL }}"; var WECHAT_SHARE_URL="{% url 'wechat_share_help' %}";</script>
 <script src="{% static "js/WeixinApi.js" %}?{{buildid}}"></script>
