@@ -308,11 +308,6 @@ var PKPoolrooms = function(pkMap) {
 		return $(Mustache.render(PoolroomTemplate, view)).appendTo('#poolrooms');
 	}
 
-	function getThumbnail(filename, width) {
-		return filename.replace(/(\.[\w\d_-]+)$/i, '-w'+width+'$1');
-	}
-
-	
 	function poolroomInfo(marker, poolroom) {
 		var view = {
 			"name": poolroom.fields.name,
@@ -353,6 +348,10 @@ function createInfo(text) {
 	} else {
 		$("#info .subheader").text(text);
 	}
+}
+
+function getThumbnail(filename, width) {
+	return filename.replace(/(\.[\w\d_-]+)$/i, '-w'+width+'$1');
 }
 
 var PKChallenges = function(pkMap) {
@@ -550,9 +549,9 @@ var PKChallenges = function(pkMap) {
 		if (images.length !== 0) {
 			view["image"] = {};
 			for (i in images) {
-				image = poolroom.fields.images[images[i]]
-				if (image.fields.iscover) {
-					view["image"]["path"] = MEDIA_URL + getThumbnail(image.fields.imagepath, '200');
+				image = challenge.fields.poolroom.images[images[i]]
+				if (image.iscover) {
+					view["image"]["path"] = MEDIA_URL + getThumbnail(image.imagepath, '200');
 				}
 			}
 		}
@@ -606,5 +605,202 @@ var PKChallenges = function(pkMap) {
 		var infoWindow = new BMap.InfoWindow(Mustache.render(ChallengeInfoTemplate, view));
 		marker.openInfoWindow(infoWindow);
 		infoWindow.redraw();
+	}
+}
+
+var PKMatches = function(pkMap) {
+	var CalendarTemplate = '\
+		{{#monthes}}\
+			<dl class="sub-nav">\
+				<dt><strong>{{month}}</strong></dt>\
+				{{#days}}\
+				<dd timestamp="{{timestamp}}" class="{{active}}"><a class="{{money}}" href="javascript:void(0);">{{day}}</a></dd>\
+				{{/days}}\
+			</dl>\
+		{{/monthes}}\
+	';
+	
+	var MatchTemplate = '\
+		<div class="match panel medium-pull-1 medium-offset-1 medium-3 columns">\
+			<div class="optional">\
+				{{#image}}\
+					<img src="{{path}}" >\
+				{{/image}}\
+				{{^image}}\
+					<img data-caption="MapShot" src="http://api.map.baidu.com/staticimage?center={{point}}&width=104&height=62&zoom=16&scale=2&markers={{point}}&markerStyles=-1">\
+				{{/image}}\
+			</div>\
+			<div>\
+				<p class="optional">距离我: <code>{{distance}}</code></p>\
+				<p class="musthave"><a href="{{match_detail_url}}">{{title}}</a></p>\
+				<p class="musthave">{{type}}球馆: <a href="{{poolroom_url}}">{{poolroom_name}}</a></p>\
+				{{#equip}}\
+					<div class="optional icon_list">\
+						<span class="ico_none">球房设施: </span>\
+						{{#wifi}}\
+							<span class="ico_wifi" title="公共区域WIFI"></span>\
+						{{/wifi}}\
+						{{#freeWifi}}\
+							<span class="ico_free_wifi" title="公共区域WIFI"></span>\
+						{{/freeWifi}}\
+						{{#parking}}\
+							<span class="ico_parking" title="停车场"></span>\
+						{{/parking}}\
+						{{#cafe}}\
+							<span class="ico_restaurant" title="餐饮服务"></span>\
+						{{/cafe}}\
+						{{#subway}}\
+							<span class="ico_bus" title="地铁周边"></span>\
+						{{/subway}}\
+					</div>\
+				{{/equip}}\
+				<p class="musthave">开始时间: <code>{{starttime}}</code></p>\
+				{{#hasPrize}}\
+				<p class="musthave">比赛奖金: <code>\
+				{{#bonus}}\
+				现金: {{bonus}}元\
+				{{/bonus}}\
+				{{#rechargeablecard}}\
+				俱乐部充值卡: {{rechargeablecard}}元\
+				{{/rechargeablecard}}\
+				{{#otherprize}}\
+				{{otherprize}}\
+				{{/otherprize}}\
+				</code></p>\
+				{{/hasPrize}}\
+				<p class="optional">报名费: <code>{{enroll_fee}}</code></p>\
+				{{#enroll_focal}}\
+				<p class="optional">报名联系人: <code>{{enroll_focal}}</code></p>\
+				{{/enroll_focal}}\
+			</div>\
+		</div>\
+	';
+	
+	this.buildCalendar = function(starttime, endtime, bonusobj, summary, intervals) {
+		var bonussummary = {};
+		for (var idx in bonusobj) {
+			bonussummary[bonusobj[idx].starttime] = bonusobj[idx].bonus;
+		}
+		
+		var m = moment.utc([starttime.year(), starttime.month(), starttime.dates(), starttime.hour(), starttime.minute(), starttime.second()]);
+		var selectedTimestamp = getParameterByName('s');
+		if (selectedTimestamp != null) {
+			var initialDay = moment.unix(selectedTimestamp);
+			if (!(initialDay.unix() >= starttime.unix() && initialDay.unix() <= endtime.unix()))
+				initialDay = null;
+		}
+		var thismonth = m.month();
+		view = {
+			"monthes": [
+			    {"month": m.lang('zh_CN').format('MMM')},
+			]
+		};
+		var days = [];
+		for (var i = 0; i < intervals; i++) {
+			if (m.month() != thismonth) {
+				view["monthes"][view["monthes"].length - 1]["days"] = days;
+				days = [];
+				thismonth = m.month();
+				view["monthes"].push({"month": m.lang('zh_CN').format('MMM')});
+			}
+			var day = {
+				"day": m.format('DD') + " " + m.format('dddd'),
+				"timestamp": m.unix(),
+			};
+			if (initialDay != null) {
+				if (m.date() == initialDay.date() && m.month() == initialDay.month())
+					day["active"] = "active";
+			} else if (m.date() == starttime.date() && m.month() == starttime.month())
+				day["active"] = "active";
+			var formattedday = m.format("YYYY-MM-DD");
+			if (formattedday in summary) {
+				day["day"] += "(" + summary[formattedday] + ")";
+			}
+			if (formattedday in bonussummary) {
+				day["money"] = "fi-trophy";
+			}
+			m.add('days', 1);
+			days.push(day);
+		}
+		view["monthes"][view["monthes"].length - 1]["days"] = days;
+		
+		return $(Mustache.render(CalendarTemplate, view)).appendTo('#calendarSelect');
+	};
+	
+	this.layMatches = layMatches;
+	
+	function layMatches(data) {
+		var points = [];
+		for (var i = 0; i < data.length; i++) {
+			var point = new BMap.Point(
+				data[i].fields.poolroom.lng,
+				data[i].fields.poolroom.lat
+			);
+			var matchObj = renderMatch(data[i], point);
+//			markers.push(createMatchMarker(matchObj, data[i], point));
+			points.push(point);
+		}
+
+		$('#matches .match:nth-child(3n)').after('<br style="clear:both;">');
+		if ($('#viewSwitch a.map').hasClass('active')) {
+			$('#matches').addClass('medium-3 columns').children('.match').removeClass('medium-pull-1 medium-offset-1 medium-3');	
+		}
+
+		pkMap.setViewport(points);
+	}
+	
+	function matchToView(match, point) {
+		var view = {
+				"point": point.lng + "," + point.lat,
+				"poolroom_name": match.fields.poolroom.name,
+				"poolroomurl": POOLROOM_URL.replace(/000/g, match.fields.poolroom.id),
+				"starttime": getSmartTime(match.fields.starttime),
+				"title": match.fields.title,
+				"enroll_fee": match.fields.enrollfee,
+				"enroll_focal": match.fields.enrollfocal,
+			};
+		
+		if (match.fields.type == 1) {
+			view["match_detail_url"] = MATCH_URL.replace(/000/g, match.pk);
+			view["hasPrize"] = true;
+			if (match.fields.bonus > 0)
+				view["bonus"] = match.fields.bonus;
+			if (match.fields.rechargeablecard > 0)
+				view["rechargeablecard"] = match.fields.rechargeablecard;
+			if (match.fields.otherprize != null)
+				view["otherprize"] = match.fields.otherprize;
+		}
+		else 
+			view["match_detail_url"] = ACTIVITY_URL.replace(/000/g, match.pk);
+
+		return view;
+	}
+	
+	function renderMatch(match, point) {
+		var view = matchToView(match, point),
+			images = Object.getOwnPropertyNames(match.fields.poolroom.images),
+			image,
+			equip = {},
+			i;
+		if (images.length !== 0) {
+			view["image"] = {};
+			for (i in images) {
+				image = match.fields.poolroom.images[images[i]];
+				if (image.iscover) {
+					view["image"]["path"] = MEDIA_URL + getThumbnail(image.imagepath, '200');
+				}
+			}
+		}
+
+		match.fields.poolroom.flags.wifi && (equip["wifi"] = true);
+		match.fields.poolroom.flags.freeWifi && (equip["freeWifi"] = true);
+		(match.fields.poolroom.flags.parking || match.fields.poolroom.flags.parking_free) && (equip["parking"] = true);
+		match.fields.poolroom.flags.cafeteria && (equip["cafe"] = true);
+		match.fields.poolroom.flags.subway && (equip["subway"] = true);
+		if (equip.hasOwnProperty()) {
+			view["equip"] = equip;
+		}
+
+		return $(Mustache.render(MatchTemplate, view)).appendTo('#matches');
 	}
 }

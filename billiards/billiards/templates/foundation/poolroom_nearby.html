@@ -1,37 +1,37 @@
 {% extends "foundation/base.html" %}
 {% block header %}
-<link href="http://cdnjscn.b0.upaiyun.com/libs/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
 {% load staticfiles %}
+<link href="http://cdnjscn.b0.upaiyun.com/libs/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
+<link href="{% static "foundation-icons/foundation-icons.css" %}" rel="stylesheet">
 {% endblock %}
 {% load extras %}
 {% block content %}
-	<div>
-		<div class="clearfix">
-			<div class="large-8 columns">
-				<h2>附近<span id="distance">{{defaultDistance}}公里</span>内的球房</h2>
-				<div>
-					<dl id="distanceSelect" class="sub-nav">
-						<dt>距离:</dt>
-						<dd {% if defaultDistance == 3 %} class="active" {% endif %} distance="3"><a href="javascript:void(0);">3公里</a></dd>
-						<dd {% if defaultDistance == 5 %} class="active" {% endif %} distance="5"><a href="javascript:void(0);">5公里</a></dd>
-						<dd {% if defaultDistance == 10 %} class="active" {% endif %} distance="10"><a href="javascript:void(0);">10公里</a></dd>
-					</dl>
-				</div>
-			</div>
-			<div id="viewSwitch" class="large-4 columns show-for-medium-up">
-				<a href="#" class="active list"><i class="fa fa-th-large"></i> 列表</a> 
-				<a href="#" class="map"><i class="fa fa-globe"></i> 地图</a>
+<div>
+	<div class="clearfix">
+		<div class="medium-8 columns">
+			<h2 class="fi-map">附近<span id="distance">{{defaultDistance}}公里</span>内的球房</h2>
+			<div>
+				<dl id="distanceSelect" class="sub-nav">
+					<dt>距离:</dt>
+					<dd {% if defaultDistance == 3 %} class="active" {% endif %} distance="3"><a href="javascript:void(0);">3公里</a></dd>
+					<dd {% if defaultDistance == 5 %} class="active" {% endif %} distance="5"><a href="javascript:void(0);">5公里</a></dd>
+					<dd {% if defaultDistance == 10 %} class="active" {% endif %} distance="10"><a href="javascript:void(0);">10公里</a></dd>
+				</dl>
 			</div>
 		</div>
-		<hr>
-		<div id="content">
-		</div>
-		<div>
-			<div id="poolrooms"></div>
-			<div id="mapContainer" class="hidden medium-9 columns"><div id="pkMap"></div></div>
+		<div id="viewSwitch" class="medium-4 columns show-for-medium-up">
+			<a href="#" class="active list"><i class="fa fa-th-large"></i> 列表</a> 
+			<a href="#" class="map"><i class="fa fa-globe"></i> 地图</a>
 		</div>
 	</div>
-	
+	<hr>
+	<div id="content">
+	</div>
+	<div>
+		<div id="poolrooms"></div>
+		<div id="mapContainer" class="hidden medium-9 columns"><div id="pkMap"></div></div>
+	</div>
+</div>
 {% endblock %}
 {% block foundationscript %}
     <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/foundation/foundation.clearing.min.js"></script>
