@@ -125,8 +125,8 @@ var PKPoolrooms = function(pkMap) {
 
 	// 球房模板
 	var PoolroomTemplate = '\
-		<div class="poolroom panel medium-pull-1 medium-offset-1 medium-3 columns">\
-			<div class="pic">\
+		<div class="item panel medium-pull-1 medium-offset-1 medium-3 columns">\
+			<div class="optional">\
 				{{#image}}\
 					<img src="{{path}}" >\
 				{{/image}}\
@@ -140,9 +140,9 @@ var PKPoolrooms = function(pkMap) {
 						<a target="_blank" href="{{url}}">{{name}}</a>\
 					</span>\
 				</h5>\
-				<p class="distance">距离我: {{distance}}</p>\
+				<p class="optional">距离我: {{distance}}</p>\
 				{{#equip}}\
-					<div class="equip icon_list">\
+					<div class="optional icon_list">\
 						<span class="ico_none">球房设施: </span>\
 						{{#wifi}}\
 							<span class="ico_wifi" title="公共区域WIFI"></span>\
@@ -162,8 +162,8 @@ var PKPoolrooms = function(pkMap) {
 					</div>\
 				{{/equip}}\
 				<p class="address">地址: {{address}}</p>\
-				<p class="tel">电话: {{tel}}</p>\
-				<p class="hour">营业时间: {{hour}}</p>\
+				<p class="optional">电话: {{tel}}</p>\
+				<p class="optional">营业时间: {{hour}}</p>\
 				{{#coupon}}\
 					<div><h5><b>优惠信息</b></h5></div>\
 					{{#coupons}}\
@@ -232,10 +232,7 @@ var PKPoolrooms = function(pkMap) {
 			points.push(point);
 		}
 
-		$('#poolrooms .poolroom:nth-child(3n)').after('<br style="clear:both;">');
-		if ($('#viewSwitch a.map').hasClass('active')) {
-			$('#poolrooms').addClass('medium-3 columns').children('.poolroom').removeClass('medium-pull-1 medium-offset-1 medium-3');	
-		}
+		initialViewSwitch();
 
 		pkMap.setViewport(points);
 	}
@@ -305,7 +302,7 @@ var PKPoolrooms = function(pkMap) {
 			}
 		}
 
-		return $(Mustache.render(PoolroomTemplate, view)).appendTo('#poolrooms');
+		return $(Mustache.render(PoolroomTemplate, view)).appendTo('#items');
 	}
 
 	function poolroomInfo(marker, poolroom) {
@@ -359,7 +356,7 @@ var PKChallenges = function(pkMap) {
 		myPosition;
 	
 	var ChallengeTemplate = '\
-		<div class="challenge panel medium-pull-1 medium-offset-1 medium-3 columns">\
+		<div class="item panel medium-pull-1 medium-offset-1 medium-3 columns">\
 			<div class="optional">\
 				{{#image}}\
 					<img src="{{path}}" >\
@@ -443,7 +440,7 @@ var PKChallenges = function(pkMap) {
 				success : function(data)
 				{
 					if (data.length == 0) {
-						$("#info .subheader").text("真遗憾，暂时没有球友和俱乐部发布的约球信息。");
+						createInfo("真遗憾，暂时没有球友和俱乐部发布的约球信息。");
 					} else {
 						$("#info").remove();
 						layChallenges(data);
@@ -453,7 +450,7 @@ var PKChallenges = function(pkMap) {
 					}
 				},
 				error: function (xhr, ajaxOptions, thrownError) {
-					$("#info .subheader").text("无法获取约球信息，请刷新重试。");
+					createInfo("无法获取约球信息，请刷新重试。");
 			     }
 			});
 		};
@@ -461,7 +458,7 @@ var PKChallenges = function(pkMap) {
 	
 	this.layChallenge = function(data) {
 		layChallenges(data);
-		$('#challenges').addClass('map medium-3 columns').children('.challenge').removeClass('medium-pull-1 medium-offset-1 medium-3');	
+		$('#items').addClass('map medium-3 columns').children('.item').removeClass('medium-pull-1 medium-offset-1 medium-3');	
 		pkMap.innerMap().panTo(markers[0].getPosition());
 		pkMap.innerMap().tilesloaded(function(type, target) {
 			pkMap.innerMap().panTo(markers[0].getPosition());
@@ -493,10 +490,7 @@ var PKChallenges = function(pkMap) {
 			points.push(point);
 		}
 
-		$('#challenges .challenge:nth-child(3n)').after('<br style="clear:both;">');
-		if ($('#viewSwitch a.map').hasClass('active')) {
-			$('#challenges').addClass('map medium-3 columns').children('.challenge').removeClass('medium-pull-1 medium-offset-1 medium-3');	
-		}
+		initialViewSwitch();
 
 		pkMap.setViewport(points);
 	}
@@ -569,7 +563,7 @@ var PKChallenges = function(pkMap) {
 			//TODO add challege apply
 		}
 
-		return $(Mustache.render(ChallengeTemplate, view)).appendTo('#challenges');
+		return $(Mustache.render(ChallengeTemplate, view)).appendTo('#items');
 	}	
 	
 	
@@ -614,14 +608,14 @@ var PKMatches = function(pkMap) {
 			<dl class="sub-nav">\
 				<dt><strong>{{month}}</strong></dt>\
 				{{#days}}\
-				<dd timestamp="{{timestamp}}" class="{{active}}"><a class="{{money}}" href="javascript:void(0);">{{day}}</a></dd>\
+				<dd class="{{active}}"><a class="{{money}}" timestamp="{{timestamp}}" href="javascript:void(0);">{{day}}</a></dd>\
 				{{/days}}\
 			</dl>\
 		{{/monthes}}\
 	';
 	
 	var MatchTemplate = '\
-		<div class="match panel medium-pull-1 medium-offset-1 medium-3 columns">\
+		<div class="item panel medium-pull-1 medium-offset-1 medium-3 columns">\
 			<div class="optional">\
 				{{#image}}\
 					<img src="{{path}}" >\
@@ -729,6 +723,31 @@ var PKMatches = function(pkMap) {
 	
 	this.layMatches = layMatches;
 	
+	this.loadMatches = function(timestamp) {
+		createInfo("正在加载选定日期的比赛和活动...");
+		
+		selecteddate = moment(timestamp);
+		$.ajax({
+			url : MATCH_URL,
+			data : {'f':'json', 'starttime':timestamp, 'endtime': selecteddate.add('days', 1).unix()},
+			dataType : 'json',
+			success : function(data)
+			{
+				newloc = setGetParameter(window.location.pathname, 's', timestamp);
+				window.history.pushState({ path: newloc }, '', newloc);
+				if (data.length == 0) {
+					createInfo("你选择的日期没有比赛和活动被收录，请选择别的日期。");
+				} else {
+					$("#info").remove();
+					layMatches(data);
+				}
+			},
+			error: function (xhr, ajaxOptions, thrownError) {
+				createInfo("无法获取比赛活动信息，请刷新重试。");
+			}
+		});
+	};
+	
 	function layMatches(data) {
 		var points = [];
 		for (var i = 0; i < data.length; i++) {
@@ -741,10 +760,7 @@ var PKMatches = function(pkMap) {
 			points.push(point);
 		}
 
-		$('#matches .match:nth-child(3n)').after('<br style="clear:both;">');
-		if ($('#viewSwitch a.map').hasClass('active')) {
-			$('#matches').addClass('medium-3 columns').children('.match').removeClass('medium-pull-1 medium-offset-1 medium-3');	
-		}
+		initialViewSwitch();
 
 		pkMap.setViewport(points);
 	}
@@ -801,6 +817,48 @@ var PKMatches = function(pkMap) {
 			view["equip"] = equip;
 		}
 
-		return $(Mustache.render(MatchTemplate, view)).appendTo('#matches');
+		return $(Mustache.render(MatchTemplate, view)).appendTo('#items');
 	}
+}
+
+function initialViewSwitch() {
+	$('#items .item:nth-child(3n)').after('<br style="clear:both;">');
+	if ($('#viewSwitch a.map').hasClass('active')) {
+		$('#items').addClass('map medium-3 columns').children('.item').removeClass('medium-pull-1 medium-offset-1 medium-3');
+		$('#content').addClass('map medium-3 columns');
+	}
+}
+
+function setUpViewSwitch() {
+	$('#viewSwitch a').click(function() {
+		if ($(this).hasClass('active')) {
+			return false;
+		}
+		if ($(this).hasClass('list')) {
+			$('#mapContainer').addClass('hidden');
+			$('#items').removeClass('map medium-3 columns').children('.item').addClass('medium-pull-1 medium-offset-1 medium-3');
+			$('#content').removeClass('map medium-3 columns');
+		} else if ($(this).hasClass('map')) {
+			$('#items').addClass('map medium-3 columns').children('.item').removeClass('medium-pull-1 medium-offset-1 medium-3');	
+			$('#content').addClass('map medium-3 columns');
+			$('#mapContainer').removeClass('hidden');
+		}
+
+		$(this).addClass('active').siblings().removeClass('active');
+		return false;
+	});
+	
+	$(window).scroll(function() {
+		if ($(window).scrollTop() > $('#mapContainer').offset().top) {
+			$('#pkMap').css({
+				'position': 'fixed',
+				'top': 0,
+				'width': $('#mapContainer').width()
+			});
+		} else {
+			$('#pkMap').css({
+				'position': 'relative'
+			});
+		}
+	});
 }

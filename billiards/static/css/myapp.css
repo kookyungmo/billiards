@@ -62,39 +62,19 @@ body {
 	font-size: 0.8125rem;
 }    
 
-#poolrooms.map .pic,
-#poolrooms.map .distance,
-#poolrooms.map .tel,
-#poolrooms.map .hour,
-#poolrooms.map .equip {
+#items.map .optional {
 	display: none;
 }
 
-.poolroom {
+.item {
 	background-color: #fcfcfc;
 }
 
-#poolrooms.map .poolroom {
+#items.map .item {
 	border: none;
 }
-#poolrooms.map .poolroom h5,
-#poolrooms.map .poolroom p {
-	font-size: 0.8125rem;
-}
-
-#challenges.map .optional {
-	display: none;
-}
-
-.challenge {
-	background-color: #fcfcfc;
-}
-
-#challenges.map .challenge {
-	border: none;
-}
-#challenges.map .challenge h5,
-#challenges.map .challenge p {
+#items.map .item h5,
+#items.map .item p {
 	font-size: 0.8125rem;
 }
 

@@ -23,7 +23,7 @@
 	<div id="content">
 	</div>
 	<div>
-		<div id="matches"></div>
+		<div id="items"></div>
 		<div id="mapContainer" class="hidden medium-9 columns"><div id="pkMap"></div></div>
 	</div>
 </div>
@@ -43,6 +43,7 @@ var MATCH_URL = "{% url match_detail '000' %}";
 var ACTIVITY_URL = "{% url activity_detail '000' %}";
 var ENROLL_URL = "{% url match_enroll '000' %}";
 var POOLROOM_URL = "{% url poolroom_detail '000' %}";
+var MATCH_URL = "{% url match_map 'map' %}";
 
 var defaultZoom = 12;
 
@@ -55,47 +56,30 @@ var endtime = moment("{{ enddate|date:"D d M Y" }}");
 var bonusobj = eval('{{ bonussummary|safe }}');
 var summary = {};
 {% for k,v in matchsummary.items %}
-	summary['{{ k }}'] = {{ v }};
+summary['{{ k }}'] = {{ v }};
 {% endfor %}
 
 pkMatches.buildCalendar(starttime, endtime, bonusobj, summary, {{ intervals }});
 matches = eval(jsonescape('{{ matches|matchtojsonwithenroll:user|safe }}'));
 pkMatches.layMatches(matches);
+pkLocation.consume(
+	pkMap.markCurrentLocation
+);
 
-/* 		$("dl dd a").click(function() {
-			selectedItem = $(this);
-			timestamp = selectedItem.attr('timestamp');
-			selecteddate = moment(timestamp);
-			$.ajax({
-				url : "{% url match_map 'map' %}",
-				data : {'f':'json', 'starttime':timestamp, 'endtime': selecteddate.add('days', 1).unix()},
-				dataType : 'json',
-				success : function(data)
-				{
-					$("dl dd.active").each(function() {
-						$(this).removeClass("active");
-					});
-					selectedItem.parents("dd").attr('class', 'active');
-					newloc = setGetParameter(window.location.pathname, 's', timestamp);
-					window.history.pushState({ path: newloc }, '', newloc);
-					addMatchItems_v2(data);
-				}
-			});
-		});
-		$('#calendar-select').change(function(){
-			timestamp = $('#calendar-select').val();
-			selecteddate = moment(timestamp);
-			$.ajax({
-				url : "{% url match_map 'map' %}",
-				data : {'f':'json', 'starttime':timestamp, 'endtime': selecteddate.add('days', 1).unix()},
-				dataType : 'json',
-				success : function(data)
-				{
-					newloc = setGetParameter(window.location.pathname, 's', timestamp);
-					window.history.pushState({ path: newloc }, '', newloc);
-					addMatchItems_v2(data);
-				}
-			});
-	    }); */
+setUpViewSwitch();
+
+$("dl dd a").click(function() {
+	$('#items').html('');
+	
+	selectedItem = $(this);
+	$("dl dd.active").each(function() {
+		$(this).removeClass("active");
+	});
+	selectedItem.parents("dd").attr('class', 'active');
+	
+	timestamp = selectedItem.attr('timestamp');
+	pkMatches.loadMatches(timestamp);
+});
+
 	</script>
 {% endblock %}

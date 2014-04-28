@@ -28,7 +28,7 @@
 	<div id="content">
 	</div>
 	<div>
-		<div id="poolrooms"></div>
+		<div id="items"></div>
 		<div id="mapContainer" class="hidden medium-9 columns"><div id="pkMap"></div></div>
 	</div>
 </div>
@@ -63,38 +63,10 @@
 		pkPoolrooms.loadPoolrooms('{{ defaultDistance }}')
 	);
 
-	$('#viewSwitch a').click(function() {
-		if ($(this).hasClass('active')) {
-			return false;
-		}
-		if ($(this).hasClass('list')) {
-			$('#mapContainer').addClass('hidden');
-			$('#poolrooms').removeClass('map medium-3 columns').children('.poolroom').addClass('medium-pull-1 medium-offset-1 medium-3');
-		} else if ($(this).hasClass('map')) {
-			$('#poolrooms').addClass('map medium-3 columns').children('.poolroom').removeClass('medium-pull-1 medium-offset-1 medium-3');	
-			$('#mapContainer').removeClass('hidden');
-		}
-
-		$(this).addClass('active').siblings().removeClass('active');
-		return false;
-	});
-
-	$(window).scroll(function() {
-		if ($(window).scrollTop() > $('#mapContainer').offset().top) {
-			$('#pkMap').css({
-				'position': 'fixed',
-				'top': 0,
-				'width': $('#mapContainer').width()
-			});
-		} else {
-			$('#pkMap').css({
-				'position': 'relative'
-			});
-		}
-	});
+	setUpViewSwitch();
 		
 	$("dl dd").click(function() {
-		$('#poolrooms').html('');
+		$('#items').html('');
 		$("dl dd[class=active]").removeClass("active");
 		$(this).addClass("active");
 		distance = $(this).attr("distance");

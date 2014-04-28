@@ -18,7 +18,7 @@
 <div>
 	<div class="clearfix">
 		<div class="large-8 columns">
-			<h2>{% if group != None %}<code>{{group.name}}</code>群内{% endif %}约球信息</h2><h4><b>抢台费</b>新玩法，发送你的位置到"{{group.name|default:"我为台球狂"}}"微信帐号发起抢台费。</h4>
+			<h2 class="fi-torsos-all">{% if group != None %}<code>{{group.name}}</code>群内{% endif %}约球信息</h2><h4><b>抢台费</b>新玩法，发送你的位置到"{{group.name|default:"我为台球狂"}}"微信帐号发起抢台费。</h4>
 		</div>
 		<div id="viewSwitch" class="large-4 columns show-for-medium-up">
 			<a href="#" class="active list"><i class="fa fa-th-large"></i> 列表</a> 
@@ -29,7 +29,7 @@
 	<div id="content">
 	</div>
 	<div>
-		<div id="challenges"></div>
+		<div id="items"></div>
 		<div id="mapContainer" class="hidden medium-9 columns"><div id="pkMap"></div></div>
 	</div>
 </div>
@@ -61,34 +61,6 @@
 		pkChallenges.loadChallenges(mypoint)
 	);
 	
-	$('#viewSwitch a').click(function() {
-		if ($(this).hasClass('active')) {
-			return false;
-		}
-		if ($(this).hasClass('list')) {
-			$('#mapContainer').addClass('hidden');
-			$('#challenges').removeClass('map medium-3 columns').children('.challenge').addClass('medium-pull-1 medium-offset-1 medium-3');
-		} else if ($(this).hasClass('map')) {
-			$('#challenges').addClass('map medium-3 columns').children('.challenge').removeClass('medium-pull-1 medium-offset-1 medium-3');	
-			$('#mapContainer').removeClass('hidden');
-		}
-
-		$(this).addClass('active').siblings().removeClass('active');
-		return false;
-	});
-
-	$(window).scroll(function() {
-		if ($(window).scrollTop() > $('#mapContainer').offset().top) {
-			$('#pkMap').css({
-				'position': 'fixed',
-				'top': 0,
-				'width': $('#mapContainer').width()
-			});
-		} else {
-			$('#pkMap').css({
-				'position': 'relative'
-			});
-		}
-	});
+	setUpViewSwitch();
 	</script>
 {% endblock %}	
