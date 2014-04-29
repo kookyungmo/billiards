@@ -231,6 +231,8 @@ var PKPoolrooms = function(pkMap) {
 			markers.push(createPoolroomMarker(poolroomObj, data[i], point));
 			points.push(point);
 		}
+		
+		addPlaceholder(data.length);
 
 		initialViewSwitch();
 
@@ -489,6 +491,8 @@ var PKChallenges = function(pkMap) {
 			markers.push(createChallengeMarker(challengeObj, data[i], point));
 			points.push(point);
 		}
+		
+		addPlaceholder(data.length);
 
 		initialViewSwitch();
 
@@ -827,6 +831,8 @@ var PKMatches = function(pkMap) {
 			markers.push(createMatchMarker(matchObj, data[i], point));
 			points.push(point);
 		}
+		
+		addPlaceholder(data.length);
 
 		initialViewSwitch();
 
@@ -959,4 +965,13 @@ function setUpViewSwitch() {
 			});
 		}
 	});
+}
+
+function addPlaceholder(length) {
+	if (length % 3 == 2) {
+		var emptyobj = jQuery('<div/>', {
+			class : 'medium-pull-1 medium-offset-1 medium-3 columns',
+		});
+		emptyobj.appendTo('#items');
+	}
 }
