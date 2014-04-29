@@ -293,7 +293,7 @@ def is_expired(atime):
         return True
     return False
 
-match_fields = ('id', 'poolroom', 'title', 'organizer', 'bonus', 'rechargeablecard', 'otherprize', 'bonusdetail', 'rule', 'starttime', 'description', 'status', 'type', 'enrollfee')
+match_fields = ('id', 'poolroom', 'title', 'organizer', 'bonus', 'rechargeablecard', 'otherprize', 'bonusdetail', 'rule', 'starttime', 'description', 'status', 'type', 'enrollfee', 'enrollfocal')
 class Match(models.Model):
     id = models.AutoField(primary_key=True)
     poolroom = models.ForeignKey(Poolroom, verbose_name='比赛/活动所在球房')

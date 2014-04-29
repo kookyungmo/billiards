@@ -39,7 +39,7 @@
 var STATIC_URL = "{{ STATIC_URL|escapejs }}";
 var MEDIA_URL = "{{ MEDIA_URL }}";
 
-var MATCH_URL = "{% url match_detail '000' %}";
+var MATCH_DETAIL_URL = "{% url match_detail '000' %}";
 var ACTIVITY_URL = "{% url activity_detail '000' %}";
 var ENROLL_URL = "{% url match_enroll '000' %}";
 var POOLROOM_URL = "{% url poolroom_detail '000' %}";
@@ -63,7 +63,8 @@ pkMatches.buildCalendar(starttime, endtime, bonusobj, summary, {{ intervals }});
 matches = eval(jsonescape('{{ matches|matchtojsonwithenroll:user|safe }}'));
 pkMatches.layMatches(matches);
 pkLocation.consume(
-	pkMap.markCurrentLocation
+	pkMap.markCurrentLocation,
+	pkMatches.updateDistance
 );
 
 setUpViewSwitch();

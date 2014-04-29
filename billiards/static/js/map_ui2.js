@@ -603,6 +603,9 @@ var PKChallenges = function(pkMap) {
 }
 
 var PKMatches = function(pkMap) {
+	var markers = [],
+		myPosition;
+	
 	var CalendarTemplate = '\
 		{{#monthes}}\
 			<dl class="sub-nav">\
@@ -625,7 +628,7 @@ var PKMatches = function(pkMap) {
 				{{/image}}\
 			</div>\
 			<div>\
-				<p class="optional">距离我: <code>{{distance}}</code></p>\
+				<p class="optional" point="{{point}}">距离我: <code>{{distance}}</code></p>\
 				<p class="musthave"><a href="{{match_detail_url}}">{{title}}</a></p>\
 				<p class="musthave">{{type}}球馆: <a href="{{poolroom_url}}">{{poolroom_name}}</a></p>\
 				{{#equip}}\
@@ -668,6 +671,52 @@ var PKMatches = function(pkMap) {
 				{{/enroll_focal}}\
 			</div>\
 		</div>\
+	';
+	
+	MatchInfoTemplate = '\
+		<div class="mapBubbleInfo"><h6>{{name}}</h6>\
+		<a href="{{match_detail_url}}">{{title}}</a>\
+		<p>距离我: <code>{{distance}}</code></p>\
+		<p>{{type}}球馆: <a href="{{poolroom_url}}">{{poolroom_name}}</a></p>\
+		<p>球馆地址: {{poolroom_address}}</p>\
+		{{#equip}}\
+		<div class="optional icon_list">\
+			<span class="ico_none">球房设施: </span>\
+			{{#wifi}}\
+				<span class="ico_wifi" title="公共区域WIFI"></span>\
+			{{/wifi}}\
+			{{#freeWifi}}\
+				<span class="ico_free_wifi" title="公共区域WIFI"></span>\
+			{{/freeWifi}}\
+			{{#parking}}\
+				<span class="ico_parking" title="停车场"></span>\
+			{{/parking}}\
+			{{#cafe}}\
+				<span class="ico_restaurant" title="餐饮服务"></span>\
+			{{/cafe}}\
+			{{#subway}}\
+				<span class="ico_bus" title="地铁周边"></span>\
+			{{/subway}}\
+		</div>\
+		{{/equip}}\
+		<p>开始时间: <code>{{starttime}}</code></p>\
+		{{#hasPrize}}\
+		<p>比赛奖金: <code>\
+		{{#bonus}}\
+		现金: {{bonus}}元\
+		{{/bonus}}\
+		{{#rechargeablecard}}\
+		俱乐部充值卡: {{rechargeablecard}}元\
+		{{/rechargeablecard}}\
+		{{#otherprize}}\
+		{{otherprize}}\
+		{{/otherprize}}\
+		</code></p>\
+		{{/hasPrize}}\
+		<p>报名费: <code>{{enroll_fee}}</code></p>\
+		{{#enroll_focal}}\
+		<p>报名联系人: <code>{{enroll_focal}}</code></p>\
+		{{/enroll_focal}}\
 	';
 	
 	this.buildCalendar = function(starttime, endtime, bonusobj, summary, intervals) {
@@ -725,6 +774,10 @@ var PKMatches = function(pkMap) {
 	
 	this.loadMatches = function(timestamp) {
 		createInfo("正在加载选定日期的比赛和活动...");
+
+		for (var i = 0; i < markers.length; i++) {
+			pkMap.removeMarker(markers[i]);
+		}
 		
 		selecteddate = moment(timestamp);
 		$.ajax({
@@ -748,6 +801,21 @@ var PKMatches = function(pkMap) {
 		});
 	};
 	
+	this.updateDistance = function(myPos) {
+		if (myPos) {
+			myPosition = myPos;
+			$(".item p[point]").each(function() {
+				var pointstr = $(this).attr("point").split(",");
+				var point = new BMap.Point(pointstr[0], pointstr[1]);
+				$(this).children("code").html(formatDistance(distance(myPosition, point)));
+			});
+		} else {
+			$(".item p[point] code").each(function() {
+				$(this).html("无法获取你的位置");
+			})
+		}
+	};
+	
 	function layMatches(data) {
 		var points = [];
 		for (var i = 0; i < data.length; i++) {
@@ -756,7 +824,7 @@ var PKMatches = function(pkMap) {
 				data[i].fields.poolroom.lat
 			);
 			var matchObj = renderMatch(data[i], point);
-//			markers.push(createMatchMarker(matchObj, data[i], point));
+			markers.push(createMatchMarker(matchObj, data[i], point));
 			points.push(point);
 		}
 
@@ -765,19 +833,49 @@ var PKMatches = function(pkMap) {
 		pkMap.setViewport(points);
 	}
 	
+	function createMatchMarker(obj, match, point) {
+		var marker = pkMap.addMarker(point, STATIC_URL + "images/marker.png");
+		marker.addEventListener("click", function() {
+			matchInfo(marker, match, point);
+		});
+		if (obj != null) {
+			(function(){
+				$(obj).click(
+					function(event) {
+						var link = $(obj);
+						var clickingobj = $(event.target);
+						if (clickingobj[0].tagName == 'A') {
+							//TODO catch click event on link
+						} else {
+							matchInfo(marker, match, point);
+						}
+					});
+			})();
+		}
+		return marker;
+	}
+	
+	function matchInfo(marker, match, point) {
+		var infoWindow = new BMap.InfoWindow(Mustache.render(MatchInfoTemplate, matchToView(match, point)));
+		marker.openInfoWindow(infoWindow);
+		infoWindow.redraw();
+	}
+	
 	function matchToView(match, point) {
 		var view = {
 				"point": point.lng + "," + point.lat,
 				"poolroom_name": match.fields.poolroom.name,
-				"poolroomurl": POOLROOM_URL.replace(/000/g, match.fields.poolroom.id),
+				"poolroom_url": POOLROOM_URL.replace(/000/g, match.fields.poolroom.id),
+				"poolroom_address": match.fields.poolroom.address,
 				"starttime": getSmartTime(match.fields.starttime),
 				"title": match.fields.title,
 				"enroll_fee": match.fields.enrollfee,
 				"enroll_focal": match.fields.enrollfocal,
+				"distance": myPosition ? formatDistance(distance(myPosition, point)) : "正在计算距离",
 			};
 		
 		if (match.fields.type == 1) {
-			view["match_detail_url"] = MATCH_URL.replace(/000/g, match.pk);
+			view["match_detail_url"] = MATCH_DETAIL_URL.replace(/000/g, match.pk);
 			view["hasPrize"] = true;
 			if (match.fields.bonus > 0)
 				view["bonus"] = match.fields.bonus;
