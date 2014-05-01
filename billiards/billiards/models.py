@@ -66,7 +66,7 @@ class Poolroom(models.Model):
     businesshours = models.CharField(max_length=60,null=True,verbose_name='营业时间')
     size = models.IntegerField(max_length=8,null=True,verbose_name='球馆面积(平米)')
     rating = models.IntegerField(max_length=2,null=True,verbose_name='球房总评分')
-    review = models.CharField(max_length=255,null=True,blank=True,verbose_name='球房点评')
+    review = models.CharField(max_length=1024,null=True,blank=True,verbose_name='球房介绍')
     city = models.IntegerField(verbose_name=u'城市', choices=CITY_DISTRICT.values(), default=10,)
     district = models.CharField(verbose_name=u'行政区', max_length=10)
     exist = models.IntegerField(verbose_name=u'是否还存在', choices=(
