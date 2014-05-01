@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+{% load staticfiles %}
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+  <link href="http://fonts.googleapis.com/css?family=Corben:bold" rel="stylesheet" type="text/css">
+  <link href="http://fonts.googleapis.com/css?family=Nobile" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/css/foundation.min.css">
+  <link rel="stylesheet" href="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/css/normalize.min.css">
+  <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/vendor/modernizr.js"></script>
+  <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/vendor/jquery.js"></script>
+  <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/vendor/fastclick.js"></script>
+  <script src="http://cdnjscn.b0.upaiyun.com/libs/moment.js/2.6.0/moment-with-langs.min.js"></script>  
+  <script src="{% static "js/app.js" %}?{{buildid}}"></script>
+  <link rel="stylesheet" href="{% static "css/myapp.css" %}?{{buildid}}">
+  <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>
+<script src="{% static "js/map_ui2.js" %}?{{buildid}}"></script>
+<script src="{% static "js/mustache.js" %}?0.8.1"></script>
+<title>我为台球狂地图服务</title>
+<style type="text/css">
+body, html,#pkMap {width: 100%;height: 100%;overflow: hidden;margin:0;}
+</style>
+</head>
+<body>
+<div id="pkMap"></div>
+</body>
+</html>
+{% load extras %}
+<script type="text/javascript">
+var STATIC_URL = "{{ STATIC_URL|escapejs }}";
+var MEDIA_URL = "{{ MEDIA_URL }}";
+
+var defaultZoom = 16;
+var pkMap = new PKMap("pkMap", "北京", defaultZoom);
+var pkLocation = new PKLocation(null);
+
+{% with target|classname as modelclass %}
+{% if modelclass == "Match" %}
+var MATCH_DETAIL_URL = "{% url match_detail '000' %}";
+var ACTIVITY_URL = "{% url activity_detail '000' %}";
+var ENROLL_URL = "{% url match_enroll '000' %}";
+var POOLROOM_URL = "{% url poolroom_detail '000' %}";
+var MATCH_URL = "{% url match_map 'map' %}";
+var pkMatches = new PKMatches(pkMap);
+matches = eval(jsonescape('{{ target|matchtojson|safe }}'));
+pkMatches.addMatchMarker(matches[0]);
+pkLocation.consume(
+		pkMap.markCurrentLocation,
+		pkMatches.updateDistance
+);
+{% elif modelclass == "Poolroom" %}
+var POOLROOM_URL = "{% url poolroom_detail '000' %}";
+var pkPoolrooms = new PKPoolrooms(pkMap);
+poolrooms = eval(jsonescape('{{ target|poolroomtojson|safe }}'));
+pkPoolrooms.createSinglePoolroomMarker(poolrooms[0]);
+pkLocation.consume(
+	pkMap.markCurrentLocation,
+	pkPoolrooms.updateDistance
+);
+{% elif modelclass == "Challenge" %}
+POOLROOM_URL = "{% url poolroom_detail '000' %}";
+CHALLENGE_DETAIL_URL = "{% url challenge_detail '000' %}";
+var LOGO_URL="{{ SITE_LOGO_URL }}";
+var WECHAT_SHARE_URL="{% url wechat_share_help %}";
+
+var pkChallenges = new PKChallenges(pkMap);
+challenges = eval(jsonescape('{{ target|tojson|safe }}'));
+pkChallenges.addChllengeMarker(challenges[0]);
+pkLocation.consume(
+	pkMap.markCurrentLocation,
+	pkChallenges.updateDistance
+);
+{% endif %}
+{% endwith %}
+
+</script>

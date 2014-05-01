@@ -33,6 +33,10 @@ def matchtojsonwithenroll(matches, user):
 def thumbnail(imagepath, width):
     return PoolroomImage.getThumbnailPath(imagepath.name, width)
 
+def classname(obj):
+    classname = obj.__class__.__name__
+    return classname
+
 register = template.Library()
 register.filter('matchtojson', matchtojson)
 register.filter('poolroomtojson', poolroomtojson)
@@ -40,3 +44,4 @@ register.filter('tojson', tojson)
 register.filter('equipmentname', equipmentname)
 register.filter('matchtojsonwithenroll', matchtojsonwithenroll)
 register.filter('thumbnail', thumbnail)
+register.filter('classname', classname)

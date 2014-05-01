@@ -140,23 +140,3 @@ function getReportData(url, startdate, enddate, callback) {
 		}
 	});
 }
-
-function initialMomentTZ() {
-	moment.tz.add({
-	    "zones": {
-	        "Asia/Chongqing": [
-	            "7:6:20 - LMT 1928 7:6:20",
-	            "7 - LONT 1980_4 7",
-	            "8 PRC C%sT"
-	        ]
-	    },
-	    "rules": {
-	        "PRC": [
-	            "1986 1986 4 4 7 0 0 1 D",
-	            "1986 1991 8 11 0 0 0 0 S",
-	            "1987 1991 3 10 0 0 0 1 D"
-	        ]
-	    },
-	    "links": {}
-	});
-}

@@ -121,6 +121,7 @@ var PKMap = function(dom, center, zoom) {
 
 var PKPoolrooms = function(pkMap) {
 	var markers = [],
+		infoWindow,
 		myPosition;
 
 	// 球房模板
@@ -140,7 +141,8 @@ var PKPoolrooms = function(pkMap) {
 						<a target="_blank" href="{{url}}">{{name}}</a>\
 					</span>\
 				</h5>\
-				<p class="optional">距离我: {{distance}}</p>\
+				<p class="musthave show-for-small-only"><a href="javascript:void(0);" onclick="javascript:openMap(\'{{name}}\', \'poolroom\', {{poolroom_id}});">地图中查看...</a></p>\
+				<p class="musthave">距离我: <code>{{distance}}</code></p>\
 				{{#equip}}\
 					<div class="optional icon_list">\
 						<span class="ico_none">球房设施: </span>\
@@ -163,7 +165,7 @@ var PKPoolrooms = function(pkMap) {
 				{{/equip}}\
 				<p class="address">地址: {{address}}</p>\
 				<p class="optional">电话: {{tel}}</p>\
-				<p class="optional">营业时间: {{hour}}</p>\
+				<p class="optional">营业时间: {{businessHours}}</p>\
 				{{#coupon}}\
 					<div><h5><b>优惠信息</b></h5></div>\
 					{{#coupons}}\
@@ -184,7 +186,7 @@ var PKPoolrooms = function(pkMap) {
 			<code>{{businessHours}}</code>\
 		</p>\
 		{{#distance}}\
-			<p>距离我: \
+			<p point="{{point}}">距离我: \
 				<code>{{.}}</code>\
 			</p>\
 		{{/distance}}\
@@ -261,22 +263,29 @@ var PKPoolrooms = function(pkMap) {
 		return marker;
 	}
 	
-	function renderPoolroom(poolroom, point) {
+	function poolroomToView(poolroom) {
 		var view = {
-				"point": point.lng + "," + point.lat,
+				"point": poolroom.fields.lng_baidu + "," + poolroom.fields.lat_baidu,
 				"name": poolroom.fields.name,
 				"address": poolroom.fields.address,
 				"tel": poolroom.fields.tel,
-				"hour": poolroom.fields.businesshours,
-				"distance": formatDistance(poolroom.fields.distance * 1000),
-				"url": POOLROOM_URL.replace(/000/g, poolroom.pk)
+				"distance": "正在获取你的位置",
+				"url": POOLROOM_URL.replace(/000/g, poolroom.pk),
+				"businessHours": poolroom.fields.businesshours,
+				"poolroom_id": poolroom.pk,
 			},
-			images = Object.getOwnPropertyNames(poolroom.fields.images),
+			images = poolroom.fields.images ? Object.getOwnPropertyNames(poolroom.fields.images) : [],
 			image,
-			coupons = Object.getOwnPropertyNames(poolroom.fields.coupons),
+			coupons = poolroom.fields.coupons ? Object.getOwnPropertyNames(poolroom.fields.coupons) : [],
 			coupon,
 			equip = {},
 			i;
+		if (poolroom.fields.distance) {
+			view["distance"] = formatDistance(poolroom.fields.distance * 1000);
+		} else if (myPosition) {
+			var point = new BMap.Point(poolroom.fields.lng_baidu, poolroom.fields.lat_baidu);
+			view["distance"] = formatDistance(distance(myPosition, point));
+		}
 		if (images.length !== 0) {
 			view["image"] = {};
 			for (i in images) {
@@ -286,7 +295,7 @@ var PKPoolrooms = function(pkMap) {
 				}
 			}
 		}
-
+	
 		poolroom.fields.flags.wifi && (equip["wifi"] = true);
 		poolroom.fields.flags.freeWifi && (equip["freeWifi"] = true);
 		(poolroom.fields.flags.parking || poolroom.fields.flags.parking_free) && (equip["parking"] = true);
@@ -295,7 +304,7 @@ var PKPoolrooms = function(pkMap) {
 		if (equip.hasOwnProperty()) {
 			view["equip"] = equip;
 		}
-
+	
 		if (coupons.length > 0) {
 			view["coupon"] = {"coupons": []};
 			for (i in coupons) {
@@ -303,23 +312,16 @@ var PKPoolrooms = function(pkMap) {
 				view["coupon"]["coupons"].push({"url": coupon.fields.url}, {"title": coupon.fields.title});
 			}
 		}
-
+		return view;
+	}
+	
+	function renderPoolroom(poolroom, point) {
+		var view = poolroomToView(poolroom, point);
 		return $(Mustache.render(PoolroomTemplate, view)).appendTo('#items');
 	}
 
 	function poolroomInfo(marker, poolroom) {
-		var view = {
-			"name": poolroom.fields.name,
-			"address": poolroom.fields.address,
-			"businessHours": poolroom.fields.businesshours
-		};
-		if (poolroom.fields.distance) {
-			view["distance"] = formatDistance(poolroom.fields.distance * 1000);
-		}
-		
-		var infoWindow = new BMap.InfoWindow(Mustache.render(PoolroomInfoTemplate, view));
-		marker.openInfoWindow(infoWindow);
-		infoWindow.redraw();
+		infoWindow = openInfoWindow(marker, Mustache.render(PoolroomInfoTemplate, poolroomToView(poolroom)));
 	}
 	
 	this.createSinglePoolroomMarker = function(poolroom) {
@@ -327,13 +329,27 @@ var PKPoolrooms = function(pkMap) {
 				poolroom.fields.lat_baidu);
 		marker = createPoolroomMarker(null, poolroom, point);
 		setTimeout(function(){
-			pkMap.innerMap().panTo(point);
+			poolroomInfo(marker, poolroom);
 			marker.setAnimation(BMAP_ANIMATION_BOUNCE);
 			setTimeout(function(){
 				marker.setAnimation(null);
 			}, 3000);
-		}, 2500);
+		}, 1500);
 	};
+	
+	this.updateDistance = function (myPos) {
+		if (myPos)
+			myPosition = myPos;
+		if (infoWindow && infoWindow.isOpen()) {
+			var distanceObj = $(infoWindow.getContent()).find("p[point]");
+			var pointstr = distanceObj.attr("point").split(",");
+			var point = new BMap.Point(pointstr[0], pointstr[1]);
+			if (myPosition)
+				distanceObj.children("code").html(formatDistance(distance(myPosition, point)));
+			else
+				distanceObj.children("code").html("无法获取你的位置");
+		}
+	}
 };
 
 function createInfo(text) {
@@ -355,6 +371,7 @@ function getThumbnail(filename, width) {
 
 var PKChallenges = function(pkMap) {
 	var markers = [],
+		infoWindow,
 		myPosition;
 	
 	var ChallengeTemplate = '\
@@ -368,7 +385,8 @@ var PKChallenges = function(pkMap) {
 				{{/image}}\
 			</div>\
 			<div>\
-				<p class="optional">距离我: <code>{{distance}}</code></p>\
+				<p class="musthave" point="{{point}}">距离我: <code>{{distance}}</code></p>\
+				<a class="show-for-small-only" href="javascript:void(0);" onclick="javascript:openMap(\'一名{{level}}{{nickname}}发起在{{name}}的{{type}}\', \'challenge\', {{challenge_id}});">地图中查看...</a></p>\
 				{{#equip}}\
 					<div class="optional icon_list">\
 						<span class="ico_none">球房设施: </span>\
@@ -414,72 +432,81 @@ var PKChallenges = function(pkMap) {
 		<p>{{contactway}}: <code>{{contact}}</code></p>\
 		<p>球台类型: <code>{{tabletype}}</code></p>\
 		{{#distance}}\
-			<p>距离我: \
+			<p point="{{point}}">距离我: \
 				<code>{{.}}</code>\
 			</p>\
 		{{/distance}}\
 	';
 	
-	this.loadChallenges = function() {
-		return function(myPos) {
-			if (myPos) {
-				myPosition = myPos;
-			}
-			for (var i = 0; i < markers.length; i++) {
-				pkMap.removeMarker(markers[i]);
-			}
+	this.loadChallenges = function(mypos) {
+		for (var i = 0; i < markers.length; i++) {
+			pkMap.removeMarker(markers[i]);
+		}
 
-			createInfo("正在加载约球信息...");
-			url = CHALLENGE_URL;
-			if (myPosition != null) {
-				url = CHALLENGE_WITH_DISTANCE_URL;
-				url = url.replace(/00\.00/g, myPosition.lat).replace(/11\.11/g, myPosition.lng);
-			}
-			$.ajax({
-				url : url,
-				data : {'f':'json'},
-				dataType : 'json',
-				success : function(data)
-				{
-					if (data.length == 0) {
-						createInfo("真遗憾，暂时没有球友和俱乐部发布的约球信息。");
-					} else {
-						$("#info").remove();
-						layChallenges(data);
-						$(document).foundation({
-					    	abide: abideOptions
-					    });
-					}
-				},
-				error: function (xhr, ajaxOptions, thrownError) {
-					createInfo("无法获取约球信息，请刷新重试。");
-			     }
-			});
-		};
+		createInfo("正在加载约球信息...");
+		url = CHALLENGE_URL;
+		if (mypos) {
+			url = CHALLENGE_WITH_DISTANCE_URL;
+			url = url.replace(/00\.00/g, myPosition.lat).replace(/11\.11/g, myPosition.lng);
+		}
+		$.ajax({
+			url : url,
+			data : {'f':'json'},
+			dataType : 'json',
+			success : function(data)
+			{
+				if (data.length == 0) {
+					createInfo("真遗憾，暂时没有球友和俱乐部发布的约球信息。");
+				} else {
+					$("#info").remove();
+					layChallenges(data);
+					$(document).foundation({
+				    	abide: abideOptions
+				    });
+				}
+			},
+			error: function (xhr, ajaxOptions, thrownError) {
+				createInfo("无法获取约球信息，请刷新重试。");
+		     }
+		});
 	};
 	
 	this.layChallenge = function(data) {
 		layChallenges(data);
-		$('#items').addClass('map medium-3 columns').children('.item').removeClass('medium-pull-1 medium-offset-1 medium-3');	
-		pkMap.innerMap().panTo(markers[0].getPosition());
-		pkMap.innerMap().tilesloaded(function(type, target) {
-			pkMap.innerMap().panTo(markers[0].getPosition());
-		});
+		switchToMap();
+		setTimeout(function(){
+			challengeInfo(markers[0], data[0], markers[0].getPosition());
+			markers[0].setAnimation(BMAP_ANIMATION_BOUNCE);
+			setTimeout(function(){
+				markers[0].setAnimation(null);
+			}, 3000);
+		}, 1500);
 	};
 	
-	this.updateMyPosition = function(challenge) {
-		return function(myPos) {
-			if (myPos) {
-				myPosition = myPos;
-			}
-			var point = new BMap.Point(
-					challenge.fields.lng_baidu,
-					challenge.fields.lat_baidu
-				);
-			pkMap.innerMap().panTo(point);
+	this.updateDistance = function(myPos) {
+		if (myPos) {
+			myPosition = myPos;
+			$(".item p[point]").each(function() {
+				var pointstr = $(this).attr("point").split(",");
+				var point = new BMap.Point(pointstr[0], pointstr[1]);
+				$(this).children("code").html(formatDistance(distance(myPosition, point)));
+			});
+		} else {
+			$(".item p[point] code").each(function() {
+				$(this).html("无法获取你的位置");
+			})
+		}
+		if (infoWindow && infoWindow.isOpen()) {
+			var distanceObj = $(infoWindow.getContent()).find("p[point]");
+			var pointstr = distanceObj.attr("point").split(",");
+			var point = new BMap.Point(pointstr[0], pointstr[1]);
+			if (myPosition)
+				distanceObj.children("code").html(formatDistance(distance(myPosition, point)));
+			else
+				distanceObj.children("code").html("无法获取你的位置");
 		}
 	}
-	
+		
 	function layChallenges(data) {
 		var points = [];
 		for (var i = 0; i < data.length; i++) {
@@ -510,8 +537,9 @@ var PKChallenges = function(pkMap) {
 				"nickname": challenge.fields.issuer_nickname == null ? "" : challenge.fields.issuer_nickname,
 				"type": challenge.fields.source == 1 ? "约赛" : "抢台费",
 				"tabletype": challenge.fields.tabletype,
-				"challenge_datail_url": CHALLENGE_DETAIL_URL.replace(/000/g, challenge.fields.id),
+				"challenge_datail_url": CHALLENGE_DETAIL_URL.replace(/000/g, challenge.pk),
 				"logo_url": LOGO_URL,
+				"challenge_id": challenge.pk,
 			};
 		var protocols = [["tel://", "电话"], ["qq://", "QQ"], ["wechat://", "微信"]];
 		for (idx in protocols) {
@@ -570,6 +598,14 @@ var PKChallenges = function(pkMap) {
 		return $(Mustache.render(ChallengeTemplate, view)).appendTo('#items');
 	}	
 	
+	this.addChllengeMarker = function(challenge) {
+		var point = new BMap.Point(
+				challenge.fields.lng_baidu,
+				challenge.fields.lat_baidu
+			);
+		var marker = createChallengeMarker(null, challenge, point);
+		challengeInfo(marker, challenge, point);
+	};
 	
 	function createChallengeMarker(obj, challenge, point) {
 		var marker = pkMap.addMarker(point, STATIC_URL + "images/marker.png");
@@ -595,20 +631,22 @@ var PKChallenges = function(pkMap) {
 	
 	function challengeInfo(marker, challenge, point) {
 		var view = challengeToView(challenge, point);
-		if (myPosition != null) {
-			view["distance"] = formatDistance(distance(myPosition, point));
-		}
-		
-		pkMap.innerMap().panTo(point);
-		var infoWindow = new BMap.InfoWindow(Mustache.render(ChallengeInfoTemplate, view));
-		marker.openInfoWindow(infoWindow);
-		infoWindow.redraw();
+		view["distance"] = myPosition ? formatDistance(distance(myPosition, point)) : "正在获取你的位置";
+		infoWindow = openInfoWindow(marker, Mustache.render(ChallengeInfoTemplate, view));
 	}
+}
+
+function openInfoWindow(marker, innerHtml) {
+	var infoWindow = new BMap.InfoWindow(innerHtml);
+	infoWindow.enableAutoPan();
+	marker.openInfoWindow(infoWindow);
+	infoWindow.redraw();
+	return infoWindow;
 }
 
 var PKMatches = function(pkMap) {
 	var markers = [],
-		myPosition;
+		myPosition, infoWindow;
 	
 	var CalendarTemplate = '\
 		{{#monthes}}\
@@ -634,7 +672,8 @@ var PKMatches = function(pkMap) {
 			<div>\
 				<p class="optional" point="{{point}}">距离我: <code>{{distance}}</code></p>\
 				<p class="musthave"><a href="{{match_detail_url}}">{{title}}</a></p>\
-				<p class="musthave">{{type}}球馆: <a href="{{poolroom_url}}">{{poolroom_name}}</a></p>\
+				<p class="musthave">{{type}}球馆: <a href="{{poolroom_url}}">{{poolroom_name}}</a>\
+				<a class="show-for-small-only" href="javascript:void(0);" onclick="javascript:openMap(\'{{title}}\', \'match\', {{match_id}});">地图中查看...</a></p>\
 				{{#equip}}\
 					<div class="optional icon_list">\
 						<span class="ico_none">球房设施: </span>\
@@ -680,7 +719,7 @@ var PKMatches = function(pkMap) {
 	MatchInfoTemplate = '\
 		<div class="mapBubbleInfo"><h6>{{name}}</h6>\
 		<a href="{{match_detail_url}}">{{title}}</a>\
-		<p>距离我: <code>{{distance}}</code></p>\
+		<p point="{{point}}">距离我: <code>{{distance}}</code></p>\
 		<p>{{type}}球馆: <a href="{{poolroom_url}}">{{poolroom_name}}</a></p>\
 		<p>球馆地址: {{poolroom_address}}</p>\
 		{{#equip}}\
@@ -729,7 +768,7 @@ var PKMatches = function(pkMap) {
 			bonussummary[bonusobj[idx].starttime] = bonusobj[idx].bonus;
 		}
 		
-		var m = moment.utc([starttime.year(), starttime.month(), starttime.dates(), starttime.hour(), starttime.minute(), starttime.second()]);
+		var m = starttime.clone();
 		var selectedTimestamp = getParameterByName('s');
 		if (selectedTimestamp != null) {
 			var initialDay = moment.unix(selectedTimestamp);
@@ -783,7 +822,7 @@ var PKMatches = function(pkMap) {
 			pkMap.removeMarker(markers[i]);
 		}
 		
-		selecteddate = moment(timestamp);
+		selecteddate = moment.utc(timestamp);
 		$.ajax({
 			url : MATCH_URL,
 			data : {'f':'json', 'starttime':timestamp, 'endtime': selecteddate.add('days', 1).unix()},
@@ -818,6 +857,15 @@ var PKMatches = function(pkMap) {
 				$(this).html("无法获取你的位置");
 			})
 		}
+		if (infoWindow && infoWindow.isOpen()) {
+			var distanceObj = $(infoWindow.getContent()).find("p[point]");
+			var pointstr = distanceObj.attr("point").split(",");
+			var point = new BMap.Point(pointstr[0], pointstr[1]);
+			if (myPosition)
+				distanceObj.children("code").html(formatDistance(distance(myPosition, point)));
+			else
+				distanceObj.children("code").html("无法获取你的位置");
+		}
 	};
 	
 	function layMatches(data) {
@@ -837,6 +885,15 @@ var PKMatches = function(pkMap) {
 		initialViewSwitch();
 
 		pkMap.setViewport(points);
+	}
+	
+	this.addMatchMarker = function(match) {
+		var point = new BMap.Point(
+				match.fields.poolroom.lng,
+				match.fields.poolroom.lat
+			);
+		var marker = createMatchMarker(null, match, point);
+		matchInfo(marker, match, point);
 	}
 	
 	function createMatchMarker(obj, match, point) {
@@ -862,13 +919,12 @@ var PKMatches = function(pkMap) {
 	}
 	
 	function matchInfo(marker, match, point) {
-		var infoWindow = new BMap.InfoWindow(Mustache.render(MatchInfoTemplate, matchToView(match, point)));
-		marker.openInfoWindow(infoWindow);
-		infoWindow.redraw();
+		infoWindow = openInfoWindow(marker, Mustache.render(MatchInfoTemplate, matchToView(match, point)));
 	}
 	
 	function matchToView(match, point) {
 		var view = {
+				"match_id": match.pk,
 				"point": point.lng + "," + point.lat,
 				"poolroom_name": match.fields.poolroom.name,
 				"poolroom_url": POOLROOM_URL.replace(/000/g, match.fields.poolroom.id),
@@ -933,19 +989,27 @@ function initialViewSwitch() {
 	}
 }
 
+function switchToMap() {
+	$('#items').addClass('map medium-3 columns').children('.item').removeClass('medium-pull-1 medium-offset-1 medium-3');	
+	$('#content').addClass('map medium-3 columns');
+	$('#mapContainer').removeClass('hidden');
+}
+
+function switchToList() {
+	$('#mapContainer').addClass('hidden');
+	$('#items').removeClass('map medium-3 columns').children('.item').addClass('medium-pull-1 medium-offset-1 medium-3');
+	$('#content').removeClass('map medium-3 columns');
+}
+
 function setUpViewSwitch() {
 	$('#viewSwitch a').click(function() {
 		if ($(this).hasClass('active')) {
 			return false;
 		}
 		if ($(this).hasClass('list')) {
-			$('#mapContainer').addClass('hidden');
-			$('#items').removeClass('map medium-3 columns').children('.item').addClass('medium-pull-1 medium-offset-1 medium-3');
-			$('#content').removeClass('map medium-3 columns');
+			switchToList();
 		} else if ($(this).hasClass('map')) {
-			$('#items').addClass('map medium-3 columns').children('.item').removeClass('medium-pull-1 medium-offset-1 medium-3');	
-			$('#content').addClass('map medium-3 columns');
-			$('#mapContainer').removeClass('hidden');
+			switchToMap();
 		}
 
 		$(this).addClass('active').siblings().removeClass('active');

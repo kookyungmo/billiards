@@ -48,6 +48,9 @@ def updateChallengeJsonStrDistance(jsonstr, lat, lng):
     jsonstr = simplejson.dumps(challenges)
     return jsonstr
 
+def getChallenge(cid):
+    return get_object_or_404(Challenge, pk=cid)
+
 def index(request, lat = None, lng = None, group = 1):
     if 'f' in request.GET and request.GET.get('f') == 'json':
         starttime = datetime.datetime.today()
@@ -147,7 +150,7 @@ def publish(request, group = None, lat = None, lng = None, distance = 3):
                                   {'poolrooms': nearbypoolrooms, 'lat': lat, 'lng': lng, 'username': username, 'gid': group if group != None else 1, 'group': gobj}, context_instance=RequestContext(request))
     
 def detail(request, challengeid):
-    challenge = get_object_or_404(Challenge, pk=challengeid)
+    challenge = getChallenge(challengeid)
     group = challenge.group
     if challenge.lng_baidu is not None:
         location = "%s,%s" %(challenge.lng_baidu, challenge.lat_baidu)

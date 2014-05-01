@@ -1,60 +1,38 @@
-{% extends "foundation/base.html" %}
-{% load url from future %}
-{% block header %} 
-{% load staticfiles %}
-<script type="text/javascript"
-	src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>
-<script src="http://cdnjscn.b0.upaiyun.com/libs/moment.js/2.6.0/moment-with-langs.min.js"></script>
-<script src="{% static "js/map_ui2.js" %}?{{buildid}}"></script>
-<script src="{% static "js/mustache.js" %}?0.8.1"></script>
-<script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}"; var MEDIA_URL = "{{ MEDIA_URL }}"; var LOGO_URL="{{ SITE_LOGO_URL }}"; var WECHAT_SHARE_URL="{% url 'wechat_share_help' %}";</script>
-<script src="{% static "js/WeixinApi.js" %}?{{buildid}}"></script>
-<script src="{% static "js/wechat.js" %}?{{buildid}}"></script>
-<link href="http://cdnjscn.b0.upaiyun.com/libs/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
-<link href="{% static "foundation-icons/foundation-icons.css" %}" rel="stylesheet">
-{% endblock %} 
+{% extends "foundation/challenge.html" %}
 {% load extras %} 
-{% block content %}
-<div>
-	<div class="clearfix">
-		<div class="large-8 columns">
-			<h2>{% if gid != 1 %}<code>{{group.name}}</code>群内{% endif %}约球信息</h2>
-			<a href="{% if gid == 1 %}{% url 'challenge_list' %}{% else %} {% url 'challenge_group_list' gid %}{% endif %}" class="button secondary small radius fi-list-thumbnails">  查看更多约球信息</a>
-		</div>
-	</div>
-	<hr>
-	<div id="content">
-	</div>
-	<div>
-		<div id="challenges"></div>
-		<div id="mapContainer" class="medium-9 columns"><div id="pkMap"></div></div>
-	</div>
-</div>
+{% block maptitle %}
+<h2>{% if gid != 1 %}<code>{{group.name}}</code>群内{% endif %}约球信息</h2>
+<a href="{% if gid == 1 %}{% url challenge_list %}{% else %} {% url challenge_group_list gid %}{% endif %}" class="button secondary small radius fi-list-thumbnails">  查看更多约球信息</a>
+{% endblock %}
+{% block mapscript %}
 <div id="shareToWechat" class="reveal-modal xlarge" data-reveal>
 </div>
-{% endblock %}
-{% block script %}
-	<script>
-	{% if lat != None %}
-	var mypoint = new BMap.Point({{lng}}, {{lat}});
-	{% else %}
-	var mypoint = null;
-	{% endif %}
-	CHALLENGE_URL = window.location.pathname;
-	CHALLENGE_DETAIL_URL = "{% url 'challenge_detail' '000' %}";
-	CHALLENGE_WITH_DISTANCE_URL = "{% url 'challenge_with_distance' gid '00.00' '11.11' %}";
-	POOLROOM_URL = "{% url 'poolroom_detail' '000' %}";
-	
-	var defaultZoom = 16;
 
-	var pkMap = new PKMap("pkMap", "北京", defaultZoom);
-	var pkLocation = new PKLocation(mypoint);
-	var pkChallenges = new PKChallenges(pkMap);
-	challenges = eval(jsonescape('{{ cha|tojson|safe }}'));
-	pkLocation.consume(
-		pkMap.markCurrentLocation,
-		pkChallenges.updateMyPosition(challenges[0])
-	);
-	pkChallenges.layChallenge(challenges);
-	</script>
+<script>
+$('#viewSwitch a').hide();
+var LOGO_URL="{{ SITE_LOGO_URL }}";
+var WECHAT_SHARE_URL="{% url wechat_share_help %}";
+
+{% if lat != None %}
+var mypoint = new BMap.Point({{lng}}, {{lat}});
+{% else %}
+var mypoint = null;
+{% endif %}
+CHALLENGE_URL = window.location.pathname;
+CHALLENGE_DETAIL_URL = "{% url challenge_detail '000' %}";
+CHALLENGE_WITH_DISTANCE_URL = "{% url challenge_with_distance gid '00.00' '11.11' %}";
+POOLROOM_URL = "{% url poolroom_detail '000' %}";
+
+var defaultZoom = 16;
+
+var pkMap = new PKMap("pkMap", "北京", defaultZoom);
+var pkLocation = new PKLocation(mypoint);
+var pkChallenges = new PKChallenges(pkMap);
+challenges = eval(jsonescape('{{ cha|tojson|safe }}'));
+pkChallenges.layChallenge(challenges);
+pkLocation.consume(
+	pkMap.markCurrentLocation,
+	pkChallenges.updateDistance
+);
+</script>
 {% endblock %}

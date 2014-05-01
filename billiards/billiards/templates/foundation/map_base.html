@@ -1,0 +1,52 @@
+{% extends "foundation/base.html" %}
+{% block header %}
+{% load staticfiles %}
+<script src="http://cdnjscn.b0.upaiyun.com/libs/moment.js/2.6.0/moment-with-langs.min.js"></script>
+<link href="http://cdnjscn.b0.upaiyun.com/libs/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
+<link href="{% static "foundation-icons/foundation-icons.css" %}" rel="stylesheet">
+{% block mapheader %}
+{% endblock %}
+{% endblock %}
+{% block content %}
+<div>
+	<div class="clearfix">
+		<div class="medium-8 columns">
+			{% block maptitle %}
+			{% endblock %}
+		</div>
+		<div id="viewSwitch" class="medium-4 columns show-for-medium-up">
+			<a href="javascript:void(0);" class="active list"><i class="fa fa-th-large"></i> 列表</a> 
+			<a href="javascript:void(0);" class="map"><i class="fa fa-globe"></i> 地图</a>
+		</div>
+		{% block mapfilter %}
+		{% endblock %}
+	</div>
+	<hr>
+	<div id="content">
+	</div>
+	<div>
+		<div id="items"></div>
+		<div id="mapContainer" class="hidden show-medium-only-up medium-9 columns"><div id="pkMap"></div></div>
+	</div>
+</div>
+<div id="mapModal" class="reveal-modal full" data-reveal>
+  <h2 id="title"></h2>
+  <div class="flex-video">
+    <iframe width="100%" frameborder="0" allowfullscreen></iframe>
+  </div>
+  <a class="close-reveal-modal">&#215;</a>
+</div>
+{% endblock %}
+{% block script %}
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>
+<script src="{% static "js/map_ui2.js" %}?{{buildid}}"></script>
+<script src="{% static "js/mustache.js" %}?0.8.1"></script>
+
+<script>
+var STATIC_URL = "{{ STATIC_URL|escapejs }}";
+var MEDIA_URL = "{{ MEDIA_URL }}";
+var PKMAP_URL = "{% url pk_map %}";
+</script>
+{% block mapscript %}
+{% endblock %}
+{% endblock %}

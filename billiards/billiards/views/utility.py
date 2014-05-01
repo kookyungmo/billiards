@@ -9,6 +9,10 @@ from django.shortcuts import render_to_response, get_object_or_404
 from billiards.settings import TEMPLATE_ROOT
 from django.template.context import RequestContext
 from billiards.models import Coupon
+from billiards.views.match import getMatch
+from django.http import Http404
+from billiards.views.poolroom import getPoolroom
+from billiards.views.challenge import getChallenge
 '''
 Base on a responsive web page template that works well on IE7 and IE8.
 It won't work on IE6, but it also gives very simple text for information.
@@ -33,3 +37,19 @@ def wechatsharehelp(request):
 def survey_redbull(request):
     return render_to_response(TEMPLATE_ROOT + 'survey_redbull.html',
                               {}, context_instance=RequestContext(request))
+    
+def pkmap(request):
+    objType = request.GET.get('type')
+    objId = request.GET.get('id')
+    try:
+        targetObj = None
+        if objType == 'match':
+            targetObj = getMatch(objId)
+        elif objType == 'poolroom':
+            targetObj = getPoolroom(objId)
+        elif objType == 'challenge':
+            targetObj = getChallenge(objId)
+    except Http404:
+        pass
+    return render_to_response(TEMPLATE_ROOT + 'pkmap.html',
+                              {'target': targetObj}, context_instance=RequestContext(request))

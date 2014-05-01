@@ -79,3 +79,37 @@ abideOptions = {
 			}
 		}
 };
+
+function isSmall() {
+    return matchMedia(Foundation.media_queries.small).matches &&
+      !matchMedia(Foundation.media_queries.medium).matches;
+}
+
+function openMap(name, objType, objId) {
+	$("#mapModal #title").text(name);
+	var originalSrc = PKMAP_URL;
+	var newurl = setGetParameter(originalSrc, "type", objType);
+	newurl = setGetParameter(newurl, "id", objId);
+	$("#mapModal iframe").attr("src", newurl);
+	$('#mapModal').foundation('reveal', 'open');
+}
+
+function initialMomentTZ() {
+	moment.tz.add({
+	    "zones": {
+	        "Asia/Chongqing": [
+	            "7:6:20 - LMT 1928 7:6:20",
+	            "7 - LONT 1980_4 7",
+	            "8 PRC C%sT"
+	        ]
+	    },
+	    "rules": {
+	        "PRC": [
+	            "1986 1986 4 4 7 0 0 1 D",
+	            "1986 1991 8 11 0 0 0 0 S",
+	            "1987 1991 3 10 0 0 0 1 D"
+	        ]
+	    },
+	    "links": {}
+	});
+}
