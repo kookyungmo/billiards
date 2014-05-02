@@ -893,7 +893,13 @@ var PKMatches = function(pkMap) {
 				match.fields.poolroom.lat
 			);
 		var marker = createMatchMarker(null, match, point);
-		matchInfo(marker, match, point);
+		setTimeout(function(){
+			matchInfo(marker, match, point);
+			marker.setAnimation(BMAP_ANIMATION_BOUNCE);
+			setTimeout(function(){
+				marker.setAnimation(null);
+			}, 3000);
+		}, 1500);
 	}
 	
 	function createMatchMarker(obj, match, point) {

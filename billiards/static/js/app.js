@@ -113,3 +113,29 @@ function initialMomentTZ() {
 	    "links": {}
 	});
 }
+
+function loginFirst() {
+	$('#quickLogin').foundation('reveal', 'open');
+}
+
+function completeInfo() {
+	$('#userInfoForm').foundation('reveal', 'open');
+}
+
+function applyChallenge(objdiv, id) {
+	url = CHALLENGE_APPLY_URL;
+	$.ajax({
+		url : url.replace(/000/g, id),
+		dataType : 'json',
+		success : function(data)
+		{
+			objdiv.children("#enroll").text('应战已提交到俱乐部');
+			objdiv.children("#enroll").addClass('disabled');
+		},
+		error: function (xhr, ajaxOptions, thrownError) {
+			if (xhr.status == 403) {
+				loginFirst();
+		    }
+	     }
+	});
+}
