@@ -309,7 +309,8 @@ var PKPoolrooms = function(pkMap) {
 			view["coupon"] = {"coupons": []};
 			for (i in coupons) {
 				coupon = poolroom.fields.coupons[coupons[i]]
-				view["coupon"]["coupons"].push({"url": coupon.fields.url}, {"title": coupon.fields.title});
+				view["coupon"]["coupons"].push({"url": COUPON_URL.replace(/000/g, coupon.pk), 
+					"title": coupon.fields.title});
 			}
 		}
 		return view;
