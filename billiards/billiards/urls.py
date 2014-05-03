@@ -84,6 +84,7 @@ urlpatterns += patterns('billiards.views.club',
 
 urlpatterns += patterns('billiards.views.wechat',
     url(r'^wechatkb$', 'weixin', name='weixin'),
+    url(r'^wechatkb/strongworld$', 'wechat', name='wechat'),
     url(r'^wechat/report$', 'activity_report', name='wechat_activity_report'),
     url(r'^wechat/report/newuser$', 'activity_report_newuser', name='wechat_activity_report_newuser'),
     url(r'^wechat/report/message$', 'activity_report_message', name='wechat_activity_report_message'),

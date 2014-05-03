@@ -33,6 +33,7 @@ from billiards.views.poolroom import getNearbyPoolrooms
 from dateutil.relativedelta import relativedelta
 from werobot.utils import to_text
 from random import randint
+from werobot.messages import TextMessage, EventMessage
 
 def set_video():
     videos = [
@@ -183,6 +184,26 @@ class PKWechat(BaseRoBot):
         self.target = target
         self.addHandlers()
         
+    def mapKeyHanlders(self):
+        keyHandlers = {
+            "PK_COUPON": self.getPKCoupon,
+            "PK_ACTIVITY": self.getPKActivity,
+            "PK_MATCH": self.getPKMatch
+        }
+        self.keysHandlers = keyHandlers
+        self.add_handler(self.click(), "click")
+        
+    def click(self):
+        def click_handler(message):
+            reply = self.getSpecialEventItem(message.time)
+            if message.key in self.keysHandlers:
+                return self.keysHandlers[message.key](reply, message, 'event')
+            reply += self.getHelpMesg()
+            recordUserActivity(message.source, 'event', 'menu', {'content': message.key}, message.time, 
+                    None, self.target)
+            return reply    
+        return click_handler
+        
     def addHandlers(self):
         self.add_handler(self.subscribe(), 'subscribe')
         self.add_handler(self.unsubscribe(), 'unsubscribe')
@@ -190,6 +211,7 @@ class PKWechat(BaseRoBot):
         self.add_handler(self.text(), 'text')
         self.add_handler(self.pic(), 'image')
         self.add_handler(self.help(), 'all')
+        self.mapKeyHanlders()
         
     def hasSpecialEvent(self, receivedtime):
         nativetime = datetime.utcfromtimestamp(float(receivedtime))
@@ -365,6 +387,70 @@ class PKWechat(BaseRoBot):
         starttime = localtz.localize(nativetime)
         return getMatchByRequest(self.request, starttime, deltadays=7)[0].filter(type=2)
     
+    def getPKCoupon(self, reply, message, source = 'text'):
+        content = None
+        if isinstance(message, TextMessage): 
+            content = message.content
+        elif isinstance(message, EventMessage):
+            content = message.key        
+        nativetime = datetime.utcfromtimestamp(float(message.time))
+        localtz = pytz.timezone(settings.TIME_ZONE)
+        localtime = localtz.localize(nativetime)
+        coupons = Coupon.objects.filter(getCouponCriteria(localtime)).order_by('?')[:3]
+        if len(coupons) > 0:
+            recordUserActivity(message.source, source, 'coupon', {'content': content}, message.time, 
+                           {'count': len(coupons), 'coupon': True}, self.target)
+            reply += self.getCouponsReply(coupons, True)
+        else:
+            recordUserActivity(message.source, source, 'nocoupon', {'content': content}, message.time, None, self.target)
+            data = u'暂时没有俱乐部有"优惠"或"团购"。'
+            reply.append((data, data, SITE_LOGO_URL, ''))
+        return reply
+    
+    def getPKActivity(self, reply, message, source = 'text'):
+        content = None
+        if isinstance(message, TextMessage): 
+            content = message.content
+        elif isinstance(message, EventMessage):
+            content = message.key
+        acts = self.getActs(float(message.time))
+        count = acts.count()
+        if count > 0:
+            acts = acts[:MAX_NEWSITEM - len(reply)]
+            reply += self.getActsReply(acts)
+            recordUserActivity(message.source, source, 'activity', {'content': content}, message.time, 
+                           {'count': len(acts), 'activity': True}, self.target)
+        else:
+            data = u'最近7天内没有被收录的爱好者活动'
+            recordUserActivity(message.source, source, 'noactivity', {'content': content}, message.time, 
+                           None, self.target)
+            reply.append((data, data, SITE_LOGO_URL, ''))
+        return reply
+    
+    def getPKMatch(self, reply, message, source = 'text'):
+        nativetime = datetime.utcfromtimestamp(float(message.time))
+        localtz = pytz.timezone(settings.TIME_ZONE)
+        starttime = localtz.localize(nativetime)
+        matches, starttime, endtime = getMatchByRequest(self.request, starttime, deltadays=7)
+        matches = matches.filter(type=1)
+        count = matches.count()
+        if count > 0:
+            matches = matches[:MAX_NEWSITEM - len(reply)]
+            reply += self.getMatchesReply(matches)
+            content = None
+            if isinstance(message, TextMessage): 
+                content = message.content
+            elif isinstance(message, EventMessage):
+                content = message.key
+            recordUserActivity(message.source, source, 'match', {'content': content}, message.time, 
+                           {'count': len(matches), 'match': True}, self.target)       
+        else:
+            data = '最近7天内没有被收录的比赛'
+            recordUserActivity(message.source, source, 'nomatch', {'content': content}, message.time, 
+                           None, self.target)
+            reply.append((data, data, SITE_LOGO_URL, ''))
+        return reply
+    
     def text(self):
         def text_handler(message):
             qqface = "/::\\)|/::~|/::B|/::\\||/:8-\\)|/::<|/::$|/::X|/::Z|/::'\\(|/::-\\||/::@|/::P|/::D|/::O|/::\\(|/::\\+|/:--b|/::Q|/::T|/:,@P|/:,@-D|/::d|/:,@o|/::g|/:\\|-\\)|/::!|/::L|/::>|/::,@|/:,@f|/::-S|/:\\?|/:,@x|/:,@@|/::8|/:,@!|/:!!!|/:xx|/:bye|/:wipe|/:dig|/:handclap|/:&-\\(|/:B-\\)|/:<@|/:@>|/::-O|/:>-\\||/:P-\\(|/::'\\||/:X-\\)|/::\\*|/:@x|/:8\\*|/:pd|/:<W>|/:beer|/:basketb|/:oo|/:coffee|/:eat|/:pig|/:rose|/:fade|/:showlove|/:heart|/:break|/:cake|/:li|/:bome|/:kn|/:footb|/:ladybug|/:shit|/:moon|/:sun|/:gift|/:hug|/:strong|/:weak|/:share|/:v|/:@\\)|/:jj|/:@@|/:bad|/:lvu|/:no|/:ok|/:love|/:<L>|/:jump|/:shake|/:<O>|/:circle|/:kotow|/:turn|/:skip|/:oY|/:#-0|/:hiphot|/:kiss|/:<&|/:&>"
@@ -387,18 +473,7 @@ class PKWechat(BaseRoBot):
                     videoid = randint(0,len(videos)-1)
                     reply.append((videos[videoid]['title'], videos[videoid]['description'], videos[videoid]['plink'], videos[videoid]['vlink'])) 
                 elif message.content == u"团购" or message.content == u"找便宜" or message.content == u"优惠":
-                    nativetime = datetime.utcfromtimestamp(float(message.time))
-                    localtz = pytz.timezone(settings.TIME_ZONE)
-                    localtime = localtz.localize(nativetime)
-                    coupons = Coupon.objects.filter(getCouponCriteria(localtime)).order_by('?')[:3]
-                    if len(coupons) > 0:
-                        recordUserActivity(message.source, 'text', 'coupon', {'content': message.content}, message.time, 
-                                       {'count': len(coupons), 'coupon': True}, self.target)
-                        reply += self.getCouponsReply(coupons, True)
-                    else:
-                        recordUserActivity(message.source, 'text', 'nocoupon', {'content': message.content}, message.time, None, self.target)
-                        data = u'暂时没有俱乐部有"优惠"或"团购"。'
-                        reply.append((data, data, SITE_LOGO_URL, ''))
+                    reply = self.keysHandlers["PK_COUPON"](reply, message)
                 elif message.content == u"云川" or message.content == u"yunchuan" or message.content == u"yc":
                     nativetime = datetime.utcfromtimestamp(float(message.time))
                     localtz = pytz.timezone(settings.TIME_ZONE)
@@ -414,35 +489,9 @@ class PKWechat(BaseRoBot):
                                        None, self.target)
                         reply.append((data, data, SITE_LOGO_URL, ''))
                 elif message.content == u"活动":
-                    acts = self.getActs(float(message.time))
-                    count = acts.count()
-                    if count > 0:
-                        acts = acts[:MAX_NEWSITEM - len(reply)]
-                        reply += self.getActsReply(acts)
-                        recordUserActivity(message.source, 'text', 'activity', {'content': message.content}, message.time, 
-                                       {'count': len(acts), 'activity': True}, self.target)
-                    else:
-                        data = u'最近7天内没有被收录的爱好者活动'
-                        recordUserActivity(message.source, 'text', 'noactivity', {'content': message.content}, message.time, 
-                                       None, self.target)
-                        reply.append((data, data, SITE_LOGO_URL, ''))
+                    reply = self.keysHandlers["PK_ACTIVITY"](reply, message)
                 elif message.content == u"比赛":
-                    nativetime = datetime.utcfromtimestamp(float(message.time))
-                    localtz = pytz.timezone(settings.TIME_ZONE)
-                    starttime = localtz.localize(nativetime)
-                    matches, starttime, endtime = getMatchByRequest(self.request, starttime, deltadays=7)
-                    matches = matches.filter(type=1)
-                    count = matches.count()
-                    if count > 0:
-                        matches = matches[:MAX_NEWSITEM - len(reply)]
-                        reply += self.getMatchesReply(matches)
-                        recordUserActivity(message.source, 'text', 'match', {'content': message.content}, message.time, 
-                                       {'count': len(matches), 'match': True}, self.target)       
-                    else:
-                        data = '最近7天内没有被收录的比赛'
-                        recordUserActivity(message.source, 'text', 'nomatch', {'content': message.content}, message.time, 
-                                       None, self.target)
-                        reply.append((data, data, SITE_LOGO_URL, ''))
+                    reply = self.keysHandlers["PK_MATCH"](reply, message)
                 elif message.content in HELP_KEYWORDS:
                     reply += self.getHelpMesg()
                 else:
@@ -453,13 +502,16 @@ class PKWechat(BaseRoBot):
         return text_handler
     
     def echo(self, request):
-        if not self.check_signature(
-                request.GET.get('timestamp'),
-                request.GET.get('nonce'),
-                request.GET.get('signature')
-                ):
+        try:
+            if not self.check_signature(
+                    request.GET.get('timestamp'),
+                    request.GET.get('nonce'),
+                    request.GET.get('signature')
+                    ):
+                raise PermissionDenied
+            return HttpResponse(request.GET.get('echostr'))
+        except:
             raise PermissionDenied
-        return HttpResponse(request.GET.get('echostr'))
 
     def handle(self, request):
         if not settings.TESTING and not self.check_signature(
@@ -482,6 +534,14 @@ class PKWechat(BaseRoBot):
 @csrf_exempt
 def weixin(request):
     robot = PKWechat("pktaiqiu", request)
+    if request.method=='GET':
+        return robot.echo(request)
+    elif request.method=='POST':
+        return robot.handle(request)
+    
+@csrf_exempt
+def wechat(request):
+    robot = PKWechat("Iwk0IlxqidGPYbAeEAeQ4K1f1hym76", request)
     if request.method=='GET':
         return robot.echo(request)
     elif request.method=='POST':
