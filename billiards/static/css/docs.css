@@ -2849,6 +2849,8 @@ ul.pagination {
     font-size: 0.77778rem;
     font-weight: normal;
     border-bottom: dotted 1px #ddd; }
+    .pricing-table .bullet-item:last-child {
+      border-bottom: none;}
   .pricing-table .cta-button {
     background-color: #fff;
     text-align: center;

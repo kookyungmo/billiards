@@ -1,0 +1,107 @@
+
+@media only screen { 
+	.games {
+		list-style: none;
+		margin: 0;
+	}
+
+	dl.inline dt{
+		float: left;
+		width: 4rem;
+	}
+	dl.inline dd {
+		margin-left: 5rem;
+	}
+	.room-name {
+		color: rgb(255, 76, 46);
+	}
+	.room-photo {
+		max-height:370px;
+		display: block;
+		margin-left: auto;
+		margin-right: auto; 
+	}
+	.baidu-map {
+		overflow: hidden;
+		margin: 0; 
+		height: 250px;
+	}
+} 
+
+/* Define mobile styles */
+@media only screen and (max-width: 40em) { 
+	html {
+		font-size: 12px;
+	}
+	hr {
+		margin: 0.8rem 0 0.8rem;
+	}
+	.columns.no-padding {
+		padding: 0;		
+	}
+	.row.room-photos {
+		box-shadow: 1px 0px 2px 1px rgba(0, 0, 0, 0.6);
+		margin-bottom: 0.8em;
+	}
+	p {
+		margin-bottom: 0;
+	}
+	.games dl {
+		margin-bottom: 0;
+	}
+	.games .item {
+		margin-bottom: 0.3rem;
+	}
+	dl.inline dd {
+		margin-bottom: 0.3rem;
+	}
+
+} /* max-width 640px, mobile-only styles, use when QAing mobile issues */
+
+/*Medium screens*/
+@media only screen and (min-width: 40.063em) { 
+	.row .room-photos {
+		margin: 0;
+	}
+	h2.room-name {
+		margin-top: -0.5rem;
+		margin-bottom: 1rem;
+	}
+} /* min-width 641px, medium screens */
+
+@media only screen and (min-width: 40.063em) and (max-width: 64em) { 
+	.main-content {
+		padding: 2rem 0;
+	}	
+} /* min-width 641px and max-width 1024px, use when QAing tablet-only issues */
+
+/*Large screens*/
+@media only screen and (min-width: 64.063em) { 
+	.main-content {
+		padding: 2rem 3rem;
+	}	
+	.subheader.score {
+		margin-bottom: 1rem;
+	}
+	.icon_list.convenience {
+		margin-bottom: 0.5rem;
+		display: block;
+	}
+	.favour + .line {
+		float: none;
+		display: inline-block;
+	}
+	.favour .title {
+		margin-top: -0.2rem;
+	}
+} /* min-width 1025px, large screens */
+
+@media only screen and (min-width: 64.063em) and (max-width: 90em) { } /* min-width 1025px and max-width 1440px, use when QAing large screen-only issues */
+
+/*XLarge screens*/
+@media only screen and (min-width: 90.063em) { } /* min-width 1441px, xlarge screens */
+
+@media only screen and (min-width: 90.063em) and (max-width: 120em) { } /* min-width 1441px and max-width 1920px, use when QAing xlarge screen-only issues */
+
+/*XXLarge screens*/
+@media only screen and (min-width: 120.063em) { } /* min-width 1921px, xlarge screens */

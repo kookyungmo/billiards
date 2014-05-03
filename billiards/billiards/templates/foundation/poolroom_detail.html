@@ -8,18 +8,19 @@
 <script src="{% static "js/map.js" %}?{{buildid}}"></script>
 <script src="{% static "js/map_v2.js" %}?{{buildid}}"></script>
 <link rel="stylesheet" href="{% static "css/map.css" %}?{{buildid}}">
+<link rel="stylesheet" href="{% static "css/poolroom_detail.css" %}?{{buildid}}">
 {% endblock %}
 {% load extras %}
 {% load url from future %} 
 {% block content %}
-  <hr>
-      <div class="medium-9 columns panel">
-         <div class="row">
-          <div class="medium-7 medium-push-5 columns">
-			{% with picimages=poolroom.images %}
+      <div class="small-12 large-8 columns">
+         <div class="row deal-container">
+          <div class="large-7 medium-6 columns">             			
+			<!-- {% with picimages=poolroom.images %}
 			{% if picimages|length > 0 %}
-			<div class="row">
-				<ul class="example-orbit" data-orbit>
+			<div class="row room-photos">
+				<ul class="example-orbit" data-orbit>					
+
 				  {% for image in picimages %}
 				  	{% if image.iscover %}
 				  	<li><img style="max-height:370px;display: block;margin-left: auto;margin-right: auto" src="{{ MEDIA_URL }}{{ image.imagepath }}" alt="slide {{ forloop.counter }}"></li>
@@ -34,16 +35,30 @@
 			</div>
 			<hr>
 			{% endif %}
-			{% endwith %}
-			<div class="row">
-				<div id="baidumap"
-						style="overflow: hidden; margin: 0; height: 250px;"></div>
+			{% endwith %} -->			       		
+			<div class="row room-photos">
+				<ul class="example-orbit" data-orbit>					
+					<li><img class="room-photo" src="/static/images/500.jpg" alt="图片"></li>
+					<li><img class="room-photo" src="/static/images/500.jpg" alt="图片"></li>
+					<li><img class="room-photo" src="/static/images/500.jpg" alt="图片"></li>
+
+					<li><img class="room-photo" src="/static/images/500.jpg" alt="非封面图片"></li>
+					<li><img class="room-photo" src="/static/images/500.jpg" alt="非封面图片"></li>
+					<li><img class="room-photo" src="/static/images/500.jpg" alt="非封面图片"></li>				  
+				</ul>
 			</div>
           </div>
-          <div class="medium-5 medium-pull-7 columns">
-            <h3 style = color:#EB6100>{{ poolroom.name }}</h3>
-            <h5 class="subheader">地址：{{ poolroom.address }}</h5>
-            <span class="icon_list">
+          <div class="large-5 medium-6 columns">
+          	<h2 class="room-name">{{ poolroom.name }}</h2>
+          	<p class="subheader score"><strong>综合评分:</strong> {{ poolroom.rating }}</p>          
+            <span class="icon_list clearfix convenience">
+				    <span class="ico_wifi" title="公共区域WIFI"></span>
+				    <span class="ico_free_wifi" title="公共区域WIFI"></span>
+				    <span class="ico_parking" title="停车场"></span>
+				    <span class="ico_restaurant" title="餐饮服务"></span>
+				    <span class="ico_bus" title="地铁周边"></span>
+			</span>
+            <!-- <span class="icon_list clearfix">
             	{% if poolroom.flags.wifi %}
 				    <span class="ico_wifi" title="公共区域WIFI"></span>
 				{% endif %}
@@ -59,35 +74,72 @@
 	            {% if poolroom.flags.subway %}
 				    <span class="ico_bus" title="地铁周边"></span>
 				{% endif %}
-			</span>
-            <hr>
-            <h3 class="subheader"><strong>营业时间</strong></h3>
-            <h4 class="subheader">
-              <p><strong>{{ poolroom.businesshours }}</strong></p>
-            </h4>
-            <hr>
-            <h3 class="subheader"><strong>球房面积</strong></h3>
-			<h4 class="subheader">
-				    <p><strong>{{ poolroom.size }}平方米</strong></p>
-			</h4>
-			<hr>
-			<h3 class="subheader"><strong>综合评分</strong></h3>
-			<h4 class="subheader">
-				<p>{{ poolroom.rating }}</p>
-			</h4>
-			<hr>
-			<h3 class="subheader"><strong> 专业点评</strong></h3>
-			<h5 class="subheader">
-				<p>{{ poolroom.review }}</p>
-			</h5>
+			</span> -->            
+          </div>          
+          <hr class="large-5 medium-6  columns show-for-small-only">
+          <div class="large-5 columns medium-6  infos">            
+          	<h3 class="title show-for-small-only"><strong>店面信息</strong></h3>
+          	<p class="subheader"><strong>营业时间</strong> {{ poolroom.businesshours }}</p>
+            <p class="subheader"><strong>球房面积</strong> {{ poolroom.size }}平方米</p>
+            <p class="subheader"><strong> 专业点评</strong> {{ poolroom.review }}</p>
 		</div>
 	</div>
 	<div class="row">
-		<hr>
+		<hr class="small-12 columns">
+        <div class="small-12 columns">
+        	<div class="row">
+        		<div class="large-5 large-push-7 medium-6 medium-push-6 columns">
+        			<h3><strong>地址</strong></h3>
+          			<p class="subheader"> {{ poolroom.address }}</p>
+        		</div>
+        		<div class="large-7 large-pull-5 medium-6 medium-pull-6 columns">
+        			<div id="baidumap"
+						class="baidu-map"></div>
+        		</div>
+        	</div>
+        </div>
+		<hr class="small-12 columns">
 		<div class="small-12 columns">
-			<div class="row"><h3><strong> &nbsp 球台信息</strong></h3></div>
+			<h3><strong>球台信息</strong></h3>
 			<div class="row">
-				{% for equipment in equipments %}
+					<div class="small-12 medium-3 left columns">
+						<ul class="pricing-table">
+						  <li class="title">设备</li>
+						  <li class="price">100元/小时</li>
+						  <li class="bullet-item">数量: 4张</li>
+						  <li class="bullet-item">球桌品牌: 高大上品牌</li>
+						  <li class="bullet-item">球杆品牌: {高大上品牌</li>
+						</ul>
+					</div>
+					<div class="small-12 medium-3 left columns">
+						<ul class="pricing-table">
+						  <li class="title">设备</li>
+						  <li class="price">100元/小时</li>
+						  <li class="bullet-item">数量: 4张</li>
+						  <li class="bullet-item">球桌品牌: 高大上品牌</li>
+						  <li class="bullet-item">球杆品牌: {高大上品牌</li>
+						</ul>
+					</div>
+					<div class="small-12 medium-3 left columns">
+						<ul class="pricing-table">
+						  <li class="title">设备</li>
+						  <li class="price">100元/小时</li>
+						  <li class="bullet-item">数量: 4张</li>
+						  <li class="bullet-item">球桌品牌: 高大上品牌</li>
+						  <li class="bullet-item">球杆品牌: {高大上品牌</li>
+						</ul>
+					</div>
+					<div class="small-12 medium-3 left columns">
+						<ul class="pricing-table">
+						  <li class="title">设备</li>
+						  <li class="price">100元/小时</li>
+						  <li class="bullet-item">数量: 4张</li>
+						  <li class="bullet-item">球桌品牌: 高大上品牌</li>
+						  <li class="bullet-item">球杆品牌: {高大上品牌</li>
+						</ul>
+					</div>
+
+				<!-- {% for equipment in equipments %}
 					<div class="small-6 medium-3 left columns">
 						<ul class="pricing-table">
 						  <li class="title">{{ equipment|equipmentname }}</li>
@@ -97,14 +149,31 @@
 						  <li class="bullet-item">球杆品牌: {{ equipment.cue }}</li>
 						</ul>
 					</div>
-				{% endfor %}
+				{% endfor %} -->
 			</div>
 		</div>
 	</div>
       </div>
-    	<div class="medium-3 small-12 columns">
-    	  <div style="margin-left:1em">
-    		{% for coupon in poolroom.coupons %}
+      	<hr class="small-12 columns hide-for-large-up">
+    	<div class="large-3 large-offset-1 small-12 columns favour">    	  
+    		<h3 class="title">近期的优惠</h3>
+			    
+			<p>
+				<a href="">某个优惠</a>
+			</p>
+			<p>
+				<a href="">某个优惠</a>
+			</p>
+			<p>
+				<a href="">某个优惠</a>
+			</p>
+			<p>
+				<a href="">某个优惠</a>
+			</p>			 
+			<!-- <div class="row"><h2>没有近期优惠信息。</h2></div> -->
+    		
+    		
+    		<!-- {% for coupon in poolroom.coupons %}
     			{% if forloop.first %}
 			    	<div class="row"><h2>近期的优惠</h2></div>
 			    {% endif %}
@@ -118,9 +187,77 @@
 			 </div>		
     		{% empty %}
 			    <div class="row"><h2>没有近期优惠信息。</h2></div>
-    		{% endfor %}
-    		<hr>
-	        {% for match in matches %}
+    		{% endfor %} -->    		
+		</div>
+		<hr class="small-12 columns large-3 large-offset-1 line">
+		<div class="large-3 large-offset-1 small-12 columns games-wrapper">			 
+			<h3>近期的比赛</h3>
+			<ol class="games">
+				<li class="item">
+					<dl class="inline">
+						<dt>比赛日期</dt>
+						<dd>某年某月某日</dd>
+						<dt>冠军奖金</dt>
+						<dd>
+							<p>现金: 2000元</p>
+						    <p>俱乐部充值卡: 3000元</p>
+						    <p>其它奖励: 美女陪</p>
+						</dd>
+						
+
+					</dl>
+					<p class="text-right"><a href="">详情</a></p>
+				</li>
+				<li class="item">
+					<dl class="inline">
+						<dt>比赛日期</dt>
+						<dd>某年某月某日</dd>
+						<dt>冠军奖金</dt>
+						<dd>
+							<p>现金: 2000元</p>
+						    <p>俱乐部充值卡: 3000元</p>
+						    <p>其它奖励: 美女陪</p>
+						</dd>
+						
+
+					</dl>
+					<p class="text-right"><a href="">详情</a></p>
+				</li>
+				<li class="item">
+					<dl class="inline">
+						<dt>比赛日期</dt>
+						<dd>某年某月某日</dd>
+						<dt>冠军奖金</dt>
+						<dd>
+							<p>现金: 2000元</p>
+						    <p>俱乐部充值卡: 3000元</p>
+						    <p>其它奖励: 美女陪</p>
+						</dd>
+						
+
+					</dl>
+					<p class="text-right"><a href="">详情</a></p>
+				</li>
+				<li class="item">
+					<dl class="inline">
+						<dt>比赛日期</dt>
+						<dd>某年某月某日</dd>
+						<dt>冠军奖金</dt>
+						<dd>
+							<p>现金: 2000元</p>
+						    <p>俱乐部充值卡: 3000元</p>
+						    <p>其它奖励: 美女陪</p>
+						</dd>
+						
+
+					</dl>
+					<p class="text-right"><a href="">详情</a></p>
+				</li>				
+			</ol>				 
+			    <!-- <div class="row"><h2>没有近期比赛信息。</h2></div> -->
+
+
+	        <!-- {% for match in matches %}
 	        	{% if forloop.first %}
 			    <div class="row"><h2>近期的比赛</h2></div><hr>
 			    {% endif %}
@@ -146,8 +283,7 @@
 				 </div>
 		    {% empty %}
 			    <div class="row"><h2>没有近期比赛信息。</h2></div>
-		    {% endfor %}
-        </div>
+		    {% endfor %} -->
       </div>
 {% endblock %}
 {% block foundationscript %}
