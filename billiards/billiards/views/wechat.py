@@ -538,10 +538,14 @@ def weixin(request):
         return robot.echo(request)
     elif request.method=='POST':
         return robot.handle(request)
+
+class PKWechatService(PKWechat):
+    def getFromSoureStr(self):
+        return 'wechat-service'
     
 @csrf_exempt
 def wechat(request):
-    robot = PKWechat("Iwk0IlxqidGPYbAeEAeQ4K1f1hym76", request)
+    robot = PKWechatService("Iwk0IlxqidGPYbAeEAeQ4K1f1hym76", request, 0)
     if request.method=='GET':
         return robot.echo(request)
     elif request.method=='POST':

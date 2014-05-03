@@ -625,6 +625,8 @@ class WechatActivity(models.Model):
     def get_target_display(self):
         if self.target == 1:
             return u'我为台球狂'
+        elif self.target == 0:
+            return u'我为台球狂--服务号'
         try:
             return Group.objects.get(id=self.target).name
         except:
