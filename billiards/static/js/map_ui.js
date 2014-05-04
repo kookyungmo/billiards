@@ -697,7 +697,7 @@ var PKMatches = function(pkMap) {
 				{{/equip}}\
 				<p class="musthave">开始时间: <code>{{starttime}}</code></p>\
 				{{#hasPrize}}\
-				<p class="musthave">比赛奖金: <code>\
+				<p class="musthave">冠军奖励: <code>\
 				{{#bonus}}\
 				现金: {{bonus}}元\
 				{{/bonus}}\
@@ -745,7 +745,7 @@ var PKMatches = function(pkMap) {
 		{{/equip}}\
 		<p>开始时间: <code>{{starttime}}</code></p>\
 		{{#hasPrize}}\
-		<p>比赛奖金: <code>\
+		<p>冠军奖励: <code>\
 		{{#bonus}}\
 		现金: {{bonus}}元\
 		{{/bonus}}\
