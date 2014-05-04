@@ -59,13 +59,13 @@
 	#footer {
 		margin-bottom: 7rem;
 	}
-	.panel-room-desks, .panel-room-games, .panel-room-favours {
-		padding-top: 0.5rem;
+	.mobile-content {
+		min-height: 23rem;
 	}
 
 	/*mobile-tab style*/
 	.mobile-tabs-content .mobile-content {
-		height: 0;
+		display: none;
 		opacity: 0;
 		overflow: hidden;
 		-webkit-transition:opacity .5s ease-in;
@@ -74,7 +74,7 @@
 		transition:opacity .5s ease-in;
 	}
 	.mobile-tabs-content .mobile-content.active { 
-		height: auto;
+		display: block;
 		opacity: 1;
 		overflow: auto;
 	}
