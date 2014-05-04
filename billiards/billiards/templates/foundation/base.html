@@ -5,23 +5,20 @@
 <!--[if gt IE 8]><!--> <html lang="en"> <!--<![endif]-->
 {% load staticfiles %}
 <head>
-  <meta charset="utf-8" />
+	<meta charset="utf-8" />
 
-  <!-- Set the viewport width to device width for mobile -->
-  <meta name="viewport" content="width=device-width" />
-
+<!-- Set the viewport width to device width for mobile -->
+<meta name="viewport" content="width=device-width" />
   <title>我为台球狂</title>
-  <!--<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,700" />-->
   <link href="http://fonts.googleapis.com/css?family=Corben:bold" rel="stylesheet" type="text/css">
-      <link href="http://fonts.googleapis.com/css?family=Nobile" rel="stylesheet" type="text/css">
-  <!-- <link rel="stylesheet" href="//cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/css/normalize.min.css">
-  <link rel="stylesheet" href="//cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/css/foundation.min.css"> -->
-  <link rel="stylesheet" href="{% static 'css/docs.css' %}?{{FOUNDATION_VER}}">
-  <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/vendor/modernizr.min.js"></script>
-  <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/vendor/jquery.min.js"></script>
-  <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/vendor/fastclick.min.js"></script>
+  <link href="http://fonts.googleapis.com/css?family=Nobile" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/css/foundation.min.css">
+  <link rel="stylesheet" href="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/css/normalize.min.css">
+  <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/vendor/modernizr.js"></script>
+  <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/vendor/jquery.js"></script>
+  <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/vendor/fastclick.js"></script>
   <script src="{% static "js/app.js" %}?{{buildid}}"></script>
-  <link rel="stylesheet" href="{% static "css/app.css" %}?{{buildid}}">
+  <link rel="stylesheet" href="{% static "css/myapp.css" %}?{{buildid}}">
   <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
 {% block header %}{% endblock %}
 {% load url from future %} 
@@ -96,12 +93,12 @@
 	    </section>
 	</nav>
 	<nav class="tab-bar show-for-small">
-	  <section class="left-small">
-        <a class="left-off-canvas-toggle menu-icon" ><span></span></a>
-      </section>
-	  <section class="middle tab-bar-section">
-        <h1 class="title">我为台球狂</h1>
-      </section>
+		<section class="left-small">
+			<a class="left-off-canvas-toggle menu-icon" ><span></span></a>
+		</section>
+		<section class="middle tab-bar-section">
+			<h1 class="title">我为台球狂</h1>
+		</section>
 	</nav>
 	<aside class="left-off-canvas-menu">
 	  <ul class="off-canvas-list">
@@ -146,37 +143,36 @@
 	{% endblock %}
 	<!-- End Header and Nav -->
 	
-	    <!-- Main Feed -->
-		<section role="main">
-		  	<div id="mainContent" class="row main-content">
-		  		{% block content %}{% endblock %}
-		  	</div>
-		
-		  <!-- Footer -->
-		
-		  <footer id="footer" class="row">
-		    <div class="large-12 columns">
-		      <br>
-		      <div class="row">
-		        <div class="medium-7 medium-push-5 columns">
-					<ul class="inline-list right">
-		                <li><a href="{% url 'about' %}">关于我们</a></li>
-		                <li><a href="{% url 'join' %}">加入我们</a></li>
-		                <li><a href="{% url 'contact' %}">联系我们</a></li>
-		                <li><a href="{% url 'partner' %}">关注俱乐部</a></li>
-		            </ul>
-		        </div>		      
-		        <div class="medium-5 medium-pull-7 columns">
-		          <ul class="inline-list right">
-		          		<li>&copy; 2014 我为台球狂 - All Rights Reserved</li>
-						<li>rev {{rev}}</li>
-						<li><h4><a href="http://www.miibeian.gov.cn" target="_blank">京ICP备14001617号-1</a></h4></li>
-		            </ul>
-		        </div>
-		      </div>
-		    </div>
-		  </footer>
-		</section>
+	<section role="main">
+		<div id="mainContent" class="row main-content">
+			{% block content %}{% endblock %}
+		</div>
+	</section>
+	<div id="share">
+		<div class="row">
+			<div class="medium-7 columns">关注微信公众帐号(pktaiqiu)，还有更多惊喜等着您。</div>
+			<div class="medium-pull-3 medium-2 columns"><img width="120" height="120" src="http://billiardsalbum.bcs.duapp.com/2014/03/qrcode_for_logo.jpg"></div>
+		</div>
+	</div>
+	<footer id="footer">
+		<div class="row">
+			<div class="columns">
+				<ul class="inline-list">
+					<li><a href="{% url 'about' %}">关于我们</a></li>
+					<li><a href="{% url 'join' %}">加入我们</a></li>
+					<li><a href="{% url 'contact' %}">联系我们</a></li>
+					<li><a href="{% url 'partner' %}">关注俱乐部</a></li>
+				</ul>
+			</div>
+			<div class="columns">
+				<ul class="inline-list">
+					<li>&copy; 2014 我为台球狂 - All Rights Reserved</li>
+					<!-- li>rev {{rev}}</li -->
+					<li>京ICP备14001617号-1</li>
+				</ul>
+			</div>
+		</div>
+	</footer>
 	</div>
 </div>
 
@@ -262,15 +258,10 @@
 			}
 		});
     });
-  	if ($(".off-canvas-wrap").outerHeight() < $(window).height()) {
-  		$("#mainContent").height($(window).height() - $("#footer").outerHeight() 
-  				- $(".top-bar.hide-for-small").outerHeight() - $(".top-bar.show-for-small").outerHeight());
-  	}
     $(document).foundation({
     	abide: abideOptions
     });
   </script>
-
-  {% block script %}{% endblock %}
+{% block script %}{% endblock %}
 </body>
 </html>
