@@ -1,73 +1,46 @@
-{% extends "foundation/base.html" %}
-{% load url from future %}
-{% block header %}
+{% extends "foundation/map_base.html" %}
+{% block mapheader %}
 {% load staticfiles %}
-<script type="text/javascript"
-	src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>
-<script src="{% static "js/moment-with-langs.min.js" %}"></script>	
-<script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}"; var MEDIA_URL = "{{ MEDIA_URL }}"; var LOGO_URL="{{ SITE_LOGO_URL }}"; var WECHAT_SHARE_URL="{% url 'wechat_share_help' %}";</script>
-<script src="{% static "js/map.js" %}?{{buildid}}"></script>
-<script src="{% static "js/map_v2.js" %}?{{buildid}}"></script>
 <script src="{% static "js/WeixinApi.js" %}?{{buildid}}"></script>
 <script src="{% static "js/wechat.js" %}?{{buildid}}"></script>
-<link rel="stylesheet" href="{% static "css/map.css" %}?{{buildid}}">
+{% endblock %}
+{% block maptitle %}
+<h2 class="fi-torsos-all">{% if group != None %}<code>{{group.name}}</code>群内{% endif %}约球信息</h2><h4><b>抢台费</b>新玩法，发送你的位置到"{{group.name|default:"我为台球狂"}}"微信帐号发起抢台费。</h4>
 {% endblock %}
 {% load extras %}
-{% block content %}
-	<div class="medium-12 columns">
-		<div class="row">
-		<div class="small-12 large-10 large-centered columns">
-			<h2>{% if group != None %}<code>{{group.name}}</code>群内{% endif %}约球信息</h2><h4><b>抢台费</b>新玩法，发送你的位置到"我为台球狂"微信帐号发起抢台费。</h4>
-		</div><hr></div>
-		<div id="content" class="row">
-                <div class="small-12 large-10 large-centered columns">
-			<script type="text/javascript">createInfo("正在加载约球信息...");</script>
-		</div></div>
-	</div>
 
-{% endblock %}
-{% block foundationscript %}
-    <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/foundation/foundation.clearing.min.js"></script>
-{% endblock %}
-{% block script %}
-<div id="shareToWechat" class="reveal-modal medium" data-reveal>
-  <h3>请先通过微信搜索 pktaiqiu 添加我为台球狂为好友，通过微信分享抢台费 :)</h3>
-  <a class="close-reveal-modal">&#215;</a>
+{% block mapscript %}
+<div id="shareToWechat" class="reveal-modal xlarge" data-reveal>
 </div>
-	<script>
-	{% if lat != None %}
-	var mypoint = new BMap.Point({{lng}}, {{lat}});
-	{% else %}
-	var mypoint = null;
-	{% endif %}
-	CHALLENGE_URL = window.location.pathname;
-	CHALLENGE_DETAIL_URL = "{% url 'challenge_detail' '000' %}";
-	CHALLENGE_WITH_DISTANCE_URL = "{% url 'challenge_with_distance' gid '00.00' '11.11' %}";
-	POOLROOM_URL = "{% url 'poolroom_detail' '000' %}";
-	CHALLENGE_APPLY_URL = "{% url 'apply_challenge' '000' %}";
-	getChallenges(mypoint);
-	if (mypoint == null) {
-		$(document).ready(
-				function() {
-				    var geolocation = new BMap.Geolocation();
-				    geolocation.getCurrentPosition(function(r){
-				        if(this.getStatus() == BMAP_STATUS_SUCCESS){
-	                       	// update distance
-				        	mypoint = r.point;
-	                       	$("div[id=challenge]").each(function() {
-	                       		var distancetext = $(this).find(".pricing-table .price");
-	                       		var pointstr = distancetext.attr("point").split(",");
-	                       		var point = new BMap.Point(pointstr[0], pointstr[1]);
-	                       		distancetext.text(formatDistance(distance(mypoint, point)));
-	                       	});
-				        }
-				        else {
-				        	$("div[id=challenge]").each(function() {
-	                       		$(this).find(".pricing-table .price").text('无法获取你当前的位置');
-	                       	});
-				        }
-				    },{enableHighAccuracy: false});
-				});
-	}
-	</script>
+
+<script>
+var LOGO_URL="{{ SITE_LOGO_URL }}";
+var WECHAT_SHARE_URL="{% url wechat_share_help %}";
+
+{% if lat != None %}
+var mypoint = new BMap.Point({{lng}}, {{lat}});
+{% else %}
+var mypoint = null;
+{% endif %}
+CHALLENGE_URL = window.location.pathname;
+CHALLENGE_DETAIL_URL = "{% url challenge_detail '000' %}";
+CHALLENGE_WITH_DISTANCE_URL = "{% url challenge_with_distance gid '00.00' '11.11' %}";
+POOLROOM_URL = "{% url poolroom_detail '000' %}";
+CHALLENGE_APPLY_URL = "{% url apply_challenge '000' %}";
+
+createInfo("正在加载约球信息...");
+
+var defaultZoom = 12;
+
+var pkMap = new PKMap("pkMap", "北京", defaultZoom);
+var pkLocation = new PKLocation(mypoint);
+var pkChallenges = new PKChallenges(pkMap);
+pkChallenges.loadChallenges(mypoint);
+pkLocation.consume(
+	pkMap.markCurrentLocation,
+	pkChallenges.updateDistance
+);
+
+setUpViewSwitch();
+</script>
 {% endblock %}	

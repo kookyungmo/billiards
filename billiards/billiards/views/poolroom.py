@@ -112,8 +112,11 @@ def updateBaiduLocation(request):
 def getCoupons(poolroomid):
     return Coupon.objects.filter(getCouponCriteria() & Q(poolroom__id=poolroomid)).order_by('-discount')
     
+def getPoolroom(poolroomid):
+    return get_object_or_404(Poolroom, pk=poolroomid)
+    
 def detail(request, poolroomid):
-    poolroom = get_object_or_404(Poolroom, pk=poolroomid)
+    poolroom = getPoolroom(poolroomid)
     
     starttime = datetime.datetime.today()
     endtime = starttime + relativedelta(days=30)

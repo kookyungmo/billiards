@@ -1,0 +1,58 @@
+{% extends "foundation/map_base.html" %}
+{% load extras %}
+{% block maptitle %}
+<h2 class="fi-calendar">赛事活动日程表</h2>
+{% endblock %}
+{% block mapfilter %}
+<div id="calendarSelect" class="large-12 columns">
+</div>
+{% endblock %}
+{% block mapscript %}
+<script>
+var MATCH_DETAIL_URL = "{% url match_detail '000' %}";
+var ACTIVITY_URL = "{% url activity_detail '000' %}";
+var ENROLL_URL = "{% url match_enroll '000' %}";
+var POOLROOM_URL = "{% url poolroom_detail '000' %}";
+var MATCH_URL = "{% url match_map 'map' %}";
+
+var defaultZoom = 12;
+
+var pkMap = new PKMap("pkMap", "北京", defaultZoom);
+var pkLocation = new PKLocation(null);
+var pkMatches = new PKMatches(pkMap);
+
+var starttime = moment("{{ startdate|date:"Y-m-d" }}", "YYYY-MM-DD").add('h', 8);
+var endtime = moment("{{ enddate|date:"Y-m-d" }}", "YYYY-MM-DD").add('h', 8);
+var bonusobj = eval('{{ bonussummary|safe }}');
+var summary = {};
+{% for k,v in matchsummary.items %}
+summary['{{ k }}'] = {{ v }};
+{% endfor %}
+
+pkMatches.buildCalendar(starttime, endtime, bonusobj, summary, {{ intervals }});
+matches = eval(jsonescape('{{ matches|matchtojsonwithenroll:user|safe }}'));
+if (matches.length == 0) {
+	createInfo("你选择的日期没有比赛和活动被收录，请选择别的日期。");
+} else
+	pkMatches.layMatches(matches);
+pkLocation.consume(
+	pkMap.markCurrentLocation,
+	pkMatches.updateDistance
+);
+
+setUpViewSwitch();
+
+$("dl dd a").click(function() {
+	$('#items').html('');
+	
+	selectedItem = $(this);
+	$("dl dd.active").each(function() {
+		$(this).removeClass("active");
+	});
+	selectedItem.parents("dd").attr('class', 'active');
+	
+	timestamp = selectedItem.attr('timestamp');
+	pkMatches.loadMatches(timestamp);
+});
+</script>
+{% endblock %}

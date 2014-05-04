@@ -109,12 +109,8 @@ def index(request, view = None):
         if request.user.is_authenticated():
             jsonstr = updateMatchJsonStrEnrollInfo(jsonstr, request.user, matches)
         return HttpResponse(jsonstr)
-    if view == 'map':
-        page = 'match_map_v2.html'
-    else:
-        page = 'match_list.html'
-
-
+    
+    page = 'match.html'
     query2 = getQueryCriteria(starttime2, endtime2)
     matchCountSummary = dict()
     rt = Match.objects.filter(query2)

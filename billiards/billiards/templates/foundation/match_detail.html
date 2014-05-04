@@ -3,11 +3,9 @@
 {% load staticfiles %}
 <script type="text/javascript"
 	src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>
-<script src="{% static "js/moment-with-langs.min.js" %}"></script>
-<script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}";</script>
-<script src="{% static "js/map.js" %}?{{buildid}}"></script>
-<script src="{% static "js/map_v2.js" %}?{{buildid}}"></script>
-<link rel="stylesheet" href="{% static "css/map.css" %}?{{buildid}}">
+<script src="http://cdnjscn.b0.upaiyun.com/libs/moment.js/2.6.0/moment-with-langs.min.js"></script>
+<script src="{% static "js/map_ui.js" %}?{{buildid}}"></script>
+<script src="{% static "js/mustache.js" %}?0.8.1"></script>
 {% endblock %} 
 {% load extras %} 
 {% load url from future %} 
@@ -37,7 +35,7 @@
 				{% endif %}
 				{% endwith %}
 				<div class="row">
-					<div id="baidumap" style="overflow: hidden; margin: 0; height: 250px;"></div>
+					<div id="pkMap"></div>
 				</div>
 			</div>
 			<div class="medium-5 medium-pull-7 columns">
@@ -186,31 +184,35 @@
 {% endblock %}
 {% block script %}
 <script>
-	var map = new BMap.Map("baidumap");
-		$(document).ready(
-			function() {
-			    map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_RIGHT, type: BMAP_NAVIGATION_CONTROL_SMALL}));
-			    map.enableScrollWheelZoom(true);
-			    data = eval(jsonescape('{{ match|matchtojson|safe }}'));
-			    point = new BMap.Point(data[0].fields.poolroom.lng,
-						data[0].fields.poolroom.lat);
-			    map.centerAndZoom(point, 16);
-				marker = addMatchMarker(0, point, [data[0]]);
-				setTimeout(function(){
-					map.panTo(point);
-					marker.setAnimation(BMAP_ANIMATION_BOUNCE);
-					setTimeout(function(){
-						marker.setAnimation(null);
-					}, 3000);
-				}, 1000);
-				$(document).foundation();
-				ENROLL_URL = "{% url 'match_enroll' '000' %}";
-				$(".hide-for-small #enroll").click(function(){
-					matchEnroll($(this).parent(), $(this).attr('match'));
-				});
-				$(".show-for-small #enroll").click(function(){
-					matchEnroll($(this).parent(), $(this).attr('match'));
-				});
-			});
-	</script>
+var STATIC_URL = "{{ STATIC_URL|escapejs }}";
+var MEDIA_URL = "{{ MEDIA_URL }}";
+
+var defaultZoom = 16;
+var pkMap = new PKMap("pkMap", "北京", defaultZoom);
+var pkLocation = new PKLocation(null);
+
+var MATCH_DETAIL_URL = "{% url 'match_detail' '000' %}";
+var ACTIVITY_URL = "{% url 'activity_detail' '000' %}";
+var ENROLL_URL = "{% url 'match_enroll' '000' %}";
+var POOLROOM_URL = "{% url 'poolroom_detail' '000' %}";
+var MATCH_URL = "{% url 'match_map' 'map' %}";
+var pkMatches = new PKMatches(pkMap);
+matches = eval(jsonescape('{{ match|matchtojson|safe }}'));
+pkMatches.addMatchMarker(matches[0]);
+pkLocation.consume(
+		pkMap.markCurrentLocation,
+		pkMatches.updateDistance
+);
+
+$(document).ready(
+	function() {
+		ENROLL_URL = "{% url 'match_enroll' '000' %}";
+		$(".hide-for-small #enroll").click(function(){
+			matchEnroll($(this).parent(), $(this).attr('match'));
+		});
+		$(".show-for-small #enroll").click(function(){
+			matchEnroll($(this).parent(), $(this).attr('match'));
+		});
+	});
+</script>
 {% endblock %}

@@ -3,11 +3,10 @@
 {% load staticfiles %}
 <script type="text/javascript"
 	src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>
-<script src="{% static "js/moment-with-langs.min.js" %}"></script>
+<script src="http://cdnjscn.b0.upaiyun.com/libs/moment.js/2.6.0/moment-with-langs.min.js"></script>
 <script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}";</script>
-<script src="{% static "js/map.js" %}?{{buildid}}"></script>
-<script src="{% static "js/map_v2.js" %}?{{buildid}}"></script>
-<link rel="stylesheet" href="{% static "css/map.css" %}?{{buildid}}">
+<script src="{% static "js/map_ui.js" %}?{{buildid}}"></script>
+<script src="{% static "js/mustache.js" %}?0.8.1"></script>
 {% endblock %}
 {% load extras %}
 {% load url from future %} 
@@ -36,8 +35,7 @@
 			{% endif %}
 			{% endwith %}
 			<div class="row">
-				<div id="baidumap"
-						style="overflow: hidden; margin: 0; height: 250px;"></div>
+				<div id="pkMap"></div>
 			</div>
           </div>
           <div class="medium-5 medium-pull-7 columns">
@@ -73,7 +71,7 @@
 			<hr>
 			<h3 class="subheader"><strong>综合评分</strong></h3>
 			<h4 class="subheader">
-				<p>{{ poolroom.rating }}</p>
+				<p>{{ poolroom.rating|default:"暂无" }}</p>
 			</h4>
 			<hr>
 			<h3 class="subheader"><strong> 球房介绍</strong></h3>
@@ -85,20 +83,26 @@
 	<div class="row">
 		<hr>
 		<div class="small-12 columns">
-			<div class="row"><h3><strong> &nbsp 球台信息</strong></h3></div>
-			<div class="row">
-				{% for equipment in equipments %}
-					<div class="small-6 medium-3 left columns">
-						<ul class="pricing-table">
-						  <li class="title">{{ equipment|equipmentname }}</li>
-						  <li class="price">{{ equipment.price }}元/小时</li>
-						  <li class="bullet-item">数量: {{ equipment.quantity }}张</li>
-						  <li class="bullet-item">球桌品牌: {{ equipment.producer }}</li>
-						  <li class="bullet-item">球杆品牌: {{ equipment.cue }}</li>
-						</ul>
+			<h3><strong>球台信息</strong></h3>
+			{% for equipment in equipments %}
+				{% if forloop.first %}
+					<div class="row">
+				{% endif %} 
+				<div class="small-6 medium-3 left columns">
+					<ul class="pricing-table">
+					  <li class="title">{{ equipment|equipmentname }}</li>
+					  <li class="price">{{ equipment.price }}元/小时</li>
+					  <li class="bullet-item">数量: {{ equipment.quantity }}张</li>
+					  <li class="bullet-item">球桌品牌: {{ equipment.producer }}</li>
+					  <li class="bullet-item">球杆品牌: {{ equipment.cue }}</li>
+					</ul>
+				</div>
+				{% if forloop.last %}
 					</div>
-				{% endfor %}
-			</div>
+				{% endif %}
+			{% empty %}
+   				<h4 class="subheader"><p>暂无</p></h4>
+			{% endfor %}
 		</div>
 	</div>
       </div>
@@ -106,7 +110,7 @@
     	  <div style="margin-left:1em">
     		{% for coupon in poolroom.coupons %}
     			{% if forloop.first %}
-			    	<div class="row"><h2>近期的优惠</h2></div>
+			    	<div class="row"><h4>近期的优惠</h4></div>
 			    {% endif %}
 			 <div class="row">
 					<h3 class="subheader">
@@ -117,12 +121,12 @@
 			    {% endif %}
 			 </div>		
     		{% empty %}
-			    <div class="row"><h2>没有近期优惠信息。</h2></div>
+			    <div class="row"><h4>没有近期优惠信息。</h4></div>
     		{% endfor %}
     		<hr>
 	        {% for match in matches %}
 	        	{% if forloop.first %}
-			    <div class="row"><h2>近期的比赛</h2></div><hr>
+			    <div class="row"><h4>近期的比赛</h4></div><hr>
 			    {% endif %}
 				 <div class="row">
 				    	<h3 class="subheader"><strong>&nbsp 比赛日期</strong></h3>
@@ -145,7 +149,7 @@
 				    {% endif %}
 				 </div>
 		    {% empty %}
-			    <div class="row"><h2>没有近期比赛信息。</h2></div>
+			    <div class="row"><h4>没有近期比赛信息。</h4></div>
 		    {% endfor %}
         </div>
       </div>
@@ -155,24 +159,15 @@
 {% endblock %}
 {% block script %}
 	<script>
-	var map = new BMap.Map("baidumap");
-	$(document).ready(
-		function() {
-		    map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_RIGHT, type: BMAP_NAVIGATION_CONTROL_SMALL}));
-		    map.enableScrollWheelZoom(true);
-		    data = eval(jsonescape('{{ poolroom|poolroomtojson|safe }}'));
-		    point = new BMap.Point(data[0].fields.lng_baidu,
-					data[0].fields.lat_baidu);
-		    map.centerAndZoom(point, 16);
-			marker = addPoolroomMarker(0, point, data[0]);
-			setTimeout(function(){
-				map.panTo(point);
-				marker.setAnimation(BMAP_ANIMATION_BOUNCE);
-				setTimeout(function(){
-					marker.setAnimation(null);
-				}, 3000);
-			}, 1000);
-			$(document).foundation();
-		});
+	var POOLROOM_URL = "{% url 'poolroom_detail' '000' %}";
+	var pkMap = new PKMap("pkMap", "北京", 16);
+	var pkLocation = new PKLocation();
+	var pkPoolrooms = new PKPoolrooms(pkMap);
+	data = eval(jsonescape('{{ poolroom|poolroomtojson|safe }}'));
+	pkPoolrooms.createSinglePoolroomMarker(data[0]);
+	pkLocation.consume(
+		pkMap.markCurrentLocation,
+		pkPoolrooms.updateDistance
+	);
 	</script>
 {% endblock %}	
