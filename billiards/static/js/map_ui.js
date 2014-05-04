@@ -175,6 +175,10 @@ var PKPoolrooms = function(pkMap) {
 			</div>\
 		</div>\
 	';
+	
+	var PoolroomMessageTemplate = '\
+		{{name}} 地址:{{address}} 营业时间:{{businessHours}}\
+	';
 
 	// 球房摘要模板
 	var PoolroomInfoTemplate = '\
@@ -322,7 +326,9 @@ var PKPoolrooms = function(pkMap) {
 	}
 
 	function poolroomInfo(marker, poolroom) {
-		infoWindow = openInfoWindow(marker, Mustache.render(PoolroomInfoTemplate, poolroomToView(poolroom)));
+		var poolroomView = poolroomToView(poolroom);
+		infoWindow = openInfoWindow(marker, Mustache.render(PoolroomInfoTemplate, poolroomView),
+				Mustache.render(PoolroomMessageTemplate, poolroomView));
 	}
 	
 	this.createSinglePoolroomMarker = function(poolroom) {
@@ -419,6 +425,10 @@ var PKChallenges = function(pkMap) {
 				<a href="javascript:weixinShareTimeline(\'{{nickname}}在我为台球狂发起的{{type}}\', \'我为台球狂，一个专注于台球的网站\', \'{{challenge_datail_url}}\', \'{{logo_url}}\');" class="button small secondary fi-social-picasa">  分享到朋友圈</a>\
 			</div>\
 		</div>\
+	';
+	
+	var ChallengeMessageTemplate = '\
+		{{level}}"{{nickname}}"发起在{{name}}的{{type}}  开始时间:{{starttime}}  结束时间:{{endtime}}\
 	';
 	
 	var ChallengeInfoTemplate = '\
@@ -633,12 +643,20 @@ var PKChallenges = function(pkMap) {
 	function challengeInfo(marker, challenge, point) {
 		var view = challengeToView(challenge, point);
 		view["distance"] = myPosition ? formatDistance(distance(myPosition, point)) : "正在获取你的位置";
-		infoWindow = openInfoWindow(marker, Mustache.render(ChallengeInfoTemplate, view));
+		infoWindow = openInfoWindow(marker, Mustache.render(ChallengeInfoTemplate, view),
+				Mustache.render(ChallengeMessageTemplate, view));
 	}
 }
 
-function openInfoWindow(marker, innerHtml) {
-	var infoWindow = new BMap.InfoWindow(innerHtml);
+function openInfoWindow(marker, innerHtml, message) {
+	var infoOptions = {
+		"message": message,	
+	};
+	if (isSmall()) {
+		infoOptions["height"] = 200;
+		infoOptions["width"] = 100;
+	}
+	var infoWindow = new BMap.InfoWindow(innerHtml, infoOptions);
 	infoWindow.enableAutoPan();
 	marker.openInfoWindow(infoWindow);
 	infoWindow.redraw();
@@ -717,11 +735,15 @@ var PKMatches = function(pkMap) {
 		</div>\
 	';
 	
+	MatchInfoMessage = '\
+		{{title}} {{starttime}}在{{poolroom_name}}({{poolroom_address}})\
+	';
+	
 	MatchInfoTemplate = '\
 		<div class="mapBubbleInfo"><h6>{{name}}</h6>\
-		<a href="{{match_detail_url}}">{{title}}</a>\
+		<a href="{{match_detail_url}}" onclick="javascript:clickLinkInInfo(this);">{{title}}</a>\
 		<p point="{{point}}">距离我: <code>{{distance}}</code></p>\
-		<p>{{type}}球馆: <a href="{{poolroom_url}}">{{poolroom_name}}</a></p>\
+		<p>{{type}}球馆: <a href="{{poolroom_url}}" onclick="javascript:clickLinkInInfo(this);">{{poolroom_name}}</a></p>\
 		<p>球馆地址: {{poolroom_address}}</p>\
 		{{#equip}}\
 		<div class="optional icon_list">\
@@ -926,7 +948,9 @@ var PKMatches = function(pkMap) {
 	}
 	
 	function matchInfo(marker, match, point) {
-		infoWindow = openInfoWindow(marker, Mustache.render(MatchInfoTemplate, matchToView(match, point)));
+		var matchView = matchToView(match, point);
+		infoWindow = openInfoWindow(marker, Mustache.render(MatchInfoTemplate, matchView),
+				Mustache.render(MatchInfoMessage, matchView));
 	}
 	
 	function matchToView(match, point) {
@@ -1047,5 +1071,12 @@ function addPlaceholder(length) {
 			class : 'medium-pull-1 medium-offset-1 medium-3 columns',
 		});
 		emptyobj.appendTo('#items');
+	}
+}
+
+function clickLinkInInfo(link) {
+	if (inIframe()) {
+		window.top.location = $(link).attr('href');
+		return false;
 	}
 }
