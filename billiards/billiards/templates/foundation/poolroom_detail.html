@@ -39,8 +39,8 @@
 			</div>
           </div>
           <div class="medium-5 medium-pull-7 columns">
-            <h3 style = color:#EB6100>{{ poolroom.name }}</h3>
-            <h5 class="subheader">地址：{{ poolroom.address }}</h5>
+            <h4 style = color:#EB6100>{{ poolroom.name }}</h4>
+            <h6 class="subheader">地址：{{ poolroom.address }}</h6>
             <span class="icon_list">
             	{% if poolroom.flags.wifi %}
 				    <span class="ico_wifi" title="公共区域WIFI"></span>
@@ -59,31 +59,31 @@
 				{% endif %}
 			</span>
             <hr>
-            <h3 class="subheader"><strong>营业时间</strong></h3>
-            <h4 class="subheader">
+            <h4 class="subheader"><strong>营业时间</strong></h4>
+            <h5 class="subheader">
               <p><strong>{{ poolroom.businesshours }}</strong></p>
-            </h4>
+            </h5>
             <hr>
-            <h3 class="subheader"><strong>球房面积</strong></h3>
-			<h4 class="subheader">
-				    <p><strong>{{ poolroom.size }}平方米</strong></p>
-			</h4>
-			<hr>
-			<h3 class="subheader"><strong>综合评分</strong></h3>
-			<h4 class="subheader">
-				<p>{{ poolroom.rating|default:"暂无" }}</p>
-			</h4>
-			<hr>
-			<h3 class="subheader"><strong> 球房介绍</strong></h3>
+            <h4 class="subheader"><strong>球房面积</strong></h4>
 			<h5 class="subheader">
-				<p>{{ poolroom.review }}</p>
+				    <p><strong>{{ poolroom.size }}平方米</strong></p>
 			</h5>
+			<hr>
+			<h4 class="subheader"><strong>综合评分</strong></h4>
+			<h5 class="subheader">
+				<p>{{ poolroom.rating|default:"暂无" }}</p>
+			</h5>
+			<hr>
+			<h4 class="subheader"><strong> 球房介绍</strong></h4>
+			<h6 class="subheader">
+				<p>{{ poolroom.review }}</p>
+			</h6>
 		</div>
 	</div>
 	<div class="row">
 		<hr>
 		<div class="small-12 columns">
-			<h3><strong>球台信息</strong></h3>
+			<h4><strong>球台信息</strong></h4>
 			{% for equipment in equipments %}
 				{% if forloop.first %}
 					<div class="row">
@@ -101,7 +101,7 @@
 					</div>
 				{% endif %}
 			{% empty %}
-   				<h4 class="subheader"><p>暂无</p></h4>
+   				<h5 class="subheader"><p>暂无</p></h5>
 			{% endfor %}
 		</div>
 	</div>
@@ -110,31 +110,31 @@
     	  <div style="margin-left:1em">
     		{% for coupon in poolroom.coupons %}
     			{% if forloop.first %}
-			    	<div class="row"><h4>近期的优惠</h4></div>
+			    	<div class="row"><h5>近期的优惠</h5></div>
 			    {% endif %}
 			 <div class="row">
-					<h3 class="subheader">
+					<h4 class="subheader">
 						<a href="{% url 'coupontracker' coupon.id %}">{{ coupon.title }}</a>
-					</h3>
+					</h4>
 			    {% if not forloop.last %}
 			    <hr>
 			    {% endif %}
 			 </div>		
     		{% empty %}
-			    <div class="row"><h4>没有近期优惠信息。</h4></div>
+			    <div class="row"><h5>没有近期优惠信息。</h5></div>
     		{% endfor %}
     		<hr>
 	        {% for match in matches %}
 	        	{% if forloop.first %}
-			    <div class="row"><h4>近期的比赛</h4></div><hr>
+			    <div class="row"><h5>近期的比赛</h5></div><hr>
 			    {% endif %}
 				 <div class="row">
-				    	<h3 class="subheader"><strong>&nbsp 比赛日期</strong></h3>
-			            <h4 class="subheader">
+				    	<h4 class="subheader"><strong>&nbsp 比赛日期</strong></h4>
+			            <h5 class="subheader">
 			              <p><strong>&nbsp <script>document.write(getFormattedTimeToDate('{{ match.starttime|date:"D d M Y, H:i" }}'));</script></strong></p>
-			            </h4>
-			            <h3 class="subheader"><strong>&nbsp 冠军奖金</strong></h3>
-						<h4 class="subheader">
+			            </h5>
+			            <h4 class="subheader"><strong>&nbsp 冠军奖金</strong></h4>
+						<h5 class="subheader">
 							{% if match.bonus > 0 %}
 							    <p>&nbsp 现金: <strong>{{ match.bonus }}元</strong></p>
 							{% elif match.rechargeablecard > 0 %}
@@ -142,14 +142,14 @@
 				            {% elif match.otherprize != None %}
 							    <p>&nbsp 其它奖励: <strong>{{ match.otherprize }}</strong></p>
 							{% endif %}
-						</h4>
-						<h3 class="subheader"><a href="{% url 'match_detail' match.id %}">&nbsp 详情</a></h3>
+						</h5>
+						<h4 class="subheader"><a href="{% url 'match_detail' match.id %}">&nbsp 详情</a></h4>
 				    {% if not forloop.last %}
 				    <hr>
 				    {% endif %}
 				 </div>
 		    {% empty %}
-			    <div class="row"><h4>没有近期比赛信息。</h4></div>
+			    <div class="row"><h5>没有近期比赛信息。</h5></div>
 		    {% endfor %}
         </div>
       </div>

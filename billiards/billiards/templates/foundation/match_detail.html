@@ -42,7 +42,7 @@
 				<div class="show-for-small" align="center">
 					<hr>
 					{% if match.enrolled %}
-					<h3 style="color: #FF9900">已预留报名位，请在赛事规定时间内到俱乐部缴费。</h3>
+					<h4 style="color: #FF9900">已预留报名位，请在赛事规定时间内到俱乐部缴费。</h4>
 					{% else %} <a class="small radius button {% if match.is_expired or  match.status != 'approved' %} disabled {% endif %}"
 						{% if match.is_expired %}
 			       			href="javascript:void(0);"> 比赛已过期。
@@ -63,11 +63,11 @@
 		       		</a>
 					<hr>
 				</div>
-				<h2 style="color: #EB6100">{{ match.title }}</h2><hr>
-				<h3 style="color: #EB6100">
+				<h3 style="color: #EB6100">{{ match.title }}</h3><hr>
+				<h4 style="color: #EB6100">
 					<a href="{% url 'poolroom_detail' match.poolroom.id %}">{{ match.poolroom.name }}</a>
-				</h3>
-				<h3 class="subheader">地址：{{ match.poolroom.address }}</h3>
+				</h4>
+				<h6 class="subheader">地址：{{ match.poolroom.address }}</h6>
 				<span class="icon_list"> 
 					{% if match.poolroom.flags.wifi %} 
 						<span class="ico_wifi" title="公共区域WIFI"></span>
@@ -86,19 +86,19 @@
 					{% endif %}
 				</span>
 				<hr>
-				<h3 class="subheader">
-					<strong>比赛时间</strong>
-				</h3>
 				<h5 class="subheader">
+					<strong>比赛时间</strong>
+				</h5>
+				<h6 class="subheader">
 					<p>
 						<strong><script>document.write(getFormattedTimeToDate('{{ match.starttime|date:"D d M Y, H:i" }}'));</script></strong>
 					</p>
-				</h5>
+				</h6>
 				<hr>
-				<h3 class="subheader">
-					<strong>冠军奖金</strong>
-				</h3>
 				<h5 class="subheader">
+					<strong>冠军奖金</strong>
+				</h5>
+				<h6 class="subheader">
 					{% if match.bonus > 0 %}
 					<p>
 						现金: <strong>{{ match.bonus }}元</strong>
@@ -112,52 +112,52 @@
 						其它奖励: <strong>{{ match.otherprize }}</strong>
 					</p>
 					{% endif %}
-				</h5>
+				</h6>
 				<hr>
-				<h3 class="subheader">
+				<h5 class="subheader">
 					<strong>报名费</strong>
-				</h3>
-				<h5 class="subheader">
+				</h5>
+				<h6 class="subheader">
 					<p>{{ match.enrollfee }}</p>
-				</h5>
+				</h6>
 				<hr>
-				<h3 class="subheader">
-					<strong>报名联系人</strong>
-				</h3>
 				<h5 class="subheader">
-					<p>{{ match.enrollfocal }}</p>
+					<strong>报名联系人</strong>
 				</h5>
+				<h6 class="subheader">
+					<p>{{ match.enrollfocal }}</p>
+				</h6>
 			</div>
 		</div>
 		<div class="row">
 			<hr>
-			<h3 class="subheader">
+			<h5 class="subheader">
 				<strong> 奖金细则</strong>
-			</h3>
-			<h5 class="subheader">
+			</h5>
+			<h6 class="subheader">
 				<p>{{ match.bonusdetail }}</p>
-			</h5>
+			</h6>
 			<hr>
-			<h3 class="subheader">
+			<h5 class="subheader">
 				<strong>比赛规则</strong>
-			</h3>
-			<h5 class="subheader">
+			</h5>
+			<h6 class="subheader">
 				<p>{{ match.rule }}</p>
-			</h5>
-			<h3 class="subheader">
-				<strong>备注</strong>
-			</h3>
+			</h6>
 			<h5 class="subheader">
-				<p>{{ match.description }}</p>
+				<strong>备注</strong>
 			</h5>
+			<h6 class="subheader">
+				<p>{{ match.description }}</p>
+			</h6>
 		</div>
 	</div>
 </div>
 <div class="medium-3 columns hide-for-small">
-	<h2>行动起来!</h2>
+	<h3>行动起来!</h3>
 	<hr>
 	{% if match.enrolled %}
-	<h3 style="color: #FF9900">已预留报名位，请在赛事规定时间内到俱乐部缴费。</h3>
+	<h5 style="color: #FF9900">已预留报名位，请在赛事规定时间内到俱乐部缴费。</h5>
 	{% else %} 
 		<a class="small radius button {% if match.is_expired or  match.status != 'approved' %} disabled {% endif %}"
 		{% if match.is_expired %}
