@@ -21,10 +21,11 @@
 		margin-left: auto;
 		margin-right: auto; 
 	}
-	.baidu-map {
-		overflow: hidden;
-		margin: 0; 
-		height: 250px;
+	.pricing-table .bullet-item:last-child {
+		border-bottom: none;
+	}
+	hr {
+		margin: 1.5rem 0;
 	}
 } 
 
@@ -55,8 +56,11 @@
 	dl.inline dd {
 		margin-bottom: 0.3rem;
 	}
-	footer.row {
+	#footer {
 		margin-bottom: 7rem;
+	}
+	.panel-room-desks, .panel-room-games, .panel-room-favours {
+		padding-top: 0.5rem;
 	}
 
 	/*mobile-tab style*/
@@ -78,7 +82,7 @@
 		position: fixed;
 		bottom: 0;
 		background-color: #fff;
-		z-index: 10;
+		z-index: 100;
 		width: 100%;
 	}
 	.mobile-tabs {
@@ -104,12 +108,11 @@
 	dd.tab-item.active {
 		background-color: rgba(0, 64, 84, 0.05);
 	}
-	.tab-item span.glyphicon {
+	.tab-item span {
 		display: block;
 		width: 100%;
 		font-size: 2.5rem;
 		color: #008CBA;
-		padding: 0.5rem 0 0.7rem;
 	}
 
 } /* max-width 640px, mobile-only styles, use when QAing mobile issues */
@@ -123,19 +126,17 @@
 		margin-top: -0.5rem;
 		margin-bottom: 1rem;
 	}	
-} /* min-width 641px, medium screens */
-
-@media only screen and (min-width: 40.063em) and (max-width: 64em) { 
 	.main-content {
 		padding: 2rem 0;
 	}	
+} /* min-width 641px, medium screens */
+
+@media only screen and (min-width: 40.063em) and (max-width: 64em) { 
+	
 } /* min-width 641px and max-width 1024px, use when QAing tablet-only issues */
 
 /*Large screens*/
 @media only screen and (min-width: 64.063em) { 
-	.main-content {
-		padding: 2rem 3rem;
-	}	
 	.subheader.score {
 		margin-bottom: 1rem;
 	}

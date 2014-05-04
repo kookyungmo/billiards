@@ -1,31 +1,31 @@
 {% extends "foundation/base.html" %}
 {% block header %}
 {% load staticfiles %}
+
 <script type="text/javascript"
-	src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>
+    src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>
 <script src="http://cdnjscn.b0.upaiyun.com/libs/moment.js/2.6.0/moment-with-langs.min.js"></script>
 <script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}";</script>
-
 <script src="{% static "js/map_ui.js" %}?{{buildid}}"></script>
 <script src="{% static "js/mustache.js" %}?0.8.1"></script>
-<link rel="stylesheet" href="{% static "css/map.css" %}?{{buildid}}">
+
 <link rel="stylesheet" href="{% static "css/poolroom_detail.css" %}?{{buildid}}">
-<link rel="stylesheet" href="{% static "css/fonts.css" %}?{{buildid}}">
+<link rel="stylesheet" href="{% static "foundation-icons/foundation-icons.css" %}?{{buildid}}">
 {% endblock %}
 {% load extras %}
 {% load url from future %} 
 {% block content %}
 <div class="tab-wrapper show-for-small-only">
 	<dl class="mobile-tabs clearfix" id="mobile-tabs">
-		<dd class="tab-item active"><span class="glyphicon glyphicon-home"></span><a href="#panel-room-infos">球房信息</a>
+		<dd class="tab-item active"><span class="fi-home large"></span><a href="#panel-room-infos">球房信息</a>
 		</dd>
-		<dd class="tab-item"><span class="glyphicon glyphicon-usd"></span><a href="#panel-room-desks">球台价格</a>
+		<dd class="tab-item"><span class="fi-pricetag-multiple large"></span><a href="#panel-room-desks">球台价格</a>
 		</dd>
-		<dd class="tab-item"><span class="glyphicon glyphicon-map-marker"></span><a href="#panel-room-address">球房地址</a>
+		<dd class="tab-item"><span class="fi-map large"></span><a href="#panel-room-address">球房地址</a>
 		</dd>
-		<dd class="tab-item"><span class="glyphicon glyphicon-gift"></span><a href="#panel-room-favours">球房优惠</a>
+		<dd class="tab-item"><span class="fi-ticket large"></span><a href="#panel-room-favours">球房优惠</a>
 		</dd>
-		<dd class="tab-item"><span class="glyphicon glyphicon-tower"></span><a href="#panel-room-games">球房赛事</a>
+		<dd class="tab-item"><span class="fi-trophy large"></span><a href="#panel-room-games">球房赛事</a>
 		</dd>
 	</dl>
 </div>
@@ -88,25 +88,25 @@
 	                <span class="ico_restaurant" title="餐饮服务"></span>
 	                <span class="ico_bus" title="地铁周边"></span>
 	                </span>
-	                <!-- <span class="icon_list clearfix">
-    	            {% if poolroom.flags.wifi %}
-    	                <span class="ico_wifi" title="公共区域WIFI"></span>
-    	            {% endif %}
-    	            {% if poolroom.flags.wifi_free %}
-    	                <span class="ico_free_wifi" title="公共区域WIFI"></span>
-    	            {% endif %}
-    	            {% if poolroom.flags.parking or poolroom.flags.parking_free %}
-    	                <span class="ico_parking" title="停车场"></span>
-    	            {% endif %}
-    	            {% if poolroom.flags.cafeteria %}
-    	                <span class="ico_restaurant" title="餐饮服务"></span>
-    	            {% endif %}
-    	            {% if poolroom.flags.subway %}
-    	                <span class="ico_bus" title="地铁周边"></span>
-    	            {% endif %}
-        	        </span> -->
+	                <!-- span class="icon_list">
+                    {% if poolroom.flags.wifi %}
+                        <span class="ico_wifi" title="公共区域WIFI"></span>
+                    {% endif %}
+                    {% if poolroom.flags.wifi_free %}
+                        <span class="ico_free_wifi" title="公共区域WIFI"></span>
+                    {% endif %}
+                    {% if poolroom.flags.parking or poolroom.flags.parking_free %}
+                        <span class="ico_parking" title="停车场"></span>
+                    {% endif %}
+                    {% if poolroom.flags.cafeteria %}
+                        <span class="ico_restaurant" title="餐饮服务"></span>
+                    {% endif %}
+                    {% if poolroom.flags.subway %}
+                        <span class="ico_bus" title="地铁周边"></span>
+                    {% endif %}
+                </span> -->
 	            </div>        
-	            <hr class="large-5 medium-6  columns show-for-small-only">
+	            <hr class="show-for-small-only">
 
 	            <div class="large-5 columns medium-6  infos">
 	                <h3 class="title show-for-small-only"><strong>店面信息</strong></h3>
@@ -132,7 +132,7 @@
                 </div>
             </div>
             <hr class="small-12 columns show-for-medium-up">
-            <div class="small-12 columns mobile-content" id="panel-room-desks">
+            <div class="small-12 columns mobile-content panel-room-desks" id="panel-room-desks">
                 <h3 class="show-for-medium-up"><strong>球台信息</strong></h3>
 
                 <div class="row">
@@ -200,7 +200,7 @@
     	<div class="row">
     		<hr class="small-12 columns show-for-medium-only">
     	</div>    	
-        <div class="favour mobile-content" id="panel-room-favours">
+        <div class="favour mobile-content panel-room-favours" id="panel-room-favours">
             <h3 class="title show-for-medium-up">近期的优惠</h3>
 
             <p>
@@ -241,7 +241,7 @@
         	<hr class="small-12 columns show-for-medium-up">
         </div>
         
-        <div class="games-wrapper mobile-content" id="panel-room-games">
+        <div class="games-wrapper mobile-content panel-room-games" id="panel-room-games">
             <h3 class="show-for-medium-up">近期的比赛</h3>
             <ol class="games">
                 <li class="game-item">
@@ -367,9 +367,7 @@
         pkPoolrooms.updateDistance
     );
     </script>
-    <script src="{% static "js/poolroom_detail.js" %}?{{buildid}}">
-    
-</script>
+    <script src="{% static "js/poolroom_detail.js" %}?{{buildid}}"></script>
 {% endblock %}  
 
 
