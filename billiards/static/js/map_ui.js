@@ -1024,6 +1024,9 @@ function setUpViewSwitch() {
 	});
 	
 	$(window).scroll(function() {
+		if ($('#items').height() <= $('#pkMap').height()) {
+			return;
+		}
 		if ($(window).scrollTop() > $('#mapContainer').offset().top) {
 			$('#pkMap').css({
 				'position': 'fixed',
