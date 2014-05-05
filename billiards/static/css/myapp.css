@@ -74,7 +74,8 @@ body {
 	border: none;
 }
 #items.map .item h5,
-#items.map .item p {
+#items.map .item p,
+#items.map .item div {
 	font-size: 0.8125rem;
 }
 
