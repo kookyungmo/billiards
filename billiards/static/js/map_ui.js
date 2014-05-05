@@ -127,51 +127,53 @@ var PKPoolrooms = function(pkMap) {
 	// 球房模板
 	var PoolroomTemplate = '\
 		<div class="item panel medium-pull-1 medium-offset-1 medium-3 columns">\
-			<div class="optional">\
-				{{#image}}\
-					<img src="{{path}}" >\
-				{{/image}}\
-				{{^image}}\
-					<img data-caption="MapShot" src="http://api.map.baidu.com/staticimage?center={{point}}&width=104&height=62&zoom=16&scale=2&markers={{point}}&markerStyles=-1">\
-				{{/image}}\
-			</div>\
-			<div>\
-				<h5>\
-					<span name="title">\
-						<a target="_blank" href="{{url}}">{{name}}</a>\
-					</span>\
-				</h5>\
-				<p class="musthave show-for-small-only"><a href="javascript:void(0);" onclick="javascript:openMap(\'{{name}}\', \'poolroom\', {{poolroom_id}});">地图中查看...</a></p>\
-				<p class="musthave">距离我: <code>{{distance}}</code></p>\
-				{{#equip}}\
-					<div class="optional icon_list">\
-						<span class="ico_none">球房设施: </span>\
-						{{#wifi}}\
-							<span class="ico_wifi" title="公共区域WIFI"></span>\
-						{{/wifi}}\
-						{{#freeWifi}}\
-							<span class="ico_free_wifi" title="公共区域WIFI"></span>\
-						{{/freeWifi}}\
-						{{#parking}}\
-							<span class="ico_parking" title="停车场"></span>\
-						{{/parking}}\
-						{{#cafe}}\
-							<span class="ico_restaurant" title="餐饮服务"></span>\
-						{{/cafe}}\
-						{{#subway}}\
-							<span class="ico_bus" title="地铁周边"></span>\
-						{{/subway}}\
-					</div>\
-				{{/equip}}\
-				<p class="address">地址: {{address}}</p>\
-				<p class="optional">电话: {{tel}}</p>\
-				<p class="optional">营业时间: {{businessHours}}</p>\
-				{{#coupon}}\
-					<div><h5><b>优惠信息</b></h5></div>\
-					{{#coupons}}\
-						<div><h6><a target="_blank" href="{{url}}">{{title}}</a></h6></div>\
-					{{/coupons}}\
-				{{/coupon}}\
+			<div class="row collapse">\
+				<div class="optional small-5 medium-12 columns">\
+						{{#image}}\
+							<img src="{{path}}" >\
+						{{/image}}\
+						{{^image}}\
+							<img data-caption="MapShot" src="http://api.map.baidu.com/staticimage?center={{point}}&width=104&height=62&zoom=16&scale=2&markers={{point}}&markerStyles=-1">\
+						{{/image}}\
+				</div>\
+				<div class="small-7 medium-12 columns">\
+					<h5>\
+						<span name="title">\
+							<a target="_blank" href="{{url}}">{{name}}</a>\
+						</span>\
+					</h5>\
+					<div class="musthave show-for-small-only"><a href="javascript:void(0);" onclick="javascript:openMap(\'{{name}}\', \'poolroom\', {{poolroom_id}});">地图中查看...</a></div>\
+					{{#equip}}\
+						<div class="optional icon_list">\
+							<span class="ico_none">球房设施: </span>\
+							{{#wifi}}\
+								<span class="ico_wifi" title="公共区域WIFI"></span>\
+							{{/wifi}}\
+							{{#freeWifi}}\
+								<span class="ico_free_wifi" title="公共区域WIFI"></span>\
+							{{/freeWifi}}\
+							{{#parking}}\
+								<span class="ico_parking" title="停车场"></span>\
+							{{/parking}}\
+							{{#cafe}}\
+								<span class="ico_restaurant" title="餐饮服务"></span>\
+							{{/cafe}}\
+							{{#subway}}\
+								<span class="ico_bus" title="地铁周边"></span>\
+							{{/subway}}\
+						</div>\
+					{{/equip}}\
+					<div class="musthave">地址: {{address}}</div>\
+					<div class="optional">电话: {{tel}}</div>\
+					<div class="optional">营业时间: {{businessHours}}</div>\
+					{{#coupon}}\
+						<div><h5><b>优惠信息</b></h5></div>\
+						{{#coupons}}\
+							<div><h6><a target="_blank" href="{{url}}">{{title}}</a></h6></div>\
+						{{/coupons}}\
+					{{/coupon}}\
+					<div class="musthave right">距离我: <code>{{distance}}</code></div>\
+				</div>\
 			</div>\
 		</div>\
 	';
