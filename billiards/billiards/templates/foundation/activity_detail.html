@@ -39,12 +39,12 @@
 				</div>
 			</div>
 			<div class="medium-5 medium-pull-7 columns">
-				<h2 style="color: #EB6100">{{ match.title }}</h2>
-				<h3 class="subheader">活动组织者：{{ match.organizer.name }}</h3><hr>
-				<h3 style="color: #EB6100">
+				<h4 style="color: #EB6100">{{ match.title }}</h4>
+				<h5 class="subheader">活动组织者：{{ match.organizer.name }}</h5><hr>
+				<h5 style="color: #EB6100">
 					<a href="{% url 'poolroom_detail' match.poolroom.id %}">{{ match.poolroom.name }}</a>
-				</h3>
-				<h3 class="subheader">地址：{{ match.poolroom.address }}</h3>
+				</h5>
+				<h5 class="subheader">地址：{{ match.poolroom.address }}</h5>
 				<span class="icon_list"> 
 					{% if match.poolroom.flags.wifi %} 
 						<span class="ico_wifi" title="公共区域WIFI"></span>
@@ -63,34 +63,34 @@
 					{% endif %}
 				</span>
 				<hr>
-				<h3 class="subheader">
-					<strong>活动开始时间</strong>
-				</h3>
 				<h5 class="subheader">
+					<strong>活动开始时间</strong>
+				</h5>
+				<h6 class="subheader">
 					<p>
 						<strong><script>document.write(getFormattedTimeToDate('{{ match.starttime|date:"D d M Y, H:i" }}'));</script></strong>
 					</p>
-				</h5>
+				</h6>
 				<hr>
-				<h3 class="subheader">
+				<h5 class="subheader">
 					<strong>活动费用</strong>
-				</h3>
-				<h5 class="subheader">
-					<p>{{ match.enrollfee }}</p>
 				</h5>
-				<h3 class="subheader">
+				<h6 class="subheader">
+					<p>{{ match.enrollfee }}</p>
+				</h6>
+				<h5 class="subheader">
 					<strong>活动详情</strong>
-				</h3>
-				<h5 class="subheader">
+				</h5>
+				<h6 class="subheader">
 					<p>{{ match.description }}</p>
-				</h5>	
+				</h6>	
 				<hr>
-				<h3 class="subheader">
-					<strong>报名联系人</strong>
-				</h3>
 				<h5 class="subheader">
+					<strong>报名联系人</strong>
+				</h5>
+				<h6 class="subheader">
 					<p>{{ match.enrollfocal }}</p>
-				</h5>			
+				</h6>			
 			</div>
 		</div>
 	</div>

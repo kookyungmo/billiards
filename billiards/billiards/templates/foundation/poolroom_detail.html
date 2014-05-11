@@ -59,22 +59,22 @@
 				{% endif %}
 			</span>
             <hr>
-            <h4 class="subheader"><strong>营业时间</strong></h4>
-            <h5 class="subheader">
+            <h5 class="subheader"><strong>营业时间</strong></h5>
+            <h6 class="subheader">
               <p><strong>{{ poolroom.businesshours }}</strong></p>
-            </h5>
+            </h6>
             <hr>
-            <h4 class="subheader"><strong>球房面积</strong></h4>
-			<h5 class="subheader">
+            <h5 class="subheader"><strong>球房面积</strong></h5>
+			<h6 class="subheader">
 				    <p><strong>{{ poolroom.size }}平方米</strong></p>
-			</h5>
+			</h6>
 			<hr>
-			<h4 class="subheader"><strong>综合评分</strong></h4>
-			<h5 class="subheader">
+			<h5 class="subheader"><strong>综合评分</strong></h5>
+			<h6 class="subheader">
 				<p>{{ poolroom.rating|default:"暂无" }}</p>
-			</h5>
+			</h6>
 			<hr>
-			<h4 class="subheader"><strong> 球房介绍</strong></h4>
+			<h5 class="subheader"><strong> 球房介绍</strong></h5>
 			<h6 class="subheader">
 				<p>{{ poolroom.review|linebreaksbr }}</p>
 			</h6>
@@ -83,7 +83,7 @@
 	<div class="row">
 		<hr>
 		<div class="small-12 columns">
-			<h4><strong>球台信息</strong></h4>
+			<h5><strong>球台信息</strong></h5>
 			{% for equipment in equipments %}
 				{% if forloop.first %}
 					<div class="row">
