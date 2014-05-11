@@ -731,7 +731,6 @@ var PKMatches = function(pkMap) {
 				{{/hasPrize}}\
 				<p class="optional">报名费: <code>{{enroll_fee}}</code></p>\
 				{{#enroll_focal}}\
-				<p class="optional">报名联系人: <code>{{enroll_focal}}</code></p>\
 				{{/enroll_focal}}\
 			</div>\
 		</div>\
