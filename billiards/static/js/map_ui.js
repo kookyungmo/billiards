@@ -169,7 +169,7 @@ var PKPoolrooms = function(pkMap) {
 					{{#coupon}}\
 						<div><h5><b>优惠信息</b></h5></div>\
 						{{#coupons}}\
-							<div><h6><a target="_blank" href="{{url}}">{{title}}</a></h6></div>\
+							<div><h5><a target="_blank" href="{{url}}">{{title}}</a></h5></div>\
 						{{/coupons}}\
 					{{/coupon}}\
 					<div class="musthave right">距离我: <code>{{distance}}</code></div>\
