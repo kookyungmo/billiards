@@ -62,6 +62,7 @@ class Poolroom(models.Model):
             ('subway', u'地铁周边'),
             ('nosmoking', u'禁烟'),
             ('nosmokingarea', u'无烟区'),
+            ('redbullpartner', u'红牛合作球房'),
         ), verbose_name='特色属性')
     businesshours = models.CharField(max_length=60,null=True,verbose_name='营业时间')
     size = models.IntegerField(max_length=8,null=True,verbose_name='球馆面积(平米)')
