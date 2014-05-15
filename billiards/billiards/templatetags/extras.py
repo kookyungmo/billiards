@@ -10,7 +10,6 @@ from billiards.models import match_fields, poolroom_fields, PoolroomEquipment,\
     PoolroomImage
 from billiards.views import match
 from billiards.views.match import tojson
-import os
 
 def poolroomtojson(data):
     return tojson(data, poolroom_fields)

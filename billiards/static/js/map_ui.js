@@ -682,7 +682,80 @@ var PKMatches = function(pkMap) {
 	
 	var MatchTemplate = '\
 		<div class="item panel medium-pull-1 medium-offset-1 medium-3 columns">\
-			<div class="optional">\
+			<div class="row collapse">\
+				<div class="optional small-5 medium-12 columns">\
+					{{#image}}\
+						<img src="{{path}}" >\
+					{{/image}}\
+					{{^image}}\
+						<img data-caption="MapShot" src="http://api.map.baidu.com/staticimage?center={{point}}&width=104&height=62&zoom=16&scale=2&markers={{point}}&markerStyles=-1">\
+					{{/image}}\
+				</div>\
+				<div class="small-7 medium-12 columns">\
+					{{#distance}}\
+						<p class="optional" point="{{point}}">距离我: <code>{{distance}}</code></p>\
+					{{/distance}}\
+					{{^distance}}\
+						<p class="optional hide" point="{{point}}">距离我: <code>{{distance}}</code></p>\
+					{{/distance}}\
+					<p class="musthave"><a href="{{match_detail_url}}">{{title}}</a></p>\
+					<p class="musthave">{{type}}球馆: <a href="{{poolroom_url}}">{{poolroom_name}}</a>\
+					<p class="{{addressAttr}}">球馆地址: {{poolroom_address}}\
+					{{#equip}}\
+						<div class="optional icon_list">\
+							<span class="ico_none">球房设施: </span>\
+							{{#wifi}}\
+								<span class="ico_wifi" title="公共区域WIFI"></span>\
+							{{/wifi}}\
+							{{#freeWifi}}\
+								<span class="ico_free_wifi" title="公共区域WIFI"></span>\
+							{{/freeWifi}}\
+							{{#parking}}\
+								<span class="ico_parking" title="停车场"></span>\
+							{{/parking}}\
+							{{#cafe}}\
+								<span class="ico_restaurant" title="餐饮服务"></span>\
+							{{/cafe}}\
+							{{#subway}}\
+								<span class="ico_bus" title="地铁周边"></span>\
+							{{/subway}}\
+						</div>\
+					{{/equip}}\
+					<p class="musthave">开始时间: <code>{{starttime}}</code></p>\
+					{{#hasPrize}}\
+					<p class="optional {{prizeAttr}}">冠军奖励: <code>\
+					{{#bonus}}\
+					现金: {{bonus}}元\
+					{{/bonus}}\
+					{{#rechargeablecard}}\
+					俱乐部充值卡: {{rechargeablecard}}元\
+					{{/rechargeablecard}}\
+					{{#otherprize}}\
+					{{otherprize}}\
+					{{/otherprize}}\
+					</code></p>\
+					{{/hasPrize}}\
+					<p class="optional">报名费: <code>{{enroll_fee}}</code></p>\
+					{{#enroll_focal}}\
+					{{/enroll_focal}}\
+				</div>\
+			</div>\
+			<div class="row collapse show-for-small-only">\
+				<div class="small-3 small-offset-2 columns">\
+					<span><a href="{{map_url}}" target="_blank">地图中查看</a></span>\
+				</div>\
+				<div class="small-6 columns"></div>\
+			</div>\
+		</div>\
+	';
+	
+	var MatchInfoMessage = '\
+		{{title}} {{starttime}}在{{poolroom_name}}({{poolroom_address}})\
+	';
+	
+	var MatchInfoTemplate = '\
+		<div class="mapBubbleInfo row collapse">\
+			<div class="small-5 columns">\
 				{{#image}}\
 					<img src="{{path}}" >\
 				{{/image}}\
@@ -690,34 +763,37 @@ var PKMatches = function(pkMap) {
 					<img data-caption="MapShot" src="http://api.map.baidu.com/staticimage?center={{point}}&width=104&height=62&zoom=16&scale=2&markers={{point}}&markerStyles=-1">\
 				{{/image}}\
 			</div>\
-			<div>\
-				<p class="optional" point="{{point}}">距离我: <code>{{distance}}</code></p>\
-				<p class="musthave"><a href="{{match_detail_url}}">{{title}}</a></p>\
-				<p class="musthave">{{type}}球馆: <a href="{{poolroom_url}}">{{poolroom_name}}</a>\
-				<a class="show-for-small-only" href="javascript:void(0);" onclick="javascript:openMap(\'{{title}}\', \'match\', {{match_id}});">地图中查看...</a></p>\
+			<div class="small-7 columns">\
+				<h6>{{name}}</h6>\
+				<a href="{{match_detail_url}}" onclick="javascript:clickLinkInInfo(this);">{{title}}</a>\
+				{{#distance}}\
+				<p point="{{point}}">距离我: <code>{{distance}}</code></p>\
+				{{/distance}}\
+				<p>{{type}}球馆: <a href="{{poolroom_url}}" onclick="javascript:clickLinkInInfo(this);">{{poolroom_name}}</a></p>\
+				<p class="{{insideAttr}}">球馆地址: {{poolroom_address}}</p>\
 				{{#equip}}\
-					<div class="optional icon_list">\
-						<span class="ico_none">球房设施: </span>\
-						{{#wifi}}\
-							<span class="ico_wifi" title="公共区域WIFI"></span>\
-						{{/wifi}}\
-						{{#freeWifi}}\
-							<span class="ico_free_wifi" title="公共区域WIFI"></span>\
-						{{/freeWifi}}\
-						{{#parking}}\
-							<span class="ico_parking" title="停车场"></span>\
-						{{/parking}}\
-						{{#cafe}}\
-							<span class="ico_restaurant" title="餐饮服务"></span>\
-						{{/cafe}}\
-						{{#subway}}\
-							<span class="ico_bus" title="地铁周边"></span>\
-						{{/subway}}\
-					</div>\
+				<div class="optional icon_list {{insideAttr}}">\
+					<span class="ico_none">球房设施: </span>\
+					{{#wifi}}\
+						<span class="ico_wifi" title="公共区域WIFI"></span>\
+					{{/wifi}}\
+					{{#freeWifi}}\
+						<span class="ico_free_wifi" title="公共区域WIFI"></span>\
+					{{/freeWifi}}\
+					{{#parking}}\
+						<span class="ico_parking" title="停车场"></span>\
+					{{/parking}}\
+					{{#cafe}}\
+						<span class="ico_restaurant" title="餐饮服务"></span>\
+					{{/cafe}}\
+					{{#subway}}\
+						<span class="ico_bus" title="地铁周边"></span>\
+					{{/subway}}\
+				</div>\
 				{{/equip}}\
-				<p class="musthave">开始时间: <code>{{starttime}}</code></p>\
+				<p class="{{insideAttr}}">开始时间: <code>{{starttime}}</code></p>\
 				{{#hasPrize}}\
-				<p class="musthave">冠军奖励: <code>\
+				<p>冠军奖励: <code>\
 				{{#bonus}}\
 				现金: {{bonus}}元\
 				{{/bonus}}\
@@ -729,62 +805,14 @@ var PKMatches = function(pkMap) {
 				{{/otherprize}}\
 				</code></p>\
 				{{/hasPrize}}\
-				<p class="optional">报名费: <code>{{enroll_fee}}</code></p>\
-				{{#enroll_focal}}\
-				{{/enroll_focal}}\
 			</div>\
 		</div>\
 	';
 	
-	MatchInfoMessage = '\
-		{{title}} {{starttime}}在{{poolroom_name}}({{poolroom_address}})\
-	';
-	
-	MatchInfoTemplate = '\
-		<div class="mapBubbleInfo"><h6>{{name}}</h6>\
-		<a href="{{match_detail_url}}" onclick="javascript:clickLinkInInfo(this);">{{title}}</a>\
-		<p point="{{point}}">距离我: <code>{{distance}}</code></p>\
-		<p>{{type}}球馆: <a href="{{poolroom_url}}" onclick="javascript:clickLinkInInfo(this);">{{poolroom_name}}</a></p>\
-		<p>球馆地址: {{poolroom_address}}</p>\
-		{{#equip}}\
-		<div class="optional icon_list">\
-			<span class="ico_none">球房设施: </span>\
-			{{#wifi}}\
-				<span class="ico_wifi" title="公共区域WIFI"></span>\
-			{{/wifi}}\
-			{{#freeWifi}}\
-				<span class="ico_free_wifi" title="公共区域WIFI"></span>\
-			{{/freeWifi}}\
-			{{#parking}}\
-				<span class="ico_parking" title="停车场"></span>\
-			{{/parking}}\
-			{{#cafe}}\
-				<span class="ico_restaurant" title="餐饮服务"></span>\
-			{{/cafe}}\
-			{{#subway}}\
-				<span class="ico_bus" title="地铁周边"></span>\
-			{{/subway}}\
-		</div>\
-		{{/equip}}\
-		<p>开始时间: <code>{{starttime}}</code></p>\
-		{{#hasPrize}}\
-		<p>冠军奖励: <code>\
-		{{#bonus}}\
-		现金: {{bonus}}元\
-		{{/bonus}}\
-		{{#rechargeablecard}}\
-		俱乐部充值卡: {{rechargeablecard}}元\
-		{{/rechargeablecard}}\
-		{{#otherprize}}\
-		{{otherprize}}\
-		{{/otherprize}}\
-		</code></p>\
-		{{/hasPrize}}\
-		<p>报名费: <code>{{enroll_fee}}</code></p>\
-		{{#enroll_focal}}\
-		<p>报名联系人: <code>{{enroll_focal}}</code></p>\
-		{{/enroll_focal}}\
-	';
+	var MATCH_MARKER_URL = STATIC_URL + "images/marker.png";
+	var PrizeAttr = "";
+	var AddressAttr = "hidden";
+	var DefaultMapInsideVisible = "hidden";
 	
 	this.buildCalendar = function(starttime, endtime, bonusobj, summary, intervals) {
 		var bonussummary = {};
@@ -837,6 +865,48 @@ var PKMatches = function(pkMap) {
 		return $(Mustache.render(CalendarTemplate, view)).appendTo('#calendarSelect');
 	};
 	
+	this.loadRedbullMatches = function() {
+//		MATCH_MARKER_URL = "";
+		PrizeAttr = "optional";
+		AddressAttr = "musthave";
+		createInfo("正在加载红牛比赛及球房...");
+		$.ajax({
+			url : REDBULL_URL,
+			data : {'f':'json'},
+			dataType : 'json',
+			success : function(data) {
+				if (data.length == 0) {
+					$("#info .subheader").text("真遗憾，还没有比赛被收录。");
+				} else {
+					$("#info").remove();
+					for (var idx = 0; idx < data.length; idx++) {
+						var image = {
+							imagepath: "/2014%2F05%2Fredbull-activity.jpg",
+							iscover: true,
+							description: '',
+						};
+						var images = Object.getOwnPropertyNames(data[idx].fields.poolroom.images);
+						var newimages = {};
+						if (images.length !== 0) {
+							newimages["img" + images.length] = image;
+							for (i in images) {
+								newimages[images[i]] = data[idx].fields.poolroom.images[images[i]];
+							}
+						} else {
+							newimages["img0"] = image;
+						}
+						data[idx].fields.poolroom.images = newimages;
+					}
+					layMatches(data);
+					switchToMap();
+				}
+			},
+			error: function (xhr, ajaxOptions, thrownError) {
+				$("#info .subheader").text("无法获取比赛和球房，请刷新重试。");
+			}
+		});
+	};
+	
 	this.layMatches = layMatches;
 	
 	this.loadMatches = function(timestamp) {
@@ -875,6 +945,7 @@ var PKMatches = function(pkMap) {
 				var pointstr = $(this).attr("point").split(",");
 				var point = new BMap.Point(pointstr[0], pointstr[1]);
 				$(this).children("code").html(formatDistance(distance(myPosition, point)));
+				$(this).removeClass("hide");
 			});
 		} else {
 			$(".item p[point] code").each(function() {
@@ -883,12 +954,14 @@ var PKMatches = function(pkMap) {
 		}
 		if (infoWindow && infoWindow.isOpen()) {
 			var distanceObj = $(infoWindow.getContent()).find("p[point]");
-			var pointstr = distanceObj.attr("point").split(",");
-			var point = new BMap.Point(pointstr[0], pointstr[1]);
-			if (myPosition)
-				distanceObj.children("code").html(formatDistance(distance(myPosition, point)));
-			else
-				distanceObj.children("code").html("无法获取你的位置");
+			if (distanceObj.length) {
+				var pointstr = distanceObj.attr("point").split(",");
+				var point = new BMap.Point(pointstr[0], pointstr[1]);
+				if (myPosition)
+					distanceObj.children("code").html(formatDistance(distance(myPosition, point)));
+				else
+					distanceObj.children("code").html("无法获取你的位置");
+			}
 		}
 	};
 	
@@ -927,7 +1000,7 @@ var PKMatches = function(pkMap) {
 	}
 	
 	function createMatchMarker(obj, match, point) {
-		var marker = pkMap.addMarker(point, STATIC_URL + "images/marker.png");
+		var marker = pkMap.addMarker(point, MATCH_MARKER_URL);
 		marker.addEventListener("click", function() {
 			matchInfo(marker, match, point);
 		});
@@ -965,9 +1038,39 @@ var PKMatches = function(pkMap) {
 				"title": match.fields.title,
 				"enroll_fee": match.fields.enrollfee,
 				"enroll_focal": match.fields.enrollfocal,
-				"distance": myPosition ? formatDistance(distance(myPosition, point)) : "正在计算距离",
-			};
+				"prizeAttr": PrizeAttr,
+				"addressAttr": AddressAttr,
+				"map_url": PKMAP_URL.replace(/000/g, match.pk).replace(/mtype/g, "match"),
+				"insideAttr": DefaultMapInsideVisible,
+			},
+			images = Object.getOwnPropertyNames(match.fields.poolroom.images),
+			image,
+			equip = {},
+			i;
+		if (images.length !== 0) {
+			view["image"] = {};
+			for (i in images) {
+				image = match.fields.poolroom.images[images[i]];
+				view["image"]["path"] = MEDIA_URL + getThumbnail(image.imagepath, '200');
+				if (image.iscover) {
+					view["image"]["path"] = MEDIA_URL + getThumbnail(image.imagepath, '200');
+					break;
+				}
+			}
+		}
+
+		match.fields.poolroom.flags.wifi && (equip["wifi"] = true);
+		match.fields.poolroom.flags.freeWifi && (equip["freeWifi"] = true);
+		(match.fields.poolroom.flags.parking || match.fields.poolroom.flags.parking_free) && (equip["parking"] = true);
+		match.fields.poolroom.flags.cafeteria && (equip["cafe"] = true);
+		match.fields.poolroom.flags.subway && (equip["subway"] = true);
+		if (equip.hasOwnProperty()) {
+			view["equip"] = equip;
+		}
 		
+		if (myPosition)
+			view["distance"] = formatDistance(distance(myPosition, point));
+			
 		if (match.fields.type == 1) {
 			view["match_detail_url"] = MATCH_DETAIL_URL.replace(/000/g, match.pk);
 			view["hasPrize"] = true;
@@ -985,29 +1088,7 @@ var PKMatches = function(pkMap) {
 	}
 	
 	function renderMatch(match, point) {
-		var view = matchToView(match, point),
-			images = Object.getOwnPropertyNames(match.fields.poolroom.images),
-			image,
-			equip = {},
-			i;
-		if (images.length !== 0) {
-			view["image"] = {};
-			for (i in images) {
-				image = match.fields.poolroom.images[images[i]];
-				if (image.iscover) {
-					view["image"]["path"] = MEDIA_URL + getThumbnail(image.imagepath, '200');
-				}
-			}
-		}
-
-		match.fields.poolroom.flags.wifi && (equip["wifi"] = true);
-		match.fields.poolroom.flags.freeWifi && (equip["freeWifi"] = true);
-		(match.fields.poolroom.flags.parking || match.fields.poolroom.flags.parking_free) && (equip["parking"] = true);
-		match.fields.poolroom.flags.cafeteria && (equip["cafe"] = true);
-		match.fields.poolroom.flags.subway && (equip["subway"] = true);
-		if (equip.hasOwnProperty()) {
-			view["equip"] = equip;
-		}
+		var view = matchToView(match, point);
 
 		return $(Mustache.render(MatchTemplate, view)).appendTo('#items');
 	}

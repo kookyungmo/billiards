@@ -183,3 +183,14 @@ def enroll(request, matchid):
     elif created != False:
         msg = {'rt': 1, 'msg': 'enrolled'}
     return HttpResponse(json.dumps(msg), content_type="application/json")
+
+def redbull_2014_06(request):
+    if 'f' in request.GET and request.GET.get('f') == 'json':
+        redbull_matches = Match.objects.filter(Q(flags=Match.flags.redbull))
+        json_serializer = serializers.get_serializer("json")()
+        stream = StringIO()
+        json_serializer.serialize(redbull_matches, fields=match_fields, ensure_ascii=False, stream=stream, indent=2, use_natural_keys=True)
+        jsonstr = stream.getvalue()
+        return HttpResponse(jsonstr)
+    return render_to_response(TEMPLATE_ROOT + 'redbull/match_poolroom.html', {},
+            context_instance=RequestContext(request))
