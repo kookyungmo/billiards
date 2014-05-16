@@ -16,16 +16,57 @@ from billiards.location_convertor import gcj2bd
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserChangeForm
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.admin.filters import SimpleListFilter
+import datetime
+from django.db.models.query_utils import Q
 
 class ModelWithFlagsAdmin(admin.ModelAdmin):
     formfield_overrides = {
         BitField: {'widget': BitFieldCheckboxSelectMultiple},
     }
-
+    
 class MatchAdmin(ModelWithFlagsAdmin):
+    class PoolroomLocation(SimpleListFilter):
+        title = _(u'球房所在区域')
+        parameter_name = 'district'
+    
+        def lookups(self, request, model_admin):
+            return ((poolroom['district'], poolroom['district']) for poolroom in Poolroom.objects.values('district').distinct()) 
+    
+        def queryset(self, request, queryset):
+            if self.value() is None:
+                return queryset
+            return queryset.filter(poolroom__district=self.value())
+        
+    class MatchTimeFilter(SimpleListFilter):
+        title = _(u'比赛所在月份')
+        parameter_name = 'month'
+        
+        datefmt = '%Y-%m'
+    
+        def monthdelta(self, date, delta):
+            m, y = (date.month+delta) % 12, date.year + ((date.month)+delta-1) // 12
+            if not m: m = 12
+            d = min(date.day, [31,
+                29 if y%4==0 and not y%400==0 else 28,31,30,31,30,31,31,30,31,30,31][m-1])
+            return date.replace(day=d,month=m, year=y)
+        
+        def lookups(self, request, model_admin):
+            today = datetime.datetime.today()
+            return ((self.monthdelta(today, 0-m).strftime(self.datefmt), self.monthdelta(today, 0-m).strftime(self.datefmt)) for m in range(0, 11)) 
+    
+        def queryset(self, request, queryset):
+            if self.value() is None:
+                return queryset
+            datemonth = datetime.datetime.strptime(self.value(), self.datefmt)
+            return queryset.filter(Q(starttime__gte=datemonth) & Q(starttime__lt=self.monthdelta(datemonth, 1)))
+        
     list_filter = (
             ('flags', BitFieldListFilter),
+            PoolroomLocation,
+            MatchTimeFilter
             )
+    save_as = True
 
 class PoolroomAdmin(ModelWithFlagsAdmin):
     list_filter = (

@@ -312,6 +312,7 @@ class Match(models.Model):
     flags = BitField(flags=(
             ('groupon', u'支持团购'),
             ('coupon', u'支持用券'),
+            ('redbull', u'红牛宝贝比赛'),
         ), verbose_name='特色属性')
     status = ChoiceTypeField(max_length=10, choices=(
             ('reviewing', u'等待审核'),
