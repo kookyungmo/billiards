@@ -184,7 +184,7 @@ def enroll(request, matchid):
         msg = {'rt': 1, 'msg': 'enrolled'}
     return HttpResponse(json.dumps(msg), content_type="application/json")
 
-def redbull_2014_06(request):
+def redbull_2014_05(request):
     if 'f' in request.GET and request.GET.get('f') == 'json':
         redbull_matches = Match.objects.filter(Q(flags=Match.flags.redbull))
         json_serializer = serializers.get_serializer("json")()
