@@ -14,6 +14,7 @@ var ACTIVITY_URL = "{% url activity_detail '000' %}";
 var ENROLL_URL = "{% url match_enroll '000' %}";
 var POOLROOM_URL = "{% url poolroom_detail '000' %}";
 var MATCH_URL = "{% url match_map 'map' %}";
+var PKMAP_URL = "{% url pk_map_type_id 'mtype' '000' %}";
 
 var defaultZoom = 12;
 
@@ -30,15 +31,13 @@ summary['{{ k }}'] = {{ v }};
 {% endfor %}
 
 pkMatches.buildCalendar(starttime, endtime, bonusobj, summary, {{ intervals }});
-matches = eval(jsonescape('{{ matches|matchtojsonwithenroll:user|safe }}'));
-if (matches.length == 0) {
-	createInfo("你选择的日期没有比赛和活动被收录，请选择别的日期。");
-} else
-	pkMatches.layMatches(matches);
 pkLocation.consume(
 	pkMap.markCurrentLocation,
 	pkMatches.updateDistance
 );
+
+activetimestamp = $("dl dd.active a").attr('timestamp');
+pkMatches.loadMatches(activetimestamp);
 
 setUpViewSwitch();
 

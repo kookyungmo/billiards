@@ -14,10 +14,12 @@
 			{% block maptitle %}
 			{% endblock %}
 		</div>
+		{% block switcher %}
 		<div id="viewSwitch" class="medium-4 columns show-for-medium-up">
 			<a href="javascript:void(0);" class="active list"><i class="fa fa-th-large"></i> 列表</a> 
 			<a href="javascript:void(0);" class="map"><i class="fa fa-globe"></i> 地图</a>
 		</div>
+		{% endblock %}
 		{% block mapfilter %}
 		{% endblock %}
 	</div>
@@ -26,7 +28,7 @@
 	</div>
 	<div>
 		<div id="items"></div>
-		<div id="mapContainer" class="hidden show-medium-only-up medium-9 columns"><div id="pkMap"></div></div>
+		<div id="mapContainer" class="{% block visible %}hidden{% endblock %} show-medium-only-up medium-9 columns"><div id="pkMap"></div></div>
 	</div>
 </div>
 <div id="mapModal" class="reveal-modal full" data-reveal>

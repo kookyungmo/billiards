@@ -71,7 +71,7 @@ def getNearbyPoolrooms(lat, lng, distance, where = None):
     '''
     haversine = '6371 * acos( cos( radians(%s) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(%s) ) + sin( radians(%s) )\
          * sin( radians( lat ) ) )' %(googles[0], googles[1], googles[0])
-    where = "%s %s" %(1 if where is None else where, ("having distance <= %s" %(distance) if distance is not None else ""))
+    where = "%s %s" %("exist=1" if where is None else where, ("having distance <= %s" %(distance) if distance is not None else ""))
     return Poolroom.objects.extra(select={'distance' : haversine}).extra(order_by=['distance'])\
         .extra(where=[where])
     
@@ -113,7 +113,7 @@ def getCoupons(poolroomid):
     return Coupon.objects.filter(getCouponCriteria() & Q(poolroom__id=poolroomid)).order_by('-discount')
     
 def getPoolroom(poolroomid):
-    return get_object_or_404(Poolroom, pk=poolroomid)
+    return get_object_or_404(Poolroom, pk=poolroomid, exist=1)
     
 def detail(request, poolroomid):
     poolroom = getPoolroom(poolroomid)

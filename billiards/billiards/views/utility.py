@@ -38,17 +38,18 @@ def survey_redbull(request):
     return render_to_response(TEMPLATE_ROOT + 'survey_redbull.html',
                               {}, context_instance=RequestContext(request))
     
-def pkmap(request):
-    objType = request.GET.get('type')
-    objId = request.GET.get('id')
+def pkmap(request, mtype = None, tid = None):
+    if mtype == None:
+        mtype = request.GET.get('type')
+        tid = request.GET.get('id')
     try:
         targetObj = None
-        if objType == 'match':
-            targetObj = getMatch(objId)
-        elif objType == 'poolroom':
-            targetObj = getPoolroom(objId)
-        elif objType == 'challenge':
-            targetObj = getChallenge(objId)
+        if mtype == 'match':
+            targetObj = getMatch(tid)
+        elif mtype == 'poolroom':
+            targetObj = getPoolroom(tid)
+        elif mtype == 'challenge':
+            targetObj = getChallenge(tid)
     except Http404:
         pass
     return render_to_response(TEMPLATE_ROOT + 'pkmap.html',

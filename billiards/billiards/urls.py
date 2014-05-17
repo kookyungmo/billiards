@@ -13,6 +13,7 @@ urlpatterns = patterns('billiards.views.match',
 #     url(r'^match$', 'index', name="match"),
     url(r'^match/(?P<view>\w+)/$', 'index', name="match_map"),
     url(r'^activity/(?P<matchid>\d+)/$', 'activity', name="activity_detail"),
+    url(r'^match/redbull/2014/05', 'redbull_2014_05', name='match_redbull_2014_05'),
 )
 
 urlpatterns += patterns('billiards.views.poolroom',
@@ -61,6 +62,7 @@ urlpatterns += patterns('billiards.views.utility',
     url(r'^coupon/(?P<couponid>\d+)$', 'coupon', name='coupontracker'),
     url(r'^wechatshare', 'wechatsharehelp', name='wechat_share_help'),
     url(r'^survey/redbull', 'survey_redbull', name='survey_redbull_2014_04'),
+    url(r'^pkmap/(?P<mtype>\w+)/(?P<tid>\d+)$', 'pkmap', name='pk_map_type_id'),
     url(r'^pkmap$', 'pkmap', name='pk_map'),
 )
 
