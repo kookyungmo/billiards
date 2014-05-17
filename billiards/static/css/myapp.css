@@ -70,12 +70,12 @@ body {
 	background-color: #fcfcfc;
 }
 
-#items.map .item {
+#items.item {
 	border: none;
 }
-#items.map .item h5,
-#items.map .item p,
-#items.map .item div {
+#items .item h5,
+#items .item p,
+#items .item div {
 	font-size: 0.8125rem;
 }
 

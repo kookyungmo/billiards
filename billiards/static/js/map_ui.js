@@ -164,7 +164,6 @@ var PKPoolrooms = function(pkMap) {
 						</div>\
 					{{/equip}}\
 					<div class="musthave">地址: {{address}}</div>\
-					<div class="optional">电话: {{tel}}</div>\
 					<div class="optional">营业时间: {{businessHours}}</div>\
 					{{#coupon}}\
 						<div><h5><b>优惠信息</b></h5></div>\
@@ -172,7 +171,26 @@ var PKPoolrooms = function(pkMap) {
 							<div><h5><a target="_blank" href="{{url}}">{{title}}</a></h5></div>\
 						{{/coupons}}\
 					{{/coupon}}\
-					<div class="musthave right">距离我: <code>{{distance}}</code></div>\
+				</div>\
+			</div>\
+			<hr>\
+			<div class="row collapse">\
+				{{#isSmall}}\
+					<div class="small-2 medium-6 columns"><h3><a class="fi-telephone" href="tel://{{tel}}"></a><h3></div>\
+				{{/isSmall}}\
+				{{^isSmall}}\
+					<div class="small-3 medium-6 columns"><a class="fi-telephone" href="tel://{{tel}}">{{tel}}</a></div>\
+				{{/isSmall}}\
+				<div class="small-4 show-for-small-only columns">\
+					<span><a href="{{map_url}}" target="_blank">地图中查看</a></span>\
+				</div>\
+				<div class="small-6 medium-6 columns">\
+					{{#distance}}\
+						<span class="optional" point="{{point}}">距离我: <code>{{distance}}</code></span>\
+					{{/distance}}\
+					{{^distance}}\
+						<span class="optional hide" point="{{point}}">距离我: <code>{{distance}}</code></span>\
+					{{/distance}}\
 				</div>\
 			</div>\
 		</div>\
@@ -279,6 +297,7 @@ var PKPoolrooms = function(pkMap) {
 				"url": POOLROOM_URL.replace(/000/g, poolroom.pk),
 				"businessHours": poolroom.fields.businesshours,
 				"poolroom_id": poolroom.pk,
+				"map_url": PKMAP_URL.replace(/000/g, poolroom.pk).replace(/mtype/g, "poolroom"),
 			},
 			images = poolroom.fields.images ? Object.getOwnPropertyNames(poolroom.fields.images) : [],
 			image,
@@ -318,6 +337,9 @@ var PKPoolrooms = function(pkMap) {
 				view["coupon"]["coupons"].push({"url": COUPON_URL.replace(/000/g, coupon.pk), 
 					"title": coupon.fields.title});
 			}
+		}
+		if (isSmall()) {
+			view["isSmall"] = true;
 		}
 		return view;
 	}
@@ -385,44 +407,58 @@ var PKChallenges = function(pkMap) {
 	
 	var ChallengeTemplate = '\
 		<div class="item panel medium-pull-1 medium-offset-1 medium-3 columns">\
-			<div class="optional">\
-				{{#image}}\
-					<img src="{{path}}" >\
-				{{/image}}\
-				{{^image}}\
-					<img data-caption="MapShot" src="http://api.map.baidu.com/staticimage?center={{point}}&width=104&height=62&zoom=16&scale=2&markers={{point}}&markerStyles=-1">\
-				{{/image}}\
+			<div class="row collapse">\
+				<div class="small-5 medium-12 columns optional">\
+					{{#image}}\
+						<img src="{{path}}" >\
+					{{/image}}\
+					{{^image}}\
+						<img data-caption="MapShot" src="http://api.map.baidu.com/staticimage?center={{point}}&width=104&height=62&zoom=16&scale=2&markers={{point}}&markerStyles=-1">\
+					{{/image}}\
+					{{#equip}}\
+						<div class="optional icon_list">\
+							<span class="ico_none">球房设施: </span>\
+							{{#wifi}}\
+								<span class="ico_wifi" title="公共区域WIFI"></span>\
+							{{/wifi}}\
+							{{#freeWifi}}\
+								<span class="ico_free_wifi" title="公共区域WIFI"></span>\
+							{{/freeWifi}}\
+							{{#parking}}\
+								<span class="ico_parking" title="停车场"></span>\
+							{{/parking}}\
+							{{#cafe}}\
+								<span class="ico_restaurant" title="餐饮服务"></span>\
+							{{/cafe}}\
+							{{#subway}}\
+								<span class="ico_bus" title="地铁周边"></span>\
+							{{/subway}}\
+						</div>\
+					{{/equip}}\
+				</div>\
+				<div class="small-7 medium-12 columns">\
+					<p class="musthave">开始时间: <code>{{starttime}}</code></p>\
+					<p class="optional">结束时间: <code>{{endtime}}</code></p>\
+					<p class="musthave">一名<code>{{level}}</code> <code>{{nickname}}</code>发起在<a target="_blank" href="{{poolroomurl}}">{{name}}</a>的{{type}}</p>\
+					<p class="musthave">{{contactway}}: <code>{{contact}}</code></p>\
+					<p class="optional">球台类型: <code>{{tabletype}}</code></p>\
+				</div>\
 			</div>\
-			<div>\
-				<p class="musthave" point="{{point}}">距离我: <code>{{distance}}</code></p>\
-				<a class="show-for-small-only" href="javascript:void(0);" onclick="javascript:openMap(\'一名{{level}}{{nickname}}发起在{{name}}的{{type}}\', \'challenge\', {{challenge_id}});">地图中查看...</a></p>\
-				{{#equip}}\
-					<div class="optional icon_list">\
-						<span class="ico_none">球房设施: </span>\
-						{{#wifi}}\
-							<span class="ico_wifi" title="公共区域WIFI"></span>\
-						{{/wifi}}\
-						{{#freeWifi}}\
-							<span class="ico_free_wifi" title="公共区域WIFI"></span>\
-						{{/freeWifi}}\
-						{{#parking}}\
-							<span class="ico_parking" title="停车场"></span>\
-						{{/parking}}\
-						{{#cafe}}\
-							<span class="ico_restaurant" title="餐饮服务"></span>\
-						{{/cafe}}\
-						{{#subway}}\
-							<span class="ico_bus" title="地铁周边"></span>\
-						{{/subway}}\
-					</div>\
-				{{/equip}}\
-				<p class="musthave">开始时间: <code>{{starttime}}</code></p>\
-				<p class="optional">结束时间: <code>{{endtime}}</code></p>\
-				<p class="musthave">一名<code>{{level}}</code> <code>{{nickname}}</code>发起在<a target="_blank" href="{{poolroomurl}}">{{name}}</a>的{{type}}</p>\
-				<p class="musthave">{{contactway}}: <code>{{contact}}</code></p>\
-				<p class="optional">球台类型: <code>{{tabletype}}</code></p>\
+			<hr class="optional">\
+			<div class="row collapse">\
+				<div class="small-4 small-offset-2 show-for-small-only columns">\
+					<span><a href="{{map_url}}" target="_blank">地图中查看</a></span>\
+				</div>\
+				<div class="small-6 medium-12 columns">\
+					{{#distance}}\
+						<span class="optional" point="{{point}}">距离我: <code>{{distance}}</code></span>\
+					{{/distance}}\
+					{{^distance}}\
+						<span class="optional hide" point="{{point}}">距离我: <code>{{distance}}</code></span>\
+					{{/distance}}\
+				</div>\
 			</div>\
-			<div class="show-for-touch show-for-small-only">\
+			<div class="row collapse show-for-touch show-for-small-only">\
 				<a href="javascript:weixinSendAppMessage(\'{{nickname}}在我为台球狂发起的{{type}}\', \'我为台球狂，一个专注于台球的网站\', \'{{challenge_datail_url}}\', \'{{logo_url}}\');" class="button small secondary fi-share">  发送给好友</a>\
 				<a href="javascript:weixinShareTimeline(\'{{nickname}}在我为台球狂发起的{{type}}\', \'我为台球狂，一个专注于台球的网站\', \'{{challenge_datail_url}}\', \'{{logo_url}}\');" class="button small secondary fi-social-picasa">  分享到朋友圈</a>\
 			</div>\
@@ -499,18 +535,19 @@ var PKChallenges = function(pkMap) {
 	this.updateDistance = function(myPos) {
 		if (myPos) {
 			myPosition = myPos;
-			$(".item p[point]").each(function() {
+			$(".item span[point]").each(function() {
 				var pointstr = $(this).attr("point").split(",");
 				var point = new BMap.Point(pointstr[0], pointstr[1]);
 				$(this).children("code").html(formatDistance(distance(myPosition, point)));
+				$(this).removeClass("hide");
 			});
 		} else {
-			$(".item p[point] code").each(function() {
+			$(".item span[point] code").each(function() {
 				$(this).html("无法获取你的位置");
 			})
 		}
 		if (infoWindow && infoWindow.isOpen()) {
-			var distanceObj = $(infoWindow.getContent()).find("p[point]");
+			var distanceObj = $(infoWindow.getContent()).find("span[point]");
 			var pointstr = distanceObj.attr("point").split(",");
 			var point = new BMap.Point(pointstr[0], pointstr[1]);
 			if (myPosition)
@@ -553,7 +590,33 @@ var PKChallenges = function(pkMap) {
 				"challenge_datail_url": CHALLENGE_DETAIL_URL.replace(/000/g, challenge.pk),
 				"logo_url": LOGO_URL,
 				"challenge_id": challenge.pk,
-			};
+				"map_url": PKMAP_URL.replace(/000/g, challenge.pk).replace(/mtype/g, "challenge"),
+			},
+			images = Object.getOwnPropertyNames(challenge.fields.poolroom.images),
+			image,
+			equip = {},
+			i;
+		if (images.length !== 0) {
+			view["image"] = {};
+			for (i in images) {
+				image = challenge.fields.poolroom.images[images[i]]
+				if (image.iscover) {
+					view["image"]["path"] = MEDIA_URL + getThumbnail(image.imagepath, '200');
+				}
+			}
+		}
+		challenge.fields.poolroom.flags.wifi && (equip["wifi"] = true);
+		challenge.fields.poolroom.flags.freeWifi && (equip["freeWifi"] = true);
+		(challenge.fields.poolroom.flags.parking || challenge.fields.poolroom.flags.parking_free) && (equip["parking"] = true);
+		challenge.fields.poolroom.flags.cafeteria && (equip["cafe"] = true);
+		challenge.fields.poolroom.flags.subway && (equip["subway"] = true);
+		if (equip.hasOwnProperty()) {
+			view["equip"] = equip;
+		}
+		
+		if (myPosition)
+			view["distance"] = formatDistance(distance(myPosition, point));
+
 		var protocols = [["tel://", "电话"], ["qq://", "QQ"], ["wechat://", "微信"]];
 		for (idx in protocols) {
 			protocol = protocols[idx];
@@ -580,29 +643,7 @@ var PKChallenges = function(pkMap) {
 	}
 	
 	function renderChallenge(challenge, point) {
-		var view = challengeToView(challenge, point),
-			images = Object.getOwnPropertyNames(challenge.fields.poolroom.images),
-			image,
-			equip = {},
-			i;
-		if (images.length !== 0) {
-			view["image"] = {};
-			for (i in images) {
-				image = challenge.fields.poolroom.images[images[i]]
-				if (image.iscover) {
-					view["image"]["path"] = MEDIA_URL + getThumbnail(image.imagepath, '200');
-				}
-			}
-		}
-		view["distance"] = myPosition == null ? "正在获取你的位置" : formatDistance(distance(myPosition, point));
-		challenge.fields.poolroom.flags.wifi && (equip["wifi"] = true);
-		challenge.fields.poolroom.flags.freeWifi && (equip["freeWifi"] = true);
-		(challenge.fields.poolroom.flags.parking || challenge.fields.poolroom.flags.parking_free) && (equip["parking"] = true);
-		challenge.fields.poolroom.flags.cafeteria && (equip["cafe"] = true);
-		challenge.fields.poolroom.flags.subway && (equip["subway"] = true);
-		if (equip.hasOwnProperty()) {
-			view["equip"] = equip;
-		}
+		var view = challengeToView(challenge, point);
 		
 		if (challenge.fields.source == 1) {
 			//TODO add challege apply
@@ -658,6 +699,7 @@ function openInfoWindow(marker, innerHtml, message) {
 		infoOptions["height"] = 200;
 		infoOptions["width"] = 100;
 	}
+	marker.getMap().setCenter(marker.getPosition());
 	var infoWindow = new BMap.InfoWindow(innerHtml, infoOptions);
 	infoWindow.enableAutoPan();
 	marker.openInfoWindow(infoWindow);
@@ -692,12 +734,6 @@ var PKMatches = function(pkMap) {
 					{{/image}}\
 				</div>\
 				<div class="small-7 medium-12 columns">\
-					{{#distance}}\
-						<p class="optional" point="{{point}}">距离我: <code>{{distance}}</code></p>\
-					{{/distance}}\
-					{{^distance}}\
-						<p class="optional hide" point="{{point}}">距离我: <code>{{distance}}</code></p>\
-					{{/distance}}\
 					<p class="musthave"><a href="{{match_detail_url}}">{{title}}</a></p>\
 					<p class="musthave">{{type}}球馆: <a href="{{poolroom_url}}">{{poolroom_name}}</a>\
 					<p class="{{addressAttr}}">球馆地址: {{poolroom_address}}\
@@ -740,11 +776,18 @@ var PKMatches = function(pkMap) {
 					{{/enroll_focal}}\
 				</div>\
 			</div>\
-			<div class="row collapse show-for-small-only">\
-				<div class="small-3 small-offset-2 columns">\
+			<div class="row collapse">\
+				<div class="small-3 small-offset-2 show-for-small-only columns">\
 					<span><a href="{{map_url}}" target="_blank">地图中查看</a></span>\
 				</div>\
-				<div class="small-6 columns"></div>\
+				<div class="small-6 medium-12 columns">\
+					{{#distance}}\
+						<span class="optional" point="{{point}}">距离我: <code>{{distance}}</code></span>\
+					{{/distance}}\
+					{{^distance}}\
+						<span class="optional hide" point="{{point}}">距离我: <code>{{distance}}</code></span>\
+					{{/distance}}\
+				</div>\
 			</div>\
 		</div>\
 	';
@@ -941,19 +984,19 @@ var PKMatches = function(pkMap) {
 	this.updateDistance = function(myPos) {
 		if (myPos) {
 			myPosition = myPos;
-			$(".item p[point]").each(function() {
+			$(".item span[point]").each(function() {
 				var pointstr = $(this).attr("point").split(",");
 				var point = new BMap.Point(pointstr[0], pointstr[1]);
 				$(this).children("code").html(formatDistance(distance(myPosition, point)));
 				$(this).removeClass("hide");
 			});
 		} else {
-			$(".item p[point] code").each(function() {
+			$(".item span[point] code").each(function() {
 				$(this).html("无法获取你的位置");
 			})
 		}
 		if (infoWindow && infoWindow.isOpen()) {
-			var distanceObj = $(infoWindow.getContent()).find("p[point]");
+			var distanceObj = $(infoWindow.getContent()).find("span[point]");
 			if (distanceObj.length) {
 				var pointstr = distanceObj.attr("point").split(",");
 				var point = new BMap.Point(pointstr[0], pointstr[1]);

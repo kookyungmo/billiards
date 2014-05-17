@@ -67,6 +67,7 @@ class MatchAdmin(ModelWithFlagsAdmin):
             MatchTimeFilter
             )
     save_as = True
+    ordering = ('-starttime', '-id')
 
 class PoolroomAdmin(ModelWithFlagsAdmin):
     list_filter = (
