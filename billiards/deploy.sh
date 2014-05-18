@@ -41,6 +41,7 @@ main(){
 	mv django-bitfield/bitfield .
 	rm -rf django-bitfield/
 	cp -f static/images/favicon.ico .
+	cp -f billiards/settings.py.template billiards/settings.py
 	pecho "Updating release version..."
         DATE=`date '+%Y%m%d'`
 	DATE2=`date '+%Y.%m.%d'`
