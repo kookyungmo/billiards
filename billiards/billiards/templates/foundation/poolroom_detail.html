@@ -160,6 +160,7 @@
 {% block script %}
 	<script>
 	var POOLROOM_URL = "{% url 'poolroom_detail' '000' %}";
+	var PKMAP_URL = "{% url 'pk_map_type_id' 'mtype' '000' %}";
 	var pkMap = new PKMap("pkMap", "北京", 16);
 	var pkLocation = new PKLocation();
 	var pkPoolrooms = new PKPoolrooms(pkMap);

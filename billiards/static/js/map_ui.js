@@ -771,7 +771,7 @@ var PKMatches = function(pkMap) {
 					{{/otherprize}}\
 					</code></p>\
 					{{/hasPrize}}\
-					<p class="optional">报名费: <code>{{enroll_fee}}</code></p>\
+					<p class="optional {{enroolFeeAttr}}">报名费: <code>{{enroll_fee}}</code></p>\
 					{{#enroll_focal}}\
 					{{/enroll_focal}}\
 				</div>\
@@ -854,8 +854,9 @@ var PKMatches = function(pkMap) {
 	
 	var MATCH_MARKER_URL = STATIC_URL + "images/marker.png";
 	var PrizeAttr = "";
-	var AddressAttr = "hidden";
-	var DefaultMapInsideVisible = "hidden";
+	var AddressAttr = "hide";
+	var EnroolFeeAttr = "";
+	var DefaultMapInsideVisible = "hide";
 	
 	this.buildCalendar = function(starttime, endtime, bonusobj, summary, intervals) {
 		var bonussummary = {};
@@ -912,6 +913,10 @@ var PKMatches = function(pkMap) {
 		MATCH_MARKER_URL = "http://bcs.duapp.com/billiardsalbum/2014/05/redbull-billiards-256.gif";
 		PrizeAttr = "optional";
 		AddressAttr = "musthave";
+		if (isSmall()) {
+			EnroolFeeAttr = "hide";
+			AddressAttr = "hide";
+		}
 		createInfo("正在加载红牛比赛及球房...");
 		$.ajax({
 			url : REDBULL_URL,
@@ -941,7 +946,8 @@ var PKMatches = function(pkMap) {
 						data[idx].fields.poolroom.images = newimages;
 					}
 					layMatches(data);
-					switchToMap();
+					if (!isSmall())
+						switchToMap();
 				}
 			},
 			error: function (xhr, ajaxOptions, thrownError) {
@@ -1083,6 +1089,7 @@ var PKMatches = function(pkMap) {
 				"enroll_focal": match.fields.enrollfocal,
 				"prizeAttr": PrizeAttr,
 				"addressAttr": AddressAttr,
+				"enroolFeeAttr": EnroolFeeAttr,
 				"map_url": PKMAP_URL.replace(/000/g, match.pk).replace(/mtype/g, "match"),
 				"insideAttr": DefaultMapInsideVisible,
 			},

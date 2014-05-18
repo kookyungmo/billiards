@@ -67,6 +67,7 @@
 	        <li {% if request.path == mapurl %} class="active" {% endif %}><a href="{{ mapurl }}">赛事活动</a></li>
 	        <li {% if request.path == nearby %} class="active" {% endif %}><a href="{{ nearby }}">附近球房</a></li>
 	        <li {% if request.path == challenge %} class="active" {% endif %}><a href="{{ challenge }}">约球公告</a></li>
+		<li {% if request.path == redbullurl %} class="active" {% endif %}><a href="{{ redbullurl }}">能量黑八，一撞到底</a></li>
 	        {% if user.is_authenticated and user.is_staff %}
 			<li><a href="{% url 'wechat_activity_report' %}">微信用户互动统计</a></li>
 			{% endif %}
@@ -109,6 +110,7 @@
 	    <li><a href="{{ mapurl }}">赛事活动</a></li>
 	    <li><a href="{{ nearby }}">附近球房</a></li>
 	    <li><a href="{{ challenge }}">约球公告</a></li>
+	    <li><a href="{{ redbullurl }}">能量黑八，一撞到底</a></li>
 	    {% if user.is_authenticated %}
 	    {% if poolroomuser %}
 	    <li><label>俱乐部会员服务</label></li>
