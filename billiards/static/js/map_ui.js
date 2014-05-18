@@ -911,7 +911,7 @@ var PKMatches = function(pkMap) {
 	};
 	
 	this.loadRedbullMatches = function() {
-		MATCH_MARKER_URL = "http://bcs.duapp.com/billiardsalbum/2014/05/redbull-billiards-256.gif";
+		MATCH_MARKER_URL = "http://bcs.duapp.com/billiardsalbum/2014/05/redbull-marker-256.gif";
 		PrizeAttr = "optional";
 		AddressAttr = "musthave";
 		if (isSmall()) {

@@ -116,3 +116,12 @@ body {
 hr {
 	margin-top: 0;
 }
+.gloden-star {
+color: rgba(245, 159, 26, 0.8);
+text-shadow: 1px 4px 6px #FFF, 0 0 0 #000, 1px 4px 6px #FFF;
+}
+
+.hollow-star {
+text-shadow: 0 1px 3px rgba(245, 159, 26, 0.8);
+color: #FFF;
+}
