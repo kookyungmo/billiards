@@ -7,6 +7,7 @@
 <script language="javascript">var STATIC_URL = "{{ STATIC_URL|escapejs }}";</script>
 <script src="{% static "js/map_ui.js" %}?{{buildid}}"></script>
 <script src="{% static "js/mustache.js" %}?0.8.1"></script>
+<link href="{% static "foundation-icons/foundation-icons.css" %}" rel="stylesheet">
 {% endblock %}
 {% load extras %}
 {% load url from future %} 
@@ -71,7 +72,11 @@
 			<hr>
 			<h5 class="subheader"><strong>综合评分</strong></h5>
 			<h6 class="subheader">
-				<p>{{ poolroom.rating|default:"暂无" }}</p>
+				{% for i in 5|get_range %}
+					<i class="fi-star {% if i|add:1 <= poolroom.rating %}gloden-star {% else %} hollow-star {% endif %}"></i>
+				{% empty %}
+					<p>暂无</p>
+				{% endfor %}
 			</h6>
 			<hr>
 			<h5 class="subheader"><strong> 球房介绍</strong></h5>
