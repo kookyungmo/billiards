@@ -186,7 +186,7 @@ def enroll(request, matchid):
 
 def redbull_2014_05(request):
     if 'f' in request.GET and request.GET.get('f') == 'json':
-        redbull_matches = Match.objects.filter(Q(flags=Match.flags.redbull))
+        redbull_matches = Match.objects.filter(Q(flags=Match.flags.redbull)).order_by('starttime')
         json_serializer = serializers.get_serializer("json")()
         stream = StringIO()
         json_serializer.serialize(redbull_matches, fields=match_fields, ensure_ascii=False, stream=stream, indent=2, use_natural_keys=True)
