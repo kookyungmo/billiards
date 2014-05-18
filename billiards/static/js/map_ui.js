@@ -857,6 +857,7 @@ var PKMatches = function(pkMap) {
 	var AddressAttr = "hide";
 	var EnroolFeeAttr = "";
 	var DefaultMapInsideVisible = "hide";
+	var ITEM_PARENT_ELEMENT = "#items";
 	
 	this.buildCalendar = function(starttime, endtime, bonusobj, summary, intervals) {
 		var bonussummary = {};
@@ -916,6 +917,21 @@ var PKMatches = function(pkMap) {
 		if (isSmall()) {
 			EnroolFeeAttr = "hide";
 			AddressAttr = "hide";
+		} else {
+			ITEM_PARENT_ELEMENT = '.cbp_tmtimeline';
+			jQuery('<ul/>', {
+			    class: 'cbp_tmtimeline'
+			}).appendTo('#items');
+			MatchTemplate = '\
+				<li>\
+					<time class="cbp_tmtime" datetime="2013-04-10"><span>{{matchdate}}</span></time>\
+					<div class="cbp_tmicon"></div>\
+					<div class="cbp_tmlabel">\
+						<p class="musthave"><a href="{{match_detail_url}}">{{title}}</a></p>\
+						<p class="musthave">{{type}}球馆: <a href="{{poolroom_url}}">{{poolroom_name}}</a>\
+						<p class="musthave">开始时间: <code>{{matchtime}}</code></p>\
+					</div>\
+				</li>';
 		}
 		createInfo("正在加载红牛比赛及球房...");
 		$.ajax({
@@ -1092,6 +1108,8 @@ var PKMatches = function(pkMap) {
 				"enroolFeeAttr": EnroolFeeAttr,
 				"map_url": PKMAP_URL.replace(/000/g, match.pk).replace(/mtype/g, "match"),
 				"insideAttr": DefaultMapInsideVisible,
+				"matchdate": getFormattedTime(match.fields.starttime),
+				"matchtime": getFormattedTime2(match.fields.starttime),
 			},
 			images = Object.getOwnPropertyNames(match.fields.poolroom.images),
 			image,
@@ -1139,8 +1157,7 @@ var PKMatches = function(pkMap) {
 	
 	function renderMatch(match, point) {
 		var view = matchToView(match, point);
-
-		return $(Mustache.render(MatchTemplate, view)).appendTo('#items');
+		return $(Mustache.render(MatchTemplate, view)).appendTo(ITEM_PARENT_ELEMENT);
 	}
 }
 

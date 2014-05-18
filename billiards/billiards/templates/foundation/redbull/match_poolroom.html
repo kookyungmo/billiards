@@ -1,4 +1,8 @@
 {% extends "foundation/map_base.html" %}
+{% load staticfiles %}
+{% block mapheader %}
+<link rel="stylesheet" type="text/css" href="{% static "css/component.css" %}" />
+{% endblock %}
 {% block maptitle %}
 <div id="redbull" class="large-6 columns"><img src="http://bcs.duapp.com/billiardsalbum/2014/05/redbull-billiards-400.gif"></div>	
 {% endblock %}
