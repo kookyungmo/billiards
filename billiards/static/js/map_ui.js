@@ -725,7 +725,7 @@ var PKMatches = function(pkMap) {
 	var MatchTemplate = '\
 		<div class="item panel medium-pull-1 medium-offset-1 medium-3 columns">\
 			<div class="row collapse">\
-				<div class="optional small-5 medium-12 columns">\
+				<div class="optional small-5 medium-12 show-for-small columns">\
 					{{#image}}\
 						<img src="{{path}}" >\
 					{{/image}}\
