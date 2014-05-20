@@ -53,21 +53,21 @@ class BJUniversityAssociationWechat(PKWechat):
                 if count > 0:
                     acts = acts[:MAX_NEWSITEM]
                     reply = self.getActsReply(acts)
-                    recordUserActivity(message.source, 'text', 'activity', {'content': message.content}, message.time, 
+                    recordUserActivity(message, 'text', 'activity', {'content': message.content}, 
                                        {'count': len(acts), 'activity': True}, self.target)
                 else:
-                    recordUserActivity(message.source, 'text', 'noactivity', {'content': message.content}, message.time, 
+                    recordUserActivity(message, 'text', 'noactivity', {'content': message.content},
                                        None, self.target)
                     reply = u'最近7天内没有被收录的%s活动' %(self.getGroupName())
             elif message.content == u"俱乐部" or message.content == u"球房":
                 poolrooms = Poolroom.objects.filter(poolroomuser__group=self.getOrgnizerId()).order_by('?')[:10]
                 if len(poolrooms) > 0:
                     reply = self.getNewsPoolroomsReply(poolrooms)
-                    recordUserActivity(message.source, 'text', 'poolroom', {'content': message.content}, message.time, 
+                    recordUserActivity(message, 'text', 'poolroom', {'content': message.content},
                                    {'count': len(poolrooms)}, self.target)
                 else:
                     reply = u'暂时没有收录的%s合作球房' %(self.getGroupName())
-                    recordUserActivity(message.source, 'text', 'nopoolroom', {'content': message.content}, message.time, 
+                    recordUserActivity(message, 'text', 'nopoolroom', {'content': message.content},
                                    None, self.target)
             elif message.content in HELP_KEYWORDS:
                 reply = self.getHelpMesg()
@@ -140,7 +140,7 @@ class BJDaBengYingWechat(BJUniversityAssociationWechat):
                     ids.append(str(poolroom.id)) 
                     distance.append(str(poolroom.distance))
                 rt = [','.join(fieldarray) for fieldarray in [name, ids, distance]]
-                recordUserActivity(message.source, 'location', rt[0], {'lat': lat, 'lng': lng, 'scale': message.scale, 'label': ['Label']}, message.time, 
+                recordUserActivity(message, 'location', rt[0], {'lat': lat, 'lng': lng, 'scale': message.scale, 'label': ['Label']}, 
                                    {'id': rt[1], 'name': rt[0], 'distance': rt[2]}, self.target)
             else:
                 nearbyChallenges = nearbyChallenges[:MAX_NEWSITEM - len(reply) - len(challengeReply)]
