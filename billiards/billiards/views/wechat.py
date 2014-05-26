@@ -25,7 +25,7 @@ from billiards import settings
 from billiards.bcms import mail
 from billiards.location_convertor import gcj2bd
 from billiards.models import Coupon, getCouponCriteria, Poolroom, PoolroomImage, \
-    WechatActivity, DisplayNameJsonSerializer, Event
+    WechatActivity, DisplayNameJsonSerializer, Event, Membership, Group
 from billiards.settings import TEMPLATE_ROOT, TIME_ZONE, SITE_LOGO_URL
 from billiards.views.challenge import getNearbyChallenges
 from billiards.views.match import getMatchByRequest
@@ -465,6 +465,24 @@ class PKWechat(BaseRoBot):
             recordUserActivity(message, source, 'nomatch', {'content': content}, 
                            None, self.target)
             reply.append((data, data, SITE_LOGO_URL, ''))
+        return reply
+    
+    def applyMember(self, reply, message, targetgroup):
+        group = Group.objects.get(Q(id=targetgroup))
+        try:
+            member = Membership.objects.get(Q(wechatid=message.source) & Q(targetid=targetgroup))
+            reply = (u"你已经是'%s'会员啦！" %(group.name), u'我的会员号: %s' %(member.memberid), '', reverse('membership', args=(message.source, targetgroup,)))
+        except Membership.DoesNotExist:
+            reply = (u"欢迎申请'%s'会员卡" %(group.name), u"点击我只需一步就成为'%s'会员" %(group.name), '', reverse('membership_apply', args=(message.source, targetgroup,)))
+        return reply
+    
+    def queryMember(self, reply, message, targetgroup):
+        group = Group.objects.get(Q(id=targetgroup))
+        try:
+            member = Membership.objects.get(Q(wechatid=message.source) & Q(targetid=targetgroup))
+            reply = (u"%s, 欢迎你成为'%s'会员" %(member.name, group.name), u'我的会员号: %s' %(member.memberid), '', reverse('membership', args=(message.source, targetgroup,)))
+        except Membership.DoesNotExist:
+            reply = (u"你还不是'%s'会员" %(group.name), u"点击我只需一步就成为'%s'会员" %(group.name), '', reverse('membership_apply', args=(message.source, targetgroup,)))
         return reply
     
     def text(self):

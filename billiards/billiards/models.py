@@ -7,7 +7,7 @@ Created on 2013年10月21日
 '''
 
 from django.db import models
-from django.utils.timezone import localtime, pytz
+from django.utils.timezone import localtime, pytz, utc
 from bitfield import BitField
 from django.utils.encoding import force_unicode
 from django.contrib.auth.models import User
@@ -26,6 +26,7 @@ from django.db.models.fields import CharField
 from billiards import settings
 from billiards.id import generator
 from billiards.citydistrict import CITY_DISTRICT
+import string
 
 def toDict(bitfield):
     flag_dict = {}
@@ -258,6 +259,7 @@ class Group(models.Model):
             (0, u'停用'),
             (1, u'正常'),
         ), default=1,)
+    cardimg = models.CharField(max_length=100, verbose_name='会员卡图片')
 
     class Meta:
         db_table = 'fans_group'
@@ -290,7 +292,7 @@ class DisplayNameJsonSerializer(JsonSerializer):
             self._current[field.name] = field.value_to_string(obj) 
             
 def is_expired(atime):
-    if datetime.datetime.utcnow().replace(tzinfo=pytz.timezone(TIME_ZONE)) - atime.replace(tzinfo=pytz.timezone(TIME_ZONE)) > datetime.timedelta(seconds = 5):
+    if datetime.datetime.utcnow().replace(tzinfo=utc) - atime.replace(tzinfo=pytz.timezone(TIME_ZONE)) > datetime.timedelta(seconds = 5):
         return True
     return False
 
@@ -399,9 +401,9 @@ class Profile(ProfileObject):
     avatar = models.CharField(max_length=250, null=True, default='', verbose_name="头像") # address of the user logo
     site_name = models.CharField(max_length=20, null=True, default='', verbose_name="来源") # site name 
     gender = models.CharField(max_length=1, default='m', null=True, verbose_name="性别")
-    access_token = models.CharField(max_length=64, default='', null=True)
+    access_token = models.CharField(max_length=512, default='', null=True)
     expire_time = models.DateTimeField(null=True)
-    refresh_token = models.CharField(max_length=64, default='', null=True)
+    refresh_token = models.CharField(max_length=512, default='', null=True)
     cellphone = models.CharField(max_length=11, null=True, blank=True, verbose_name="移动电话")
     
 class MatchEnroll(models.Model):
@@ -664,7 +666,7 @@ class EventCode(models.Model):
     poolroom = models.ForeignKey(Poolroom, verbose_name='台球厅')
     event = models.ForeignKey(Event, verbose_name='推广活动')
     userid = models.CharField(max_length=30, verbose_name='用户id')
-    createdtime = models.DateTimeField(verbose_name='创建时间', default=datetime.datetime.now())
+    createdtime = models.DateTimeField(verbose_name='创建时间', default=datetime.datetime.utcnow().replace(tzinfo=utc))
     chargecode = models.CharField(max_length=10, verbose_name='消费唯一码', default=generator())
     usedtime = models.DateTimeField(verbose_name='创建时间', blank=True, null=True)
     used = models.BooleanField(verbose_name='使用没有', default=False)
@@ -673,3 +675,26 @@ class EventCode(models.Model):
         db_table = 'eventcode'
         verbose_name = '推广活动消费码'
         verbose_name_plural = '推广活动消费码'
+
+class Membership(models.Model):
+    id = models.AutoField(primary_key=True)
+    userid = models.IntegerField(default=0, verbose_name='站类用户')
+    wechatid = models.CharField(max_length=30, verbose_name='wechat用户id')
+    targetid = models.ForeignKey(Group, verbose_name='会员组织者(我为台球狂/俱乐部/爱好者群)', default=1, db_column='target_group')
+    joindate = models.DateTimeField(verbose_name='加入时间', default=datetime.datetime.utcnow().replace(tzinfo=utc))
+    memberid = models.CharField(max_length=20, verbose_name='会员唯一码', default=generator(11, string.digits))
+    name = models.CharField(max_length=20, verbose_name='真实姓名')
+    gender = IntegerChoiceTypeField(verbose_name=u'性别', choices=(
+            (1, u'男'),
+            (2, u'女'),
+        ), default=1, jsonUseValue=False)
+    cellphone = models.CharField(max_length=11, verbose_name='手机号码')
+    
+    def __unicode__(self):
+        localtz = pytz.timezone(settings.TIME_ZONE)
+        return u'[%s][%s] %s(%s) -- %s' %(self.targetid.name, self.get_gender_display(), self.name, self.memberid, self.joindate.astimezone(localtz))
+    
+    class Meta:
+        db_table = 'membership'
+        verbose_name = '会员资料'
+        verbose_name_plural = '会员资料'
