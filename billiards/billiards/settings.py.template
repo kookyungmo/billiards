@@ -222,7 +222,7 @@ THUMBNAIL_WIDTH = [100, 200, 300, 400]
 
 WECHAT_ACTIVITY_TRACE = ('text', 'image', 'location', 'link', 'event')
 
-WECHAT_ACTIVITY_NOTIFICATION = ('event')
+WECHAT_ACTIVITY_NOTIFICATION = {'event': {'type': ('subscribe', 'unsubscribe')}}
 
 WECHAT_ACTIVITY_NOTIFICATION_KEYWORDS = ('club_huiju')
 
