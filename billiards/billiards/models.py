@@ -397,9 +397,9 @@ class ProfileObject(object):
     __metaclass__ = ProfileBase
 
 class Profile(ProfileObject):
-    nickname = models.TextField(max_length=200, null=True,default='', verbose_name="昵称") # nickname
+    nickname = models.CharField(max_length=255, null=True,default='', verbose_name="昵称") # nickname
     avatar = models.CharField(max_length=250, null=True, default='', verbose_name="头像") # address of the user logo
-    site_name = models.CharField(max_length=20, null=True, default='', verbose_name="来源") # site name 
+    site_name = models.CharField(max_length=64, null=True, default='', verbose_name="来源") # site name 
     gender = models.CharField(max_length=1, default='m', null=True, verbose_name="性别")
     access_token = models.CharField(max_length=512, default='', null=True)
     expire_time = models.DateTimeField(null=True)
@@ -626,6 +626,13 @@ class WechatActivity(models.Model):
         return u'[%s][%s] 用户\'%s\' %s发送 %s - %s' %(self.get_target_display(), self.eventtype, self.userid, self.receivedtime.astimezone(localtz), 
                                                self.get_eventtype_display(), self.message)
         
+    def get_userid_display(self):
+        try:
+            user = User.objects.get(username=self.userid)
+            return user.nickname.decode('unicode_escape')
+        except User.DoesNotExist:
+            return self.userid
+        
     def get_target_display(self):
         if self.target == 1:
             return u'我为台球狂'
@@ -698,3 +705,14 @@ class Membership(models.Model):
         db_table = 'membership'
         verbose_name = '会员资料'
         verbose_name_plural = '会员资料'
+        
+class WechatCredential(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=30, verbose_name='微信号')
+    appid = models.CharField(max_length=32, verbose_name='AppId')
+    secret = models.CharField(max_length=64, verbose_name='Secret')
+    
+    class Meta:
+        db_table = 'wechat_credential'
+        verbose_name = '微信开发者凭证'
+        verbose_name_plural = '微信开发者凭证'

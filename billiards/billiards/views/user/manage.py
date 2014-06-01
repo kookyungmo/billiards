@@ -11,7 +11,7 @@ from django.db.models.query_utils import Q
 from billiards.settings import TEMPLATE_ROOT
 from django.template.context import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404, redirect
-from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+from django.views.decorators.csrf import ensure_csrf_cookie
 import json
 
 def completeInfo(request):
