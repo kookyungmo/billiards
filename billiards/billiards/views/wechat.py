@@ -25,7 +25,7 @@ from billiards import settings
 from billiards.bcms import mail
 from billiards.location_convertor import gcj2bd
 from billiards.models import Coupon, getCouponCriteria, Poolroom, PoolroomImage, \
-    WechatActivity, DisplayNameJsonSerializer, Event
+    WechatActivity, DisplayNameJsonSerializer, Event, Membership, Group
 from billiards.settings import TEMPLATE_ROOT, TIME_ZONE, SITE_LOGO_URL
 from billiards.views.challenge import getNearbyChallenges
 from billiards.views.match import getMatchByRequest
@@ -117,7 +117,23 @@ LOGO_IMG_URL = SITE_LOGO_URL
 
 MAX_NEWSITEM = 10
 
-def recordUserActivity(userid, event, keyword, message, receivedtime, reply, target = 1):
+def shouldNotifyEvent(message, event, mapping):
+    if event in mapping:
+        if isinstance(mapping, dict):
+            dictValue = mapping[event]
+            if isinstance(dictValue, dict):
+                for key, value in dictValue.iteritems():
+                    if hasattr(message, key):
+                        return shouldNotifyEvent(message, getattr(message, key), value)
+            else:
+                return True
+        return True
+    return False
+    
+
+def recordUserActivity(rawmessage, event, keyword, message, reply, target = 1):
+    userid = rawmessage.source
+    receivedtime = rawmessage.time
     nativetime = datetime.utcfromtimestamp(float(receivedtime))
     localtz = pytz.timezone(settings.TIME_ZONE)
     localtime = nativetime.replace(tzinfo=timezone.utc).astimezone(tz=localtz)
@@ -125,7 +141,7 @@ def recordUserActivity(userid, event, keyword, message, receivedtime, reply, tar
     if event in settings.WECHAT_ACTIVITY_TRACE:
         newactivity.save()
         
-    if not settings.TESTING and (event in settings.WECHAT_ACTIVITY_NOTIFICATION or keyword in settings.WECHAT_ACTIVITY_NOTIFICATION_KEYWORDS):
+    if  not settings.TESTING and (shouldNotifyEvent(rawmessage, event, settings.WECHAT_ACTIVITY_NOTIFICATION) or (keyword and keyword in settings.WECHAT_ACTIVITY_NOTIFICATION_KEYWORDS)):
         mail(settings.NOTIFICATION_EMAIL, u'New wechat activity -- %s' %(localtime), 
              u'[%s][%s] The "%s" message %s from "%s" was received at %s.' %(newactivity.get_target_display(), event, keyword, simplejson.dumps(message).decode('unicode-escape'), userid, localtime))
 
@@ -196,7 +212,7 @@ class PKWechat(BaseRoBot):
             if message.key in self.keysHandlers:
                 return self.keysHandlers[message.key](reply, message, 'event')
             reply += self.getHelpMesg()
-            recordUserActivity(message.source, 'event', 'menu', {'content': message.key}, message.time, 
+            recordUserActivity(message, 'event', message.type, {'event': message.type, 'eventkey': message.key}, 
                     None, self.target)
             return reply    
         return click_handler
@@ -326,13 +342,13 @@ class PKWechat(BaseRoBot):
                 eventkey = message.key
             except AttributeError:
                 eventkey = None
-            recordUserActivity(message.source, 'event', message.type, {'event': message.type, 'eventkey': eventkey}, message.time, None, self.target)
+            recordUserActivity(message, 'event', message.type, {'event': message.type, 'eventkey': eventkey}, None, self.target)
             return reply
         return subscribe_handler
     
     def unsubscribe(self):
         def unsubscribe_handler(message):
-            recordUserActivity(message.source, 'event', message.type, {'event': message.type}, message.time, None, self.target)
+            recordUserActivity(message, 'event', message.type, {'event': message.type}, None, self.target)
         return unsubscribe_handler
     
     def location(self):
@@ -353,11 +369,11 @@ class PKWechat(BaseRoBot):
                 coupons = poolroom.getCoupons(localtime)
                 reply += self.getCouponsReply(coupons)
                 
-                recordUserActivity(message.source, 'location', poolroom.name, {'lat': lat, 'lng': lng, 'scale': message.scale, 'label': ['Label']}, message.time, 
+                recordUserActivity(message, 'location', poolroom.name, {'lat': lat, 'lng': lng, 'scale': message.scale, 'label': ['Label']}, 
                                    {'id': poolroom.id, 'name': poolroom.name, 'distance': poolroom.distance}, self.target)
             else:
                 reply.append((u"在您附近3公里以内，没有推荐的台球俱乐部，去其他地方试试吧", '', LOGO_IMG_URL, ''))
-                recordUserActivity(message.source, 'location', '', {'lat': lat, 'lng': lng, 'scale': message.scale, 'label': ['Label']}, message.time, 
+                recordUserActivity(message, 'location', '', {'lat': lat, 'lng': lng, 'scale': message.scale, 'label': ['Label']}, 
                                    None, self.target)
                 
             challengeReply = self.getChallengeReply(message, baidu_loc_lat, baidu_loc_lng)
@@ -395,11 +411,11 @@ class PKWechat(BaseRoBot):
         localtime = localtz.localize(nativetime)
         coupons = Coupon.objects.filter(getCouponCriteria(localtime)).order_by('?')[:3]
         if len(coupons) > 0:
-            recordUserActivity(message.source, source, 'coupon', {'content': content}, message.time, 
+            recordUserActivity(message, source, 'coupon', {'content': content}, 
                            {'count': len(coupons), 'coupon': True}, self.target)
             reply += self.getCouponsReply(coupons, True)
         else:
-            recordUserActivity(message.source, source, 'nocoupon', {'content': content}, message.time, None, self.target)
+            recordUserActivity(message, source, 'nocoupon', {'content': content}, None, self.target)
             data = u'暂时没有俱乐部有"优惠"或"团购"。'
             reply.append((data, data, SITE_LOGO_URL, ''))
         return reply
@@ -415,11 +431,11 @@ class PKWechat(BaseRoBot):
         if count > 0:
             acts = acts[:MAX_NEWSITEM - len(reply)]
             reply += self.getActsReply(acts)
-            recordUserActivity(message.source, source, 'activity', {'content': content}, message.time, 
+            recordUserActivity(message, source, 'activity', {'content': content}, 
                            {'count': len(acts), 'activity': True}, self.target)
         else:
             data = u'最近7天内没有被收录的爱好者活动'
-            recordUserActivity(message.source, source, 'noactivity', {'content': content}, message.time, 
+            recordUserActivity(message, source, 'noactivity', {'content': content}, 
                            None, self.target)
             reply.append((data, data, SITE_LOGO_URL, ''))
         return reply
@@ -439,13 +455,31 @@ class PKWechat(BaseRoBot):
                 content = message.content
             elif isinstance(message, EventMessage):
                 content = message.key
-            recordUserActivity(message.source, source, 'match', {'content': content}, message.time, 
+            recordUserActivity(message, source, 'match' if source == 'event' else message.type, {'content': content}, 
                            {'count': len(matches), 'match': True}, self.target)       
         else:
             data = '最近7天内没有被收录的比赛'
-            recordUserActivity(message.source, source, 'nomatch', {'content': content}, message.time, 
+            recordUserActivity(message, source, 'nomatch', {'content': content}, 
                            None, self.target)
             reply.append((data, data, SITE_LOGO_URL, ''))
+        return reply
+    
+    def applyMember(self, reply, message, targetgroup):
+        group = Group.objects.get(Q(id=targetgroup))
+        try:
+            member = Membership.objects.get(Q(wechatid=message.source) & Q(targetid=targetgroup))
+            reply = (u"你已经是'%s'会员啦！" %(group.name), u'我的会员号: %s' %(member.memberid), '', reverse('membership', args=(message.source, targetgroup,)))
+        except Membership.DoesNotExist:
+            reply = (u"欢迎申请'%s'会员卡" %(group.name), u"点击我只需一步就成为'%s'会员" %(group.name), '', reverse('membership_apply', args=(message.source, targetgroup,)))
+        return reply
+    
+    def queryMember(self, reply, message, targetgroup):
+        group = Group.objects.get(Q(id=targetgroup))
+        try:
+            member = Membership.objects.get(Q(wechatid=message.source) & Q(targetid=targetgroup))
+            reply = (u"%s, 欢迎你成为'%s'会员" %(member.name, group.name), u'我的会员号: %s' %(member.memberid), '', reverse('membership', args=(message.source, targetgroup,)))
+        except Membership.DoesNotExist:
+            reply = (u"你还不是'%s'会员" %(group.name), u"点击我只需一步就成为'%s'会员" %(group.name), '', reverse('membership_apply', args=(message.source, targetgroup,)))
         return reply
     
     def text(self):
@@ -477,12 +511,12 @@ class PKWechat(BaseRoBot):
                     localtime = localtz.localize(nativetime)
                     coupons = Coupon.objects.filter(getCouponCriteria(localtime)).filter(poolroom__in=Poolroom.objects.filter(name__startswith=u'北京云川')).order_by('?')[:1]
                     if len(coupons) > 0:
-                        recordUserActivity(message.source, 'text', 'yunchuan', {'content': message.content}, message.time, 
+                        recordUserActivity(message, 'text', 'yunchuan', {'content': message.content}, 
                                        {'count': len(coupons), 'yunchuan_coupon': True}, self.target)
                         reply += self.getCouponsReply(coupons, True)
                     else:
                         data = u'云川俱乐部暂没有优惠。请输入"优惠"或"团购“查找其他俱乐部的优惠。'
-                        recordUserActivity(message.source, 'text', 'noyunchuan', {'content': message.content}, message.time, 
+                        recordUserActivity(message, 'text', 'noyunchuan', {'content': message.content}, 
                                        None, self.target)
                         reply.append((data, data, SITE_LOGO_URL, ''))
                 elif message.content == u"活动":
@@ -493,7 +527,7 @@ class PKWechat(BaseRoBot):
                     reply += self.getHelpMesg()
                 else:
                     reply += self.getHelpMesg()
-                    recordUserActivity(message.source, 'text', message.content, {'content': message.content}, message.time, 
+                    recordUserActivity(message, 'text', message.content, {'content': message.content}, 
                                            None, self.target)
             return reply
         return text_handler

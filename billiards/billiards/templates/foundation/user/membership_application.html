@@ -1,0 +1,84 @@
+{% extends "foundation/base.html" %}
+{% block content %}
+<h1>申请<b>{{group.name}}</b>的会员卡</h1>
+<hr>
+<form id="applyform" data-abide="ajax">
+  <fieldset>
+  	<legend>申请{{group.name}}的会员卡</legend>
+    
+    <div class="row">
+      <div class="medium-4 columns">
+        <label for="realname">真实姓名<small>*</small></label>
+		<input type="text" id="realname" placeholder="您的真实姓名" required>
+        <small class="error">请输入您的真实姓名</small>        
+      </div>
+      <div class="medium-4 columns">
+        <label for="cellphone">手机号码<small>*</small></label>
+		<input type="cellphone" id="cellphone" placeholder="您的手机号码" required>
+        <small class="error">请输入您的手机号码</small>        
+      </div>
+      <div class="medium-4 columns">
+        <label for="gender-option">性别<small>*</small></label>
+		<select id="gender-option" class="medium" required>
+        	<option value="1">男</option>
+        	<option value="2">女</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div id="errorMsg" class="large-12 columns hide">
+       	<div data-alert class="alert-box warning round">
+		</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-12 columns">
+        <button type="submit" class="medium button green">提交申请</button>
+      </div>
+    </div>
+
+  </fieldset>
+</form>
+{% endblock %}
+{% block script %}
+<script>
+$("#applyform").on('valid', function() {
+  		$("#errorMsg").addClass("hide");
+   		$.ajax({
+			data : {
+				'gender': $("#gender-option").val(),
+				'realname': $("#realname").val(),
+				'cellphone': $("#cellphone").val(),
+				'email': $("#email-label").val(),
+			},
+  			url : "{% url membership_apply wechat group.id %}",
+  			type: 'POST',
+			dataType : 'json',
+			success : function(data) {
+				if (data.rt == 1) {
+					window.location = "{% url membership wechat group.id %}";
+				} else {
+					if (data.msg != null)
+						$("#errorMsg .alert-box").text(data.msg);
+					else {
+						var errorText = "";
+						for (var property in data) {
+						    if (data.hasOwnProperty(property) && property != 'rt') {
+						    	errorText += property + ":" + data[property] + " ";
+						    }
+						}
+						$("#errorMsg .alert-box").text(errorText);
+					}
+					$("#errorMsg").removeClass("hide");
+				}
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				console.log(textStatus, errorThrown);
+				$("#errorMsg .alert-box").text("网络错误，请重试。");
+				$("#errorMsg").removeClass("hide");
+			}
+		});
+    });
+</script>
+{% endblock %}

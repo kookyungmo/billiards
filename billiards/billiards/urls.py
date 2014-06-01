@@ -33,6 +33,8 @@ urlpatterns += patterns('billiards.views.user.login',
 
 urlpatterns += patterns('billiards.views.user.manage',
     url(r'^user/completeInfo','completeInfo', name='completeInfo'),
+    url(r'^user/(?P<wechatid>\w+)/membership/(?P<group>\d+)/apply', 'membership_apply', name='membership_apply'),
+    url(r'^user/(?P<wechatid>\w+)/membership/(?P<group>\d+)$', 'membership', name='membership'),
 )
 
 urlpatterns += patterns('',
