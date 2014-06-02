@@ -67,27 +67,101 @@ var PKMap = function(dom, center, zoom) {
 	map.enableScrollWheelZoom(true);
 
 	var _this = this;
+	
+	function createIconControl(faClass, clickCallback) {
+		var controlIcon = document.createElement("i");
+		controlIcon.className = faClass + " fa fa-2 jumbotron-icon";
+		controlIcon.style.cursor = "pointer";
+		controlIcon.style.border = "1px solid gray";
+		controlIcon.onclick = clickCallback;
+		return controlIcon;
+	}
 
 	this.markCurrentLocation = function(myPosition) {
+		_this.myposition = myPosition;
 		_this.addMarker(myPosition, STATIC_URL + "images/location.png");
 		// Custom control
 		var control = new BMap.Control();
 		$.extend(control, {
-			defaultAnchor: BMAP_ANCHOR_TOP_LEFT,
-			defaultOffset: new BMap.Size(10, 10)
+			defaultAnchor: BMAP_ANCHOR_BOTTOM_LEFT,
+			defaultOffset: new BMap.Size(isSmall() ? 30: 60, 60)
 		});
+		control.initialize = function() {			
+			var locationIcon = createIconControl("fa-location-arrow", function(e){
+				map.panTo(myPosition);
+			});
+			
+			map.getContainer().appendChild(locationIcon);
+			return locationIcon;
+		};
+		map.addControl(control);
+	};
+	
+	this.routeNavigator = function(myposition) {
+		// Custom control
+		var control = new BMap.Control();
+		var heightoffest = $("#pkMap").height() / 15;
+		$.extend(control, {
+			defaultAnchor: BMAP_ANCHOR_TOP_LEFT,
+			defaultOffset: new BMap.Size($("#pkMap").width()/2, heightoffest)
+		});
+		var prevWidth = $("#pkMap").width();
+		$("#pkMap").bind('resize', function(e) {
+			control.setOffset(new BMap.Size($("#pkMap").width()/2, heightoffest));
+		});
+		$("#pkMap").attrchange({
+	        callback: function (e) {
+	            var curWidth = $(this).width();            
+	            if (prevWidth !== curWidth) {
+	            	control.setOffset(new BMap.Size($("#pkMap").width()/2, heightoffest));
+	            	prevWidth = curWidth;
+	            }            
+	        }
+	    });
+		
+		var transit = null;
+		function addTransitRoute(trasnsitType, BRoute) {
+			var transitIcon = createIconControl(trasnsitType, function(e){
+				if (_this.myposition) {
+					if (transit) {
+						if (transit instanceof BRoute)
+							return;
+						else
+							transit.clearResults();
+					}
+					
+					var p1 = _this.myposition;
+					var overlays = map.getOverlays();
+					for (i in overlays) {
+						if (overlays[i] instanceof BMap.Marker) {
+							if (!overlays[i].getPosition().equals(p1)) {
+								var p2 = overlays[i];
+								break;
+							}
+						}
+					}
+					options = {map: map, autoViewport: true, panel: 'pkMap-r-result'};						
+					if (!isSmall()) {
+						$("#pkMap").css("width", "80%");
+						$("#pkMap").css("border-right", "2px solid #bcbcbc");
+						$("#pkMap-r-result").css("width", "18%");
+					} else {
+						$("#pkMap-r-result").hide();
+						$("#switcher").removeClass("hide");
+					}
+					
+					transit = new BRoute(map, {renderOptions:options});
+					targetPoint = {point: p2.getPosition(), title: p2.getTitle(), type: BMap.BMAP_POI_TYPE_NORMAL};
+					transit.search(p1, targetPoint);
+				}	
+			});
+			return transitIcon;
+		}
+		
 		control.initialize = function() {
 			var div = document.createElement("div");
-			div.appendChild(document.createTextNode("我的位置"));
-
-			div.style.cursor = "pointer";
-			div.style.border = "1px solid gray";
-			div.style.backgroundColor = "white";
-
-			div.onclick = function(e){
-				// map.centerAndZoom(myPosition, zoom);
-				map.panTo(myPosition);
-			}
+			div.appendChild(addTransitRoute("fa-car", BMap.DrivingRoute));
+			div.appendChild(addTransitRoute("fa-ambulance", BMap.TransitRoute));
 			map.getContainer().appendChild(div);
 			return div;
 		};
@@ -104,6 +178,23 @@ var PKMap = function(dom, center, zoom) {
 		});
 		map.addOverlay(marker);
 		return marker;
+	};
+	
+	this.addArchorControl = function(iconClass, marker) {
+		var control = new BMap.Control();
+		$.extend(control, {
+			defaultAnchor: BMAP_ANCHOR_BOTTOM_LEFT,
+			defaultOffset: new BMap.Size(isSmall() ? 30: 60, 120)
+		});
+		control.initialize = function() {			
+			var locationIcon = createIconControl(iconClass, function(e){
+				map.panTo(marker.getPosition());
+			});
+			
+			map.getContainer().appendChild(locationIcon);
+			return locationIcon;
+		};
+		map.addControl(control);
 	};
 
 	this.removeMarker = function(marker) {
@@ -254,7 +345,9 @@ var PKPoolrooms = function(pkMap) {
 				data[i].fields.lat_baidu
 			);
 			var poolroomObj = renderPoolroom(data[i], point);
-			markers.push(createPoolroomMarker(poolroomObj, data[i], point));
+			var pmarker = createPoolroomMarker(poolroomObj, data[i], point);
+			pmarker.setTitle(data.fields.name);
+			markers.push(pmarker);
 			points.push(point);
 		}
 		
@@ -359,6 +452,7 @@ var PKPoolrooms = function(pkMap) {
 		point = new BMap.Point(poolroom.fields.lng_baidu,
 				poolroom.fields.lat_baidu);
 		marker = createPoolroomMarker(null, poolroom, point);
+		pkMap.addArchorControl("fa-bookmark", marker);
 		setTimeout(function(){
 			poolroomInfo(marker, poolroom);
 			marker.setAnimation(BMAP_ANIMATION_BOUNCE);
@@ -699,7 +793,7 @@ function openInfoWindow(marker, innerHtml, message) {
 		infoOptions["height"] = 200;
 		infoOptions["width"] = 100;
 	}
-	marker.getMap().setCenter(marker.getPosition());
+	marker.getMap().panTo(marker.getPosition());
 	var infoWindow = new BMap.InfoWindow(innerHtml, infoOptions);
 	infoWindow.enableAutoPan();
 	marker.openInfoWindow(infoWindow);
@@ -1055,6 +1149,7 @@ var PKMatches = function(pkMap) {
 				match.fields.poolroom.lat
 			);
 		var marker = createMatchMarker(null, match, point);
+		pkMap.addArchorControl("fa-bookmark", marker);
 		setTimeout(function(){
 			matchInfo(marker, match, point);
 			marker.setAnimation(BMAP_ANIMATION_BOUNCE);
@@ -1066,6 +1161,7 @@ var PKMatches = function(pkMap) {
 	
 	function createMatchMarker(obj, match, point) {
 		var marker = pkMap.addMarker(point, MATCH_MARKER_URL);
+		marker.setTitle(match.fields.title + "(" + match.fields.poolroom.name + ")");
 		marker.addEventListener("click", function() {
 			matchInfo(marker, match, point);
 		});

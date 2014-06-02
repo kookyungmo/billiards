@@ -46,11 +46,13 @@ def pkmap(request, mtype = None, tid = None):
         targetObj = None
         if mtype == 'match':
             targetObj = getMatch(tid)
+            name = targetObj.title
         elif mtype == 'poolroom':
             targetObj = getPoolroom(tid)
+            name = targetObj.name
         elif mtype == 'challenge':
             targetObj = getChallenge(tid)
     except Http404:
         pass
     return render_to_response(TEMPLATE_ROOT + 'pkmap.html',
-                              {'target': targetObj}, context_instance=RequestContext(request))
+                              {'target': targetObj, 'name': name}, context_instance=RequestContext(request))
