@@ -194,3 +194,6 @@ def redbull_2014_05(request):
         return HttpResponse(jsonstr)
     return render_to_response(TEMPLATE_ROOT + 'redbull/match_poolroom.html', {},
             context_instance=RequestContext(request))
+
+def winners(request):
+    return render_to_response(TEMPLATE_ROOT + 'redbull/match_winners.html', context_instance=RequestContext(request))
