@@ -4,8 +4,6 @@
 {% load staticfiles %}
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-  <link href="http://fonts.googleapis.com/css?family=Corben:bold" rel="stylesheet" type="text/css">
-  <link href="http://fonts.googleapis.com/css?family=Nobile" rel="stylesheet" type="text/css">
   <link rel="stylesheet" href="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/css/foundation.min.css">
   <link rel="stylesheet" href="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/css/normalize.min.css">
   <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/vendor/modernizr.js"></script>
@@ -18,23 +16,49 @@
   <script src="{% static "js/app.js" %}?{{buildid}}"></script>
   <link rel="stylesheet" href="{% static "css/myapp.css" %}?{{buildid}}">
   <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
+  <link href="http://cdnjscn.b0.upaiyun.com/libs/font-awesome/{{AWESOME_FONT}}/css/font-awesome.min.css" rel="stylesheet">
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>
-<script src="{% static "js/map_ui.js" %}?{{buildid}}"></script>
+<script src="{% static "js/attrchange.js" %}"></script>
+<script src="{% static "js/map_ui.js" %}"></script>
 <script src="{% static "js/mustache.js" %}?0.8.1"></script>
 <title>我为台球狂地图服务</title>
 <style type="text/css">
-body, html,#pkMap {width: 100%;height: 100%;overflow: hidden;margin:0;}
+#pkMap{height:94%;width:100%;float:left;}
+#pkMap-r-result{height:94%;float:left; background-color:#ffffff;}
+.full-width {max-width: 100%;}
 </style>
 </head>
 <body>
 <div data-magellan-expedition="fixed">
-  <span><a href="javascript:window.close();">关闭</a></span>
+	<div class="row full-width collapse">
+		<div class="small-2 columns"><a href="javascript:window.close();">关闭</a></div>
+		<div class="small-8 columns text-center">{{ name }}</div>
+		<div class="small-2 columns "><a href="javascript:displaySwitch();" id="switcher" class="hide">详情</a></div>
+	</div>
 </div>
 <div id="pkMap"></div>
+<div id="pkMap-r-result"></div>
 </body>
 </html>
 {% load extras %}
 <script type="text/javascript">
+function displaySwitch() {
+	if (isSmall()) {
+		var link = $("#switcher");
+		if (link.text() == '详情') {
+			link.text('地图');
+			$("#pkMap-r-result").css("width", "100%");
+			$("#pkMap-r-result").show();
+			$("#pkMap").css("width", "0%");
+		} else {
+			$("#pkMap").css("width", "100%");
+			$("#pkMap-r-result").css("width", "0%");
+			$("#pkMap-r-result").hide();
+			link.text('详情');
+		}
+	}
+}
+
 $(document).foundation({
 	abide: abideOptions
 });
@@ -59,6 +83,7 @@ matches = $.parseJSON('{{ target|matchtojson|escapejs }}');
 pkMatches.addMatchMarker(matches[0]);
 pkLocation.consume(
 		pkMap.markCurrentLocation,
+		pkMap.routeNavigator,
 		pkMatches.updateDistance
 );
 {% elif modelclass == "Poolroom" %}
@@ -68,6 +93,7 @@ poolrooms = $.parseJSON('{{ target|poolroomtojson|escapejs }}');
 pkPoolrooms.createSinglePoolroomMarker(poolrooms[0]);
 pkLocation.consume(
 	pkMap.markCurrentLocation,
+	pkMap.routeNavigator,
 	pkPoolrooms.updateDistance
 );
 {% elif modelclass == "Challenge" %}
@@ -81,6 +107,7 @@ challenges = $.parseJSON('{{ target|tojson|escapejs }}');
 pkChallenges.layChallenge(challenges);
 pkLocation.consume(
 	pkMap.markCurrentLocation,
+	pkMap.routeNavigator,
 	pkChallenges.updateDistance
 );
 {% endif %}
