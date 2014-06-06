@@ -346,7 +346,7 @@ var PKPoolrooms = function(pkMap) {
 			);
 			var poolroomObj = renderPoolroom(data[i], point);
 			var pmarker = createPoolroomMarker(poolroomObj, data[i], point);
-			pmarker.setTitle(data.fields.name);
+			pmarker.setTitle(data[i].fields.name);
 			markers.push(pmarker);
 			points.push(point);
 		}
