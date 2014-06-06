@@ -233,7 +233,6 @@ var PKPoolrooms = function(pkMap) {
 							<a target="_blank" href="{{url}}">{{name}}</a>\
 						</span>\
 					</h5>\
-					<div class="musthave show-for-small-only"><a href="javascript:void(0);" onclick="javascript:openMap(\'{{name}}\', \'poolroom\', {{poolroom_id}});">地图中查看...</a></div>\
 					{{#equip}}\
 						<div class="optional icon_list">\
 							<span class="ico_none">球房设施: </span>\
@@ -277,10 +276,10 @@ var PKPoolrooms = function(pkMap) {
 				</div>\
 				<div class="small-6 medium-6 columns">\
 					{{#distance}}\
-						<span class="optional" point="{{point}}">距离我: <code>{{distance}}</code></span>\
+						<span class="musthave" point="{{point}}">距离我: <code>{{distance}}</code></span>\
 					{{/distance}}\
 					{{^distance}}\
-						<span class="optional hide" point="{{point}}">距离我: <code>{{distance}}</code></span>\
+						<span class="musthave hide" point="{{point}}">距离我: <code>{{distance}}</code></span>\
 					{{/distance}}\
 				</div>\
 			</div>\
