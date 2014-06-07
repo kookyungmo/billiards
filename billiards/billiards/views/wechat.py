@@ -265,7 +265,7 @@ class PKWechat(BaseRoBot):
             pkid = unicode(poolroom.pk)
             businesshours = poolroom.businesshours
             picurl = buildPoolroomImageURL(poolroom)
-            originContent = self.buildAbsoluteURI(reverse('poolroom_detail', args=(pkid,)))
+            originContent = self.buildAbsoluteURI(reverse('poolroom_detail_uuid', args=(poolroom.uuid,)))
             description = u"地址：%s\r\n营业面积：%s平方米\r\n营业时间：%s\r\n电话：%s" %(address, size, businesshours, tel)
             reply.append((poolroom.name, description, picurl, originContent))
         return reply
@@ -302,7 +302,7 @@ class PKWechat(BaseRoBot):
             reply.append((coupon.title, coupon.description, picurl, couponurl))
             if withPoolroom:
                 picurl = buildPoolroomImageURL(coupon.poolroom)
-                weblink = self.buildAbsoluteURI(reverse('poolroom_detail', args=(coupon.poolroom.pk,)))
+                weblink = self.buildAbsoluteURI(reverse('poolroom_detail_uuid', args=(coupon.poolroom.uuid,)))
                 reply.append((u"俱乐部详情", coupon.poolroom.name, picurl, weblink))
         return reply
     

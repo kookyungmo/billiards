@@ -8,7 +8,7 @@
 from django.http import HttpResponse, Http404
 from billiards.models import Poolroom, PoolroomEquipment, poolroom_fields, Match,\
     poolroomimage_fields, Coupon, poolroomcoupon_fields, getCouponCriteria
-from django.shortcuts import get_object_or_404, render_to_response
+from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.core import serializers
 from django.template.context import RequestContext
 from billiards.settings import TEMPLATE_ROOT
@@ -19,9 +19,13 @@ from dateutil.relativedelta import relativedelta
 from StringIO import StringIO
 from django.utils import simplejson
 from billiards.views.match import tojson
+from django.utils.timezone import utc
+from billiards.annotation import deprecated
+import uuid
 
-def more(request, poolroomid):
-    poolroom = get_object_or_404(Poolroom, pk=poolroomid)
+def more_uuid(request, poolroom_uuid):
+    uuidobj = uuid.UUID(poolroom_uuid)
+    poolroom = getPoolroomByUUID(uuidobj)
 
     equipments = PoolroomEquipment.objects.filter(poolroom=poolroom.id)
     json_serializer = serializers.get_serializer("json")()
@@ -29,6 +33,10 @@ def more(request, poolroomid):
     response['Cache-Control'] = 'max-age=%s' % (60 * 60 * 24 * 7)
     json_serializer.serialize(equipments, fields=('tabletype', 'producer', 'quantity', 'cue', 'price'), ensure_ascii=False, stream=response, indent=2, use_natural_keys=True)
     return response
+    
+def more(request, poolroomid):
+    poolroom = getPoolroom(poolroomid)
+    return redirect('poolroom_moreinfo_uuid', poolroom_uuid=str(poolroom.uuid))
 
 def updateJsonStrWithDistance(poolroomJsonStr, poolrooms):        
     poolroomObjs = simplejson.loads(poolroomJsonStr)
@@ -112,16 +120,26 @@ def updateBaiduLocation(request):
 def getCoupons(poolroomid):
     return Coupon.objects.filter(getCouponCriteria() & Q(poolroom__id=poolroomid)).order_by('-discount')
     
+def isGracePeriod():
+    return datetime.datetime.strptime('Sep 1 2014', '%b %d %Y').replace(tzinfo=utc) - datetime.datetime.utcnow().replace(tzinfo=utc) > datetime.timedelta(seconds = 5) 
+
+@deprecated
 def getPoolroom(poolroomid):
-    return get_object_or_404(Poolroom, pk=poolroomid, exist=1)
+    if isGracePeriod():
+        return get_object_or_404(Poolroom, pk=poolroomid, exist=1)
+    raise Http404()
+
+def getPoolroomByUUID(uuid):
+    return get_object_or_404(Poolroom, uuid=uuid, exist=1)
     
-def detail(request, poolroomid):
-    poolroom = getPoolroom(poolroomid)
+def detail_uuid(request, poolroom_uuid):
+    uuidobj = uuid.UUID(poolroom_uuid)
+    poolroom = getPoolroomByUUID(uuidobj)
     
     starttime = datetime.datetime.today()
     endtime = starttime + relativedelta(days=30)
     datefmt = "%Y-%m-%d"
-    matches = Match.objects.filter(Q(starttime__gte=starttime.strftime(datefmt)) & Q(poolroom__id=poolroomid)) \
+    matches = Match.objects.filter(Q(starttime__gte=starttime.strftime(datefmt)) & Q(poolroom__uuid=uuidobj)) \
         .exclude(starttime__gt=endtime.strftime(datefmt)).order_by('starttime')
         
     equipments = PoolroomEquipment.objects.filter(poolroom=poolroom.id)
@@ -129,3 +147,8 @@ def detail(request, poolroomid):
     return render_to_response(TEMPLATE_ROOT + 'poolroom_detail.html', 
                               {'poolroom': poolroom, 'matches':matches, 'equipments': equipments},
                               context_instance=RequestContext(request))
+    
+def detail(request, poolroomid):
+    poolroom = getPoolroom(poolroomid)
+    
+    return redirect('poolroom_detail_uuid', poolroom_uuid=str(poolroom.uuid))

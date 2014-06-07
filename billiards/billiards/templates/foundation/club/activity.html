@@ -22,7 +22,7 @@
     <tr>
       <td><script>document.write(getSmartTime('{{ activity.starttime|date:'c' }}'));</script></td>
       <td><a href="{% url 'club_activity_edit' activity.id %}">{{ activity.title }}</a></td>
-      <td><a href="{% url 'poolroom_detail' activity.poolroom.id %}">{{ activity.poolroom.name }}</a></td>
+      <td><a href="{% url 'poolroom_detail_uuid' activity.poolroom.uuid %}">{{ activity.poolroom.name }}</a></td>
       <td>
       {% if activity.is_expired  %}
       已过期

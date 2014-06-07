@@ -11,8 +11,9 @@ from django.template.context import RequestContext
 from billiards.models import Coupon
 from billiards.views.match import getMatch
 from django.http import Http404
-from billiards.views.poolroom import getPoolroom
+from billiards.views.poolroom import getPoolroomByUUID
 from billiards.views.challenge import getChallenge
+import uuid
 '''
 Base on a responsive web page template that works well on IE7 and IE8.
 It won't work on IE6, but it also gives very simple text for information.
@@ -48,7 +49,7 @@ def pkmap(request, mtype = None, tid = None):
             targetObj = getMatch(tid)
             name = targetObj.title
         elif mtype == 'poolroom':
-            targetObj = getPoolroom(tid)
+            targetObj = getPoolroomByUUID(uuid.UUID(tid))
             name = targetObj.name
         elif mtype == 'challenge':
             targetObj = getChallenge(tid)
