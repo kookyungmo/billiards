@@ -5,3 +5,4 @@ pil
 bae_image
 WeRoBot == 0.5.3
 six
+django-bitfield == 1.7.0
