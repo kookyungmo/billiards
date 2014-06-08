@@ -221,7 +221,9 @@ class PKWechat(BaseRoBot):
         return click_handler
         
     def addHandlers(self):
+        self._handlers['scan'] = []
         self.add_handler(self.subscribe(), 'subscribe')
+        self.add_handler(self.scan(), 'scan')
         self.add_handler(self.unsubscribe(), 'unsubscribe')
         self.add_handler(self.location(), 'location')
         self.add_handler(self.text(), 'text')
@@ -342,12 +344,31 @@ class PKWechat(BaseRoBot):
             reply = self.getSpecialEventItem(message.time)
             reply += self.getWelcomeMsg()
             try:
-                eventkey = message.key
+                eventkey = message.EventKey
             except AttributeError:
                 eventkey = None
-            recordUserActivity(message, 'event', message.type, {'event': message.type, 'eventkey': eventkey}, None, self.target)
+            try:
+                ticket = message.Ticket
+            except AttributeError:
+                ticket = None
+            recordUserActivity(message, 'event', message.type, {'event': message.type, 'eventkey': eventkey, 'ticket': ticket}, None, self.target)
             return reply
         return subscribe_handler
+    
+    def scan(self):
+        def scan_handler(message):
+            reply = self.getSpecialEventItem(message.time)
+            try:
+                eventkey = message.EventKey
+            except AttributeError:
+                eventkey = None
+            try:
+                ticket = message.Ticket
+            except AttributeError:
+                ticket = None
+            recordUserActivity(message, 'event', message.type, {'event': message.type, 'eventkey': eventkey, 'ticket': ticket}, None, self.target)
+            return reply
+        return scan_handler
     
     def unsubscribe(self):
         def unsubscribe_handler(message):

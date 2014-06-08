@@ -401,3 +401,47 @@ class WechatTest(TestCase):
         self.assertEqual(u'PK_MATCH', msg['content'])
         reply = simplejson.loads(activity.reply)
         self.assertEqual(1, reply['count'])
+        
+    def test_nonsubscriber_scan_sceneqr(self):
+        data = """
+        <xml><ToUserName><![CDATA[toUser]]></ToUserName>
+        <FromUserName><![CDATA[FromUser]]></FromUserName>
+        <CreateTime>123456789</CreateTime>
+        <MsgType><![CDATA[event]]></MsgType>
+        <Event><![CDATA[subscribe]]></Event>
+        <EventKey><![CDATA[qrscene_123123]]></EventKey>
+        <Ticket><![CDATA[TICKET]]></Ticket>
+        </xml>
+        """
+        self._send_wechat_message(data)
+        activityquery = WechatActivity.objects.filter(eventtype='event')
+        self.assertEqual(1, activityquery.count())
+        activity = activityquery[:1][0]
+        self.assertEqual('FromUser', activity.userid)
+        self.assertEqual('subscribe', activity.keyword)
+        msg = simplejson.loads(activity.message)
+        self.assertEqual('subscribe', msg['event'])
+        self.assertEqual('qrscene_123123', msg['eventkey'])
+        
+    def test_subscriber_scan_sceneqr(self):
+        data = """
+        <xml>
+        <ToUserName><![CDATA[toUser]]></ToUserName>
+        <FromUserName><![CDATA[FromUser]]></FromUserName>
+        <CreateTime>123456789</CreateTime>
+        <MsgType><![CDATA[event]]></MsgType>
+        <Event><![CDATA[SCAN]]></Event>
+        <EventKey><![CDATA[SCENE_VALUE]]></EventKey>
+        <Ticket><![CDATA[TICKET]]></Ticket>
+        </xml>
+        """
+        self._send_wechat_message(data)
+        activityquery = WechatActivity.objects.filter(eventtype='event')
+        self.assertEqual(1, activityquery.count())
+        activity = activityquery[:1][0]
+        self.assertEqual('FromUser', activity.userid)
+        self.assertEqual('scan', activity.keyword)
+        msg = simplejson.loads(activity.message)
+        self.assertEqual('scan', msg['event'])
+        self.assertEqual('SCENE_VALUE', msg['eventkey'])
+        self.assertEqual('TICKET', msg['ticket'])
