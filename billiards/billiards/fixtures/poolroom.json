@@ -5,16 +5,20 @@
         "fields": {
             "rating": 5, 
             "tel": "010-52427963", 
-            "name": "\u5317\u4eac\u591c\u65f6\u5c1a\u62a4\u56fd\u5bfa\u5e97", 
+            "uuid": "e65ff46b-58ba-4bbf-88c5-974ee0bfbc4c", 
+            "district": "\u897f\u57ce\u533a", 
+            "city": 10, 
             "review": "", 
             "lng_baidu": "116.3797641", 
             "flags": "54", 
-            "businesshours": "10:00AM\u2014\u20143:00AM", 
+            "businesshours": "10:00AM-3:00AM", 
             "address": "\u5317\u4eac\u5e02\u897f\u57ce\u533a\u62a4\u56fd\u5bfa\u5927\u8857137\u53f7\u6cca\u946b\u5bbe\u9986\u5730\u4e0b\u4e00\u5c42 ", 
             "lat": "39.9349310", 
-            "lat_baidu": "39.9409848", 
+            "exist": 1, 
             "lng": "116.3733030", 
-            "size": 1000
+            "size": 1000, 
+            "lat_baidu": "39.9409848", 
+            "name": "\u5317\u4eac\u591c\u65f6\u5c1a\u62a4\u56fd\u5bfa\u5e97"
         }
     }, 
     {
@@ -23,16 +27,20 @@
         "fields": {
             "rating": null, 
             "tel": "010-82965625 ", 
-            "name": "\u5317\u4eac\u6d69\u5929\u53f0\u7403\u4ff1\u4e50\u90e8", 
+            "uuid": "a8a911c1-f6e8-443e-bb78-82401f2b38c6", 
+            "district": "\u660c\u5e73\u533a", 
+            "city": 10, 
             "review": null, 
             "lng_baidu": "116.3266917", 
             "flags": "0", 
             "businesshours": "24\u5c0f\u65f6", 
             "address": "\u5317\u4eac\u5e02 \u660c\u5e73\u533a \u56de\u9f99\u89c2 \u65b0\u9f99\u57ce\u4e16\u7eaa\u534e\u8054\u8d85\u5e02\u4e8c\u697c ", 
             "lat": "40.0715040", 
-            "lat_baidu": "40.0773245", 
+            "exist": 1, 
             "lng": "116.3201390", 
-            "size": 600
+            "size": 600, 
+            "lat_baidu": "40.0773245", 
+            "name": "\u5317\u4eac\u6d69\u5929\u53f0\u7403\u4ff1\u4e50\u90e8"
         }
     }, 
     {
@@ -41,16 +49,20 @@
         "fields": {
             "rating": 3, 
             "tel": "010-80752885", 
-            "name": "\u5317\u4eac98\u53f0\u7403\u4ff1\u4e50\u90e8", 
-            "review": "", 
+            "uuid": "833954d2-aafa-44ee-a0db-e976f3bcc87b", 
+            "district": "\u660c\u5e73\u533a", 
+            "city": 10, 
+            "review": "\u5e97\u9762\u7279\u8272\uff1a\u672c\u5e97\u62e5\u6709\u666e\u901a\u53f0\uff0c\u6807\u51c6\u8d5b\u53f0\u53ca\u65af\u8bfa\u514b20\u4f59\u5f20\u7403\u53f0\uff1b 6\u95f4\u72ec\u7acb\u68cb\u724c\u5ba4\uff0c\u5168\u90e8\u914d\u5907\u5168\u81ea\u52a8\u9ebb\u5c06\u673a\uff1b \u5168\u65b06811\u53f0\u5c3c\uff0c\u5168\u65b0\u94a2\u5e93\u8d5b\u53f0\uff1b 10M\u72ec\u7acb\u5bbd\u5e26\uff0c\u514d\u8d39\u7545\u7528\uff1b 365*24\u5c0f\u65f6\u8425\u4e1a\uff1b \u6570\u767e\u672c\u4e66\u7c4d\u3001\u6742\u5fd7\u514d\u8d39\u770b\uff1b \u6e29\u99a8\u8212\u9002\u5f85\u5ba2\u533a\uff0c\u9ad8\u914d\u7535\u8111\u514d\u8d39\u7528\u3002", 
             "lng_baidu": "116.3647790", 
             "flags": "0", 
             "businesshours": "24\u5c0f\u65f6", 
             "address": "\u5317\u4eac\u660c\u5e73\u533a\u56de\u9f99\u89c2\u548c\u8c10\u5bb6\u56ed\u4e8c\u533a\u897f\u95e8", 
             "lat": "40.0823690", 
-            "lat_baidu": "40.0881677", 
+            "exist": 1, 
             "lng": "116.3582070", 
-            "size": 700
+            "size": 700, 
+            "lat_baidu": "40.0881677", 
+            "name": "\u5317\u4eac98\u53f0\u7403\u4ff1\u4e50\u90e8"
         }
     }, 
     {
@@ -59,16 +71,20 @@
         "fields": {
             "rating": 2, 
             "tel": "18911796160", 
-            "name": "\u5317\u4eac\u9ed1\u68438\u649e\u7403\u9986\u4e0a\u5761\u5bb6\u56ed\u5e97", 
+            "uuid": "db884262-bfd6-4347-900f-e7caf1e1982c", 
+            "district": "\u660c\u5e73\u533a", 
+            "city": 10, 
             "review": "", 
             "lng_baidu": "116.3702907", 
             "flags": "0", 
-            "businesshours": "10:00AM\u2014\u20142:00AM", 
+            "businesshours": "10:00AM-2:00AM", 
             "address": "\u5317\u4eac\u660c\u5e73\u533a\u6d4e\u8fdc\u8857\u4e0e\u9f99\u95263\u8857\u4ea4\u53c9\u8def\u53e3\u4e1c\u884c20\u7c73\u8def\u5357B1\u5c42", 
             "lat": "40.0840640", 
-            "lat_baidu": "40.0899531", 
+            "exist": 1, 
             "lng": "116.3637480", 
-            "size": 500
+            "size": 500, 
+            "lat_baidu": "40.0899531", 
+            "name": "\u5317\u4eac\u9ed1\u68438\u649e\u7403\u9986\u4e0a\u5761\u5bb6\u56ed\u5e97"
         }
     }, 
     {
@@ -77,16 +93,20 @@
         "fields": {
             "rating": 2, 
             "tel": "010-64906446", 
-            "name": "\u5317\u4eac\u4e91\u5ddd\u53f0\u7403\u4ff1\u4e50\u90e8\u5927\u5c6f\u5e97", 
+            "uuid": "25a47b8a-b565-4ca6-a53c-12b329a7b8bf", 
+            "district": "\u671d\u9633\u533a", 
+            "city": 10, 
             "review": "", 
             "lng_baidu": "116.4153867", 
             "flags": "0", 
-            "businesshours": "10:00AM\u2014\u20142:00AM", 
+            "businesshours": "10:00AM-2:00AM", 
             "address": "\u5317\u4eac\u5e02\u671d\u9633\u533a\u4e9a\u8fd0\u6751\u5b89\u7acb\u8def66\u53f7\u5b89\u7acb\u82b1\u56ed1\u53f7\u697c", 
             "lat": "40.0030810", 
-            "lat_baidu": "40.0093974", 
+            "exist": 1, 
             "lng": "116.4089790", 
-            "size": 800
+            "size": 800, 
+            "lat_baidu": "40.0093974", 
+            "name": "\u5317\u4eac\u4e91\u5ddd\u53f0\u7403\u4ff1\u4e50\u90e8\u5927\u5c6f\u5e97"
         }
     }, 
     {

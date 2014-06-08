@@ -4,6 +4,7 @@
         "model": "billiards.group", 
         "fields": {
             "status": 0, 
+            "cardimg": "", 
             "name": "\u6d3b\u52a8\u6240\u5728\u7403\u623f", 
             "description": "\u6b64\u7231\u597d\u8005\u7fa4\u4e3a\u5360\u4f4d\u7fa4, \u5f53\u6bd4\u8d5b\u53d1\u5e03\u8005\u4e3a\u7403\u623f/\u4ff1\u4e50\u90e8\u65f6\u4f7f\u7528\u3002\u8bf7\u4e0d\u8981\u5220\u9664!"
         }
@@ -13,8 +14,19 @@
         "model": "billiards.group", 
         "fields": {
             "status": 1, 
+            "cardimg": "", 
             "name": "\u5317\u4eac\u9ad8\u6821\u53f0\u7403\u8054\u76df", 
             "description": "\u5317\u4eac\u9ad8\u6821\u53f0\u7403\u8054\u76df"
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "billiards.group", 
+        "fields": {
+            "status": 1, 
+            "cardimg": "", 
+            "name": "\u6d4b\u8bd5\u7fa4", 
+            "description": "\u6d4b\u8bd5\u7fa4"
         }
     }, 
     {
@@ -22,8 +34,59 @@
         "model": "billiards.group", 
         "fields": {
             "status": 1, 
+            "cardimg": "", 
             "name": "\u53f0\u7403\u5927\u672c\u8425", 
             "description": "\u53f0\u7403\u5927\u672c\u8425"
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "billiards.group", 
+        "fields": {
+            "status": 1, 
+            "cardimg": "", 
+            "name": "\u591c\u65f6\u5c1a\u9a6c\u5bb6\u5821\u5e97\u7fa4", 
+            "description": "\u591c\u65f6\u5c1a\u9a6c\u5bb6\u5821\u5e97"
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "billiards.group", 
+        "fields": {
+            "status": 1, 
+            "cardimg": "", 
+            "name": "\u661f\u7403\u6c47", 
+            "description": "\u661f\u7403\u6c47"
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "billiards.group", 
+        "fields": {
+            "status": 1, 
+            "cardimg": "", 
+            "name": "\u6c47\u4eac\u96c6\u56e2\u80a1\u4efd\u6709\u9650\u516c\u53f8", 
+            "description": "\u6c47\u4eac\u96c6\u56e2\u80a1\u4efd\u6709\u9650\u516c\u53f8"
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "billiards.group", 
+        "fields": {
+            "status": 1, 
+            "cardimg": "", 
+            "name": "\u5317\u4eac\u53f0\u7403\u5708", 
+            "description": "\u5317\u4eac\u53f0\u7403\u5708"
+        }
+    }, 
+    {
+        "pk": 9, 
+        "model": "billiards.group", 
+        "fields": {
+            "status": 1, 
+            "cardimg": "", 
+            "name": "\u7ea2\u725b", 
+            "description": "\u7ea2\u725b"
         }
     }
 ]
