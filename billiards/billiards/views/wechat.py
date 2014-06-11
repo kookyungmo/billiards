@@ -492,18 +492,18 @@ class PKWechat(BaseRoBot):
         group = Group.objects.get(Q(id=targetgroup))
         try:
             member = Membership.objects.get(Q(wechatid=message.source) & Q(targetid=targetgroup))
-            reply = (u"你已经是'%s'会员啦！" %(group.name), u'我的会员号: %s' %(member.memberid), '', reverse('membership', args=(message.source, targetgroup,)))
+            reply = [(u"你已经是'%s'会员啦！" %(group.name), u'我的会员号: %s' %(member.memberid), '', self.buildAbsoluteURI(reverse('membership', args=(message.source, targetgroup,))))]
         except Membership.DoesNotExist:
-            reply = (u"欢迎申请'%s'会员卡" %(group.name), u"点击我只需一步就成为'%s'会员" %(group.name), '', reverse('membership_apply', args=(message.source, targetgroup,)))
+            reply = [(u"欢迎申请'%s'会员卡" %(group.name), u"点击我只需一步就成为'%s'会员" %(group.name), '', self.buildAbsoluteURI(reverse('membership_apply', args=(message.source, targetgroup,))))]
         return reply
     
     def queryMember(self, reply, message, targetgroup):
         group = Group.objects.get(Q(id=targetgroup))
         try:
             member = Membership.objects.get(Q(wechatid=message.source) & Q(targetid=targetgroup))
-            reply = (u"%s, 欢迎你成为'%s'会员" %(member.name, group.name), u'我的会员号: %s' %(member.memberid), '', reverse('membership', args=(message.source, targetgroup,)))
+            reply = [(u"%s, 欢迎你成为'%s'会员" %(member.name, group.name), u'我的会员号: %s' %(member.memberid), '', self.buildAbsoluteURI(reverse('membership', args=(message.source, targetgroup,))))]
         except Membership.DoesNotExist:
-            reply = (u"你还不是'%s'会员" %(group.name), u"点击我只需一步就成为'%s'会员" %(group.name), '', reverse('membership_apply', args=(message.source, targetgroup,)))
+            reply = [(u"你还不是'%s'会员" %(group.name), u"点击我只需一步就成为'%s'会员" %(group.name), '', self.buildAbsoluteURI(reverse('membership_apply', args=(message.source, targetgroup,))))]
         return reply
     
     def text(self):
@@ -547,6 +547,10 @@ class PKWechat(BaseRoBot):
                     reply = self.keysHandlers["PK_ACTIVITY"](reply, message)
                 elif message.content == u"比赛":
                     reply = self.keysHandlers["PK_MATCH"](reply, message)
+                elif message.content == u'申请会员卡':
+                    reply = self.applyMember(reply, message, 4)
+                elif message.content == u'查看会员卡':
+                    reply = self.queryMember(reply, message, 4)
                 elif message.content in HELP_KEYWORDS:
                     reply += self.getHelpMesg()
                 else:

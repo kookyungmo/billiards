@@ -445,3 +445,20 @@ class WechatTest(TestCase):
         self.assertEqual('scan', msg['event'])
         self.assertEqual('SCENE_VALUE', msg['eventkey'])
         self.assertEqual('TICKET', msg['ticket'])
+        
+    def test_wechat_bj_university_membership(self):
+        data = u"""
+        <xml>
+        <ToUserName><![CDATA[toUser]]></ToUserName>
+        <FromUserName><![CDATA[fromUser]]></FromUserName> 
+        <CreateTime>1391212800</CreateTime>
+        <MsgType><![CDATA[text]]></MsgType>
+        <Content><![CDATA[申请会员卡]]></Content>
+        <MsgId>1234567890123456</MsgId>
+        </xml>
+        """
+        msg = self._send_wechat_message(data, reverse('wechat_bj_dabenying'))
+        self.assertTrue('ArticleCount' in msg)
+        self.assertEqual(1, int(msg['ArticleCount']))
+        queries = parse_qsl(urlparse(msg['Articles']['item']['Url'])[4])
+        self.assertTrue("wechat-bj-university", queries[0][1])
