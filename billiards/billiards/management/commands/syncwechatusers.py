@@ -60,6 +60,7 @@ class Command(NoArgsCommand):
                         obj.gender = (lambda x: 'm' if x == 1 else 'f' if x == 2 else 'u')(int(idresponse['sex']))
                         obj.nickname = idresponse['nickname'].encode('unicode_escape')
                         obj.avatar = idresponse['headimgurl']
+                        obj.expire_time = expiretime
                         obj.save()
                         UPDATED += 1
             self.stdout.write('\t\t %s subscribers are created, %s subscribers are updated for wechat account \'%s\'.\n' %(CREATED, UPDATED, cred.name))
