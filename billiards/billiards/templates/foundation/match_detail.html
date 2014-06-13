@@ -65,7 +65,7 @@
 				</div>
 				<h4 style="color: #EB6100">{{ match.title }}</h4><hr>
 				<h4 style="color: #EB6100">
-					<a href="{% url 'poolroom_detail' match.poolroom.id %}">{{ match.poolroom.name }}</a>
+					<a href="{% url 'poolroom_detail_uuid' match.poolroom.uuid %}">{{ match.poolroom.name }}</a>
 				</h4>
 				<h6 class="subheader">地址：{{ match.poolroom.address }}</h6>
 				<span class="icon_list"> 
@@ -194,7 +194,7 @@ var pkLocation = new PKLocation(null);
 var MATCH_DETAIL_URL = "{% url 'match_detail' '000' %}";
 var ACTIVITY_URL = "{% url 'activity_detail' '000' %}";
 var ENROLL_URL = "{% url 'match_enroll' '000' %}";
-var POOLROOM_URL = "{% url 'poolroom_detail' '000' %}";
+var POOLROOM_URL = "{% url 'poolroom_detail_uuid' UUID_SAMPLE %}";
 var MATCH_URL = "{% url 'match_map' 'map' %}";
 var PKMAP_URL = "{% url 'pk_map_type_id' 'mtype' '000' %}";
 var pkMatches = new PKMatches(pkMap);

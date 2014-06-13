@@ -27,6 +27,7 @@ from billiards import settings
 from billiards.id import generator
 from billiards.citydistrict import CITY_DISTRICT
 import string
+from uuidfield.fields import UUIDField
 
 def toDict(bitfield):
     flag_dict = {}
@@ -34,7 +35,7 @@ def toDict(bitfield):
         flag_dict[f[0]] = f[1]
     return flag_dict
 
-poolroom_fields = ('id', 'name', 'address', 'tel', 'lat_baidu', 'lng_baidu', 'flags', 'businesshours', 'size', 'rating')
+poolroom_fields = ('uuid', 'name', 'address', 'tel', 'lat_baidu', 'lng_baidu', 'flags', 'businesshours', 'size', 'rating')
 
 def getCouponCriteria(theday = None):
     datefmt = "%Y-%m-%d"
@@ -46,6 +47,7 @@ def getCouponCriteria(theday = None):
         
 class Poolroom(models.Model):
     id = models.AutoField(primary_key=True)
+    uuid = UUIDField(auto=True, hyphenate=True)
     name = models.CharField(max_length=200,null=False,verbose_name='名字')
     address = models.TextField(null=True,verbose_name='地址')
     tel = models.CharField(max_length=20,null=True,verbose_name='电话')
@@ -93,7 +95,7 @@ class Poolroom(models.Model):
             newimage['iscover'] = image.iscover
             newimage['description'] = image.description
             images['img' + str(idx)] = newimage
-        return {'id': self.id, 'name': self.name, 'lat': self.lat_baidu, 'lng': self.lng_baidu,
+        return {'uuid': str(self.uuid), 'name': self.name, 'lat': self.lat_baidu, 'lng': self.lng_baidu,
                 'businesshours': self.businesshours, 'size': self.size,
                 'address': self.address, 'flags': toDict(self.flags), 'rating': self.rating,
                 'images': images}

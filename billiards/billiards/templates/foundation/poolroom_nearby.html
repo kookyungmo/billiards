@@ -18,7 +18,7 @@
 {% block mapscript %}
 <script>
 var NEARBY_URL = "{% url 'poolroom_nearby_point_distance' '00.00' '11.11' '00' %}";
-var POOLROOM_URL = "{% url 'poolroom_detail' '000' %}";
+var POOLROOM_URL = "{% url 'poolroom_detail_uuid' UUID_SAMPLE %}";
 var COUPON_URL = "{% url 'coupontracker' '000' %}";
 var PKMAP_URL = "{% url 'pk_map_type_id' 'mtype' '000' %}";
 

@@ -233,7 +233,6 @@ var PKPoolrooms = function(pkMap) {
 							<a target="_blank" href="{{url}}">{{name}}</a>\
 						</span>\
 					</h5>\
-					<div class="musthave show-for-small-only"><a href="javascript:void(0);" onclick="javascript:openMap(\'{{name}}\', \'poolroom\', {{poolroom_id}});">地图中查看...</a></div>\
 					{{#equip}}\
 						<div class="optional icon_list">\
 							<span class="ico_none">球房设施: </span>\
@@ -277,10 +276,10 @@ var PKPoolrooms = function(pkMap) {
 				</div>\
 				<div class="small-6 medium-6 columns">\
 					{{#distance}}\
-						<span class="optional" point="{{point}}">距离我: <code>{{distance}}</code></span>\
+						<span class="musthave" point="{{point}}">距离我: <code>{{distance}}</code></span>\
 					{{/distance}}\
 					{{^distance}}\
-						<span class="optional hide" point="{{point}}">距离我: <code>{{distance}}</code></span>\
+						<span class="musthave hide" point="{{point}}">距离我: <code>{{distance}}</code></span>\
 					{{/distance}}\
 				</div>\
 			</div>\
@@ -387,10 +386,10 @@ var PKPoolrooms = function(pkMap) {
 				"address": poolroom.fields.address,
 				"tel": poolroom.fields.tel,
 				"distance": "正在获取你的位置",
-				"url": POOLROOM_URL.replace(/000/g, poolroom.pk),
+				"url": POOLROOM_URL.replace(UUID_PATTERN, poolroom.fields.uuid),
 				"businessHours": poolroom.fields.businesshours,
 				"poolroom_id": poolroom.pk,
-				"map_url": PKMAP_URL.replace(/000/g, poolroom.pk).replace(/mtype/g, "poolroom"),
+				"map_url": PKMAP_URL.replace(/000/g, poolroom.fields.uuid).replace(/mtype/g, "poolroom"),
 			},
 			images = poolroom.fields.images ? Object.getOwnPropertyNames(poolroom.fields.images) : [],
 			image,
@@ -674,7 +673,7 @@ var PKChallenges = function(pkMap) {
 		var view = {
 				"point": point.lng + "," + point.lat,
 				"name": challenge.fields.poolroom.name,
-				"poolroomurl": POOLROOM_URL.replace(/000/g, challenge.fields.poolroom.id),
+				"poolroomurl": POOLROOM_URL.replace(UUID_PATTERN, challenge.fields.poolroom.uuid),
 				"starttime": getSmartTime(challenge.fields.starttime),
 				"endtime": getSmartTime(challenge.fields.expiretime),
 				"level": challenge.fields.level,
@@ -1193,7 +1192,7 @@ var PKMatches = function(pkMap) {
 				"match_id": match.pk,
 				"point": point.lng + "," + point.lat,
 				"poolroom_name": match.fields.poolroom.name,
-				"poolroom_url": POOLROOM_URL.replace(/000/g, match.fields.poolroom.id),
+				"poolroom_url": POOLROOM_URL.replace(UUID_PATTERN, match.fields.poolroom.uuid),
 				"poolroom_address": match.fields.poolroom.address,
 				"starttime": getSmartTime(match.fields.starttime),
 				"title": match.fields.title,

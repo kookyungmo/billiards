@@ -1,3 +1,0 @@
-[submodule "billiards/django-bitfield"]
-	path = billiards/django-bitfield
-	url = https://github.com/disqus/django-bitfield.git

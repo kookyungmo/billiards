@@ -218,7 +218,9 @@ class PKWechat(BaseRoBot):
         return click_handler
         
     def addHandlers(self):
+        self._handlers['scan'] = []
         self.add_handler(self.subscribe(), 'subscribe')
+        self.add_handler(self.scan(), 'scan')
         self.add_handler(self.unsubscribe(), 'unsubscribe')
         self.add_handler(self.location(), 'location')
         self.add_handler(self.text(), 'text')
@@ -262,7 +264,7 @@ class PKWechat(BaseRoBot):
             pkid = unicode(poolroom.pk)
             businesshours = poolroom.businesshours
             picurl = buildPoolroomImageURL(poolroom)
-            originContent = self.buildAbsoluteURI(reverse('poolroom_detail', args=(pkid,)))
+            originContent = self.buildAbsoluteURI(reverse('poolroom_detail_uuid', args=(poolroom.uuid,)))
             description = u"地址：%s\r\n营业面积：%s平方米\r\n营业时间：%s\r\n电话：%s" %(address, size, businesshours, tel)
             reply.append((poolroom.name, description, picurl, originContent))
         return reply
@@ -299,7 +301,7 @@ class PKWechat(BaseRoBot):
             reply.append((coupon.title, coupon.description, picurl, couponurl))
             if withPoolroom:
                 picurl = buildPoolroomImageURL(coupon.poolroom)
-                weblink = self.buildAbsoluteURI(reverse('poolroom_detail', args=(coupon.poolroom.pk,)))
+                weblink = self.buildAbsoluteURI(reverse('poolroom_detail_uuid', args=(coupon.poolroom.uuid,)))
                 reply.append((u"俱乐部详情", coupon.poolroom.name, picurl, weblink))
         return reply
     
@@ -339,12 +341,31 @@ class PKWechat(BaseRoBot):
             reply = self.getSpecialEventItem(message.time)
             reply += self.getWelcomeMsg()
             try:
-                eventkey = message.key
+                eventkey = message.EventKey
             except AttributeError:
                 eventkey = None
-            recordUserActivity(message, 'event', message.type, {'event': message.type, 'eventkey': eventkey}, None, self.target)
+            try:
+                ticket = message.Ticket
+            except AttributeError:
+                ticket = None
+            recordUserActivity(message, 'event', message.type, {'event': message.type, 'eventkey': eventkey, 'ticket': ticket}, None, self.target)
             return reply
         return subscribe_handler
+    
+    def scan(self):
+        def scan_handler(message):
+            reply = self.getSpecialEventItem(message.time)
+            try:
+                eventkey = message.EventKey
+            except AttributeError:
+                eventkey = None
+            try:
+                ticket = message.Ticket
+            except AttributeError:
+                ticket = None
+            recordUserActivity(message, 'event', message.type, {'event': message.type, 'eventkey': eventkey, 'ticket': ticket}, None, self.target)
+            return reply
+        return scan_handler
     
     def unsubscribe(self):
         def unsubscribe_handler(message):
@@ -468,18 +489,18 @@ class PKWechat(BaseRoBot):
         group = Group.objects.get(Q(id=targetgroup))
         try:
             member = Membership.objects.get(Q(wechatid=message.source) & Q(targetid=targetgroup))
-            reply = (u"你已经是'%s'会员啦！" %(group.name), u'我的会员号: %s' %(member.memberid), '', reverse('membership', args=(message.source, targetgroup,)))
+            reply = [(u"你已经是'%s'会员啦！" %(group.name), u'我的会员号: %s' %(member.memberid), '', self.buildAbsoluteURI(reverse('membership', args=(message.source, targetgroup,))))]
         except Membership.DoesNotExist:
-            reply = (u"欢迎申请'%s'会员卡" %(group.name), u"点击我只需一步就成为'%s'会员" %(group.name), '', reverse('membership_apply', args=(message.source, targetgroup,)))
+            reply = [(u"欢迎申请'%s'会员卡" %(group.name), u"点击我只需一步就成为'%s'会员" %(group.name), '', self.buildAbsoluteURI(reverse('membership_apply', args=(message.source, targetgroup,))))]
         return reply
     
     def queryMember(self, reply, message, targetgroup):
         group = Group.objects.get(Q(id=targetgroup))
         try:
             member = Membership.objects.get(Q(wechatid=message.source) & Q(targetid=targetgroup))
-            reply = (u"%s, 欢迎你成为'%s'会员" %(member.name, group.name), u'我的会员号: %s' %(member.memberid), '', reverse('membership', args=(message.source, targetgroup,)))
+            reply = [(u"%s, 欢迎你成为'%s'会员" %(member.name, group.name), u'我的会员号: %s' %(member.memberid), '', self.buildAbsoluteURI(reverse('membership', args=(message.source, targetgroup,))))]
         except Membership.DoesNotExist:
-            reply = (u"你还不是'%s'会员" %(group.name), u"点击我只需一步就成为'%s'会员" %(group.name), '', reverse('membership_apply', args=(message.source, targetgroup,)))
+            reply = [(u"你还不是'%s'会员" %(group.name), u"点击我只需一步就成为'%s'会员" %(group.name), '', self.buildAbsoluteURI(reverse('membership_apply', args=(message.source, targetgroup,))))]
         return reply
     
     def text(self):
@@ -523,6 +544,10 @@ class PKWechat(BaseRoBot):
                     reply = self.keysHandlers["PK_ACTIVITY"](reply, message)
                 elif message.content == u"比赛":
                     reply = self.keysHandlers["PK_MATCH"](reply, message)
+                elif message.content == u'申请会员卡':
+                    reply = self.applyMember(reply, message, 4)
+                elif message.content == u'查看会员卡':
+                    reply = self.queryMember(reply, message, 4)
                 elif message.content in HELP_KEYWORDS:
                     reply += self.getHelpMesg()
                 else:
