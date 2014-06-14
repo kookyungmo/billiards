@@ -28,6 +28,7 @@ from billiards.id import generator
 from billiards.citydistrict import CITY_DISTRICT
 import string
 from uuidfield.fields import UUIDField
+from decimal import Decimal
 
 def toDict(bitfield):
     flag_dict = {}
@@ -718,3 +719,83 @@ class WechatCredential(models.Model):
         db_table = 'wechat_credential'
         verbose_name = '微信开发者凭证'
         verbose_name_plural = '微信开发者凭证'
+
+class PayAccount(models.Model):
+    id = models.AutoField(primary_key=True)
+    pid = models.CharField(max_length=16, verbose_name='Partner ID')
+    key = models.CharField(max_length=64, verbose_name='Key')
+    name = models.CharField(max_length=32, verbose_name='账号名')
+    email = models.CharField(max_length=64, verbose_name='帐号邮箱')
+    type = IntegerChoiceTypeField(verbose_name=u'帐号类型', choices=(
+            (1, u'Alipay'),
+        ), default=1)
+    
+    class Meta:
+        db_table = 'payaccount'
+        verbose_name = '交易账户信息'
+        verbose_name_plural = '交易账户信息'
+    
+class CurrencyField(models.DecimalField):
+    __metaclass__ = models.SubfieldBase
+    
+    def __init__(self, verbose_name=None, name=None, **kwargs):
+        super(CurrencyField, self). __init__(
+        verbose_name=verbose_name, name=name, max_digits=10,
+        decimal_places=2, **kwargs)
+
+    def to_python(self, value):
+        try:
+            return super(CurrencyField, self).to_python(value).quantize(Decimal("0.01"))
+        except AttributeError:
+            return None
+        
+class Goods(models.Model):
+    id = models.AutoField(primary_key=True)
+    sku = models.CharField(max_length=32, verbose_name='商品sku', default=generator(32))
+    name = models.CharField(max_length=32, verbose_name='商品名称')
+    description = models.CharField(max_length=512, verbose_name='描述')
+    price = CurrencyField(verbose_name='价格(元)')
+    type = IntegerChoiceTypeField(verbose_name=u'类别', choices=(
+            (1, u'电子卡'),
+        ), default=1)
+    state = IntegerChoiceTypeField(verbose_name=u'状态', choices=(
+            (1, u'可购买'),
+            (2, u'已下架'),
+            (3, u'已售完'),
+        ), default=1)
+    
+    def __unicode__(self):
+        return u'[%s] %s(%s元) -- %s' %(self.get_type_display(), self.name, self.price, self.get_state_display())
+        
+    class Meta:
+        db_table = 'goods'
+        verbose_name = '可交易商品'
+        verbose_name_plural = '可交易商品'
+          
+class Transaction(models.Model):
+    id = models.AutoField(primary_key=True)
+    payaccount = models.ForeignKey(PayAccount, verbose_name='交易账户', db_column='payaccount')
+    tradenum = models.CharField(max_length=64, verbose_name='唯一交易订单号', default=generator(64))
+    subject = models.CharField(max_length=256, verbose_name='商品名称')
+    user = models.ForeignKey(User, verbose_name='用户标识', db_column='uid')
+    goods = models.ForeignKey(Goods, verbose_name='商品唯一id', db_column='goods')
+    fee = CurrencyField(verbose_name='交易金额')
+    createdDate = models.DateTimeField(verbose_name='交易生成时间')
+    paidDate = models.DateTimeField(verbose_name='交易付款时间', null=True, blank=True)
+    closedDate = models.DateTimeField(verbose_name='交易关闭时间', null=True, blank=True)
+    paytradeNum = models.CharField(max_length=64, verbose_name='交易号')
+    tradeStatus = models.CharField(max_length=32, verbose_name='交易状态')
+    notifyid = models.CharField(max_length=128, verbose_name='通知校验ID')
+    buyerEmail = models.CharField(max_length=100, verbose_name='买家Email')
+    buyeid = models.CharField(max_length=30, verbose_name='买家帐号')
+    state = IntegerChoiceTypeField(verbose_name=u'状态', choices=(
+            (1, u'等待付款'),
+            (2, u'已完成'),
+            (3, u'已取消'),
+            (4, u'已过期')
+        ), default=1)
+    
+    class Meta:
+        db_table = 'transaction'
+        verbose_name = '交易信息'
+        verbose_name_plural = '交易信息'

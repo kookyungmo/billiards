@@ -106,6 +106,17 @@ urlpatterns += patterns('billiards.views.wechatpartner',
 urlpatterns += patterns('billiards.views.event',
     url(r'^event/(?P<year>\d{4})/(?P<month>\d{02})/(?:(?P<titleabbrev>[\w-]+))?$', 'detail', name='event_year_month_name'),
 )
+
+urlpatterns += patterns('billiards.views.trade',
+     url(r'^trade/membership$', 'membership', name='trade_membership'),
+)
+
+urlpatterns += patterns('billiards.views.transaction',
+     url(r'^transaction/goods/(?P<sku>\w{32})$', 'alipay_goods', name='transaction_alipay_goods'),
+     url(r'^transaction/alipay/return$', 'alipay_return', name='transaction_alipay_return'),
+     url(r'^transaction/alipay/notify$', 'alipay_notify', name='transaction_alipay_notify'),
+)
+
 urlpatterns += staticfiles_urlpatterns()
 handler403 = 'billiards.views.exceptions.handler403'
 handler404 = 'billiards.views.exceptions.handler404'
