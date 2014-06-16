@@ -1,10 +1,10 @@
 Django == 1.4.13
 MySQL-python == 1.2.5
 pytz == 2013.9
-pil
+Pillow
 bae_image
 WeRoBot == 0.5.3
 six
 django-bitfield == 1.7.0
 django-uuidfield == 0.5.0
--e git+https://github.com/zxkane/alipay.git@master#egg=alipay
+alipay == 0.2.5
