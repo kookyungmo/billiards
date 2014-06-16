@@ -14,6 +14,7 @@ from django.utils.timezone import pytz
 from billiards.settings import TIME_ZONE
 from billiards import settings
 from django.shortcuts import get_object_or_404
+import json
 
 def getAlipay():
     account = PayAccount.objects.all()[:1][0]
@@ -41,7 +42,7 @@ def alipay_goods(request, sku):
         url = alipay.create_direct_pay_by_user_url(out_trade_no=transaction.tradenum, subject=transaction.subject, total_fee=transaction.fee, 
             return_url=returnurl, notify_url=notifyurl)
         return HttpResponseRedirect(url)
-    return None
+    return HttpResponse(json.dumps({'rt': -1, 'msg': 'login first'}), content_type="application/json")
 
 TRANSACTION_TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 def alipay_return(request):
