@@ -8,13 +8,14 @@ Created on 2013年12月11日
 
 from django.http import HttpResponseRedirect, Http404
 from billiards.settings import SOCIALOAUTH_SITES
-from billiards.support.socialoauth import SocialSites, SocialAPIError
 from django.contrib.auth.models import User
 from django.contrib import auth
 from time import mktime, localtime
 from datetime import datetime
 from billiards.models import PoolroomUser
 import copy
+from socialoauth import SocialSites
+from socialoauth.exception import SocialAPIError
 
 # because social site is singleton that has different behavior on different environment
 def getSocialSite(request, site_name):
@@ -74,7 +75,7 @@ def callback(request, site_name):
         return HttpResponseRedirect(returnurl)
 
     user.nickname = _s.name
-    user.gender = (lambda x: 'm' if x else 'f')(_s.gender)
+#     user.gender = (lambda x: 'm' if x else 'f')(_s.gender)
     user.avatar = _s.avatar
     user.site_name = _s.site_name
     user.access_token = _s.access_token
