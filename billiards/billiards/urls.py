@@ -53,6 +53,10 @@ urlpatterns += patterns('billiards.views.us',
     url(r'^$', 'home', name='home'),
 )
 
+urlpatterns += patterns('billiards.views.lottery',
+    url(r'^lottery$','lottery', name='lottery'),
+)
+
 urlpatterns += patterns('billiards.views.challenge',
     url(r'^challenge/(?:(?P<group>\d+)/)?(?P<lat>\d+.\d+),(?P<lng>\d+.\d+)$', 'index', name='challenge_with_distance'),
     url(r'^challenge/(?P<challengeid>\d+)/apply$', 'applyChallenge', name='apply_challenge'),
