@@ -61,15 +61,20 @@ def callback(request, site_name):
         print e.error_msg   # the error log returned from the site
         raise
     
-    username = _s.uid[0:29]
-    password = _s.site_name + _s.uid[30:]
+    if _s.site_name != 'wechat':
+        username = _s.uid[0:29]
+        password = _s.site_name + _s.uid[30:]
+    else:
+        username = _s.uid
+        password = _s.site_name + _s.uid
     
     user = auth.authenticate(username=username, password=password)
    
     if user is None:
         user = User.objects.create_user(username=username, password=password)
+        user.site_name = _s.site_name
         user.save()
-        user = auth.authenticate(username=_s.uid[0:29], password=(_s.site_name+_s.uid[30:]))        
+        user = auth.authenticate(username=username, password=(password))        
     
     if user.is_active == 0:
         return HttpResponseRedirect(returnurl)
@@ -77,7 +82,6 @@ def callback(request, site_name):
     user.nickname = _s.name
 #     user.gender = (lambda x: 'm' if x else 'f')(_s.gender)
     user.avatar = _s.avatar
-    user.site_name = _s.site_name
     user.access_token = _s.access_token
     user.expire_time = datetime.fromtimestamp(mktime(localtime()) + _s.expires_in)
     user.refresh_token = _s.refresh_token

@@ -24,6 +24,7 @@
 {% url 'match_map' 'map' as mapurl %}
 {% url 'poolroom_nearby' as nearby %}
 {% url 'challenge_list' as challenge %}
+{% url 'login_3rd' 'wechat' as wechat %}
 {% url 'login_3rd' 'qq' as qq %}
 {% url 'login_3rd' 'weibo' as weibo %}
 {% url 'event_year_month_name' '2014' '03' 'my-favorite-club' as latest_event %}
@@ -43,7 +44,7 @@
 		var MISSING_INFO = 1;
 	{% endif %}
 </script>
-<div class="off-canvas-wrap doc-wrap">
+<div class="off-canvas-wrap doc-wrap" data-offcanvas>
    <div class="inner-wrap">
     {% block header-nav %}
 	 <!-- Header and Nav -->
@@ -124,6 +125,7 @@
 	    <li><a href="{{ user_logout }}">登出</a></li>
 	    {% else %}
 	    <li><label>用户登录</label></li>
+	    <li id="wechatlogin" class="hide"><a href="javascript:dologin('{{ wechat }}');">微信登录</a></li>
 	    <li><a href="javascript:dologin('{{ qq }}');">QQ登录</a></li>
 		<li><a href="javascript:dologin('{{ weibo }}');">微博登录</a></li>
 	    {% endif %}
@@ -260,7 +262,10 @@
 		});
     });
     $(document).foundation({
-    	abide: abideOptions
+    	abide: abideOptions,
+    });
+    $(document).on('open.fndtn.offcanvas', '[data-offcanvas]', function() {
+    	wechatLogin();
     });
   </script>
 {% block script %}{% endblock %}

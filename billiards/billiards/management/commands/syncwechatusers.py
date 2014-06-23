@@ -9,7 +9,6 @@ from billiards.models import WechatCredential
 from django.contrib.auth.models import User
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
-from billiards.id import generator
 from django.utils.timezone import utc
 '''
 For a known issue #48 of WeRobot to copy the client as workaround
@@ -44,23 +43,29 @@ class Command(NoArgsCommand):
                 if 'errorcode' in idresponse:
                     self.stdout.write('\t\t\t\tFailed to get info of subscriber \'%s\' of wechat account \'%s\' due to %s.\n' %(openid, cred.name, idresponse['errmsg']))
                 elif int(idresponse['subscribe']) == 1:
-                    obj, created = User.objects.get_or_create(username=idresponse['openid'],
+                    username = idresponse['openid']
+                    password=('wechat' + username)
+                    obj, created = User.objects.get_or_create(username=username,
                         defaults={'is_staff': 0, 'is_active': 1, 'is_superuser': 0, 
                                 'date_joined': datetime.fromtimestamp(idresponse['subscribe_time']).replace(tzinfo=utc),
                                 'nickname': idresponse['nickname'].encode('unicode_escape'), 'avatar': idresponse['headimgurl'], 
                                 'gender': (lambda x: 'm' if x == 1 else 'f' if x == 2 else 'u')(int(idresponse['sex'])), 
                                 'site_name': 'wechat/' + cred.name,
-                                'password': 'wechat/%s:%s' %(cred.name, generator()),
+                                'password': password,
                                 'expire_time': expiretime})
                     if created == True:
                         CREATED += 1
-                    elif obj != None and self.isExpired(current, obj.expire_time) \
+                        obj.set_password(password)
+                        obj.save()
+                    elif obj != None and (self.isExpired(current, obj.expire_time) \
                         and (obj.nickname != idresponse['nickname'].encode('unicode_escape') or obj.avatar != idresponse['headimgurl'] or \
-                             obj.gender != (lambda x: 'm' if x == 1 else 'f' if x == 2 else 'u')(int(idresponse['sex']))):
+                             obj.gender != (lambda x: 'm' if x == 1 else 'f' if x == 2 else 'u')(int(idresponse['sex']))) or 
+                            obj.password.startswith('wechat/')):
                         obj.gender = (lambda x: 'm' if x == 1 else 'f' if x == 2 else 'u')(int(idresponse['sex']))
                         obj.nickname = idresponse['nickname'].encode('unicode_escape')
                         obj.avatar = idresponse['headimgurl']
                         obj.expire_time = expiretime
+                        obj.set_password(password)
                         obj.save()
                         UPDATED += 1
             self.stdout.write('\t\t %s subscribers are created, %s subscribers are updated for wechat account \'%s\'.\n' %(CREATED, UPDATED, cred.name))
