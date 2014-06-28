@@ -488,7 +488,7 @@ class Challenge(models.Model):
         verbose_name_plural = '约赛'        
         
     def __unicode__(self):
-        return u'%s - %s - %s - %s - %s - %s' %(self.issuer.name, self.starttime, self.get_level_display(), self.get_tabletype_display(), self.rule, self.get_status_display())
+        return u'%s - %s - %s - %s - %s - %s' %(self.issuer_nickname, self.starttime, self.get_level_display(), self.get_tabletype_display(), self.rule, self.get_status_display())
    
 class ChallengeApply(models.Model):
     id = models.AutoField(primary_key=True)

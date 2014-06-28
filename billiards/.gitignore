@@ -1,2 +1,11 @@
 *.pyc
 billiards/settings.py
+admin/
+css/
+foundation-icons/
+foundation4.3.2/
+foundation4/
+grappelli/
+images/
+js/
+nextstep/
