@@ -8,3 +8,4 @@ six
 django-bitfield == 1.7.0
 django-uuidfield == 0.5.0
 alipay == 0.2.5
+python-dateutil == 2.2

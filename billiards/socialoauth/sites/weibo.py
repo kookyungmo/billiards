@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from billiards.support.socialoauth.sites.base import OAuth2
+from socialoauth.sites.base import OAuth2
 
 
 class Weibo(OAuth2):
@@ -22,10 +22,7 @@ class Weibo(OAuth2):
         self.uid = res['uid']
         self.access_token = res['access_token']
         self.expires_in = res['expires_in']
-        try:
-            self.refresh_token = res['refresh_token']
-        except KeyError:
-            self.refresh_token = None;
+        self.refresh_token = None
 
         res = self.api_call_get(
             'https://api.weibo.com/2/users/show.json',
@@ -35,7 +32,6 @@ class Weibo(OAuth2):
         self.name = res['name']
         self.avatar = res['profile_image_url']
         self.avatar_large = res['avatar_large']
-        self.gender = (res['gender'] == "m")
 
 
 

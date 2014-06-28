@@ -170,22 +170,28 @@ LOGGING = {
 
 SOCIALOAUTH_SITES = (
         
-    ('weibo', 'billiards.support.socialoauth.sites.weibo.Weibo', '新浪微博',
+    ('weibo', 'socialoauth.sites.weibo.Weibo', '新浪微博',
               {
-#               'redirect_uri': 'http://127.0.0.1:8000/user/oauth/weibo',
                 'redirect_uri': '$hostname/user/oauth/weibo',
                 'client_id': '1201635266',
                 'client_secret': '88c57d2325e59ec8d3871ab3d65741f6',
               }
     ),
-    
-    ('qq', 'billiards.support.socialoauth.sites.qq.QQ', 'QQ',
+    ('qq', 'socialoauth.sites.qq.QQ', 'QQ',
               {
                 'redirect_uri': '$hostname/user/oauth/qq',
                 'client_id': '100568693',
                 'client_secret': '8c21be52fe3edf9fa9b75d55fe4abf64',
               }
-    ),  
+    ),
+    ('wechat', 'socialoauth.sites.wechat.Wechat', '微信',
+              {
+                'redirect_uri': '$hostname/user/oauth/wechat',
+                'client_id': 'wx639fcbf303386e07',
+                'client_secret': 'd26b2ab613d35420ef1a8c395135d3eb',
+                'SCOPE': 'snsapi_userinfo',
+              }
+    ),
 )
 
 TEMPLATE_ROOT = 'foundation/'

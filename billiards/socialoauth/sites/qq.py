@@ -2,8 +2,8 @@
 import re
 import json
 
-from billiards.support.socialoauth.sites.base import OAuth2
-from billiards.support.socialoauth.exception import SocialAPIError
+from socialoauth.sites.base import OAuth2
+from socialoauth.exception import SocialAPIError
 
 
 QQ_OPENID_PATTERN = re.compile('\{.+\}')
@@ -40,13 +40,18 @@ class QQ(OAuth2):
 
 
     def parse_token_response(self, res):
-        res = res.split('&')
-        res = [_r.split('=') for _r in res]
-        res = dict(res)
+        if 'callback(' in res:
+            res = res[res.index('(')+1:res.rindex(')')]
+            res = json.loads(res)
+            raise SocialAPIError(self.site_name, '', u'%s:%s' % (res['error'],res['error_description']) )
+        else:
+            res = res.split('&')
+            res = [_r.split('=') for _r in res]
+            res = dict(res)
 
         self.access_token = res['access_token']
         self.expires_in = int(res['expires_in'])
-        self.refresh_token = res['refresh_token']
+        self.refresh_token = None
 
         res = self.http_get(self.OPENID_URL, {'access_token': self.access_token}, parse=False)
         res = json.loads(QQ_OPENID_PATTERN.search(res).group())
@@ -62,5 +67,4 @@ class QQ(OAuth2):
         self.name = res['nickname']
         self.avatar = res['figureurl_qq_1']
         self.avatar_large = res['figureurl_qq_2']
-        self.gender = (res['gender'] == u"男")
 
