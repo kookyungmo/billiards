@@ -79,7 +79,10 @@ def callback(request, site_name):
     if user.is_active == 0:
         return HttpResponseRedirect(returnurl)
 
-    user.nickname = _s.name
+    if _s.site_name != 'wechat':
+        user.nickname = _s.name
+    else:
+        user.nickname = _s.name.encode('unicode_escape')
 #     user.gender = (lambda x: 'm' if x else 'f')(_s.gender)
     user.avatar = _s.avatar
     user.access_token = _s.access_token
