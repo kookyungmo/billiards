@@ -14,6 +14,7 @@ from billiards.models import Match, WechatActivity
 from django.utils import simplejson, timezone
 import datetime
 from urlparse import parse_qsl, urlparse
+from django.core.cache import cache
 
 def parse_tree(root):
     msg = {}
@@ -71,21 +72,12 @@ class WechatTest(TestCase):
         msg = simplejson.loads(activity.message)
         self.assertEqual('subscribe', msg['event'])
         
-    def test_location_event(self):
-        data = """
-        <xml>
-        <ToUserName><![CDATA[toUser]]></ToUserName>
-        <FromUserName><![CDATA[fromUser]]></FromUserName>
-        <CreateTime>1393804800</CreateTime>
+    """ location nearby
         <MsgType><![CDATA[location]]></MsgType>
         <Location_X>40.094799793619</Location_X>
         <Location_Y>116.36137302268</Location_Y>
-        <Scale>20</Scale>
-        <Label><![CDATA[位置信息]]></Label>
-        <MsgId>1234567890123456</MsgId>
-        </xml> 
-        """
-        msg = self._send_wechat_message(data)
+    """
+    def verifyNearbyLocation(self, msg):
         self.assertTrue('ArticleCount' in msg)
         self.assertEqual(3, int(msg['ArticleCount']))
         self.assertEqual(u'北京黑桃8撞球馆上坡家园店', msg['Articles']['item'][0]['Title'])
@@ -103,6 +95,23 @@ class WechatTest(TestCase):
         self.assertEqual(148, reply['id'])
         utctime = datetime.datetime.utcfromtimestamp(1393804800)
         self.assertEqual(utctime.replace(tzinfo=timezone.utc), activity.receivedtime)
+        
+    def test_location_event(self):
+        data = """
+        <xml>
+        <ToUserName><![CDATA[toUser]]></ToUserName>
+        <FromUserName><![CDATA[fromUser]]></FromUserName>
+        <CreateTime>1393804800</CreateTime>
+        <MsgType><![CDATA[location]]></MsgType>
+        <Location_X>40.094799793619</Location_X>
+        <Location_Y>116.36137302268</Location_Y>
+        <Scale>20</Scale>
+        <Label><![CDATA[位置信息]]></Label>
+        <MsgId>1234567890123456</MsgId>
+        </xml> 
+        """
+        msg = self._send_wechat_message(data)
+        self.verifyNearbyLocation(msg)
         # the poolroom has coupon
         data = """
         <xml>
@@ -462,3 +471,87 @@ class WechatTest(TestCase):
         self.assertEqual(1, int(msg['ArticleCount']))
         queries = parse_qsl(urlparse(msg['Articles']['item']['Url'])[4])
         self.assertTrue("wechat-bj-university", queries[0][1])
+        
+    def test_wechat_push_user_location(self):
+        data = u"""
+        <xml>
+        <ToUserName><![CDATA[toUser]]></ToUserName>
+        <FromUserName><![CDATA[fromUser]]></FromUserName>
+        <CreateTime>123456789</CreateTime>
+        <MsgType><![CDATA[event]]></MsgType>
+        <Event><![CDATA[LOCATION]]></Event>
+        <Latitude>23.137466</Latitude>
+        <Longitude>113.352425</Longitude>
+        <Precision>119.385040</Precision>
+        </xml>
+        """
+        self._send_wechat_message(data)
+        location_key = 'location_latlng_fromUser'
+        self.assertEqual('23.137466,113.352425', cache.get(location_key))
+        self.assertEqual('123456789', cache.get('location_time_fromUser'))
+        self.assertEqual('119.38504', cache.get('location_precision_fromUser'))
+        
+    def test_wechat_menu_poolroom_nearby(self):
+        data = u"""
+        <xml>
+        <ToUserName><![CDATA[toUser]]></ToUserName>
+        <FromUserName><![CDATA[fromUser]]></FromUserName>
+        <CreateTime>123456789</CreateTime>
+        <MsgType><![CDATA[event]]></MsgType>
+        <Event><![CDATA[LOCATION]]></Event>
+        <Latitude>40.094799793619</Latitude>
+        <Longitude>116.36137302268</Longitude>
+        <Precision>119.385040</Precision>
+        </xml>
+        """
+        self._send_wechat_message(data)
+        data = """
+        <xml>
+        <ToUserName><![CDATA[toUser]]></ToUserName>
+        <FromUserName><![CDATA[fromUser]]></FromUserName>
+        <CreateTime>1393628400</CreateTime>
+        <MsgType><![CDATA[event]]></MsgType>
+        <Event><![CDATA[CLICK]]></Event>
+        <EventKey><![CDATA[PK_POOLROOM_NEARBY]]></EventKey>
+        </xml>
+        """
+        msg = self._send_wechat_message(data)
+        self.verifyNearbyLocation2(msg)
+        data = """
+        <xml>
+        <ToUserName><![CDATA[toUser]]></ToUserName>
+        <FromUserName><![CDATA[anotherUser]]></FromUserName>
+        <CreateTime>1393628400</CreateTime>
+        <MsgType><![CDATA[event]]></MsgType>
+        <Event><![CDATA[CLICK]]></Event>
+        <EventKey><![CDATA[PK_POOLROOM_NEARBY]]></EventKey>
+        </xml>
+        """
+        msg = self._send_wechat_message(data) 
+        self.assertTrue('ArticleCount' in msg)
+        self.assertEqual(1, int(msg['ArticleCount']))
+        self.assertTrue(msg['Articles']['item']['Url'].startswith('http://www.pktaiqiu.com/poolroom/nearby'))
+        
+    """ location nearby
+        <MsgType><![CDATA[location]]></MsgType>
+        <Location_X>40.094799793619</Location_X>
+        <Location_Y>116.36137302268</Location_Y>
+    """
+    def verifyNearbyLocation2(self, msg):
+        self.assertTrue('ArticleCount' in msg)
+        self.assertEqual(5, int(msg['ArticleCount']))
+        self.assertEqual(u'北京黑桃8撞球馆上坡家园店', msg['Articles']['item'][0]['Title'])
+        self.assertTrue(msg['Articles']['item'][0]['PicUrl'].startswith('http://api.map.baidu.com/staticimage'))
+        activityquery = WechatActivity.objects.filter(eventtype='location')
+        self.assertEqual(1, activityquery.count())
+        activity = activityquery[:1][0]
+        self.assertEqual('fromUser', activity.userid)
+        self.assertEqual(u'click', activity.keyword)
+        msg = simplejson.loads(activity.message)
+        self.assertEqual('40.0947997936', msg['lat'])
+        self.assertEqual('116.361373023', msg['lng'])
+        reply = simplejson.loads(activity.reply)
+        self.assertEqual(u'北京黑桃8撞球馆上坡家园店,北京98台球俱乐部', reply['name'])
+        self.assertEqual('148,137', reply['id'])
+        utctime = datetime.datetime.utcfromtimestamp(1393628400)
+        self.assertEqual(utctime.replace(tzinfo=timezone.utc), activity.receivedtime)
