@@ -1,2 +1,3 @@
 *.pyc
 billiards/settings.py
+billiards/billiards.log

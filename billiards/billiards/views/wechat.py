@@ -196,6 +196,15 @@ class ImageReply(WeChatReply):
     
 KEY_PREFIX = 'location_%s_%s'
 
+class DummyReply(WeChatReply):
+    TEMPLATE = to_text("""
+    <xml>
+    </xml>
+    """)
+
+    def render(self):
+        return DummyReply.TEMPLATE.format(**self._args)
+
 class PKWechat(BaseRoBot):
     def __init__(self, token, request, target = 1):
         super(PKWechat, self).__init__(token, enable_session=False)
@@ -387,7 +396,7 @@ class PKWechat(BaseRoBot):
                 cache.set(KEY_PREFIX %('latlng', message.source), '%s,%s' %(str(message.latitude), str(message.longitude)), timeout)
                 cache.set(KEY_PREFIX %('precision', message.source), str(message.precision), timeout)
                 cache.set(KEY_PREFIX %('time', message.source), str(message.time), timeout)
-                return ''
+                return DummyReply()
             except AttributeError:
                 return None
         return userlocation_hanlder
@@ -494,6 +503,7 @@ class PKWechat(BaseRoBot):
         if latlngstr == None:
             reply.append((u"点此查看周边球房", u'获取您的位置失败，点此查看周边球房', LOGO_IMG_URL, self.buildAbsoluteURI(reverse('poolroom_nearby', args=()))))
             return reply
+        
         latlngs = latlngstr.split(',')
         nearbyPoolrooms, baidu_loc_lat, baidu_loc_lng = self.getNearbyPoolroomsReply(message, latlngs[0], latlngs[1], MAX_NEWSITEM - len(reply))
         if len(nearbyPoolrooms) > 0:
@@ -503,7 +513,7 @@ class PKWechat(BaseRoBot):
                 ids.append(str(poolroom.id))
                 names.append(poolroom.name)
                 distances.append(str(poolroom.distance))
-                reply += self.getNewsPoolroomsReply(nearbyPoolrooms)
+                reply += self.getNewsPoolroomsReply([poolroom])
                 if newsAvaileSize > 0:
                     nativetime = datetime.utcfromtimestamp(float(message.time))
                     localtz = pytz.timezone(settings.TIME_ZONE)
@@ -520,7 +530,7 @@ class PKWechat(BaseRoBot):
             recordUserActivity(message, 'location', 'click', {'lat': latlngs[0], 'lng': latlngs[1], 'user': message.source}, 
                                None, self.target)
         return reply
-    
+        
     def getPKMatch(self, reply, message, source = 'text'):
         nativetime = datetime.utcfromtimestamp(float(message.time))
         localtz = pytz.timezone(settings.TIME_ZONE)
@@ -642,9 +652,9 @@ class PKWechat(BaseRoBot):
         logging.info("Receive message %s" % message)
         reply = self.get_reply(message)
         if not reply:
-            self.logger.warning("No handler responded message %s"
-                                % message)
-            return ''
+            errMsg = "No proper handler responded message %s" %(message.type)
+            self.logger.warning(errMsg)
+            return HttpResponse(errMsg)
         return HttpResponse(create_reply(reply, message=message), content_type="application/xml")
 
 @csrf_exempt
