@@ -34,6 +34,7 @@ from dateutil.relativedelta import relativedelta
 from werobot.utils import to_text
 from random import randint
 from werobot.messages import TextMessage, EventMessage
+from django.core.cache import cache
 
 def set_video():
     videos = [
@@ -190,6 +191,8 @@ class ImageReply(WeChatReply):
     def render(self):
         return ImageReply.TEMPLATE.format(**self._args)
     
+KEY_PREFIX = 'location_%s_%s'
+
 class PKWechat(BaseRoBot):
     def __init__(self, token, request, target = 1):
         super(PKWechat, self).__init__(token, enable_session=False)
@@ -201,7 +204,8 @@ class PKWechat(BaseRoBot):
         keyHandlers = {
             "PK_COUPON": self.getPKCoupon,
             "PK_ACTIVITY": self.getPKActivity,
-            "PK_MATCH": self.getPKMatch
+            "PK_MATCH": self.getPKMatch,
+            "PK_POOLROOM_NEARBY": self.getPKPoolroomNearby,
         }
         self.keysHandlers = keyHandlers
         self.add_handler(self.click(), "click")
@@ -223,6 +227,7 @@ class PKWechat(BaseRoBot):
         self.add_handler(self.scan(), 'scan')
         self.add_handler(self.unsubscribe(), 'unsubscribe')
         self.add_handler(self.location(), 'location')
+        self.add_handler(self.userlocation(), 'location')
         self.add_handler(self.text(), 'text')
         self.add_handler(self.pic(), 'image')
         self.add_handler(self.help(), 'all')
@@ -372,37 +377,56 @@ class PKWechat(BaseRoBot):
             recordUserActivity(message, 'event', message.type, {'event': message.type}, None, self.target)
         return unsubscribe_handler
     
+    def userlocation(self):
+        def userlocation_hanlder(message):
+            try:
+                timeout = 60 * 60 * 24
+                cache.set(KEY_PREFIX %('latlng', message.source), '%s,%s' %(str(message.latitude), str(message.longitude)), timeout)
+                cache.set(KEY_PREFIX %('precision', message.source), str(message.precision), timeout)
+                cache.set(KEY_PREFIX %('time', message.source), str(message.time), timeout)
+                return ''
+            except AttributeError:
+                return None
+        return userlocation_hanlder
+    
+    def getNearbyPoolroomsReply(self, message, lat, lng, size):
+        baidu_loc = gcj2bd(float(lat),float(lng))
+        baidu_loc_lat = unicode(baidu_loc[0])
+        baidu_loc_lng = unicode(baidu_loc[1])
+        nearbyPoolrooms = getNearbyPoolrooms(baidu_loc_lat, baidu_loc_lng, 3)[:size]
+        return (nearbyPoolrooms, baidu_loc_lat, baidu_loc_lng)
+    
     def location(self):
         def location_handler(message):
-            lat = message.location[0]
-            lng = message.location[1]
-            baidu_loc = gcj2bd(float(lat),float(lng))
-            baidu_loc_lat = unicode(baidu_loc[0])
-            baidu_loc_lng = unicode(baidu_loc[1])
-            nearbyPoolrooms = getNearbyPoolrooms(baidu_loc_lat, baidu_loc_lng, 3)[:1]
-            reply = self.getSpecialEventItem(message.time)
-            if len(nearbyPoolrooms) > 0:
-                poolroom = nearbyPoolrooms[0]
-                reply += self.getNewsPoolroomsReply(nearbyPoolrooms)
-                nativetime = datetime.utcfromtimestamp(float(message.time))
-                localtz = pytz.timezone(settings.TIME_ZONE)
-                localtime = localtz.localize(nativetime)
-                coupons = poolroom.getCoupons(localtime)
-                reply += self.getCouponsReply(coupons)
-                
-                recordUserActivity(message, 'location', poolroom.name, {'lat': lat, 'lng': lng, 'scale': message.scale, 'label': ['Label']}, 
-                                   {'id': poolroom.id, 'name': poolroom.name, 'distance': poolroom.distance}, self.target)
-            else:
-                reply.append((u"在您附近3公里以内，没有推荐的台球俱乐部，去其他地方试试吧", '', LOGO_IMG_URL, ''))
-                recordUserActivity(message, 'location', '', {'lat': lat, 'lng': lng, 'scale': message.scale, 'label': ['Label']}, 
-                                   None, self.target)
-                
-            challengeReply = self.getChallengeReply(message, baidu_loc_lat, baidu_loc_lng)
-            nearbyChallenges = getNearbyChallenges(lat, lng, 5, datetime.utcfromtimestamp(float(message.time)))[:MAX_NEWSITEM - len(reply) - len(challengeReply)]
-            reply.append(challengeReply[0])
-            reply += self.getNearbyChallengeReply(nearbyChallenges)
-            reply.append(challengeReply[1])
-            return reply
+            try:
+                lat = message.location[0]
+                lng = message.location[1]
+                nearbyPoolrooms, baidu_loc_lat, baidu_loc_lng = self.getNearbyPoolroomsReply(message, lat, lng, 1)
+                reply = self.getSpecialEventItem(message.time)
+                if len(nearbyPoolrooms) > 0:
+                    poolroom = nearbyPoolrooms[0]
+                    reply += self.getNewsPoolroomsReply(nearbyPoolrooms)
+                    nativetime = datetime.utcfromtimestamp(float(message.time))
+                    localtz = pytz.timezone(settings.TIME_ZONE)
+                    localtime = localtz.localize(nativetime)
+                    coupons = poolroom.getCoupons(localtime)
+                    reply += self.getCouponsReply(coupons)
+                    
+                    recordUserActivity(message, 'location', poolroom.name, {'lat': lat, 'lng': lng, 'scale': message.scale, 'label': ['Label']}, 
+                                       {'id': poolroom.id, 'name': poolroom.name, 'distance': poolroom.distance}, self.target)
+                else:
+                    reply.append((u"在您附近3公里以内，没有推荐的台球俱乐部，去其他地方试试吧", '', LOGO_IMG_URL, ''))
+                    recordUserActivity(message, 'location', '', {'lat': lat, 'lng': lng, 'scale': message.scale, 'label': ['Label']}, 
+                                       None, self.target)
+                    
+                challengeReply = self.getChallengeReply(message, baidu_loc_lat, baidu_loc_lng)
+                nearbyChallenges = getNearbyChallenges(lat, lng, 5, datetime.utcfromtimestamp(float(message.time)))[:MAX_NEWSITEM - len(reply) - len(challengeReply)]
+                reply.append(challengeReply[0])
+                reply += self.getNearbyChallengeReply(nearbyChallenges)
+                reply.append(challengeReply[1])
+                return reply
+            except AttributeError:
+                return None
         return location_handler
     
     def pic(self):
@@ -459,6 +483,39 @@ class PKWechat(BaseRoBot):
             recordUserActivity(message, source, 'noactivity', {'content': content}, 
                            None, self.target)
             reply.append((data, data, SITE_LOGO_URL, ''))
+        return reply
+    
+    def getPKPoolroomNearby(self, reply, message, source = 'text'):
+        latlngstr = cache.get(KEY_PREFIX %('latlng', message.source))
+        reply = self.getSpecialEventItem(message.time)
+        if latlngstr == None:
+            reply.append((u"点此查看周边球房", u'获取您的位置失败，点此查看周边球房', LOGO_IMG_URL, self.buildAbsoluteURI(reverse('poolroom_nearby', args=()))))
+            return reply
+        latlngs = latlngstr.split(',')
+        nearbyPoolrooms, baidu_loc_lat, baidu_loc_lng = self.getNearbyPoolroomsReply(message, latlngs[0], latlngs[1], MAX_NEWSITEM - len(reply))
+        if len(nearbyPoolrooms) > 0:
+            newsAvaileSize = MAX_NEWSITEM - len(reply) - len(nearbyPoolrooms)
+            ids, names, distances = ([], [], [])
+            for poolroom in nearbyPoolrooms:
+                ids.append(str(poolroom.id))
+                names.append(poolroom.name)
+                distances.append(str(poolroom.distance))
+                reply += self.getNewsPoolroomsReply(nearbyPoolrooms)
+                if newsAvaileSize > 0:
+                    nativetime = datetime.utcfromtimestamp(float(message.time))
+                    localtz = pytz.timezone(settings.TIME_ZONE)
+                    localtime = localtz.localize(nativetime)
+                    coupons = poolroom.getCoupons(localtime)
+                    couponsreplies = self.getCouponsReply(coupons)[:newsAvaileSize]
+                    reply += couponsreplies
+                    newsAvaileSize -= len(couponsreplies)
+                    
+            recordUserActivity(message, 'location', 'click', {'lat': latlngs[0], 'lng': latlngs[1], 'user': message.source}, 
+                {'id': ','.join(ids), 'name': ','.join(names), 'distance': ','.join(distances)}, self.target)
+        else:
+            reply.append((u"在您附近3公里以内，没有推荐的台球俱乐部，去其他地方试试吧", '', LOGO_IMG_URL, ''))
+            recordUserActivity(message, 'location', 'click', {'lat': latlngs[0], 'lng': latlngs[1], 'user': message.source}, 
+                               None, self.target)
         return reply
     
     def getPKMatch(self, reply, message, source = 'text'):

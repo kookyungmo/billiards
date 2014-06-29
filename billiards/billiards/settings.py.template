@@ -14,15 +14,44 @@ MANAGERS = ADMINS
 
 TESTING = False
 
-DATABASES = {
-'default': {
-    'ENGINE': 'django.db.backends.mysql',
-    'NAME': 'sRCwEcHbYjeJkwmqnDVh',
-    'USER': 'lzLVWuWXTWRpmUq78cD5CEwE',
-    'PASSWORD': 'GjLz74wHP1QUIubKPlI5BvGYPTHxb14X',
-    'HOST': 'sqld.duapp.com',
-    'PORT': '4050',
+BAE_KEY = "lzLVWuWXTWRpmUq78cD5CEwE"
+BAE_SECRETKEY = "GjLz74wHP1QUIubKPlI5BvGYPTHxb14X"
+
+if DEBUG or TESTING:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+            'LOCATION': 'billiards_cache_table',
+        }
     }
+else:
+    DB_NAME = "zSREJKxwVOnnAXsDuLfV"
+    CACHES = {
+        'default': {
+            'BACKEND': 'redis_cache.RedisCache',
+            'LOCATION': 'redis.duapp.com:80',
+            'OPTIONS': {
+                'DB': 1,
+                'PASSWORD': "%s-%s-%s" %(BAE_KEY, BAE_SECRETKEY, DB_NAME) ,
+                'PARSER_CLASS': 'redis.connection.HiredisParser',
+                'CONNECTION_POOL_CLASS': 'redis.BlockingConnectionPool',
+                'CONNECTION_POOL_CLASS_KWARGS': {
+                    'max_connections': 50,
+                    'timeout': 20,
+                }
+            },
+        },
+    }
+
+DATABASES = {
+	'default': {
+	    'ENGINE': 'django.db.backends.mysql',
+	    'NAME': 'sRCwEcHbYjeJkwmqnDVh',
+	    'USER': 'lzLVWuWXTWRpmUq78cD5CEwE',
+	    'PASSWORD': 'GjLz74wHP1QUIubKPlI5BvGYPTHxb14X',
+	    'HOST': 'sqld.duapp.com',
+	    'PORT': '4050',        
+	}
 }
 
 # Local time zone for this installation. Choices can be found here:
@@ -77,9 +106,8 @@ STATICFILES_DIRS = (
 # List of finder classes that know how to find static files in
 # various locations.
 STATICFILES_FINDERS = (
-    'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    'django.contrib.staticfiles.finders.FileSystemFinder',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -170,7 +198,6 @@ LOGGING = {
 }
 
 SOCIALOAUTH_SITES = (
-        
     ('weibo', 'socialoauth.sites.weibo.Weibo', '新浪微博',
               {
                 'redirect_uri': '$hostname/user/oauth/weibo',
@@ -184,7 +211,7 @@ SOCIALOAUTH_SITES = (
                 'client_id': '100568693',
                 'client_secret': '8c21be52fe3edf9fa9b75d55fe4abf64',
               }
-    ),
+    ),  
     ('wechat', 'socialoauth.sites.wechat.Wechat', '微信',
               {
                 'redirect_uri': '$hostname/user/oauth/wechat',
@@ -192,7 +219,7 @@ SOCIALOAUTH_SITES = (
                 'client_secret': 'd26b2ab613d35420ef1a8c395135d3eb',
                 'SCOPE': 'snsapi_userinfo',
               }
-    ),
+    ), 
 )
 
 TEMPLATE_ROOT = 'foundation/'
@@ -205,8 +232,8 @@ BCS_BUCKET = {
               }
 
 BAE_IMAGE = {
-    'key': 'lzLVWuWXTWRpmUq78cD5CEwE',
-    'secret': 'GjLz74wHP1QUIubKPlI5BvGYPTHxb14X',
+    'key': BAE_KEY,
+    'secret': BAE_SECRETKEY,
     'host': 'image.duapp.com',
 }
 
