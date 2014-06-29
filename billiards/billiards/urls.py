@@ -42,7 +42,8 @@ urlpatterns += patterns('billiards.views.user.manage',
 
 urlpatterns += patterns('',
 #    url(r'^$', RedirectView.as_view(url='match/map', permanent=False), name="home"),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
+    url(r'^supadmin/', include(admin.site.urls)),
 )
 
 urlpatterns += patterns('billiards.views.us',

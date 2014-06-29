@@ -85,6 +85,15 @@ function isSmall() {
       !matchMedia(Foundation.media_queries.medium).matches;
 }
 
+function isWechat() {
+	var ua = navigator.userAgent.toLowerCase();
+    if(ua.match(/MicroMessenger/i)=="micromessenger") {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 function openMap(name, objType, objId) {
 	$("#mapModal #title").text(name);
 	var originalSrc = PKMAP_URL;
@@ -149,3 +158,9 @@ function inIframe () {
 }
 
 var UUID_PATTERN = new RegExp("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", "g");
+
+function wechatLogin() {
+	if (isWechat()){
+		$('#wechatlogin').removeClass('hide');
+	}
+}

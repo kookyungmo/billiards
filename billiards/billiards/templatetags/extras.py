@@ -47,7 +47,7 @@ register.filter('classname', classname)
 
 @register.filter
 def get_range( value ):
-  """
+    """
     Filter - returns a list containing range made from given value
     Usage (in template):
 
@@ -63,5 +63,12 @@ def get_range( value ):
     </ul>
 
     Instead of 3 one may use the variable set in the views
-  """
-  return range( value )
+    """
+    return range( value )
+
+@register.filter
+def decodeunicode(str1):
+    try:
+        return str1.decode('unicode_escape')
+    except UnicodeEncodeError:
+        return str1
