@@ -539,7 +539,7 @@ class WechatTest(TestCase):
     """
     def verifyNearbyLocation2(self, msg):
         self.assertTrue('ArticleCount' in msg)
-        self.assertEqual(5, int(msg['ArticleCount']))
+        self.assertEqual(3, int(msg['ArticleCount']))
         self.assertEqual(u'北京黑桃8撞球馆上坡家园店', msg['Articles']['item'][0]['Title'])
         self.assertTrue(msg['Articles']['item'][0]['PicUrl'].startswith('http://api.map.baidu.com/staticimage'))
         activityquery = WechatActivity.objects.filter(eventtype='location')
