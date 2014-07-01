@@ -224,7 +224,7 @@ var PKPoolrooms = function(pkMap) {
 							<img src="{{path}}" >\
 						{{/image}}\
 						{{^image}}\
-							<img data-caption="MapShot" src="http://api.map.baidu.com/staticimage?center={{point}}&width=104&height=62&zoom=16&scale=2&markers={{point}}&markerStyles=-1">\
+							<img data-caption="MapShot" src="http://api.map.baidu.com/staticimage?center={{point}}&width=105&height=70&zoom=16&scale=2&markers={{point}}&markerStyles=-1">\
 						{{/image}}\
 				</div>\
 				<div class="small-7 medium-12 columns">\
@@ -506,7 +506,7 @@ var PKChallenges = function(pkMap) {
 						<img src="{{path}}" >\
 					{{/image}}\
 					{{^image}}\
-						<img data-caption="MapShot" src="http://api.map.baidu.com/staticimage?center={{point}}&width=104&height=62&zoom=16&scale=2&markers={{point}}&markerStyles=-1">\
+						<img data-caption="MapShot" src="http://api.map.baidu.com/staticimage?center={{point}}&width=105&height=70&zoom=16&scale=2&markers={{point}}&markerStyles=-1">\
 					{{/image}}\
 					{{#equip}}\
 						<div class="optional icon_list">\
@@ -823,7 +823,7 @@ var PKMatches = function(pkMap) {
 						<img src="{{path}}" >\
 					{{/image}}\
 					{{^image}}\
-						<img data-caption="MapShot" src="http://api.map.baidu.com/staticimage?center={{point}}&width=104&height=62&zoom=16&scale=2&markers={{point}}&markerStyles=-1">\
+						<img data-caption="MapShot" src="http://api.map.baidu.com/staticimage?center={{point}}&width=105&height=70&zoom=16&scale=2&markers={{point}}&markerStyles=-1">\
 					{{/image}}\
 				</div>\
 				<div class="small-7 medium-12 columns">\
@@ -896,7 +896,7 @@ var PKMatches = function(pkMap) {
 					<img src="{{path}}" >\
 				{{/image}}\
 				{{^image}}\
-					<img data-caption="MapShot" src="http://api.map.baidu.com/staticimage?center={{point}}&width=104&height=62&zoom=16&scale=2&markers={{point}}&markerStyles=-1">\
+					<img data-caption="MapShot" src="http://api.map.baidu.com/staticimage?center={{point}}&width=105&height=70&zoom=16&scale=2&markers={{point}}&markerStyles=-1">\
 				{{/image}}\
 			</div>\
 			<div class="small-7 columns">\
