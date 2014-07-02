@@ -232,8 +232,8 @@ class PoolroomEquipment(models.Model):
     id = models.AutoField(primary_key=True)
     poolroom = models.ForeignKey(Poolroom, verbose_name='台球厅')
     tabletype = ChoiceTypeField(max_length=10, choices=(
-            ('snooker', u'斯诺克 snooker'),
-            ('pocket', u'十六彩(美式落袋)'),
+            ('snooker', u'斯诺克'),
+            ('pocket', u'中式八球'),
             ('nine-ball', u'花式九球'),
         ), verbose_name='球台类型')
     producer = models.CharField(max_length=20,null=True,verbose_name='球台品牌')
@@ -448,8 +448,8 @@ class Challenge(models.Model):
             ('companion', u'陪练')
         ), verbose_name='发起者水平')
     tabletype = ChoiceTypeField(max_length=10, choices=(
-            ('snooker', u'斯诺克 snooker'),
-            ('pocket', u'十六彩(美式落袋)'),
+            ('snooker', u'斯诺克'),
+            ('pocket', u'中式八球'),
             ('nine-ball', u'花式九球'),
             ('any', u'不限')
         ), verbose_name='球台类型')
@@ -514,7 +514,7 @@ class ChallengeApply(models.Model):
     @property
     def status_display(self):
         return self.get_status_display()
-
+    
     def verbose_username(self):
         return "%s <br/>Email: %s<br/>Tel: %s" % ((self.user.nickname if self.user.nickname is not None and self.user.nickname != "" else self.user.username), self.user.email, self.user.cellphone)
     verbose_username.short_description = u'用户详细信息'
