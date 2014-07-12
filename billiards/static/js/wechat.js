@@ -35,7 +35,7 @@ function weixinShare(messageType, title, desc, link, imgUrl) {
 			showAjaxModal('点击右上角的按钮分享给朋友');
 		}
 	} else {
-		showAjaxModal('请先通过微信搜索公众号"pktaiqiu", 添加"我为台球狂"为好友，通过微信分享 :)');
+		showAjaxModal('请先通过微信搜索公众号"ForBilliardFans", 添加"我为台球狂"为好友，通过微信分享 :)');
 	}
 }
 

@@ -47,8 +47,7 @@ def getCouponCriteria(theday = None):
         Q(status=1)
         
 class Poolroom(models.Model):
-    id = models.AutoField(primary_key=True)
-    uuid = UUIDField(auto=True, hyphenate=True)
+    uuid = UUIDField(auto=True, hyphenate=True, unique=True)
     name = models.CharField(max_length=200,null=False,verbose_name='名字')
     address = models.TextField(null=True,verbose_name='地址')
     tel = models.CharField(max_length=20,null=True,verbose_name='电话')
@@ -101,6 +100,10 @@ class Poolroom(models.Model):
                 'address': self.address, 'flags': toDict(self.flags), 'rating': self.rating,
                 'images': images}
         
+    @property
+    def uuidstr(self):
+        return str(self.uuid)
+    
     @property
     def images(self):
         return PoolroomImage.objects.filter(Q(poolroom=self) & Q(status=1))
@@ -294,8 +297,8 @@ class DisplayNameJsonSerializer(JsonSerializer):
         else: 
             self._current[field.name] = field.value_to_string(obj) 
             
-def is_expired(atime):
-    if datetime.datetime.utcnow().replace(tzinfo=utc) - atime.replace(tzinfo=pytz.timezone(TIME_ZONE)) > datetime.timedelta(seconds = 5):
+def is_expired(atime, tzinfo=pytz.timezone(TIME_ZONE)):
+    if datetime.datetime.utcnow().replace(tzinfo=utc) - atime.replace(tzinfo=tzinfo) > datetime.timedelta(seconds = 5):
         return True
     return False
 
@@ -424,12 +427,19 @@ class MatchEnroll(models.Model):
         return unicode(self.match) + " - " + (self.user.nickname if self.user.nickname is not None and self.user.nickname != "" else self.user.username)
 
 class Challenge(models.Model):
-    id = models.AutoField(primary_key=True)
+    uuid = UUIDField(auto=True, hyphenate=True, unique=True)
     source = IntegerChoiceTypeField(verbose_name=u'发起者', choices=(
             (1, u'俱乐部'),
             (2, u'用户')
         ), default=1, jsonUseValue=False)
     poolroom = models.ForeignKey(Poolroom, db_column='poolroom', verbose_name=u'期望俱乐部')
+    participant_count = IntegerChoiceTypeField(verbose_name=u'最大参与人数', choices=(
+            (1, u'1人'),
+            (2, u'2人'),
+            (3, u'3人'),
+            (4, u'4人'),
+            (5, u'5人'),
+        ), default=1, jsonUseValue=False)
     location = models.CharField(max_length=50, null=True, blank=True, verbose_name=u'非球房地址')
     lat = models.DecimalField(max_digits=11,decimal_places=7,null=True,verbose_name='纬度_google地图')
     lng = models.DecimalField(max_digits=11,decimal_places=7,null=True,verbose_name='经度_google地图')
@@ -458,9 +468,15 @@ class Challenge(models.Model):
             ('waiting', u'等待匹配'),
             ('matched', u'已经匹配'),
             ('expired', u'已经过期'),
+            ('closed', u'已经关闭'),
         ), default='waiting', verbose_name='状态', jsonUseValue=False)
     group = models.ForeignKey(Group, verbose_name='约球来源,默认值0代表pktaiqiu网站', db_column='group', default=1)
 
+    @property
+    def local_expiretime(self):
+        ue = self.expiretime.replace(tzinfo=utc)
+        return ue.astimezone(pytz.timezone(settings.TIME_ZONE))
+    
     @property
     def tabletype_display(self):
         return self.get_tabletype_display()
@@ -471,15 +487,33 @@ class Challenge(models.Model):
 
     @property
     def is_expired(self):
-        return is_expired(self.expiretime)
+        return is_expired(self.expiretime, utc) or self.status == 'expired'
+    
+    @property
+    def isMatched(self):
+        if self.enroll_count >= self.participant_count or self.status == 'matched':
+            return True
+        return False
+    
+    @property
+    def availableTime(self):
+        delta = self.expiretime.replace(tzinfo=utc) - datetime.datetime.utcnow().replace(tzinfo=utc)
+        s = delta.seconds
+        hours, remainder = divmod(s, 3600)
+        minutes, seconds = divmod(remainder, 60)
+        return (hours, minutes)
+
+    @property
+    def participants(self):
+        return ChallengeApply.objects.filter(challenge=self).order_by("applytime")
 
     @property
     def enroll_count(self):
-        return ChallengeApply.objects.filter(challenge=self).count()
+        return self.participants.count()
     
     @property
     def is_readonly(self):
-        rt = self.is_expired or self.status != 'waiting' or self.enroll_count > 0
+        rt = self.is_expired or self.status != 'waiting' or self.enroll_count >= self.participant_count
         return rt
     
     class Meta:
@@ -491,7 +525,6 @@ class Challenge(models.Model):
         return u'%s - %s - %s - %s - %s - %s' %(self.issuer_nickname, self.starttime, self.get_level_display(), self.get_tabletype_display(), self.rule, self.get_status_display())
    
 class ChallengeApply(models.Model):
-    id = models.AutoField(primary_key=True)
     challenge = models.ForeignKey(Challenge, verbose_name='约赛')
     user = models.ForeignKey(User, verbose_name='用户')
     applytime = models.DateTimeField(verbose_name='申请应战时间')
@@ -505,6 +538,7 @@ class ChallengeApply(models.Model):
         db_table = 'challenge_apply'
         verbose_name = '约赛应战'
         verbose_name_plural = '约赛应战'
+        unique_together = ('challenge', 'user',)
         
     def __unicode__(self):
         return u'[%s]%s(%s)已应战 %s' %(self.get_status_display(), \

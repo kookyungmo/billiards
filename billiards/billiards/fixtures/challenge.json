@@ -3,6 +3,7 @@
         "pk": 36, 
         "model": "billiards.challenge", 
         "fields": {
+        	"uuid": "0f6dcaa78cbc418882e424534dbb2723",
             "username": "", 
             "status": "waiting", 
             "group": 1, 
@@ -27,6 +28,7 @@
         "pk": 37, 
         "model": "billiards.challenge", 
         "fields": {
+        	"uuid": "93f0f8b9ddb94a64a729875c836444f1",
             "username": "kane", 
             "status": "waiting", 
             "group": 1, 
@@ -51,6 +53,7 @@
         "pk": 38, 
         "model": "billiards.challenge", 
         "fields": {
+        	"uuid": "40a8aae9c9124e14ae3bdb3107c02430",
             "username": "kane", 
             "status": "waiting", 
             "group": 1, 

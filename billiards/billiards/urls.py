@@ -25,6 +25,7 @@ urlpatterns += patterns('billiards.views.poolroom',
     url(r'^poolroom/nearby$', 'nearby', name="poolroom_nearby"),
     url(r'^poolroom/nearby/(?P<lat>\d+.\d+),(?P<lng>\d+.\d+)/(?P<distance>\d+)', 'nearby', name="poolroom_nearby_point_distance"),
     url(r'^poolroom/update_baidu_location', 'updateBaiduLocation', name="poolroom_internal_update_baidu_location"),
+    url(r'^poolroom/query/keyword/(?P<keyword>[\w ]+)', 'query', name='query_by_keyword'),
 )
 
 urlpatterns += patterns('billiards.views.user.login',
@@ -61,6 +62,9 @@ urlpatterns += patterns('billiards.views.challenge',
     url(r'^challenge/(?P<challengeid>\d+)$', 'detail', name='challenge_detail'),
     url(r'^challenge/group/(?P<group>\d+)$', 'index', name='challenge_group_list'),
     url(r'^challenge$', 'index', name='challenge_list'),
+    url(r'^challenge/wechatpublish', 'wechatpublish', name="challenge_wechatpublish"),
+    url(r'^challenge/(?P<uuid>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$', 'detail_uuid', name="challenge_detail_uuid"),
+    url(r'^challenge/(?P<uuid>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/apply$', 'apply_uuid', name='apply_challenge_uuid'),
 )
 
 urlpatterns += patterns('billiards.views.utility',

@@ -1,0 +1,127 @@
+{% extends "foundation/base.html" %}
+{% load extras %} 
+{% load url from future %}
+{% load staticfiles %}
+{% block header %}
+<script src="{% static "js/WeixinApi.js" %}?{{buildid}}"></script>
+<script src="{% static "js/wechat.js" %}?{{buildid}}"></script>
+{% endblock %}
+{% block content %}
+<style>
+.v-wrapper {
+display: table;
+height: 100%;
+width: 100%;
+}
+.v-wrapper .v-inner {
+display: table-cell;
+height: 100%;
+vertical-align: middle;
+}
+.avatar-frame img{
+	width: 60px;
+	height: 60px;
+	-webkit-border-radius: 30px; /* Saf3+, Chrome */
+	border-radius: 30px; /* Opera 10.5, IE 9 */
+	}
+.avatar-frame-large img{
+	width: 100px;
+	height: 100px;
+	-webkit-border-radius: 60px; /* Saf3+, Chrome */
+	border-radius: 60px; /* Opera 10.5, IE 9 */	
+}
+.strikeline{text-decoration:line-through;}
+</style>
+<br/>
+<div class="columns large-10 large-push-1 large-uncentered medium-8">
+	<div class="row">
+		<div class="v-wrapper">
+			<div class="v-inner small-text-center">
+				<span class="avatar-frame"><img src="{{ issuer.avatar }}" alt="{{ issuer.nickname|decodeunicode }}"><h3>{{ issuer.nickname|decodeunicode }}</h3></span>
+				<h4>
+					邀请小伙伴们到<a href="{% url 'poolroom_detail_uuid' cha.poolroom.uuid %}" target="_blank">{{ cha.poolroom.name }}</a>打台球
+				</h4>
+				{% if cha.status == 'closed' %}
+				<h3><strong>邀请已经被关闭</strong></h3>
+				{% elif cha.is_expired %}
+				<h3><strong>邀请已过期失效</strong></h3>
+				{% else %}
+				<h3><strong {% if cha.isMatched %} class="strikeline" {% endif %}>{% if hours > 0 %}{{hours}}小时{{minutes}}分钟后截止报名 {% else %}还有{{minutes}}分钟就截止报名了哦，抓紧参加哦{% endif %}</strong>
+				{% if cha.isMatched %}&nbsp;&nbsp;<strong style="color:blue">咋这抢手尼?!下次要早点来</strong>{% endif %}</h3>
+				{% endif %}
+				
+				{% for p in cha.participants %}
+					<span class="avatar-frame">
+					<img src="{{ p.user.avatar }}" alt="{{ p.user.nickname|decodeunicode }}">
+					&nbsp;&nbsp;<strong style="color:green" >{{ p.user.nickname|decodeunicode }}</strong>已于{{ p.applytime|date:"H:i" }}加入了此邀请。</span>
+					<br/><br/>
+				{% endfor %}
+			
+				{% if not cha.is_readonly %}
+					{% for i in cha.participant_count|subtract:cha.enroll_count|get_range %}
+						<span class="avatar-frame-large">
+						{% if not unavailable and request.user != issuer and not isEnrolled %}<a href="#">{% endif %}
+						<img src="http://cdn1.kmpfurniture.com/pthumb/90223-02.jpg" alt="虚位以待">
+						{% if not unavailable and request.user != issuer and not isEnrolled %}</a>{% endif %}
+						&nbsp;&nbsp;还犹豫什么，赶紧占了这个板凳。
+						</span>
+						<br/><br/>
+					{% endfor %}
+				{% endif %}
+			</div>
+		</div>	
+	</div>
+	<div class="row">
+		<div class="columns small-10 small-centered medium-8 large-7">
+			<div class="button-bar">
+			  <ul class="button-group round">
+			    <li><a href="javascript:weixinSendAppMessage('{{ issuer.nickname|decodeunicode }}邀请小伙伴们到{{ cha.poolroom.name }}打台球', '{{ issuer.nickname|decodeunicode }}邀请小伙伴们到{{ cha.poolroom.name }}打台球', document.URL, '{{ issuer.avatar }}');" class="small button success">分享给好友</a></li>
+			    <li><a href="javascript:weixinShareTimeline('{{ issuer.nickname|decodeunicode }}邀请小伙伴们到{{ cha.poolroom.name }}打台球', '{{ issuer.nickname|decodeunicode }}邀请小伙伴们到{{ cha.poolroom.name }}打台球', document.URL, '{{ issuer.avatar }}');" class="small button success">分享到朋友圈</a></li>
+			  </ul>
+			</div>
+		</div>
+		<div class="columns small-7 small-centered medium-5">
+			<div class="button-bar">
+			  <ul class="button-group round hide">
+			    <li><a href="{% url 'challenge_wechatpublish' %}" class="small button success">我也要发布</a></li>
+			  </ul>
+			</div>
+		</div>		
+		<br/>
+	</div>
+</div>
+<div id="shareToWechat" class="reveal-modal" data-reveal>
+{% endblock %}
+{% block script %}
+<script>
+if (isWechat()) {
+	$(".button-group:last").removeClass("hide");
+}
+var WECHAT_SHARE_URL="{% url 'wechat_share_help' %}";
+var APPLY_URL = "{% url 'apply_challenge_uuid' cha.uuid %}";
+$(".avatar-frame-large a").click(function apply(e) {
+	e.preventDefault();
+	$.ajax({
+		data : {},
+		url : APPLY_URL,
+		type: 'POST',
+		dataType : 'json',
+		success : function(data) {
+			if (data.rt == 1) {
+				$(".avatar-frame-large a").remove("href");
+			} else {
+				window.location = document.URL;
+			}
+		},
+		error : function(jqXHR, textStatus, errorThrown) {
+			if (jqXHR.status == 403) {
+				LOGIN_URL = "{% url 'login_3rd' preferSite %}";
+				window.location = setGetParameter(LOGIN_URL, 'returnurl', APPLY_URL);
+		    } else {
+				console.log(textStatus, errorThrown);
+		    }
+		}
+	});
+});
+</script>
+{% endblock %}

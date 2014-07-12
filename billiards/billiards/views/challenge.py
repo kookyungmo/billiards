@@ -8,8 +8,8 @@ Created on 2014年1月4日
 import datetime
 from billiards.models import Challenge, ChallengeApply,\
     DisplayNameJsonSerializer, Poolroom, Group
-from django.shortcuts import render_to_response, get_object_or_404
-from billiards.settings import TEMPLATE_ROOT, TIME_ZONE
+from django.shortcuts import render_to_response, get_object_or_404, redirect
+from billiards.settings import TEMPLATE_ROOT, TIME_ZONE, PREFER_LOGIN_SITE
 from django.template.context import RequestContext
 from StringIO import StringIO
 from django.http import HttpResponse, Http404
@@ -17,14 +17,19 @@ import json
 from django.utils import simplejson
 from django.db.models.query_utils import Q
 from billiards.location_convertor import bd2gcj, distance, gcj2bd
-from django.db import transaction
+from django.db import transaction, connection, utils
 import pytz
 from django.core.exceptions import PermissionDenied
-from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
-from billiards.views.poolroom import getNearbyPoolrooms
-from billiards.views.club import challenge, saveChallenge
+from django.views.decorators.csrf import csrf_exempt
+from billiards.views.poolroom import getNearbyPoolrooms, getPoolroomByUUID
+from billiards.views.club import challenge, saveChallenge, saveChallenge2
 from urlparse import urlparse
 from django.core.urlresolvers import reverse
+from django.core.cache import cache
+from billiards.commons import KEY_PREFIX, forceLogin
+import uuid
+from django.contrib.auth.models import User
+from billiards.annotation import deprecated
 
 def updateChallengeJsonStrApplyInfo(jsonstr, user, challenges):
     appliedChallenges = ChallengeApply.objects.filter(Q(challenge__in=challenges) & Q(user__exact=user))
@@ -77,6 +82,7 @@ def index(request, lat = None, lng = None, group = 1):
                               {'lat': lat, 'lng': lng, 'gid': group if group != None else 1, 'group': gobj},
                               context_instance=RequestContext(request))
 
+@deprecated
 @transaction.commit_on_success
 def applyChallenge(request, challengeid):
     if not request.user.is_authenticated():
@@ -179,3 +185,88 @@ def getNearbyChallenges(lat, lng, distance, datetime, group = 1):
     where = "challenge.group = %s and challenge.expiretime > '%s' having distance <= %s" %(group, datetime, str(distance))
     return Challenge.objects.extra(select={'distance' : haversine}).extra(order_by=['distance'])\
         .extra(where=[where])
+
+@csrf_exempt
+def wechatpublish(request):
+    if request.user.is_authenticated() and request.user.site_name.startswith(PREFER_LOGIN_SITE):
+        if request.method == 'POST':
+            try:
+                poolroom = getPoolroomByUUID(uuid.UUID(request.POST['poolroom']))
+                nickname = request.user.nickname
+                issuer = 'wechat:%s' %(request.user.username)
+                group = 0
+                try:
+                    group = int(request.POST['type'])
+                except KeyError:
+                    pass
+                
+                starttime = datetime.datetime.fromtimestamp(float(request.POST['starttime'])/1000, pytz.timezone(TIME_ZONE))
+                expiredtime = datetime.datetime.fromtimestamp(float(request.POST['expiredtime'])/1000, pytz.timezone(TIME_ZONE))
+                participants = int(request.POST['participants'])
+    
+                return saveChallenge2(issuer, poolroom, starttime, expiredtime, nickname, 'professional', 'pocket', 'default rule', 'wechat:%s' %(nickname),
+                                      'waiting', None, 2, None, request.user.username, group, participants)
+            except Exception, e:
+                return HttpResponse(json.dumps({'rt': 0, 'msg': str(e)}), content_type="application/json")
+            
+        challenges = Challenge.objects.filter(Q(username=request.user.username) & Q(expiretime__gt=datetime.datetime.utcnow()))    
+        latlngstr = cache.get(KEY_PREFIX %('latlng', request.user.username))
+        NEARBY = True
+        if latlngstr == None:
+            nearbypoolrooms = Poolroom.objects.filter(exist=1).order_by('-rating')[:15]
+            NEARBY = False
+        else:
+            lat, lng = latlngstr.split(',', 1)
+            nearbypoolrooms = getNearbyPoolrooms(lat, lng, 5)
+        return render_to_response(TEMPLATE_ROOT + 'challenge_wechat_application.html', 
+            {'poolrooms': nearbypoolrooms, 'isNearby': NEARBY, 'challenges': challenges}, context_instance=RequestContext(request))
+        
+    return forceLogin(request, PREFER_LOGIN_SITE)
+
+def getChallengeByUUID(uuidstr):
+    return get_object_or_404(Challenge, uuid=uuid.UUID(uuidstr))
+
+def detail_uuid(request, uuid):
+    challenge = getChallengeByUUID(uuid)
+    issuer = User.objects.get(username=challenge.username)
+    hours, minutes = challenge.availableTime
+    isEnrolled = any(request.user == enroll.user for enroll in challenge.participants)
+    return render_to_response(TEMPLATE_ROOT + 'challenge_wechat_detail.html', 
+        {'cha': challenge, 'issuer': issuer, 'hours': hours, 'minutes': minutes, "isEnrolled": isEnrolled,
+         'preferSite': PREFER_LOGIN_SITE,
+         'unavailable': (challenge.status == 'closed' or challenge.is_expired or challenge.status == 'expired')}, 
+        context_instance=RequestContext(request))
+    
+def apply_uuid(request, uuid):
+    if not request.user.is_authenticated():
+        raise PermissionDenied
+    try:
+        challenge = getChallengeByUUID(uuid)
+        msg = None
+        if challenge.status == 'matched':
+            msg = {'rt': 4, 'msg': 'already match'}
+        elif challenge.is_expired:
+            msg = {'rt': 3, 'msg': 'already expired'}
+        elif challenge.user == request.user:
+            msg = {'rt': 6, 'msg': 'you are the host'}
+        else:
+            try:
+                cursor = connection.cursor()
+                query = '''INSERT INTO challenge_apply(challenge_id, user_id, applytime,status) 
+                    SELECT %s, %s, '%s', 'accepted' FROM challenge WHERE (SELECT COUNT(*) FROM challenge_apply WHERE challenge_id = %s) < %s limit 1;''' %(
+                    challenge.id, request.user.id, datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'), challenge.id, challenge.participant_count)
+                cursor.execute(query)
+                transaction.commit()
+                if cursor.rowcount == 1:
+                    msg = {'rt': 1, 'msg': 'applied'}
+                elif cursor.rowcount == 0:
+                    msg = {'rt': 5, 'msg': 'no enough seat'}
+                else:
+                    msg = {'rt': -1, 'msg': 'unknown backend error'}
+            except utils.IntegrityError:
+                msg = {'rt': 2, 'msg': 'already applied'}
+        if 'HTTP_REFERER' in request.META and request.META['HTTP_REFERER'] != request.META['HTTP_HOST']:
+            return redirect('challenge_detail_uuid', uuid=str(uuid))
+        return HttpResponse(json.dumps(msg.items()), content_type="application/json")
+    except Challenge.DoesNotExist:
+        raise Http404

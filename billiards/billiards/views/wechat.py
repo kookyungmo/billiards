@@ -3,8 +3,6 @@ from StringIO import StringIO
 from datetime import datetime, timedelta
 import re
 import logging
-from urllib import urlencode
-from urlparse import urlsplit, parse_qs, urlunsplit
 
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -35,6 +33,7 @@ from werobot.utils import to_text
 from random import randint
 from werobot.messages import TextMessage, EventMessage
 from django.core.cache import cache
+from billiards.commons import set_query_parameter, KEY_PREFIX
 
 def set_video():
     videos = [
@@ -149,22 +148,6 @@ def recordUserActivity(rawmessage, event, keyword, message, reply, target = 1):
         mail(settings.NOTIFICATION_EMAIL, u'New wechat activity -- %s' %(localtime), 
              u'[%s][%s] The "%s" message %s from "%s" was received at %s.' %(newactivity.get_target_display(), event, keyword, simplejson.dumps(message).decode('unicode-escape'), userid, localtime))
 
-def set_query_parameter(url, param_name, param_value):
-    """Given a URL, set or replace a query parameter and return the
-    modified URL.
-
-    >>> set_query_parameter('http://example.com?foo=bar&biz=baz', 'foo', 'stuff')
-    'http://example.com?foo=stuff&biz=baz'
-
-    """
-    scheme, netloc, path, query_string, fragment = urlsplit(url)
-    query_params = parse_qs(query_string)
-
-    query_params[param_name] = [param_value]
-    new_query_string = urlencode(query_params, doseq=True)
-
-    return urlunsplit((scheme, netloc, path, new_query_string, fragment))
-
 def buildPoolroomImageURL(poolroom):
     if poolroom.images.count() > 0:
         coverimage = poolroom.images.filter(iscover=1)
@@ -193,8 +176,6 @@ class ImageReply(WeChatReply):
     """)
     def render(self):
         return ImageReply.TEMPLATE.format(**self._args)
-    
-KEY_PREFIX = 'location_%s_%s'
 
 class DummyReply(WeChatReply):
     TEMPLATE = to_text("""

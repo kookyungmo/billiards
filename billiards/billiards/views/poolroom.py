@@ -22,6 +22,8 @@ from billiards.views.match import tojson
 from django.utils.timezone import utc
 from billiards.annotation import deprecated
 import uuid
+import operator
+from django.views.decorators.csrf import csrf_exempt
 
 def more_uuid(request, poolroom_uuid):
     uuidobj = uuid.UUID(poolroom_uuid)
@@ -82,15 +84,18 @@ def getNearbyPoolrooms(lat, lng, distance, where = None):
     where = "%s %s" %("exist=1" if where is None else where, ("having distance <= %s" %(distance) if distance is not None else ""))
     return Poolroom.objects.extra(select={'distance' : haversine}).extra(order_by=['distance'])\
         .extra(where=[where])
-    
+
+def toJson(queryset, fields):
+    json_serializer = serializers.get_serializer("json")()
+    stream = StringIO()
+    json_serializer.serialize(queryset, fields=fields, ensure_ascii=False, stream=stream, indent=2, use_natural_keys=True)
+    jsonstr = stream.getvalue()
+    return jsonstr
     
 def nearby(request, lat = None, lng = None, distance = 10):
     if lat is not None and lng is not None:
         nearby_poolrooms = getNearbyPoolrooms(lat, lng, distance)
-        json_serializer = serializers.get_serializer("json")()
-        stream = StringIO()
-        json_serializer.serialize(nearby_poolrooms, fields=poolroom_fields, ensure_ascii=False, stream=stream, indent=2, use_natural_keys=True)
-        jsonstr = stream.getvalue()
+        jsonstr = toJson(nearby_poolrooms, poolroom_fields)
         if len(nearby_poolrooms) > 0:
             jsonstr = updateJsonStrWithDistance(jsonstr, nearby_poolrooms)
             jsonstr = updateJsonStrWithImages(jsonstr, nearby_poolrooms)
@@ -152,3 +157,8 @@ def detail(request, poolroomid):
     poolroom = getPoolroom(poolroomid)
     
     return redirect('poolroom_detail_uuid', poolroom_uuid=str(poolroom.uuid))
+
+@csrf_exempt
+def query(request, keyword):
+    rt = Poolroom.objects.filter(reduce(operator.and_, (Q(name__contains=kw) for kw in keyword.strip().split(' '))) & Q(exist=1)).order_by('-rating')[:10]
+    return HttpResponse(toJson(rt, poolroom_fields))
