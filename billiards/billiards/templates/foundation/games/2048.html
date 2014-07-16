@@ -1,0 +1,73 @@
+{% extends "foundation/base.html" %}
+{% block header %}
+{% load staticfiles %}
+<link rel="stylesheet" href="{% static "css/index.css" %}?{{buildid}}">
+{% endblock %}
+{% block content %}
+
+  <div class="container">
+    <div class="heading">
+      <div class="scores-container">
+        <div class="score-container">0</div>
+        <div class="best-container">0</div>
+      </div>
+    <div class="above-game">
+      <a class="restart-button"><strong>新游戏</strong></a>
+    </div>
+    </div>
+
+    <div class="game-container">
+      <div class="game-message">
+        <p></p>
+        <div class="lower">
+	        <a class="keep-playing-button">Keep going</a>
+          <a class="retry-button">Try again</a>
+        </div>
+      </div>
+
+      <div class="grid-container">
+        <div class="grid-row">
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+        </div>
+        <div class="grid-row">
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+        </div>
+        <div class="grid-row">
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+        </div>
+        <div class="grid-row">
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+        </div>
+      </div>
+
+      <div class="tile-container">
+
+      </div>
+    </div>
+
+{% endblock %}
+{% block foundationscript %}
+  <script src="{% static "js/games/bind_polyfill.js" %}"></script>
+  <script src="{% static "js/games/classlist_polyfill.js" %}"></script>
+  <script src="{% static "js/games/animframe_polyfill.js" %}"></script>
+  <script src="{% static "js/games/keyboard_input_manager.js" %}"></script>
+  <script src="{% static "js/games/html_actuator.js" %}"></script>
+  <script src="{% static "js/games/grid.js" %}"></script>
+  <script src="{% static "js/games/tile.js" %}"></script>
+  <script src="{% static "js/games/local_storage_manager.js" %}"></script>
+  <script src="{% static "js/games/game_manager.js" %}"></script>
+  <script src="{% static "js/games/application.js" %}"></script>
+<link rel="stylesheet" href="{% static "css/game_2048.css" %}">
+{% endblock %}
