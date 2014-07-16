@@ -127,6 +127,10 @@ urlpatterns += patterns('billiards.views.transaction',
      url(r'^transaction/alipay/notify$', 'alipay_notify', name='transaction_alipay_notify'),
 )
 
+urlpatterns += patterns('billiards.views.games',
+    url(r'^2048$','game_2048', name='game_2048'),
+)
+
 urlpatterns += staticfiles_urlpatterns()
 handler403 = 'billiards.views.exceptions.handler403'
 handler404 = 'billiards.views.exceptions.handler404'
