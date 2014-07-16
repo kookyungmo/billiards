@@ -71,10 +71,10 @@
     animation-fill-mode: both; }
 
 .score-container:after {
-  content: "Score"; }
+  content: "分数"; }
 
 .best-container:after {
-  content: "Best"; }
+  content: "宇宙最高分"; }
 
 p {
   margin-top: 0;
@@ -282,62 +282,91 @@ strong.important {
     z-index: 10;
     font-size: 55px; }
   .tile.tile-2 .tile-inner {
-    background: #eee4da;
+    background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/1-107x107.jpg');
     box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0), inset 0 0 0 1px rgba(255, 255, 255, 0); }
+    @media screen and (max-width: 520px) {
+      .tile.tile-2 .tile-inner {
+        background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/1-57x57.jpg');
+        font-size: 25px; } }
   .tile.tile-4 .tile-inner {
-    background: #ede0c8;
+    background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/2-107x107.jpg');
     box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0), inset 0 0 0 1px rgba(255, 255, 255, 0); }
+    @media screen and (max-width: 520px) {
+      .tile.tile-4 .tile-inner {
+        background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/2-57x57.jpg');
+        font-size: 25px; } }
   .tile.tile-8 .tile-inner {
     color: #f9f6f2;
-    background: #f2b179; }
+    background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/3-107x107.jpg'); }
+    @media screen and (max-width: 520px) {
+      .tile.tile-8 .tile-inner {
+        background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/3-57x57.jpg');
+        font-size: 25px; } }
   .tile.tile-16 .tile-inner {
     color: #f9f6f2;
-    background: #f59563; }
+    background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/4-107x107.jpg'); }
+    @media screen and (max-width: 520px) {
+      .tile.tile-16 .tile-inner {
+        background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/4-57x57.jpg');
+        font-size: 25px; } }
   .tile.tile-32 .tile-inner {
     color: #f9f6f2;
-    background: #f67c5f; }
+    background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/5-107x107.jpg'); }
+    @media screen and (max-width: 520px) {
+      .tile.tile-32 .tile-inner {
+        background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/5-57x57.jpg');
+        font-size: 25px; } }
   .tile.tile-64 .tile-inner {
     color: #f9f6f2;
-    background: #f65e3b; }
+    background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/6-107x107.jpg'); }
+    @media screen and (max-width: 520px) {
+      .tile.tile-64 .tile-inner {
+        background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/6-57x57.jpg');
+        font-size: 25px; } }
   .tile.tile-128 .tile-inner {
     color: #f9f6f2;
-    background: #edcf72;
+    background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/7-107x107.jpg');
     box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.2381), inset 0 0 0 1px rgba(255, 255, 255, 0.14286);
     font-size: 45px; }
     @media screen and (max-width: 520px) {
       .tile.tile-128 .tile-inner {
+        background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/7-57x57.jpg');
         font-size: 25px; } }
   .tile.tile-256 .tile-inner {
     color: #f9f6f2;
-    background: #edcc61;
+    background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/8-107x107.jpg');
     box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.31746), inset 0 0 0 1px rgba(255, 255, 255, 0.19048);
     font-size: 45px; }
     @media screen and (max-width: 520px) {
       .tile.tile-256 .tile-inner {
-        font-size: 25px; } }
+        background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/8-57x57.jpg');
+	font-size: 25px; } }
   .tile.tile-512 .tile-inner {
     color: #f9f6f2;
-    background: #edc850;
+    background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/9-107x107.jpg');
     box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.39683), inset 0 0 0 1px rgba(255, 255, 255, 0.2381);
     font-size: 45px; }
     @media screen and (max-width: 520px) {
       .tile.tile-512 .tile-inner {
+        background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/9-57x57.jpg');
         font-size: 25px; } }
   .tile.tile-1024 .tile-inner {
     color: #f9f6f2;
-    background: #edc53f;
+    background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/10-107x107.jpg');
     box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.47619), inset 0 0 0 1px rgba(255, 255, 255, 0.28571);
     font-size: 35px; }
     @media screen and (max-width: 520px) {
       .tile.tile-1024 .tile-inner {
+        background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/10-57x57.jpg');
         font-size: 15px; } }
   .tile.tile-2048 .tile-inner {
     color: #f9f6f2;
-    background: #edc22e;
+    background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/11-107x107.jpg');
     box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.55556), inset 0 0 0 1px rgba(255, 255, 255, 0.33333);
     font-size: 35px; }
     @media screen and (max-width: 520px) {
       .tile.tile-2048 .tile-inner {
+        background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/11-57x57.jpg');
         font-size: 15px; } }
   .tile.tile-super .tile-inner {
     color: #f9f6f2;
@@ -476,10 +505,6 @@ strong.important {
   margin-top: 50px; }
 
 @media screen and (max-width: 520px) {
-
-  body {
-    margin: 20px 0;
-    padding: 0 20px; }
 
   .container {
     width: 280px;
