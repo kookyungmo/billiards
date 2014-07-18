@@ -1,0 +1,33 @@
+{% extends "foundation/base.html" %}
+{% block header %}
+{% load staticfiles %}
+<link rel="stylesheet" href="{% static "css/index.css" %}?{{buildid}}">
+{% endblock %}
+{% block content %}
+
+                        <div class="row">
+                                <ul class="example-orbit" data-orbit>
+                                        <li><img style="max-height:4000px;display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/tmp/this/is/a/file/in/folder/test-1.jpg" alt="slide {{ forloop.counter }}">
+					    <div class="orbit-caption">
+      Caption One.
+    </div>
+					</li>
+                                        <li><img style="max-height:400px;display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/tmp/this/is/a/file/in/folder/test-2.jpg" alt="slide {{ forloop.counter }}">
+                                            <div class="orbit-caption">
+      Caption One.
+    </div>
+</li>
+                                        <li><a href="http://www.pktaiqiu.com/poolroom/nearby"><img style="max-height:400px;display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/tmp/this/is/a/file/in/folder/IMG_1788.JPG" alt="slide {{ forloop.counter }}"></a>
+                                            <div class="orbit-caption">
+      Caption One.
+    </div>
+</li>
+                                </ul>
+                        </div>
+
+
+
+{% endblock %}
+{% block foundationscript %}
+    <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/foundation/foundation.orbit.min.js"></script>
+{% endblock %}

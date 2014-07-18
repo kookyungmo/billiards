@@ -15,4 +15,4 @@ def partner(request):
     return render_to_response(TEMPLATE_ROOT + 'about/partner.html', context_instance=RequestContext(request))
 
 def home(request):
-    return render_to_response(TEMPLATE_ROOT + 'index.html', context_instance=RequestContext(request))
+    return render_to_response(TEMPLATE_ROOT + 'index-2.html', context_instance=RequestContext(request))
