@@ -131,6 +131,10 @@ urlpatterns += patterns('billiards.views.games',
     url(r'^2048$','game_2048', name='game_2048'),
 )
 
+urlpatterns += patterns('billiards.views.assistant',
+    url(r'^assistant$','assistant', name='assistant'),
+)
+
 urlpatterns += staticfiles_urlpatterns()
 handler403 = 'billiards.views.exceptions.handler403'
 handler404 = 'billiards.views.exceptions.handler404'

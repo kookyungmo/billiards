@@ -138,3 +138,139 @@ padding: 5px 7px 5px;
 opacity:0.9; filter:alpha(opacity=30);
 color: #3d6dcc;
 }
+
+.button {
+  -webkit-box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.5), 0px 1px 2px rgba(0, 0, 0, 0.15);
+  -moz-box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.5), 0px 1px 2px rgba(0, 0, 0, 0.15);
+  box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.5), 0px 1px 2px rgba(0, 0, 0, 0.15);
+  background-color: #eeeeee;
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fbfbfb), color-stop(100%, #e1e1e1));
+  background: -webkit-linear-gradient(top, #fbfbfb, #e1e1e1);
+  background: -moz-linear-gradient(top, #fbfbfb, #e1e1e1);
+  background: -o-linear-gradient(top, #fbfbfb, #e1e1e1);
+  background: linear-gradient(top, #fbfbfb, #e1e1e1);
+  display: -moz-inline-stack;
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  zoom: 1;
+  *display: inline;
+  border: 1px solid #d4d4d4;
+  height: 32px;
+  line-height: 32px;
+  padding: 0px 25.6px;
+  font-weight: 300;
+  font-size: 14px;
+  font-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  color: #666666;
+  text-shadow: 0 1px 1px white;
+  margin: 0;
+  text-decoration: none;
+  text-align: center;
+}
+/* line 42, ../scss/partials/_buttons.scss */
+.button:hover, .button:focus {
+  background-color: #eeeeee;
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, #dcdcdc));
+  background: -webkit-linear-gradient(top, #ffffff, #dcdcdc);
+  background: -moz-linear-gradient(top, #ffffff, #dcdcdc);
+  background: -o-linear-gradient(top, #ffffff, #dcdcdc);
+  background: linear-gradient(top, #ffffff, #dcdcdc);
+}
+/* line 46, ../scss/partials/_buttons.scss */
+.button:active {
+  -webkit-box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.3), 0px 1px 0px white;
+  -moz-box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.3), 0px 1px 0px white;
+  box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.3), 0px 1px 0px white;
+  text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.4);
+  background: #eeeeee;
+  color: #bbbbbb;
+}
+/* line 52, ../scss/partials/_buttons.scss */
+.button:focus {
+  outline: none;
+}
+
+/* line 58, ../scss/partials/_buttons.scss */
+input.button, button.button {
+  height: 34px;
+  cursor: pointer;
+  -webkit-appearance: none;
+}
+
+/* line 65, ../scss/partials/_buttons.scss */
+.button-block {
+  display: block;
+}
+
+/* line 75, ../scss/partials/_buttons.scss */
+.button.disabled,
+.button.disabled:hover,
+.button.disabled:focus,
+.button.disabled:active,
+input.button:disabled,
+button.button:disabled {
+  -webkit-box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
+  opacity: 0.8;
+  background: #EEE;
+  border: 1px solid #DDD;
+  text-shadow: 0 1px 1px white;
+  color: #CCC;
+  cursor: default;
+  -webkit-appearance: none;
+}
+
+/* line 87, ../scss/partials/_buttons.scss */
+.button-wrap {
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #e3e3e3), color-stop(100%, #f2f2f2));
+  background: -webkit-linear-gradient(top, #e3e3e3, #f2f2f2);
+  background: -moz-linear-gradient(top, #e3e3e3, #f2f2f2);
+  background: -o-linear-gradient(top, #e3e3e3, #f2f2f2);
+  background: linear-gradient(top, #e3e3e3, #f2f2f2);
+  -webkit-border-radius: 200px;
+  -moz-border-radius: 200px;
+  -ms-border-radius: 200px;
+  -o-border-radius: 200px;
+  border-radius: 200px;
+  -webkit-box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.04);
+  -moz-box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.04);
+  box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.04);
+  padding: 10px;
+  display: inline-block;
+}
+
+.button-circle {
+  -webkit-border-radius: 240px;
+  -moz-border-radius: 240px;
+  -ms-border-radius: 240px;
+  -o-border-radius: 240px;
+  border-radius: 240px;
+  -webkit-box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.5), 0px 1px 2px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.5), 0px 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.5), 0px 1px 2px rgba(0, 0, 0, 0.2);
+  width: 100px;
+  line-height: 100px;
+  height: 100px;
+  padding: 0px;
+  border-width: 4px;
+  font-size: 19px;
+}
+
+/* line 234, ../scss/partials/_buttons.scss */
+.button-primary:hover, .button-primary:focus {
+  background-color: #00a1cb;
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #00c9fe), color-stop(100%, #008db2));
+  background: -webkit-linear-gradient(top, #00c9fe, #008db2);
+  background: -moz-linear-gradient(top, #00c9fe, #008db2);
+  background: -o-linear-gradient(top, #00c9fe, #008db2);
+  background: linear-gradient(top, #00c9fe, #008db2);
+}
+/* line 238, ../scss/partials/_buttons.scss */
+.button-primary:active {
+  background: #1495b7;
+  color: #005065;
+}
+
