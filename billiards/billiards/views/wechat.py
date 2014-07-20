@@ -550,6 +550,7 @@ class PKWechat(BaseRoBot):
                            {'count': len(matches), 'match': True}, self.target)       
         else:
             data = '最近7天内没有被收录的比赛'
+            content = source
             recordUserActivity(message, source, 'nomatch', {'content': content}, 
                            None, self.target)
             reply.append((data, data, SITE_LOGO_URL, ''))
