@@ -410,6 +410,21 @@ class WechatTest(TestCase):
         self.assertEqual(u'PK_MATCH', msg['content'])
         reply = simplejson.loads(activity.reply)
         self.assertEqual(1, reply['count'])
+        # no match matching
+        data = """
+        <xml>
+        <ToUserName><![CDATA[toUser]]></ToUserName>
+        <FromUserName><![CDATA[FromUser]]></FromUserName>
+        <CreateTime>1405864050</CreateTime>
+        <MsgType><![CDATA[event]]></MsgType>
+        <Event><![CDATA[CLICK]]></Event>
+        <EventKey><![CDATA[PK_MATCH]]></EventKey>
+        </xml>
+        """
+        msg = self._send_wechat_message(data)
+        self.assertTrue('ArticleCount' in msg)
+        self.assertEqual(1, int(msg['ArticleCount']))
+        self.assertTrue(msg['Articles']['item']['Title'] == u'最近7天内没有被收录的比赛')
         
     def test_nonsubscriber_scan_sceneqr(self):
         data = """
