@@ -155,18 +155,24 @@ class ChallengeForm(ModelForm):
 def saveChallenge(request, issuer, poolroom, challenge = None, source = 1, location = None, username = None, group = 1):
     starttime = datetime.datetime.fromtimestamp(float(request.POST['starttime'])/1000, pytz.timezone(TIME_ZONE))
     expiredtime = datetime.datetime.fromtimestamp(float(request.POST['expiredtime'])/1000, pytz.timezone(TIME_ZONE))
-    data = {       
-           'issuer_nickname': request.POST['nickname'],
-           'level': request.POST['level'],
-           'tabletype': request.POST['tabletype'],
-           'rule': request.POST['rule'],
+    saveChallenge2(issuer, poolroom, starttime, expiredtime, request.POST['nickname'], request.POST['level'], request.POST['tabletype'],
+                   request.POST['rule'], request.POST['contact'], 'waiting' if challenge is None else request.POST['status'], challenge, source, location, username, group)
+
+def saveChallenge2(issuer, poolroom, starttime, expiredtime, nickname, level, tabletype, rule, contact, status, challenge = None, 
+                   source = 1, location = None, username = None, group = 1, participants = 1):
+    data = {
+           'issuer_nickname': nickname,
+           'level': level,
+           'tabletype': tabletype,
+           'rule': rule,
            'starttime': starttime,
            'expiretime': expiredtime,
            'source': source,
            'issuer': issuer,
-           'issuer_contact': request.POST['contact'],
+           'issuer_contact': contact,
            'group': group,
            'username': username,
+           'participant_count': participants
            }
     if location is not None:
         data['location'] = location
@@ -185,19 +191,19 @@ def saveChallenge(request, issuer, poolroom, challenge = None, source = 1, locat
             data['lat_baidu'] = unicode(baidu_loc[0])
             data['lag_baidu'] = unicode(baidu_loc[1])
         data['status'] = 'waiting'
-        newchallenge = ChallengeForm(data)
+        newChallengeForm = ChallengeForm(data)
     else:
-        data['status'] = request.POST['status']
+        data['status'] = status
         data['poolroom'] = challenge.poolroom.id
         data['lat'] = challenge.poolroom.lat
         data['lng'] = challenge.poolroom.lng
         data['lat_baidu'] = challenge.poolroom.lat_baidu
         data['lng_baidu'] = challenge.poolroom.lng_baidu
-        newchallenge = ChallengeForm(data=data, instance=challenge)
-    if newchallenge.is_valid():
-        newchallenge.save()
-        return HttpResponse(json.dumps({'rt': 1, 'msg': 'created'}), content_type="application/json")
-    return HttpResponse(json.dumps(dict({'rt': 0}.items() + newchallenge.errors.items())), content_type="application/json")
+        newChallengeForm = ChallengeForm(data=data, instance=challenge)
+    if newChallengeForm.is_valid():
+        newChallenge = newChallengeForm.save()
+        return HttpResponse(json.dumps({'rt': 1, 'msg': 'created', 'uuid': str(newChallenge.uuid)}), content_type="application/json")
+    return HttpResponse(json.dumps(dict({'rt': 0}.items() + newChallengeForm.errors.items())), content_type="application/json")
 
 @ensure_csrf_cookie   
 def challenge_add(request):

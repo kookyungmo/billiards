@@ -1,0 +1,228 @@
+{% extends "foundation/base.html" %} 
+{% block header %} 
+{% load staticfiles %}
+<script src="http://cdnjscn.b0.upaiyun.com/libs/moment.js/2.6.0/moment-with-langs.min.js"></script>
+<script src="http://cdnjscn.b0.upaiyun.com/libs/moment-timezone/0.0.6/moment-timezone.min.js"></script>
+<script type="text/javascript" src="{% static "js/jquery.timepicker.min.js" %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "css/jquery.timepicker.css" %}" />
+<script src="{% static "js/mustache.js" %}?0.8.1"></script>
+{% endblock %} 
+{% load extras %} 
+{% load url from future %} 
+{% block content %}
+<h1>发起朋友圈约球</h1>
+{% for cha in challenges %}
+	{% if forloop.first %}
+	<div data-alert="" class="alert-box alert round">
+		系统观察到你今天已经发布了约球邀请,你是在找他们吗?<br/>
+	{% endif %}
+	<h5><a href="{% url 'challenge_detail_uuid' cha.uuid %}"><strong>{{ cha.local_expiretime|date:'f A'}}</strong></a>过期的约球邀请</h5>
+	{% if forloop.last %}
+	</div>
+	{% endif %}
+{% endfor %}
+<hr>
+<form id="challengeForm" data-abide="ajax">
+  <fieldset>
+    <legend>发布我的朋友圈约球</legend>
+    <div class="row">
+	  <div class="medium-6 columns">
+        <label for="poolroom">{%if isNearby %}附近的球房{%else%}推荐的球房{% endif %}<small>*</small></label>
+        <select id="poolroom" class="medium" required>
+        	{% for poolroom in poolrooms %}
+        		<option value="{{ poolroom.uuid }}">{{ poolroom.name }}</option>
+        	{% endfor %}
+        </select>
+      </div>
+      <div class="medium-6 columns">
+      	<label>&nbsp;</label>
+      	<a href="#" data-reveal-id="poolroomPicker" class="round button secondary">查找更多的球房 →</a>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="medium-6 columns">
+		<label for="participants">最多参与人数<small>*</small></label>
+        <select id="participants" class="medium" required>
+        	{% for i in 5|get_range %}
+        		<option value="{{ i|add:1 }}" {% if i == 2 %} selected {% endif %}>{{ i|add:1 }}人</option>
+        	{% endfor %}
+        </select>
+        <small class="error">请选择参与人数</small>
+      </div>
+      <div class="medium-6 columns">
+		<label for="expiredtime">约球截止时间<small>*</small></label>
+		<input type="hidden" id="starttime" value="">
+        <input type="text" id="expiredtime" placeholder="8:00 pm" data-abide-validator="greaterThan" data-greaterThan="starttime" required>
+        <small class="error">请输入有效的约球截止时间(需要大于当前时间)</small>
+      </div>
+    </div>
+      
+    <div class="row">
+      <div id="errorMsg" class="large-12 columns hide">
+       	<div data-alert class="alert-box warning round">
+		</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-12 columns">
+        <button type="submit" class="medium button green">发布</button>
+      </div>
+    </div>
+  </fieldset>
+</form>
+
+<div id="poolroomPicker" class="reveal-modal" data-reveal>
+  <h2>选择更多球房</h2>
+  <form id="search" data-abide="ajax">
+	  <div class="row collapse">
+	  	<div class="small-8 medium-8 columns">
+	  		<input id="keyword" type="text" placeholder="云川 三里屯" required>
+	  		<small class="error">请输入查找的球房关键字,多个条件用空格分隔</small>
+	  	</div>
+	    <div class="small-4 medium-4 columns">
+	    	<button type="submit" class="small buttion radius">查找</button>
+	    </div>
+	  </div>
+  </form>
+  <div id="result" class="row">
+  
+  </div>
+  <a class="close-reveal-modal">&#215;</a>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+
+{% verbatim %}
+var POOLROOM_LIST_TEMPLATE = '\
+	<table> \
+	  <thead> \
+	    <tr> \
+	      <th width="40%">俱乐部名称</th> \
+	      <th>俱乐部地址</th> \
+	      <th width="20%"></th> \
+	    </tr> \
+	  </thead> \
+	  <tbody> \
+	    {{#poolrooms}}\
+	    <tr>\
+	      <td>{{fields.name}}</td>\
+	      <td>{{fields.address}}</td>\
+	      <td><a id="choose" uuid="{{fields.uuid}}" name="{{fields.name}}" class="round button secondary">选择</a></td>\
+	    </tr>\
+	    {{/poolrooms}}\
+	  </tbody>\
+	</table>\
+';
+{% endverbatim %}
+$("#search").on('valid', function(e) {
+	e.preventDefault();
+	$("#result").children().remove();
+	SEARCH_URL = "{% url 'query_by_keyword' 'search-keyword' %}";
+	$.ajax({
+		data : {},
+		url : SEARCH_URL.replace('search-keyword', encodeURIComponent($('#keyword').val())),
+		type: 'POST',
+		dataType : 'json',
+		success : function(data) {
+			if (data.length == 0) {
+				var infoobj = jQuery('<div/>', {
+					class : 'panel',
+					id : 'info'
+				});
+				infoobj.append("<h3 class=\"subheader\">没有匹配的球房。换换别的关键字试试。</h3>");
+				infoobj.appendTo('#result');
+			} else {
+				$(Mustache.render(POOLROOM_LIST_TEMPLATE, {'poolrooms': data})).appendTo('#result');
+				$("#result #choose").click(function() {
+					e.preventDefault();
+					var uuid = $(this).attr("uuid");
+					var poolrooname = $(this).attr("name");
+					var exist = false;
+					$("#poolroom > option").each(function() {
+						if (this.value == uuid) {
+							$(this).prop('selected', true);
+							exist = true;
+							return false;
+						}
+					});
+					if (!exist) {
+						$("#poolroom option:first").after("<option value=\"" + uuid + "\" selected>" + poolrooname + "</option>");
+					}
+					$('#search').foundation('reveal', 'close');
+				});
+			}
+		},
+		error : function(jqXHR, textStatus, errorThrown) {
+			console.log(textStatus, errorThrown);
+		}
+	});
+});
+$('#expiredtime').timepicker({ 'timeFormat': 'h:i A', 'scrollDefaultNow': true });
+$("#challengeForm").on('valid', function(e) {
+	e.preventDefault();
+	$("button[type=submit]").addClass("disabled");
+	$("#errorMsg").addClass("hide");
+	daystr = moment().tz('{{TIME_ZONE}}').format('YYYY-MM-DD');
+ 	starttime = moment(daystr + " " + $("#starttime").val(), 'YYYY-MM-DD hh:mm A').tz("{{ TIME_ZONE }}");
+	expiredtime = moment(daystr + " " + $("#expiredtime").val(), 'YYYY-MM-DD hh:mm A').tz("{{ TIME_ZONE }}");
+	poolroomuid = $('#poolroom').val();
+	url = document.URL;
+	$.ajax({
+		data : {
+			'poolroom': poolroomuid,
+			'participants': $('#participants').val(),
+			'starttime': starttime.valueOf(),
+			'expiredtime': expiredtime.valueOf()},
+			url : url,
+			type: 'POST',
+		dataType : 'json',
+		success : function(data) {
+			if (data.rt == 1) {
+				challengeurl = "{% url 'challenge_detail_uuid' UUID_SAMPLE %}";
+				window.location = challengeurl.replace(UUID_PATTERN, data.uuid);
+			} else {
+				if (data.msg != null)
+					$("#errorMsg .alert-box").text(data.msg);
+				else {
+					var errorText = "";
+					for (var property in data) {
+					    if (data.hasOwnProperty(property) && property != 'rt') {
+					    	errorText += property + ":" + data[property] + " ";
+					    }
+					}
+					$("#errorMsg .alert-box").text(errorText);
+				}
+				$("#errorMsg").removeClass("hide");
+			}
+		},
+		error : function(jqXHR, textStatus, errorThrown) {
+			console.log(textStatus, errorThrown);
+			$("#errorMsg .alert-box").text("网络错误，请重试。");
+			$("#errorMsg").removeClass("hide");
+			$("button[type=submit]").removeClass("disabled");
+		}
+	});
+});
+moment.tz.add({
+    "zones": {
+        "Asia/Chongqing": [
+            "7:6:20 - LMT 1928 7:6:20",
+            "7 - LONT 1980_4 7",
+            "8 PRC C%sT"
+        ]
+    },
+    "rules": {
+        "PRC": [
+            "1986 1986 4 4 7 0 0 1 D",
+            "1986 1991 8 11 0 0 0 0 S",
+            "1987 1991 3 10 0 0 0 1 D"
+        ]
+    },
+    "links": {}
+});
+$('#starttime').val(moment().tz('{{TIME_ZONE}}').format('hh:mm A'));
+</script>
+{% endblock %}
