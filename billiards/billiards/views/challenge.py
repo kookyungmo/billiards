@@ -247,7 +247,7 @@ def apply_uuid(request, uuid):
             msg = {'rt': 4, 'msg': 'already match'}
         elif challenge.is_expired:
             msg = {'rt': 3, 'msg': 'already expired'}
-        elif challenge.user == request.user:
+        elif challenge.username == request.user.username:
             msg = {'rt': 6, 'msg': 'you are the host'}
         else:
             try:
@@ -265,7 +265,7 @@ def apply_uuid(request, uuid):
                     msg = {'rt': -1, 'msg': 'unknown backend error'}
             except utils.IntegrityError:
                 msg = {'rt': 2, 'msg': 'already applied'}
-        if 'HTTP_REFERER' in request.META and request.META['HTTP_REFERER'] != request.META['HTTP_HOST']:
+        if request.method == 'GET':
             return redirect('challenge_detail_uuid', uuid=str(uuid))
         return HttpResponse(json.dumps(msg.items()), content_type="application/json")
     except Challenge.DoesNotExist:

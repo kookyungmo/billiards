@@ -117,8 +117,6 @@ $(".avatar-frame-large a").click(function apply(e) {
 			if (jqXHR.status == 403) {
 				LOGIN_URL = "{% url 'login_3rd' preferSite %}";
 				window.location = setGetParameter(LOGIN_URL, 'returnurl', APPLY_URL);
-		    } else {
-				console.log(textStatus, errorThrown);
 		    }
 		}
 	});
