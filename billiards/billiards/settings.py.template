@@ -213,6 +213,10 @@ LOGGING = {
             'handlers': ['null', 'logfile'],
             'level': 'DEBUG',
         },
+        'billiards': {
+            'handlers': ['null', 'logfile'],
+            'level': 'DEBUG',
+        },        
     }
 }
 
