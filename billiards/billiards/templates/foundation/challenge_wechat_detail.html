@@ -41,6 +41,7 @@ vertical-align: middle;
 				<h4>
 					邀请小伙伴们到<a href="{% url 'poolroom_detail_uuid' cha.poolroom.uuid %}" target="_blank">{{ cha.poolroom.name }}</a>打台球
 				</h4>
+				<h6><a href="weixin://addfriend/ForBilliardFans">点击关注 我为台球狂</a></h6>
 				{% if cha.status == 'closed' %}
 				<h3><strong>邀请已经被关闭</strong></h3>
 				{% elif cha.is_expired %}
