@@ -24,6 +24,7 @@ from billiards.annotation import deprecated
 import uuid
 import operator
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.http import urlunquote_plus
 
 def more_uuid(request, poolroom_uuid):
     uuidobj = uuid.UUID(poolroom_uuid)
@@ -160,5 +161,6 @@ def detail(request, poolroomid):
 
 @csrf_exempt
 def query(request, keyword):
-    rt = Poolroom.objects.filter(reduce(operator.and_, (Q(name__contains=kw) for kw in keyword.strip().split(' '))) & Q(exist=1)).order_by('-rating')[:10]
+    decodedKeyword = urlunquote_plus(keyword)
+    rt = Poolroom.objects.filter(reduce(operator.and_, (Q(name__contains=kw) for kw in decodedKeyword.strip().split(' '))) & Q(exist=1)).order_by('-rating')[:10]
     return HttpResponse(toJson(rt, poolroom_fields))

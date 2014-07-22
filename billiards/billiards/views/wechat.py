@@ -2,7 +2,6 @@
 from StringIO import StringIO
 from datetime import datetime, timedelta
 import re
-import logging
 
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -628,7 +627,7 @@ class PKWechat(BaseRoBot):
 
         body = smart_str(request.body)
         message = parse_user_msg(body)
-        logging.info("Receive message %s" % message)
+        self.logger.info("Receive message %s" % message)
         reply = self.get_reply(message)
         if not reply:
             errMsg = "No proper handler responded message %s" %(message.type)
