@@ -61,9 +61,9 @@ vertical-align: middle;
 					{% for i in cha.participant_count|subtract:cha.enroll_count|get_range %}
 						<span class="avatar-frame-large">
 						{% if not unavailable and request.user != issuer and not isEnrolled %}<a href="#">{% endif %}
-						<img src="http://cdn1.kmpfurniture.com/pthumb/90223-02.jpg" alt="虚位以待">
+						<img src="http://bcs.duapp.com/billiardsalbum/LOGO/logo.jpg" alt="虚位以待">
 						{% if not unavailable and request.user != issuer and not isEnrolled %}</a>{% endif %}
-						&nbsp;&nbsp;还犹豫什么，赶紧占了这个板凳。
+						&nbsp;&nbsp;👈  点一点抢个沙发吧。
 						</span>
 						<br/><br/>
 					{% endfor %}
@@ -117,8 +117,6 @@ $(".avatar-frame-large a").click(function apply(e) {
 			if (jqXHR.status == 403) {
 				LOGIN_URL = "{% url 'login_3rd' preferSite %}";
 				window.location = setGetParameter(LOGIN_URL, 'returnurl', APPLY_URL);
-		    } else {
-				console.log(textStatus, errorThrown);
 		    }
 		}
 	});
