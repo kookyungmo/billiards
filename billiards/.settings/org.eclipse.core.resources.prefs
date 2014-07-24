@@ -4,6 +4,7 @@ encoding//billiards/bcms.py=utf-8
 encoding//billiards/citydistrict.py=utf-8
 encoding//billiards/client.py=utf-8
 encoding//billiards/commons.py=utf-8
+encoding//billiards/context_processors.py=utf-8
 encoding//billiards/dbrouter.py=utf-8
 encoding//billiards/id.py=utf-8
 encoding//billiards/location_convertor.py=utf-8

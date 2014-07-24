@@ -412,6 +412,12 @@ class Profile(ProfileObject):
     refresh_token = models.CharField(max_length=512, default='', null=True)
     cellphone = models.CharField(max_length=11, null=True, blank=True, verbose_name="移动电话")
     
+    @property
+    def avatar_small(self):
+        if self.avatar != '' and self.avatar.endswith('/0'):
+            return self.avatar.replace('/0', '/64')
+        return self.avatar
+    
 class MatchEnroll(models.Model):
     id = models.AutoField(primary_key=True)
     match = models.ForeignKey(Match, verbose_name='比赛')

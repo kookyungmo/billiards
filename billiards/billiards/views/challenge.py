@@ -30,6 +30,7 @@ from billiards.commons import KEY_PREFIX, forceLogin
 import uuid
 from django.contrib.auth.models import User
 from billiards.annotation import deprecated
+from billiards.templatetags.extras import decodeunicode
 
 def updateChallengeJsonStrApplyInfo(jsonstr, user, challenges):
     appliedChallenges = ChallengeApply.objects.filter(Q(challenge__in=challenges) & Q(user__exact=user))
@@ -233,10 +234,11 @@ def detail_uuid(request, uuid):
     isEnrolled = any(request.user == enroll.user for enroll in challenge.participants)
     return render_to_response(TEMPLATE_ROOT + 'challenge_wechat_detail.html', 
         {'cha': challenge, 'issuer': issuer, 'hours': hours, 'minutes': minutes, "isEnrolled": isEnrolled,
-         'preferSite': PREFER_LOGIN_SITE,
+         'preferSite': PREFER_LOGIN_SITE, 'pagetitle': u'%s邀请小伙伴们到%s打台球' %(decodeunicode(issuer.nickname), challenge.poolroom.name),
          'unavailable': (challenge.status == 'closed' or challenge.is_expired or challenge.status == 'expired')}, 
         context_instance=RequestContext(request))
     
+@csrf_exempt
 def apply_uuid(request, uuid):
     if not request.user.is_authenticated():
         raise PermissionDenied
