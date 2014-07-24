@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# encoding: utf-8
 '''
 
 @author: kane
@@ -20,5 +22,6 @@ def siteconf(request):
             'SITE_LOGO_URL': SITE_LOGO_URL,
             'FOUNDATION_VER': '5.3.0',
             'AWESOME_FONT': '4.1.0',
-            'UUID_SAMPLE': '12345678-1234-1234-1234-123456789012'
+            'UUID_SAMPLE': '12345678-1234-1234-1234-123456789012',
+            'pagetitle': u'我为台球狂',
     }
