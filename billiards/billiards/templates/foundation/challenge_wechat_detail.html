@@ -34,10 +34,11 @@ vertical-align: middle;
 </style>
 
                         <div class="row">
+				<div class="orbit-container">
                                 <ul class="example-orbit" data-orbit>
                                         <li><img style="max-height:400px;display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/07/friends-1.jpg" alt="slide {{ forloop.counter }}">
                                         </li>
-                                </ul>
+                                </ul></div>
                         </div>
 
 
@@ -47,15 +48,15 @@ vertical-align: middle;
 			<div class="v-inner small-text-center">
 				<span class="avatar-frame"><img src="{{ issuer.avatar }}" alt="{{ issuer.nickname|decodeunicode }}"><h3>{{ issuer.nickname|decodeunicode }}</h3></span>
 				<h4>
-					喊你到<a href="{% url 'poolroom_detail_uuid' cha.poolroom.uuid %}" target="_blank">{{ cha.poolroom.name }}</a>来打台球
+					邀请你来<a href="{% url 'poolroom_detail_uuid' cha.poolroom.uuid %}" target="_blank">{{ cha.poolroom.name }}</a>打台球
 				</h4>
 				{% if cha.status == 'closed' %}
 				<h3><strong>邀请已经被关闭</strong></h3>
 				{% elif cha.is_expired %}
 				<h3><strong>邀请已过期失效</strong></h3>
 				{% else %}
-				<h3><strong {% if cha.isMatched %} class="strikeline" {% endif %}>{% if hours > 0 %}{{hours}}小时{{minutes}}分钟后截止报名 {% else %}还有{{minutes}}分钟就截止报名了哦，抓紧参加哦{% endif %}</strong>
-				{% if cha.isMatched %}&nbsp;&nbsp;<strong style="color:blue">咋这抢手尼?!下次要早点来</strong>{% endif %}</h3>
+				<h3><strong {% if cha.isMatched %} class="strikeline" {% endif %}>距离约定时间还有{% if hours > 0 %}{{hours}}小时{{minutes}}分钟 {% else %}还有{{minutes}}分钟就到约定时间喽，你还在路上吗？{% endif %}</strong>
+				{% if cha.isMatched %}&nbsp;&nbsp;<strong style="color:blue">{{ issuer.nickname|decodeunicode }}人品大爆发啊，约他(她)打球的人真多，下次要早点来</strong>{% endif %}</h3>
 				{% endif %}
 				
 				{% for p in cha.participants %}
