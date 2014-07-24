@@ -35,20 +35,19 @@ vertical-align: middle;
 
                         <div class="row">
                                 <ul class="example-orbit" data-orbit>
-                                        <li><img style="max-height:150px;display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/07/friends-1.jpg" alt="slide {{ forloop.counter }}">
+                                        <li><img style="max-height:400px;display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/07/friends-1.jpg" alt="slide {{ forloop.counter }}">
                                         </li>
                                 </ul>
                         </div>
 
 
-<br/>
 <div class="columns large-10 large-push-1 large-uncentered medium-8">
 	<div class="row">
 		<div class="v-wrapper">
 			<div class="v-inner small-text-center">
 				<span class="avatar-frame"><img src="{{ issuer.avatar }}" alt="{{ issuer.nickname|decodeunicode }}"><h3>{{ issuer.nickname|decodeunicode }}</h3></span>
 				<h4>
-					邀请小伙伴们到<a href="{% url 'poolroom_detail_uuid' cha.poolroom.uuid %}" target="_blank">{{ cha.poolroom.name }}</a>打台球
+					喊你到<a href="{% url 'poolroom_detail_uuid' cha.poolroom.uuid %}" target="_blank">{{ cha.poolroom.name }}</a>来打台球
 				</h4>
 				{% if cha.status == 'closed' %}
 				<h3><strong>邀请已经被关闭</strong></h3>
