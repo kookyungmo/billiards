@@ -56,8 +56,8 @@ vertical-align: middle;
 				{% elif cha.is_expired %}
 				<h3><strong>邀请已过期失效</strong></h3>
 				{% else %}
-				<h3><strong {% if cha.isMatched %} class="strikeline" {% endif %}>距离邀约时间还有{% if hours > 0 %}{{hours}}小时{{minutes}}分钟 {% else %}还有{{minutes}}分钟{% endif %}</strong>
-				{% if cha.isMatched %}&nbsp;&nbsp;<strong style="color:blue">{{ issuer.nickname|decodeunicode }}人品大爆发啊，约他(她)打球的人真多，下次要早点来</strong>{% endif %}</h3>
+				<h3><strong {% if cha.isMatched %} class="strikeline" {% endif %}>距离邀约时间还有{% if hours > 0 %}{{hours}}小时{{minutes}}分钟 {% else %}{{minutes}}分钟{% endif %}</strong>
+				{% if cha.isMatched %}&nbsp;&nbsp;<strong style="color:blue">{{ issuer.nickname|decodeunicode }}人品大爆发啊，应邀的人可真多，下次要早点来</strong>{% endif %}</h3>
 				{% endif %}
 				
 				{% for p in cha.participants %}
