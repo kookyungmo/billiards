@@ -34,7 +34,7 @@ vertical-align: middle;
 </style>
 
                         <div class="row">
-                                <ul class="example-orbit" data-orbit data-options="slide_number: false;">
+                                <ul class="example-orbit" data-orbit data-options="slide_number: false; timer_speed: 5000;">
                                         <li><img style="max-height:400px;display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/07/friends-1.jpg" alt="slide {{ forloop.counter }}">
                                         </li>
                                         <li><img style="max-height:400px;display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/07/friends-2.jpg" alt="slide {{ forloop.counter }}">
@@ -57,7 +57,7 @@ vertical-align: middle;
 				<h3><strong>邀请已过期失效</strong></h3>
 				{% else %}
 				<h3><strong {% if cha.isMatched %} class="strikeline" {% endif %}>距离邀约时间还有{% if hours > 0 %}{{hours}}小时{{minutes}}分钟 {% else %}{{minutes}}分钟{% endif %}</strong>
-				{% if cha.isMatched %}&nbsp;&nbsp;<strong style="color:blue">{{ issuer.nickname|decodeunicode }}人品大爆发啊，应邀的人可真多，下次要早点来</strong>{% endif %}</h3>
+				{% if cha.isMatched %}&nbsp;&nbsp;<strong style="color:blue">恭喜{{ issuer.nickname|decodeunicode }}人品指数爆棚，邀约成功！</strong>{% endif %}</h3>
 				{% endif %}
 				
 				{% for p in cha.participants %}
