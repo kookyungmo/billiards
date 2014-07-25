@@ -26,7 +26,7 @@
   <fieldset>
     <legend>发布我的朋友圈约球</legend>
     <div class="row">
-	  <div class="medium-6 columns">
+	  <div class="small-11 medium-6 columns">
         <label for="poolroom">{%if isNearby %}附近的球房{%else%}推荐的球房{% endif %}<small>*</small></label>
         <select id="poolroom" class="medium" required>
         	{% for poolroom in poolrooms %}
@@ -34,14 +34,14 @@
         	{% endfor %}
         </select>
       </div>
-      <div class="medium-6 columns">
+      <div class="small-11 medium-6 columns">
       	<label>&nbsp;</label>
       	<a href="#" data-reveal-id="poolroomPicker" class="round button secondary">查找更多的球房 →</a>
       </div>
     </div>
     
     <div class="row">
-      <div class="medium-6 columns">
+      <div class="small-11 medium-6 columns">
 		<label for="participants">最多参与人数<small>*</small></label>
         <select id="participants" class="medium" required>
         	{% for i in 5|get_range %}
@@ -50,7 +50,7 @@
         </select>
         <small class="error">请选择参与人数</small>
       </div>
-      <div class="medium-6 columns">
+      <div class="small-11 medium-6 columns">
 		<label for="expiredtime">约球截止时间<small>*</small></label>
 		<input type="hidden" id="starttime" value="">
         <input type="text" id="expiredtime" placeholder="8:00 pm" data-abide-validator="greaterThan" data-greaterThan="starttime" required>
