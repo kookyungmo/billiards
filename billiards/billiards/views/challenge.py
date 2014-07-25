@@ -156,7 +156,6 @@ def publish(request, group = None, lat = None, lng = None, distance = 3):
     return render_to_response(TEMPLATE_ROOT + 'challenge_application.html', 
                                   {'poolrooms': nearbypoolrooms, 'lat': lat, 'lng': lng, 'username': username, 'gid': group if group != None else 1, 'group': gobj}, context_instance=RequestContext(request))
     
-@csrf_exempt
 def detail(request, challengeid):
     challenge = getChallenge(challengeid)
     group = challenge.group
@@ -228,6 +227,7 @@ def wechatpublish(request):
 def getChallengeByUUID(uuidstr):
     return get_object_or_404(Challenge, uuid=uuid.UUID(uuidstr))
 
+@csrf_exempt
 def detail_uuid(request, uuid):
     challenge = getChallengeByUUID(uuid)
     issuer = User.objects.get(username=challenge.username)
