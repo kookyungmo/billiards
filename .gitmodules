@@ -1,0 +1,3 @@
+[submodule "billiards/alipay.git"]
+	path = billiards/alipay.git
+	url = https://github.com/zxkane/alipay.git

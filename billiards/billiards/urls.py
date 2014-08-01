@@ -119,6 +119,8 @@ urlpatterns += patterns('billiards.views.trade',
 urlpatterns += patterns('billiards.views.transaction',
      url(r'^transaction/goods/(?P<sku>\w{32})$', 'alipay_goods', name='transaction_alipay_goods'),
      url(r'^transaction/alipay/return$', 'alipay_return', name='transaction_alipay_return'),
+     url(r'^transaction/alipay/wap/return$', 'alipay_wapreturn', name='transaction_alipay_wapreturn'),
+     url(r'^transaction/alipay/wap/notify$', 'alipay_wapnotify', name='transaction_alipay_wapnotify'),
      url(r'^transaction/alipay/notify$', 'alipay_notify', name='transaction_alipay_notify'),
 )
 

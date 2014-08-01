@@ -5,28 +5,38 @@ Created on 2014年6月14日
 
 @author: kane
 '''
-from alipay import Alipay
+from alipay import Alipay, WapAlipay
 from billiards.models import PayAccount, Transaction, Goods
 from datetime import datetime, timedelta
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
-from django.utils.timezone import pytz
+from django.utils.timezone import pytz, utc
 from billiards.settings import TIME_ZONE
 from billiards import settings
 from django.shortcuts import get_object_or_404
 import json
+from mobi.decorators import detect_mobile
+from urlparse import unquote
+from xml.etree import ElementTree
+from django.views.decorators.csrf import csrf_exempt
 
 def getAlipay():
     account = PayAccount.objects.all()[:1][0]
     return (account, Alipay(pid=account.pid, key=account.key, seller_email=account.email))
 
+def getWapAlipay():
+    account = PayAccount.objects.all()[:1][0]
+    return (account, WapAlipay(pid=account.pid, key=account.key, seller_email=account.email))
+
 def getGoods(sku):
     return get_object_or_404(Goods, sku=sku)
 
+@detect_mobile
 def alipay_goods(request, sku):
     if request.user.is_authenticated():
         goods = getGoods(sku)
-        account, alipay = getAlipay()
+        isMobile = request.mobile
+        account, alipay = getWapAlipay() if isMobile else getAlipay()
         nativetime = datetime.utcnow()
         localtz = pytz.timezone(settings.TIME_ZONE)
         localtime = localtz.localize(nativetime)
@@ -37,14 +47,65 @@ def alipay_goods(request, sku):
                       'goods': goods, 'fee': goods.price, 'state': 1})
         if created == True:
             transaction.save()
-        returnurl = request.build_absolute_uri(reverse('transaction_alipay_return'))
-        notifyurl = request.build_absolute_uri(reverse('transaction_alipay_notify'))
-        url = alipay.create_direct_pay_by_user_url(out_trade_no=transaction.tradenum, subject=transaction.subject, total_fee=transaction.fee, 
-            return_url=returnurl, notify_url=notifyurl)
+        returnurl = request.build_absolute_uri(reverse('transaction_alipay_wapreturn')) if isMobile else request.build_absolute_uri(reverse('transaction_alipay_return'))
+        notifyurl = request.build_absolute_uri(reverse('transaction_alipay_wapnotify')) if isMobile else request.build_absolute_uri(reverse('transaction_alipay_notify'))
+        if isMobile:
+            params = {'out_trade_no': transaction.tradenum,
+                  'subject': transaction.subject,
+                  'total_fee': transaction.fee,
+                  'seller_account_name': alipay.seller_email,
+                  'call_back_url': returnurl,
+                  'notify_url': notifyurl}
+        else:
+            params = {'out_trade_no': transaction.tradenum, 'subject': transaction.subject, 'total_fee': transaction.fee, 
+            'return_url': returnurl, 'notify_url': notifyurl}
+        url = alipay.create_direct_pay_by_user_url(**params)
         return HttpResponseRedirect(url)
     return HttpResponse(json.dumps({'rt': -1, 'msg': 'login first'}), content_type="application/json")
 
 TRANSACTION_TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+def alipay_wapreturn(request):
+    account, alipay = getWapAlipay()
+    parameters = {k: unquote(v) for k, v in request.GET.iteritems()}
+    if alipay.verify_notify(**parameters):
+        tradenum = request.GET.get('out_trade_no')
+        try:
+            transaction = Transaction.objects.get(tradenum=tradenum)
+            transaction.paytradeNum = request.GET.get('trade_no')
+            transaction.tradeStatus = 'TRADE_SUCCESS'
+            transaction.paidDate = datetime.now().replace(tzinfo=utc).astimezone(pytz.timezone(TIME_ZONE))
+            transaction.state = 2
+            transaction.save()
+        except Transaction.DoesNotExist:
+            #TODO handle error case
+            pass
+        return HttpResponse("Payment completed.")
+    return HttpResponse("Error.")
+
+@csrf_exempt
+def alipay_wapnotify(request):
+    account, alipay = getWapAlipay()
+    parameters = {k: v for k, v in request.POST.iteritems()}
+    if alipay.verify_notify(**parameters):
+        tree = ElementTree.ElementTree(ElementTree.fromstring(unquote(parameters['notify_data'])))
+        notifydata = {node.tag: node.text for node in tree.iter()}
+        tradenum = notifydata['out_trade_no']
+        try:
+            transaction = Transaction.objects.get(tradenum=tradenum)
+            transaction.paytradeNum = notifydata['trade_no']
+            transaction.tradeStatus = notifydata['trade_status']
+            transaction.notifyid = notifydata['notify_id']
+            transaction.buyeid = notifydata['buyer_id']
+            transaction.paidDate = datetime.now().replace(tzinfo=utc).astimezone(pytz.timezone(TIME_ZONE)) if 'gmt_payment' not in notifydata else \
+                datetime.strptime(notifydata['gmt_payment'], TRANSACTION_TIME_FORMAT).replace(tzinfo=pytz.timezone(TIME_ZONE))
+            transaction.state = 2 if notifydata['trade_status'] == 'TRADE_SUCCESS' else 5
+            transaction.save()
+            return HttpResponse("success")
+        except Transaction.DoesNotExist:
+            #TODO handle error case
+            pass
+    return HttpResponse("Error.")
+
 def alipay_return(request):
     account, alipay = getAlipay()
     parameters = {k: v for k, v in request.GET.iteritems()}
@@ -62,15 +123,16 @@ def alipay_return(request):
                     transaction.paidDate = datetime.strptime(request.GET.get('notify_time'), TRANSACTION_TIME_FORMAT).replace(tzinfo=pytz.timezone(TIME_ZONE))
                     transaction.state = 2
                 transaction.save()
-                return HttpResponse("Payment completed.")
             except Transaction.DoesNotExist:
                 #TODO handle error case
                 pass
+            return HttpResponse("Payment completed.")
     return HttpResponse("Error.")
 
+@csrf_exempt
 def alipay_notify(request):
     account, alipay = getAlipay()
-    if alipay.verify_notify(**request.GET):
+    if alipay.verify_notify(**request.POST):
         tradenum = request.GET.get('out_trade_no')
         try:
             transaction = Transaction.objects.get(tradenum=tradenum)
