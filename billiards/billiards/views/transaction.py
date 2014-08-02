@@ -19,6 +19,9 @@ from mobi.decorators import detect_mobile
 from urlparse import unquote
 from xml.etree import ElementTree
 from django.views.decorators.csrf import csrf_exempt
+import logging
+
+logger = logging.getLogger("transaction")
 
 def getAlipay():
     account = PayAccount.objects.all()[:1][0]
@@ -71,39 +74,48 @@ def alipay_wapreturn(request):
         tradenum = request.GET.get('out_trade_no')
         try:
             transaction = Transaction.objects.get(tradenum=tradenum)
-            transaction.paytradeNum = request.GET.get('trade_no')
-            transaction.tradeStatus = 'TRADE_SUCCESS'
-            transaction.paidDate = datetime.now().replace(tzinfo=utc).astimezone(pytz.timezone(TIME_ZONE))
-            transaction.state = 2
-            transaction.save()
+            if transaction.state != 2 or transaction.state != 5:
+                transaction.paytradeNum = request.GET.get('trade_no')
+                transaction.tradeStatus = 'TRADE_SUCCESS'
+                transaction.paidDate = datetime.now().replace(tzinfo=utc).astimezone(pytz.timezone(TIME_ZONE))
+                transaction.state = 2
+                transaction.save()
         except Transaction.DoesNotExist:
             #TODO handle error case
             pass
+        # add a page here
         return HttpResponse("Payment completed.")
     return HttpResponse("Error.")
 
 @csrf_exempt
 def alipay_wapnotify(request):
-    account, alipay = getWapAlipay()
-    parameters = {k: v for k, v in request.POST.iteritems()}
-    if alipay.verify_notify(**parameters):
-        tree = ElementTree.ElementTree(ElementTree.fromstring(unquote(parameters['notify_data'])))
-        notifydata = {node.tag: node.text for node in tree.iter()}
-        tradenum = notifydata['out_trade_no']
-        try:
-            transaction = Transaction.objects.get(tradenum=tradenum)
-            transaction.paytradeNum = notifydata['trade_no']
-            transaction.tradeStatus = notifydata['trade_status']
-            transaction.notifyid = notifydata['notify_id']
-            transaction.buyeid = notifydata['buyer_id']
-            transaction.paidDate = datetime.now().replace(tzinfo=utc).astimezone(pytz.timezone(TIME_ZONE)) if 'gmt_payment' not in notifydata else \
-                datetime.strptime(notifydata['gmt_payment'], TRANSACTION_TIME_FORMAT).replace(tzinfo=pytz.timezone(TIME_ZONE))
-            transaction.state = 2 if notifydata['trade_status'] == 'TRADE_SUCCESS' else 5
-            transaction.save()
-            return HttpResponse("success")
-        except Transaction.DoesNotExist:
-            #TODO handle error case
-            pass
+    try:
+        account, alipay = getWapAlipay()
+        parameters = {k: v for k, v in request.POST.iteritems()}
+        logger.info("Received alipay wap notify at %s with parameters '%s'." %(datetime.now(), 
+            '&'.join(['%s=%s' % (key, v) for key,v in request.POST.iteritems()])))
+        if alipay.verify_notify(**parameters):
+            tree = ElementTree.ElementTree(ElementTree.fromstring(unquote(parameters['notify_data']).encode("utf-8")))
+            notifydata = {node.tag: node.text for node in tree.iter()}
+            tradenum = notifydata['out_trade_no']
+            try:
+                transaction = Transaction.objects.get(tradenum=tradenum)
+                transaction.paytradeNum = notifydata['trade_no']
+                transaction.tradeStatus = notifydata['trade_status']
+                transaction.notifyid = notifydata['notify_id']
+                transaction.buyeid = notifydata['buyer_id']
+                transaction.paidDate = datetime.now().replace(tzinfo=utc).astimezone(pytz.timezone(TIME_ZONE)) if 'gmt_payment' not in notifydata else \
+                    datetime.strptime(notifydata['gmt_payment'], TRANSACTION_TIME_FORMAT).replace(tzinfo=pytz.timezone(TIME_ZONE))
+                transaction.state = 2 if notifydata['trade_status'] == 'TRADE_SUCCESS' else 5
+                transaction.save()
+                return HttpResponse("success")
+            except Transaction.DoesNotExist:
+                #TODO handle error case
+                pass
+        else:
+            logger.warn("alipay wap notify is invalid.")
+    except Exception:
+        logger.exception("exception occurred when processing alipay wap notification.")
     return HttpResponse("Error.")
 
 def alipay_return(request):
@@ -114,46 +126,55 @@ def alipay_return(request):
             tradenum = request.GET.get('out_trade_no')
             try:
                 transaction = Transaction.objects.get(tradenum=tradenum)
-                transaction.paytradeNum = request.GET.get('trade_no')
-                transaction.tradeStatus = request.GET.get('trade_status')
-                transaction.notifyid = request.GET.get('notify_id')
-                transaction.buyerEmail = request.GET.get('buyer_email')
-                transaction.buyeid = request.GET.get('buyer_id')
-                if transaction.tradeStatus == 'TRADE_FINISHED' or transaction.tradeStatus == 'TRADE_SUCCESS':
-                    transaction.paidDate = datetime.strptime(request.GET.get('notify_time'), TRANSACTION_TIME_FORMAT).replace(tzinfo=pytz.timezone(TIME_ZONE))
-                    transaction.state = 2
-                transaction.save()
+                if transaction.state != 2 or transaction.state != 5:
+                    transaction.paytradeNum = request.GET.get('trade_no')
+                    transaction.tradeStatus = request.GET.get('trade_status')
+                    transaction.notifyid = request.GET.get('notify_id')
+                    transaction.buyerEmail = request.GET.get('buyer_email')
+                    transaction.buyeid = request.GET.get('buyer_id')
+                    if transaction.tradeStatus == 'TRADE_FINISHED' or transaction.tradeStatus == 'TRADE_SUCCESS':
+                        transaction.paidDate = datetime.strptime(request.GET.get('notify_time'), TRANSACTION_TIME_FORMAT).replace(tzinfo=pytz.timezone(TIME_ZONE))
+                        transaction.state = 2
+                    transaction.save()
             except Transaction.DoesNotExist:
                 #TODO handle error case
                 pass
+            # TODO add a page for it
             return HttpResponse("Payment completed.")
     return HttpResponse("Error.")
 
 @csrf_exempt
 def alipay_notify(request):
-    account, alipay = getAlipay()
-    if alipay.verify_notify(**request.POST):
-        tradenum = request.GET.get('out_trade_no')
-        try:
-            transaction = Transaction.objects.get(tradenum=tradenum)
-            if transaction.tradeStatus == 'TRADE_FINISHED' or transaction.tradeStatus == 'TRADE_CLOSED':
-                # already completed transaction
-                return
-            if transaction.paytradeNum is None:
-                transaction.paytradeNum = request.GET.get('trade_no')
-            transaction.tradeStatus = request.GET.get('trade_status')
-            transaction.notifyid = request.GET.get('notify_id')
-            transaction.buyerEmail = request.GET.get('buyer_email')
-            transaction.buyeid = request.GET.get('buyer_id')
-            if transaction.tradeStatus == 'TRADE_FINISHED' or transaction.tradeStatus == 'TRADE_SUCCESS':
-                transaction.paidDate = datetime.strptime(request.GET.get('gmt_payment'), TRANSACTION_TIME_FORMAT).replace(tzinfo=pytz.timezone(TIME_ZONE))
-                transaction.state = 2
-            elif transaction.tradeStatus == 'TRADE_CLOSED':
-                transaction.closedDate = datetime.strptime(request.GET.get('gmt_close'), TRANSACTION_TIME_FORMAT).replace(tzinfo=pytz.timezone(TIME_ZONE))
-                transaction.state = 4
-            transaction.save()
-            return HttpResponse("Received.")
-        except Transaction.DoesNotExist:
-            #TODO handle error case
-            pass
+    try:
+        account, alipay = getAlipay()
+        logger.info("Received alipay notify at %s with parameters '%s'." %(datetime.now(), 
+            '&'.join(['%s=%s' % (key, v) for key,v in request.POST.iteritems()])))
+        if alipay.verify_notify(**request.POST):
+            tradenum = request.GET.get('out_trade_no')
+            try:
+                transaction = Transaction.objects.get(tradenum=tradenum)
+                if transaction.tradeStatus == 'TRADE_FINISHED' or transaction.tradeStatus == 'TRADE_CLOSED':
+                    # already completed transaction
+                    return
+                if transaction.paytradeNum is None:
+                    transaction.paytradeNum = request.GET.get('trade_no')
+                transaction.tradeStatus = request.GET.get('trade_status')
+                transaction.notifyid = request.GET.get('notify_id')
+                transaction.buyerEmail = request.GET.get('buyer_email')
+                transaction.buyeid = request.GET.get('buyer_id')
+                if transaction.tradeStatus == 'TRADE_FINISHED' or transaction.tradeStatus == 'TRADE_SUCCESS':
+                    transaction.paidDate = datetime.strptime(request.GET.get('gmt_payment'), TRANSACTION_TIME_FORMAT).replace(tzinfo=pytz.timezone(TIME_ZONE))
+                    transaction.state = 2
+                elif transaction.tradeStatus == 'TRADE_CLOSED':
+                    transaction.closedDate = datetime.strptime(request.GET.get('gmt_close'), TRANSACTION_TIME_FORMAT).replace(tzinfo=pytz.timezone(TIME_ZONE))
+                    transaction.state = 4
+                transaction.save()
+                return HttpResponse("Received.")
+            except Transaction.DoesNotExist:
+                #TODO handle error case
+                pass
+        else:
+            logger.warn("alipay notify is invalid.")
+    except Exception:
+        logger.exception("exception occurred when processing alipay notification.")
     return HttpResponse("Error.")
