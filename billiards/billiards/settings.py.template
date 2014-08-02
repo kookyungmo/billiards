@@ -17,7 +17,7 @@ TESTING = False
 BAE_KEY = "lzLVWuWXTWRpmUq78cD5CEwE"
 BAE_SECRETKEY = "GjLz74wHP1QUIubKPlI5BvGYPTHxb14X"
 
-if DEBUG or TESTING:
+if DEBUG and TESTING:
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
@@ -129,6 +129,8 @@ MIDDLEWARE_CLASSES = (
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
+
+MOBI_USER_AGENT_IGNORE_LIST = ['ipad',]
 
 ROOT_URLCONF = 'billiards.urls'
 

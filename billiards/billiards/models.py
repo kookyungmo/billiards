@@ -830,9 +830,10 @@ class Transaction(models.Model):
     buyeid = models.CharField(max_length=30, verbose_name='买家帐号')
     state = IntegerChoiceTypeField(verbose_name=u'状态', choices=(
             (1, u'等待付款'),
-            (2, u'已完成'),
+            (2, u'已成功'),
             (3, u'已取消'),
-            (4, u'已过期')
+            (4, u'已过期'),
+            (5, u'已完成')
         ), default=1)
     
     class Meta:
