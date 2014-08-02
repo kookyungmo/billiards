@@ -22,6 +22,9 @@ main(){
         fi
 
 	cd $SHELLHOME
+	git submodule init
+	git submodule sync
+	git submodule update
 	commit=`git log -1 --pretty=format:%h --no-merges`
 
 	pecho "Deploying project to DIR $TARGET..."
@@ -33,8 +36,9 @@ main(){
 	rm -rf $TARGET/*
 
 	pecho "Clean unnecessary files..."
-	cp -Rfp $SHELLHOME/* .
+	cp -RfH $SHELLHOME/* .
 	find . -name "*.pyc" -exec rm -f {} \;
+	find . -name ".git*" -exec rm -f {} \;
 	rm deploy.sh
 	rm *.launch
 	rm bitfield
