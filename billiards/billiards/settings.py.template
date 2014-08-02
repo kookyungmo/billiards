@@ -208,17 +208,21 @@ LOGGING = {
         },
         'django.db.backends': {
             'handlers': ['null'],
-            'level': 'DEBUG',
+            'level': 'WARN',
             'propagate': False,
         },
         'WeRoBot': {
-            'handlers': ['null', 'logfile'],
-            'level': 'DEBUG',
+            'handlers': ['logfile'],
+            'level': 'WARN',
         },
         'billiards': {
-            'handlers': ['null', 'logfile'],
-            'level': 'DEBUG',
-        },        
+            'handlers': ['logfile'],
+            'level': 'WARN',
+        },    
+        'transaction': {
+            'handlers': ['logfile'],
+            'level': 'WARN',
+        },   
     }
 }
 
