@@ -74,7 +74,7 @@ def alipay_wapreturn(request):
         tradenum = request.GET.get('out_trade_no')
         try:
             transaction = Transaction.objects.get(tradenum=tradenum)
-            if transaction.state != 2 or transaction.state != 5:
+            if transaction.state != 2 and transaction.state != 5:
                 transaction.paytradeNum = request.GET.get('trade_no')
                 transaction.tradeStatus = 'TRADE_SUCCESS'
                 transaction.paidDate = datetime.now().replace(tzinfo=utc).astimezone(pytz.timezone(TIME_ZONE))
@@ -100,6 +100,9 @@ def alipay_wapnotify(request):
             tradenum = notifydata['out_trade_no']
             try:
                 transaction = Transaction.objects.get(tradenum=tradenum)
+                if transaction.tradeStatus == 'TRADE_FINISHED' or transaction.tradeStatus == 'TRADE_CLOSED':
+                    # already completed transaction
+                    return HttpResponse("success")
                 transaction.paytradeNum = notifydata['trade_no']
                 transaction.tradeStatus = notifydata['trade_status']
                 transaction.notifyid = notifydata['notify_id']
@@ -126,7 +129,7 @@ def alipay_return(request):
             tradenum = request.GET.get('out_trade_no')
             try:
                 transaction = Transaction.objects.get(tradenum=tradenum)
-                if transaction.state != 2 or transaction.state != 5:
+                if transaction.state != 2 and transaction.state != 5:
                     transaction.paytradeNum = request.GET.get('trade_no')
                     transaction.tradeStatus = request.GET.get('trade_status')
                     transaction.notifyid = request.GET.get('notify_id')
@@ -147,15 +150,16 @@ def alipay_return(request):
 def alipay_notify(request):
     try:
         account, alipay = getAlipay()
+        parameters = {k: v for k, v in request.POST.iteritems()}
         logger.info("Received alipay notify at %s with parameters '%s'." %(datetime.now(), 
             '&'.join(['%s=%s' % (key, v) for key,v in request.POST.iteritems()])))
-        if alipay.verify_notify(**request.POST):
+        if alipay.verify_notify(**parameters):
             tradenum = request.GET.get('out_trade_no')
             try:
                 transaction = Transaction.objects.get(tradenum=tradenum)
                 if transaction.tradeStatus == 'TRADE_FINISHED' or transaction.tradeStatus == 'TRADE_CLOSED':
                     # already completed transaction
-                    return
+                    return HttpResponse("success")
                 if transaction.paytradeNum is None:
                     transaction.paytradeNum = request.GET.get('trade_no')
                 transaction.tradeStatus = request.GET.get('trade_status')
@@ -169,7 +173,7 @@ def alipay_notify(request):
                     transaction.closedDate = datetime.strptime(request.GET.get('gmt_close'), TRANSACTION_TIME_FORMAT).replace(tzinfo=pytz.timezone(TIME_ZONE))
                     transaction.state = 4
                 transaction.save()
-                return HttpResponse("Received.")
+                return HttpResponse("success")
             except Transaction.DoesNotExist:
                 #TODO handle error case
                 pass
