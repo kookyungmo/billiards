@@ -1,3 +1,6 @@
 [submodule "billiards/alipay.git"]
 	path = billiards/alipay.git
 	url = https://github.com/zxkane/alipay.git
+[submodule "foundation-libsass-template"]
+	path = foundation-libsass-template
+	url = https://github.com/zxkane/foundation-libsass-template.git
