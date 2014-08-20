@@ -5,6 +5,9 @@ from django.template.context import RequestContext
 def assistant(request):
     return render_to_response(TEMPLATE_ROOT + 'assistant.html', context_instance=RequestContext(request))
 
+def assistant1(request):
+    return render_to_response(TEMPLATE_ROOT + 'assistant-1.html', context_instance=RequestContext(request))
+
 def xiaohui(request):
     return render_to_response(TEMPLATE_ROOT + 'xiaohui.html', context_instance=RequestContext(request))
 

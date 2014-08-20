@@ -1,0 +1,52 @@
+{% extends "foundation/base.html" %}
+{% block header %}
+{% load staticfiles %}
+<link rel="stylesheet" href="{% static "css/index.css" %}?{{buildid}}">
+<link rel="stylesheet" href="{% static "css/thumb.css" %}?{{buildid}}">
+<script src="{% static "js/thumbmodernizr.js" %}?{{buildid}}"></script>
+{% endblock %}
+{% block content %}
+ <div class="large-12 medium-12 small-11 small-centered columns">
+<ul id="og-grid" class="og-grid">
+					<li>
+						<a href="/meixi" data-largesrc="http://bcs.duapp.com/billiardsalbum/2014/assistants/shanshan-400x400-3.jpg" data-title="GOOD" data-description="美熙">
+							<img src="http://bcs.duapp.com/billiardsalbum/2014/assistants/meixi-293x343-1.jpg" alt="img01"/>
+						</a>
+					</li>
+                                        <li>
+                                                <a href="/meixi" data-largesrc="http://bcs.duapp.com/billiardsalbum/2014/assistants/shanshan
+-400x400-3.jpg" data-title="GOOD" data-description="美熙">                                                        <img src="http://bcs.duapp.com/billiardsalbum/2014/assistants/meixi-293x343-1.jpg" alt="img01"/>
+                                                </a>
+                                        </li>
+                                        <li>
+                                                <a href="/meixi" data-largesrc="http://bcs.duapp.com/billiardsalbum/2014/assistants/shanshan
+-400x400-3.jpg" data-title="GOOD" data-description="美熙">                                                        <img src="http://bcs.duapp.com/billiardsalbum/2014/assistants/meixi-293x343-1.jpg" alt="img01"/>
+                                                </a>
+                                        </li>
+                                        <li>
+                                                <a href="/meixi" data-largesrc="http://bcs.duapp.com/billiardsalbum/2014/assistants/shanshan
+-400x400-3.jpg" data-title="GOOD" data-description="美熙">                                                        <img src="http://bcs.duapp.com/billiardsalbum/2014/assistants/meixi-293x343-1.jpg" alt="img01"/>
+                                                </a>
+                                        </li>
+                                        <li>
+                                                <a href="/meixi" data-largesrc="http://bcs.duapp.com/billiardsalbum/2014/assistants/shanshan
+-400x400-3.jpg" data-title="GOOD" data-description="美熙">                                                        <img src="http://bcs.duapp.com/billiardsalbum/2014/assistants/meixi-293x343-1.jpg" alt="img01"/>
+                                                </a>
+                                        </li>
+                                        <li>
+                                                <a href="/meixi" data-largesrc="http://bcs.duapp.com/billiardsalbum/2014/assistants/shanshan
+-400x400-3.jpg" data-title="GOOD" data-description="美熙">                                                        <img src="http://bcs.duapp.com/billiardsalbum/2014/assistants/meixi-293x343-1.jpg" alt="img01"/>
+                                                </a>
+                                        </li>
+				</ul>
+</div>
+<br>
+{% endblock %}
+{% block foundationscript %}
+    <script src="{% static "js/thumbgrid.js" %}?{{buildid}}"></script>
+		<script>
+			$(function() {
+				Grid.init();
+			});
+		</script>
+{% endblock %}
