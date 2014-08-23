@@ -1,6 +1,6 @@
 <!DOCTYPE html> 
 <!--[if (lt IE 9) & (!IEMobile)]>
-<meta http-equiv="refresh" content="0; URL={% url unsupportedbrowser %}">
+<meta http-equiv="refresh" content="0; URL={% url 'unsupportedbrowser' %}">
 <![endif]--> 
 <!--[if gt IE 8]><!--> <html lang="en"> <!--<![endif]-->
 {% load staticfiles %}
@@ -20,7 +20,6 @@
   <link rel="stylesheet" href="{% static "css/myapp.css" %}?{{buildid}}">
   <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
 {% block header %}{% endblock %}
-{% load url from future %} 
 </head>
 {% url 'match_map' 'map' as mapurl %}
 {% url 'poolroom_nearby' as nearby %}

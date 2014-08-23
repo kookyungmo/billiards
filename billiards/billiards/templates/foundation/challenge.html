@@ -15,7 +15,7 @@
 
 <script>
 var LOGO_URL="{{ SITE_LOGO_URL }}";
-var WECHAT_SHARE_URL="{% url wechat_share_help %}";
+var WECHAT_SHARE_URL="{% url 'wechat_share_help' %}";
 
 {% if lat != None %}
 var mypoint = new BMap.Point({{lng}}, {{lat}});
@@ -23,11 +23,11 @@ var mypoint = new BMap.Point({{lng}}, {{lat}});
 var mypoint = null;
 {% endif %}
 CHALLENGE_URL = window.location.pathname;
-CHALLENGE_DETAIL_URL = "{% url challenge_detail '000' %}";
-CHALLENGE_WITH_DISTANCE_URL = "{% url challenge_with_distance gid '00.00' '11.11' %}";
-POOLROOM_URL = "{% url poolroom_detail_uuid UUID_SAMPLE %}";
-CHALLENGE_APPLY_URL = "{% url apply_challenge '000' %}";
-var PKMAP_URL = "{% url pk_map_type_id 'mtype' '000' %}";
+CHALLENGE_DETAIL_URL = "{% url 'challenge_detail' '000' %}";
+CHALLENGE_WITH_DISTANCE_URL = "{% url 'challenge_with_distance' gid '00.00' '11.11' %}";
+POOLROOM_URL = "{% url 'poolroom_detail_uuid' UUID_SAMPLE %}";
+CHALLENGE_APPLY_URL = "{% url 'apply_challenge' '000' %}";
+var PKMAP_URL = "{% url 'pk_map_type_id' 'mtype' '000' %}";
 
 createInfo("正在加载约球信息...");
 

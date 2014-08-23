@@ -31,3 +31,9 @@ def set_query_parameter(url, param_name, param_value):
 def forceLogin(request, sitename):
     url = set_query_parameter(reverse('login_3rd', args=(sitename,)), 'returnurl', request.build_absolute_uri(request.get_full_path()))
     return HttpResponseRedirect(url)
+
+def num(s):
+    try:
+        return int(s)
+    except ValueError:
+        return float(s)

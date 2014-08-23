@@ -138,7 +138,7 @@ class BJDaBengYingWechat(BJUniversityAssociationWechat):
                 for poolroom in nearbyPoolrooms:
                     name.append(poolroom.name) 
                     ids.append(str(poolroom.id)) 
-                    distance.append(str(poolroom.distance))
+                    distance.append(str(poolroom.location_distance.km))
                 rt = [','.join(fieldarray) for fieldarray in [name, ids, distance]]
                 recordUserActivity(message, 'location', rt[0], {'lat': lat, 'lng': lng, 'scale': message.scale, 'label': ['Label']}, 
                                    {'id': rt[1], 'name': rt[0], 'distance': rt[2]}, self.target)

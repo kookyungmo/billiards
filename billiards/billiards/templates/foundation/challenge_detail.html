@@ -2,7 +2,7 @@
 {% load extras %} 
 {% block maptitle %}
 <h2>{% if gid != 1 %}<code>{{group.name}}</code>群内{% endif %}约球信息</h2>
-<a href="{% if gid == 1 %}{% url challenge_list %}{% else %} {% url challenge_group_list gid %}{% endif %}" class="button secondary small radius fi-list-thumbnails">  查看更多约球信息</a>
+<a href="{% if gid == 1 %}{% url 'challenge_list' %}{% else %} {% url 'challenge_group_list' gid %}{% endif %}" class="button secondary small radius fi-list-thumbnails">  查看更多约球信息</a>
 {% endblock %}
 {% block mapscript %}
 <div id="shareToWechat" class="reveal-modal xlarge" data-reveal>
@@ -11,7 +11,7 @@
 <script>
 $('#viewSwitch a').hide();
 var LOGO_URL="{{ SITE_LOGO_URL }}";
-var WECHAT_SHARE_URL="{% url wechat_share_help %}";
+var WECHAT_SHARE_URL="{% url 'wechat_share_help' %}";
 
 {% if lat != None %}
 var mypoint = new BMap.Point({{lng}}, {{lat}});
@@ -19,9 +19,9 @@ var mypoint = new BMap.Point({{lng}}, {{lat}});
 var mypoint = null;
 {% endif %}
 CHALLENGE_URL = window.location.pathname;
-CHALLENGE_DETAIL_URL = "{% url challenge_detail '000' %}";
-CHALLENGE_WITH_DISTANCE_URL = "{% url challenge_with_distance gid '00.00' '11.11' %}";
-POOLROOM_URL = "{% url poolroom_detail_uuid UUID_SAMPLE %}";
+CHALLENGE_DETAIL_URL = "{% url 'challenge_detail' '000' %}";
+CHALLENGE_WITH_DISTANCE_URL = "{% url 'challenge_with_distance' gid '00.00' '11.11' %}";
+POOLROOM_URL = "{% url 'poolroom_detail_uuid' UUID_SAMPLE %}";
 
 var defaultZoom = 16;
 

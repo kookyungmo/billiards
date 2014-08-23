@@ -177,15 +177,7 @@ def detail(request, challengeid):
                               context_instance=RequestContext(request))
     
 def getNearbyChallenges(lat, lng, distance, datetime, group = 1):
-    '''
-    radius distance
-    https://developers.google.com/maps/articles/phpsqlsearch_v3?csw=1#findnearsql
-    '''
-    haversine = '6371 * acos( cos( radians(%s) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(%s) ) + sin( radians(%s) )\
-         * sin( radians( lat ) ) )' %(lat, lng, lat)
-    where = "challenge.group = %s and challenge.expiretime > '%s' having distance <= %s" %(group, datetime, str(distance))
-    return Challenge.objects.extra(select={'distance' : haversine}).extra(order_by=['distance'])\
-        .extra(where=[where])
+    return Challenge.objects.filter(Q(group=group) & Q(expiretime__gt=datetime)).filter(geolocation__distance_lt=((lat, lng), distance)).order_by_distance()
 
 @csrf_exempt
 def wechatpublish(request):
@@ -195,7 +187,7 @@ def wechatpublish(request):
                 poolroom = getPoolroomByUUID(uuid.UUID(request.POST['poolroom']))
                 nickname = request.user.nickname
                 issuer = 'wechat:%s' %(request.user.username)
-                group = 0
+                group = 1
                 try:
                     group = int(request.POST['type'])
                 except KeyError:
