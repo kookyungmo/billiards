@@ -16,6 +16,7 @@
   <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/vendor/modernizr.js"></script>
   <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/vendor/jquery.js"></script>
   <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/vendor/fastclick.js"></script>
+  <script src="{% static "js/jquery.scrollup.js" %}"></script>
   <script src="{% static "js/app.js" %}?{{buildid}}"></script>
   <link rel="stylesheet" href="{% static "css/myapp.css" %}?{{buildid}}">
   <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
@@ -33,6 +34,42 @@
 {% url 'game_2048' as gameurl %}
 {% load extras %}
 <body>
+
+<style>
+/* Image style */
+#scrollUp {
+    background-image: url("{% static "images/top.png" %}");
+    bottom: 20px;
+    right: 20px;
+    width: 38px;    /* Width of image */
+    height: 38px;   /* Height of image */
+}
+</style>
+<script>
+$(function () {
+    $.scrollUp({
+        scrollName: 'scrollUp',      // Element ID
+        scrollDistance: 300,         // Distance from top/bottom before showing element (px)
+        scrollFrom: 'top',           // 'top' or 'bottom'
+        scrollSpeed: 300,            // Speed back to top (ms)
+        easingType: 'linear',        // Scroll to top easing (see http://easings.net/)
+        animation: 'fade',           // Fade, slide, none
+        animationSpeed: 200,         // Animation speed (ms)
+        scrollTrigger: false,        // Set a custom triggering element. Can be an HTML string or jQuery object
+        scrollTarget: false,         // Set a custom target element for scrolling to. Can be element or number
+        scrollText: '', // Text for element, can contain HTML
+        scrollTitle: false,          // Set a custom <a> title if required.
+        scrollImg: false,            // Set true to use image
+        activeOverlay: false,        // Set CSS color to display scrollUp active point, e.g '#00FFFF'
+        zIndex: 2147483647           // Z-Index for the overlay
+    });
+});
+</script>
+
+
+
+
+
 <script>
 	{% if user.is_authenticated %}
 		var AUTH = 1;
