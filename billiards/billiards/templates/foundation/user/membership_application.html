@@ -52,12 +52,12 @@ $("#applyform").on('valid', function() {
 				'cellphone': $("#cellphone").val(),
 				'email': $("#email-label").val(),
 			},
-  			url : "{% url membership_apply wechat group.id %}",
+  			url : "{% url 'membership_apply' wechat group.id %}",
   			type: 'POST',
 			dataType : 'json',
 			success : function(data) {
 				if (data.rt == 1) {
-					window.location = "{% url membership wechat group.id %}";
+					window.location = "{% url 'membership' wechat group.id %}";
 				} else {
 					if (data.msg != null)
 						$("#errorMsg .alert-box").text(data.msg);

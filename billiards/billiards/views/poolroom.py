@@ -25,6 +25,7 @@ import uuid
 import operator
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.http import urlunquote_plus
+from billiards.commons import num
 
 def more_uuid(request, poolroom_uuid):
     uuidobj = uuid.UUID(poolroom_uuid)
@@ -46,7 +47,7 @@ def updateJsonStrWithDistance(poolroomJsonStr, poolrooms):
     for poolroomObj in poolroomObjs:
         for poolroom in poolrooms:
             if poolroom.id == poolroomObj['pk']:
-                poolroomObj['fields']['distance'] = str(poolroom.distance)
+                poolroomObj['fields']['distance'] = str(poolroom.location_distance.km)
                 break
     return simplejson.dumps(poolroomObjs)
 
@@ -80,11 +81,14 @@ def getNearbyPoolrooms(lat, lng, distance, where = None):
     radius distance
     https://developers.google.com/maps/articles/phpsqlsearch_v3?csw=1#findnearsql
     '''
-    haversine = '6371 * acos( cos( radians(%s) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(%s) ) + sin( radians(%s) )\
-         * sin( radians( lat ) ) )' %(googles[0], googles[1], googles[0])
-    where = "%s %s" %("exist=1" if where is None else where, ("having distance <= %s" %(distance) if distance is not None else ""))
-    return Poolroom.objects.extra(select={'distance' : haversine}).extra(order_by=['distance'])\
-        .extra(where=[where])
+    qs = Poolroom.objects.filter(Q(exist=1))
+    if where is not None:
+        qs = qs.extra(where=[where])
+    if distance is not None:
+        qs = qs.filter(location__distance_lt=((googles[0], googles[1]), num(distance))).order_by_distance()
+    else:
+        qs = qs.order_by_distance_from(location=(googles[0], googles[1]), field_name='location')
+    return qs
 
 def toJson(queryset, fields):
     json_serializer = serializers.get_serializer("json")()

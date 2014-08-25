@@ -151,8 +151,8 @@ def buildPoolroomImageURL(poolroom):
     if poolroom.images.count() > 0:
         coverimage = poolroom.images.filter(iscover=1)
         if len(coverimage) > 0:
-            return "%s%s" %(settings.MEDIA_ROOT, PoolroomImage.getThumbnailPath(coverimage[0].imagepath.name, 300))
-        return "%s%s" %(settings.MEDIA_ROOT, PoolroomImage.getThumbnailPath(poolroom.images[:1][0].imagepath.name, 300))
+            return "%s%s" %(settings.MEDIA_URL[:-1], PoolroomImage.getThumbnailPath(coverimage[0].imagepath.name, 300))
+        return "%s%s" %(settings.MEDIA_URL[:-1], PoolroomImage.getThumbnailPath(poolroom.images[:1][0].imagepath.name, 300))
     lng_baidu = str(poolroom.lng_baidu)
     lat_baidu = str(poolroom.lat_baidu)
     return "http://api.map.baidu.com/staticimage?center=%s,%s&width=450&height=300&zoom=18&scale=2&markers=%s,%s&markerStyles=-1,http://billiardsalbum.bcs.duapp.com/2014/01/marker-2.png" %(lng_baidu, lat_baidu, lng_baidu, lat_baidu)
@@ -287,7 +287,7 @@ class PKWechat(BaseRoBot):
                     loc = u'球友目前所在的位置'
             else:
                 loc = challenge.poolroom.name
-            reply.append(((u"%s发起距离你%s公里的抢台费" %(challenge.issuer_nickname, "{0:.2f}".format(challenge.distance))), u"抢台费的地点: %s" %(loc), LOGO_IMG_URL, challlengelink))
+            reply.append(((u"%s发起距离你%s公里的抢台费" %(challenge.issuer_nickname, "{0:.2f}".format(challenge.geolocation_distance.km))), u"抢台费的地点: %s" %(loc), LOGO_IMG_URL, challlengelink))
         return reply
     
     def getCouponsReply(self, coupons, withPoolroom = False):
@@ -405,7 +405,7 @@ class PKWechat(BaseRoBot):
                     reply += self.getCouponsReply(coupons)
                     
                     recordUserActivity(message, 'location', poolroom.name, {'lat': lat, 'lng': lng, 'scale': message.scale, 'label': ['Label']}, 
-                                       {'id': poolroom.id, 'name': poolroom.name, 'distance': poolroom.distance}, self.target)
+                                       {'id': poolroom.id, 'name': poolroom.name, 'distance': poolroom.location_distance.km}, self.target)
                 else:
                     reply.append((u"在您附近3公里以内，没有推荐的台球俱乐部，去其他地方试试吧", '', LOGO_IMG_URL, ''))
                     recordUserActivity(message, 'location', '', {'lat': lat, 'lng': lng, 'scale': message.scale, 'label': ['Label']}, 
@@ -492,7 +492,7 @@ class PKWechat(BaseRoBot):
             for poolroom in nearbyPoolrooms:
                 ids.append(str(poolroom.id))
                 names.append(poolroom.name)
-                distances.append(str(poolroom.distance))
+                distances.append(str(poolroom.location_distance.km))
                 reply += self.getNewsPoolroomsReply([poolroom])
                 if newsAvaileSize > 0:
                     nativetime = datetime.utcfromtimestamp(float(message.time))
