@@ -1,60 +1,52 @@
-{% extends "foundation/base.html" %}
-{% block header %}
-{% load staticfiles %}
-<link rel="stylesheet" href="{% static "css/index.css" %}?{{buildid}}">
-{% endblock %}
-{% block content %}
- <div class="large-12 medium-12 small-11 small-centered columns">
-	<br>
-	<ul class="large-block-grid-3 medium-block-grid-2 small-block-grid-1 columns">
-             <li><a href="/ruoyu"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/ruoyu-1.jpg" alt="slide {{ forloop.counter }}"></a>
-	      </li>
-             <li><a href="/ruoyu"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/ruoyu-2.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/ruoyu"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/ruoyu-3.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/ruoyu"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/ruoyu-4.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/ruoyu"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/ruoyu-5.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/yangyang"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/yangyang-1.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/yangyang"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/yangyang-2.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/shanshan"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/shanshan-1.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/shanshan"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/shanshan-2.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/shanshan"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/shanshan-3.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/meixi"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/meixi-1.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/meixi"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/meixi-2.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/meixi"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/meixi-3.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/meixi"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/meixi-4.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/xiaoxu"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/xiaoxu-1.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/wawa"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/wawa-1.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/wawa"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/wawa-2.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/wawa"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/wawa-3.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/xiaohui"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/xiaohui-1.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/xiaohui"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/xiaohui-2.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/xiaohui"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/xiaohui-3.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/xiaohui"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/xiaohui-4.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-        </ul>
+{% extends "foundation/base.html" %} {% block content %}
+<div class="row collapse">
+	<div class="small-12 medium-6 large-4 xlarge-3 xxlarge-2 columns">
+		<a href="/ruoyu" class="showcase-image-wrapper">
+			<div class="in-view-container">
+				<div
+					pp-hide-on-img-loaded="http://bcs.duapp.com/billiardsalbum/2014/assistants/ruoyu-1.jpg"
+					class="image-loading"></div>
+				<div class="image" ng-if="p.profilePictures"
+					ng-style="{'background-image': 'url(' + pepprRestBaseUrl + '/image/' + p.profilePictures[0].uploadUUID + '?width=300)'}"
+					style="background-image: url(http://bcs.duapp.com/billiardsalbum/2014/assistants/ruoyu-1.jpg);"></div>
+				<div class="img-overlay"></div>
+				<div class="profile-info">
+					<div class="profile-name">
+						<h1 class="ng-binding">若雨</h1>
+					</div>
+					<div class="indicators">
+						<div class="indicator price-indicator">
+							<i class="ibilliards-icon-price"></i> <span class="data ng-binding">200€<span
+								class="unit ng-binding">/h</span></span>
+						</div>
+						<div class="indicator distance-indicator"
+							ng-show="p.distanceKm >= 0">
+							<i class="ibilliards-icon-distance"></i> <span class="data ng-binding">1143<span
+								class="unit">km</span></span>
+						</div>
+					</div>
+				</div>
+				<div class="showcase-overlay"></div>
+			</div>
+		</a>
+	</div>
+	<div class="small-12 medium-6 large-4 xlarge-3 xxlarge-2 columns">
+		<a href="/ruoyu" class="showcase-image-wrapper">
+			<div class="in-view-container">
+				<div
+					pp-hide-on-img-loaded="http://bcs.duapp.com/billiardsalbum/2014/assistants/ruoyu-2.jpg"
+					class="image-loading"></div>
+				<div class="image" ng-if="p.profilePictures"
+					ng-style="{'background-image': 'url(' + pepprRestBaseUrl + '/image/' + p.profilePictures[0].uploadUUID + '?width=300)'}"
+					style="background-image: url(http://bcs.duapp.com/billiardsalbum/2014/assistants/ruoyu-2.jpg);"></div>
+				<div class="img-overlay"></div>
+				<div class="showcase-overlay"></div>
+			</div>
+		</a>
+
+	</div>
 </div>
-<br>
-{% endblock %}
-{% block foundationscript %}
-    <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/foundation/foundation.orbit.min.js"></script>
+{% endblock %} {% block foundationscript %}
+<script
+	src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/foundation/foundation.orbit.min.js"></script>
 {% endblock %}
