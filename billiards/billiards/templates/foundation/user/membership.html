@@ -12,14 +12,14 @@
     color:white;
     font-size:18px;
     font-weight:bold;
-    top:180px;
+    top:170px;
 }
 </style>
 <div class="row">
 	<div class="small-centered small-12 medium-6 columns" data-interchange="[{{group.cardimg}}, (small)]" style="height: 200px; background-repeat: no-repeat;">
 		<!--	<div class="row"><h2><b>{{group.name}}</b>会员卡</h2></div>  -->
 			<div class="row cardinfo collapse">
-				<div class="small-centered small-11 columns"><span class="{% if member.gender == 1 %} fi-torso {% else %} fi-torso-female {% endif %}"> {{member.name}}</span> 卡号: {{member.memberid}}</div>
+				<div class="small-centered small-12 columns"><span class="{% if member.gender == 1 %} fi-torso {% else %} fi-torso-female {% endif %}"> {{member.name}}</span> 卡号: {{member.memberid}}</div>
 			</div>
 	</div>
 </div>
