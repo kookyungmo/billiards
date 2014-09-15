@@ -1,6 +1,5 @@
 {% extends "foundation/club/base.html" %} 
 {% load extras %} 
-{% load url from future %} 
 {% block rightcontent %}
 <h1>{{poolroomuser.poolroom.name}}开始于<code><script>document.write(getSmartTime('{{ match.starttime|date:'c' }}'));</script> {{ match.title }}</code>的报名详情，总计<code>{{ enrolments|length }}</code>人报名</h1>
 {% if enrolments|length > 0 %}

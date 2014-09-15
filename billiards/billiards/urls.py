@@ -54,6 +54,7 @@ urlpatterns += patterns('billiards.views.us',
     url(r'^contact$','contact',name='contact'),
     url(r'^partner$','partner',name='partner'),
     url(r'^$', 'home', name='home'),
+    url(r'^home1$', 'home1', name='home1'),
 )
 
 urlpatterns += patterns('billiards.views.lottery',
@@ -139,6 +140,7 @@ urlpatterns += patterns('billiards.views.games',
 
 urlpatterns += patterns('billiards.views.assistant',
     url(r'^assistant$','assistant', name='assistant'),
+    url(r'^assistant1$','assistant1', name='assistant1'),
     url(r'^xiaohui$','xiaohui', name='xiaohui'),
     url(r'^ruoyu$','ruoyu', name='ruoyu'),
     url(r'^meixi$','meixi', name='meixi'),

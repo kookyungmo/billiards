@@ -26,7 +26,7 @@ class BcsStorage(FileSystemStorage):
     这是一个支持bcs和本地django的FileStorage基类
     修改存储文件的路径和基本url
     """
-    def __init__(self, location=settings.MEDIA_ROOT, base_url=settings.MEDIA_URL):
+    def __init__(self, location=settings.MEDIA_URL, base_url=settings.MEDIA_URL):
         super(BcsStorage, self).__init__(location, base_url)
 
     @property

@@ -65,8 +65,8 @@ $(document).foundation({
 
 var STATIC_URL = "{{ STATIC_URL|escapejs }}";
 var MEDIA_URL = "{{ MEDIA_URL }}";
-var PKMAP_URL = "{% url pk_map_type_id 'mtype' '000' %}";
-var POOLROOM_URL = "{% url poolroom_detail_uuid UUID_SAMPLE %}";
+var PKMAP_URL = "{% url 'pk_map_type_id' 'mtype' '000' %}";
+var POOLROOM_URL = "{% url 'poolroom_detail_uuid' UUID_SAMPLE %}";
 
 var defaultZoom = 16;
 var pkMap = new PKMap("pkMap", "北京", defaultZoom);
@@ -74,10 +74,10 @@ var pkLocation = new PKLocation(null);
 
 {% with target|classname as modelclass %}
 {% if modelclass == "Match" %}
-var MATCH_DETAIL_URL = "{% url match_detail '000' %}";
-var ACTIVITY_URL = "{% url activity_detail '000' %}";
-var ENROLL_URL = "{% url match_enroll '000' %}";
-var MATCH_URL = "{% url match_map 'map' %}";
+var MATCH_DETAIL_URL = "{% url 'match_detail' '000' %}";
+var ACTIVITY_URL = "{% url 'activity_detail' '000' %}";
+var ENROLL_URL = "{% url 'match_enroll' '000' %}";
+var MATCH_URL = "{% url 'match_map' 'map' %}";
 var pkMatches = new PKMatches(pkMap);
 matches = $.parseJSON('{{ target|matchtojson|escapejs }}');
 pkMatches.addMatchMarker(matches[0]);
@@ -96,9 +96,9 @@ pkLocation.consume(
 	pkPoolrooms.updateDistance
 );
 {% elif modelclass == "Challenge" %}
-CHALLENGE_DETAIL_URL = "{% url challenge_detail '000' %}";
+CHALLENGE_DETAIL_URL = "{% url 'challenge_detail' '000' %}";
 var LOGO_URL="{{ SITE_LOGO_URL }}";
-var WECHAT_SHARE_URL="{% url wechat_share_help %}";
+var WECHAT_SHARE_URL="{% url 'wechat_share_help' %}";
 
 var pkChallenges = new PKChallenges(pkMap);
 challenges = $.parseJSON('{{ target|tojson|escapejs }}');

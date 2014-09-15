@@ -28,8 +28,8 @@
     <p>可以……</p>
     <p>更多可以，等待您的挖掘和反馈……</p>
     <p>请告诉我们您的需求：<a>feedback@pktaiqiu.com</a></p>
-    <p>或者马上就<a {% if user.is_authenticated %} href="{% url club_apply %}" {% else %} href="javascript:loginFirst();" {% endif %}>加入我们</a>。</p>
-	<p>如果您已经加入了我们。从<a {% if user.is_authenticated %} href="{% url club_index %}" {% else %} href="javascript:loginFirst();" {% endif %}>这里</a>进入俱乐部页面。</p>
+    <p>或者马上就<a {% if user.is_authenticated %} href="{% url 'club_apply' %}" {% else %} href="javascript:loginFirst();" {% endif %}>加入我们</a>。</p>
+	<p>如果您已经加入了我们。从<a {% if user.is_authenticated %} href="{% url 'club_index' %}" {% else %} href="javascript:loginFirst();" {% endif %}>这里</a>进入俱乐部页面。</p>
   </div>
 </div>
 {% endblock %}

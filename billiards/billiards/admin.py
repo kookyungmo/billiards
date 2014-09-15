@@ -76,11 +76,17 @@ class PoolroomAdmin(ModelWithFlagsAdmin):
             )
     def save_model(self, request, obj, form, change):
         # custom stuff here
-        if (obj.lat_baidu == 0 or obj.lng_baidu == 0) and (obj.lat != 0 and obj.lng != 0):
+        if ((obj.lat_baidu == 0 or obj.lng_baidu == 0) and (obj.lat != 0 and obj.lng != 0)) or \
+            (obj.pk is not None and (self.lat != obj.lat or self.lng != obj.lng)):
             baiduLoc = gcj2bd(float(obj.lat), float(obj.lng))
             obj.lat_baidu = baiduLoc[0]
             obj.lng_baidu = baiduLoc[1]
+            obj.location = (obj.lat, obj.lng)
+        if (obj.location is None):
+            obj.location = (obj.lat, obj.lng)
         obj.save()
+        
+    exclude = ['location', 'lat_baidu', 'lng_baidu']
         
 class CustomUserChangeForm(UserChangeForm):
     class Meta:

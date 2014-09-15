@@ -82,13 +82,13 @@ $("#applyform").on('valid', function() {
 				'email': $("#email-label").val(),
 				'justification': $("#justification").val(),
 			},
-  			url : "{% url club_apply %}",
+  			url : "{% url 'club_apply' %}",
   			type: 'POST',
 			dataType : 'json',
 			success : function(data) {
 				if (data.rt == 1) {
 					$("#close").click(function() {
-						window.location = "{% url home %}";
+						window.location = "{% url 'home' %}";
 					});
 					$('#successApply').foundation('reveal', 'open');
 				} else {

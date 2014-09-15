@@ -12,7 +12,7 @@ from bitfield import BitField
 from django.utils.encoding import force_unicode
 from django.contrib.auth.models import User
 from billiards.storage import ImageStorage
-from billiards.settings import UPLOAD_TO, TIME_ZONE, MEDIA_ROOT, BAE_IMAGE,\
+from billiards.settings import UPLOAD_TO, TIME_ZONE, MEDIA_URL, BAE_IMAGE,\
     THUMBNAIL_WIDTH
 import datetime
 from django.core.serializers.json import Serializer as JsonSerializer 
@@ -29,6 +29,8 @@ from billiards.citydistrict import CITY_DISTRICT
 import string
 from uuidfield.fields import UUIDField
 from decimal import Decimal
+from geosimple.fields import GeohashField
+from geosimple.managers import GeoManager
 
 def toDict(bitfield):
     flag_dict = {}
@@ -78,6 +80,7 @@ class Poolroom(models.Model):
             (2, u'已倒闭'),
             (3, u'暂时停业'),
         ), default=1,)
+    location = GeohashField()
 
     class Meta:
         db_table = 'poolroom'
@@ -99,6 +102,8 @@ class Poolroom(models.Model):
                 'businesshours': self.businesshours, 'size': self.size,
                 'address': self.address, 'flags': toDict(self.flags), 'rating': self.rating,
                 'images': images}
+        
+    objects = GeoManager()
         
     @property
     def uuidstr(self):
@@ -136,7 +141,7 @@ class PoolroomImage(models.Model):
         verbose_name_plural = '台球厅图片'
         
     def imagetag(self):
-        return u'<img src="%s%s" />' %(MEDIA_ROOT, self.imagepath)
+        return u'<img src="%s%s" />' %(MEDIA_URL, self.imagepath)
     imagetag.short_description = u'图片预览'
     imagetag.allow_tags = True
 
@@ -163,7 +168,7 @@ class PoolroomImage(models.Model):
                 import base64
                 for width in THUMBNAIL_WIDTH:
                     img.clearOperations()
-                    img.setSource(MEDIA_ROOT + path)
+                    img.setSource(MEDIA_URL + path)
                     img.setZooming(BaeImage.ZOOMING_TYPE_WIDTH, width)
                     ret = img.process()
                     body = ret['response_params']['image_data']
@@ -265,7 +270,7 @@ class Group(models.Model):
             (0, u'停用'),
             (1, u'正常'),
         ), default=1,)
-    cardimg = models.CharField(max_length=100, verbose_name='会员卡图片')
+    cardimg = models.CharField(max_length=100, verbose_name='会员卡图片',null=True)
 
     class Meta:
         db_table = 'fans_group'
@@ -476,7 +481,19 @@ class Challenge(models.Model):
             ('expired', u'已经过期'),
             ('closed', u'已经关闭'),
         ), default='waiting', verbose_name='状态', jsonUseValue=False)
-    group = models.ForeignKey(Group, verbose_name='约球来源,默认值0代表pktaiqiu网站', db_column='group', default=1)
+    group = models.ForeignKey(Group, verbose_name='约球来源,默认值1代表pktaiqiu网站', db_column='group', default=1)
+    geolocation = GeohashField(blank=True)
+    
+    objects = GeoManager()
+    
+    def save(self):
+        self.geolocation = (self.lat, self.lng)
+        super(Challenge, self).save()
+    
+    def __init__(self, *args, **kwargs):
+        super(Challenge, self).__init__(*args, **kwargs)
+        if self.lat is not None:
+            self.geolocation = (self.lat, self.lng)
 
     @property
     def local_expiretime(self):

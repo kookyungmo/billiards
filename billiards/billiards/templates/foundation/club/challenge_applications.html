@@ -1,6 +1,5 @@
 {% extends "foundation/club/base.html" %} 
 {% load extras %} 
-{% load url from future %} 
 {% block rightcontent %}
 <h1>由<code>{{ ch.issuer_nickname }}</code>在{{poolroomuser.poolroom.name}}发起于<code><script>document.write(getSmartTime('{{ ch.starttime|date:'c' }}'));</script></code>开始的约赛应战详情，总计<code>{{ applications|length }}</code>人报名</h1>
 {% if applications|length > 0 %}
