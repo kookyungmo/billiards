@@ -277,3 +277,5 @@ NOTIFICATION_EMAIL = ['42470522@qq.com', 'kane.mx@gmail.com', 'xuhao2610@gmail.c
 SITE_LOGO_URL = 'http://bcs.duapp.com/billiardsalbum/2014/03/website_logo1.png'
 
 PREFER_LOGIN_SITE = 'wechat'
+
+ALLOWED_HOSTS = ['*']
