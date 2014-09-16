@@ -25,6 +25,7 @@ encoding//billiards/support/pybcs/common.py=utf8
 encoding//billiards/support/pybcs/httpc.py=utf8
 encoding//billiards/support/pybcs/object.py=utf8
 encoding//billiards/templatetags/extras.py=utf-8
+encoding//billiards/tests/testUser.py=utf-8
 encoding//billiards/tests/testWechat.py=utf-8
 encoding//billiards/views/challenge.py=utf-8
 encoding//billiards/views/club.py=utf-8

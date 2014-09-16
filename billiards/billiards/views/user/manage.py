@@ -43,7 +43,7 @@ def membership_apply(request, wechatid, group):
         return renderMemberPage(request, member, groupobj)
     except Membership.DoesNotExist:
         return render_to_response(TEMPLATE_ROOT + 'user/membership_application.html',
-                {'group': groupobj, 'wechat': wechatid}, context_instance=RequestContext(request))
+                {'group': groupobj, 'wechatid': wechatid}, context_instance=RequestContext(request))
 
 def renderMemberPage(request, member, groupobj):
     return render_to_response(TEMPLATE_ROOT + MEMBERSHIP_PAGE,
