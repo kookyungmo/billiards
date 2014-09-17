@@ -592,7 +592,7 @@ class PKWechat(BaseRoBot):
                     reply = self.keysHandlers["PK_ACTIVITY"](reply, message)
                 elif message.content == u"比赛":
                     reply = self.keysHandlers["PK_MATCH"](reply, message)
-                elif message.content == u'申请会员卡':
+                elif message.content == u'会员卡':
                     reply = self.applyMember(reply, message, 4)
                 elif message.content == u'查看会员卡':
                     reply = self.queryMember(reply, message, 4)
