@@ -19,7 +19,7 @@
 	<div class="small-centered small-12 medium-6 columns" data-interchange="[{{group.cardimg}}, (small)]" style="height: 194px; background-repeat: no-repeat;">
 		<!--	<div class="row"><h2><b>{{group.name}}</b>会员卡</h2></div>  -->
 			<div class="row cardinfo collapse">
-				<div class="small-centered small-12 columns"><span class="{% if member.gender == 1 %}&nbsp fi-torso {% else %}&nbsp fi-torso-female {% endif %}">&nbsp {{member.name}}</span> 卡号: &nbsp {{member.memberid}}</div>
+				<div class="small-centered small-12 columns"><span class="{% if member.gender == 1 %}&nbsp fi-torso {% else %}&nbsp fi-torso-female {% endif %}">&nbsp {{member.name}}</span> 卡号: &nbsp <span style="font-family: "Times New Roman";{% if member.gender == 1 %} color: blue; {% else %}color: red; {% endif %}">{{member.memberid}}</span></div>
 			</div>
 	</div>
 </div>
