@@ -8,7 +8,8 @@ Created on 2013年10月21日
 from billiards.models import Poolroom, Match, PoolroomEquipment, User,\
     MatchEnroll, Challenge, ChallengeApply, PoolroomUser,\
     PoolroomUserApply, PoolroomImage, Group, Coupon, WechatActivity, Event,\
-    Membership, Goods
+    Membership, Goods, Assistant, AssistantOffer, AssistantAppointment,\
+    AssistantImage
 from django.contrib import admin
 from bitfield import BitField
 from bitfield.forms import BitFieldCheckboxSelectMultiple
@@ -20,6 +21,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin.filters import SimpleListFilter
 import datetime
 from django.db.models.query_utils import Q
+from django.contrib.admin.util import flatten_fieldsets
 
 class ModelWithFlagsAdmin(admin.ModelAdmin):
     formfield_overrides = {
@@ -132,7 +134,7 @@ class ChallengeApplyAdmin(admin.ModelAdmin):
 class PoolroomUserAdmin(admin.ModelAdmin):
     list_display = ('poolroom', 'group', 'verbose_user', 'type')
     
-class PoolroomImageAdmin(admin.ModelAdmin):
+class ImageAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj=None):
         if obj is not None: # modify a object
             return self.readonly_fields + ('imagetag',)
@@ -155,6 +157,23 @@ class MembershipAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
     
+class AssistantAppointmentAdmin(admin.ModelAdmin):
+    def get_readonly_fields(self, request, obj=None):
+        if self.declared_fieldsets:
+            return flatten_fieldsets(self.declared_fieldsets)
+        else:
+            return list(set(
+                [field.name for field in self.opts.local_fields] +
+                [field.name for field in self.opts.local_many_to_many]
+            ))
+    
+    def has_add_permission(self, request):
+        # Nobody is allowed to add
+        return False
+    def has_delete_permission(self, request, obj=None):
+        # Nobody is allowed to delete
+        return False         
+    
 admin.site.register(Poolroom, PoolroomAdmin)
 admin.site.register(PoolroomEquipment)
 admin.site.register(Match, MatchAdmin)
@@ -163,7 +182,7 @@ admin.site.register(User, CustomUserAdmin)
 admin.site.register(MatchEnroll)
 admin.site.register(Challenge, ChallengeAdmin)
 admin.site.register(ChallengeApply, ChallengeApplyAdmin)
-admin.site.register(PoolroomImage, PoolroomImageAdmin)
+admin.site.register(PoolroomImage, ImageAdmin)
 admin.site.register(PoolroomUser, PoolroomUserAdmin)
 admin.site.register(PoolroomUserApply)
 admin.site.register(Group)
@@ -172,3 +191,7 @@ admin.site.register(WechatActivity, WechatActivityAdmin)
 admin.site.register(Event)
 admin.site.register(Membership, MembershipAdmin)
 admin.site.register(Goods)
+admin.site.register(Assistant)
+admin.site.register(AssistantOffer)
+admin.site.register(AssistantAppointment, AssistantAppointmentAdmin)
+admin.site.register(AssistantImage, ImageAdmin)

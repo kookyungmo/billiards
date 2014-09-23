@@ -32,6 +32,10 @@ from decimal import Decimal
 from geosimple.fields import GeohashField
 from geosimple.managers import GeoManager
 
+def getThumbnailPath(path, width):
+    fileName, fileExtension = os.path.splitext(path)
+    return "%s-w%s%s" %(fileName, width, fileExtension)
+
 def toDict(bitfield):
     flag_dict = {}
     for f in bitfield:
@@ -173,16 +177,11 @@ class PoolroomImage(models.Model):
                     ret = img.process()
                     body = ret['response_params']['image_data']
                 
-                    newpath = PoolroomImage.getThumbnailPath(path, width)
+                    newpath = getThumbnailPath(path, width)
                     albumstorage.saveToBucket(newpath, base64.b64decode(body))
             except ImportError:
                 pass
         self.__imagepath = self.imagepath
-
-    @staticmethod
-    def getThumbnailPath(path, width):
-        fileName, fileExtension = os.path.splitext(path)
-        return "%s-w%s%s" %(fileName, width, fileExtension)
 
 @receiver(pre_delete, sender=PoolroomImage)
 def delete_image(instance, **kwargs):
@@ -857,3 +856,150 @@ class Transaction(models.Model):
         db_table = 'transaction'
         verbose_name = '交易信息'
         verbose_name_plural = '交易信息'
+        
+class Assistant(models.Model):
+    uuid = UUIDField(auto=True, hyphenate=True, unique=True)
+    name = models.CharField(max_length=24, verbose_name="姓名")
+    nickname = models.CharField(max_length=24, verbose_name="昵称")
+    birthday = models.DateField(verbose_name="生日")
+    gender = IntegerChoiceTypeField(verbose_name=u'性别', choices=(
+            (1, u'女'),
+            (2, u'男'),
+        ), default=1)
+    height = models.IntegerField(verbose_name="身高(cm)")
+    occupation = models.CharField(verbose_name='职业', max_length=24)
+    language = BitField(flags=(
+            ('mandarin', u'普通话'),
+            ('english', u'英语'),
+            ('french', u'法语'),
+            ('japanese', u'日语'),
+            ('geman', u'德语'),
+            ('cantonese', u'粤语'),
+        ), verbose_name='语言')
+    interest = models.CharField(verbose_name='个人爱好', max_length=64)
+    food = models.CharField(verbose_name='喜好的食物', max_length=64)
+    drinks = models.CharField(verbose_name='喜好的饮品', max_length=64)
+    scent = models.CharField(verbose_name='气味', max_length=64)
+    dress = models.CharField(verbose_name='穿着风格', max_length=64)
+    fignure = models.CharField(verbose_name='个性', max_length=64)
+    haircolor = ChoiceTypeField(max_length=16, choices=(
+            ('blank', u'黑发色'),
+            ('brown', u'褐发色'),
+            ('blond', u'金发发'),
+            ('auburn', u'赤褐发色'),
+            ('chestnut', u'栗发色'),
+            ('ginger/red', u'红发色'),
+            ('gray-white', u'灰白发色'),
+        ), verbose_name='头发颜色')
+    pubichair = models.CharField(verbose_name='阴毛', blank=True, max_length=64)
+    state = IntegerChoiceTypeField(verbose_name=u'状态', choices=(
+            (1, u'有效'),
+            (2, u'失效'),
+            (8, u'禁用'),
+        ), default=1)    
+    class Meta:
+        db_table = 'assistant'
+        verbose_name = '助教个人资料'
+        verbose_name_plural = '助教个人资料'
+        
+    def __unicode__(self):
+        return "[%s] %s(%s) - %s" %(self.gender, self.nickname, self.name, self.birthday)
+        
+UPLOAD_TO_ASSISTANT = UPLOAD_TO + 'assistant/'   
+class AssistantImage(models.Model):
+    assistant = models.ForeignKey(Assistant, verbose_name='助教')
+    imagepath = models.ImageField(verbose_name=u'选择本地图片/图片路径', max_length=250, upload_to=UPLOAD_TO_ASSISTANT, 
+                                  storage=ImageStorage())
+    description = models.CharField(verbose_name=u'图片说明', null=True, blank=True, max_length=50)
+    iscover = models.BooleanField(verbose_name=u'是否是封面图片', default=False)
+    status = models.IntegerField(verbose_name=u'状态', choices=(
+            (0, u'不可用'),
+            (1, u'可用'),
+        ), default=1,)
+    
+    class Meta:
+        db_table = 'assistant_images'
+        verbose_name = '助教图片'
+        verbose_name_plural = '助教图片'
+        
+    def imagetag(self):
+        return u'<img src="%s%s" />' %(MEDIA_URL, self.imagepath)
+    imagetag.short_description = u'图片预览'
+    imagetag.allow_tags = True
+
+    def __unicode__(self):
+        return str(self.assistant) + "-" + self.description
+    
+    __imagepath = None
+    
+    def __init__(self, *args, **kwargs):
+        super(AssistantImage, self).__init__(*args, **kwargs)
+        self.__imagepath = self.imagepath
+    
+    def save(self):
+        super(AssistantImage, self).save()
+        
+        if self.imagepath != self.__imagepath:
+            # avoid import issue in local env
+            # https://github.com/BaiduAppEngine/bae-python-sdk/issues/1
+            try:
+                from bae_image.image import BaeImage
+                img = BaeImage(BAE_IMAGE['key'], BAE_IMAGE['secret'], BAE_IMAGE['host'])
+                albumstorage = ImageStorage()
+                path = str(self.imagepath)
+                import base64
+                for width in THUMBNAIL_WIDTH:
+                    img.clearOperations()
+                    img.setSource(MEDIA_URL + path)
+                    img.setZooming(BaeImage.ZOOMING_TYPE_WIDTH, width)
+                    ret = img.process()
+                    body = ret['response_params']['image_data']
+                
+                    newpath = getThumbnailPath(path, width)
+                    albumstorage.saveToBucket(newpath, base64.b64decode(body))
+            except ImportError:
+                pass
+        self.__imagepath = self.imagepath
+        
+class AssistantOffer(models.Model):
+    assitant = models.ForeignKey(Assistant, verbose_name="助教")
+    poolroom = models.IntegerField(verbose_name="预约的球房", blank=True)
+    price = models.IntegerField(verbose_name="价钱(元/小时)")
+    day = ChoiceTypeField(max_length=16, choices=(
+            ('monday', u'周一'),
+            ('tuesday', u'周二'),
+            ('wendesday', u'周三'),
+            ('thursday', u'周四'),
+            ('friday', u'周五'),
+            ('saturday', u'周六'),
+            ('sunday', u'周日'),
+        ), verbose_name='星期几')
+    starttime = models.TimeField(verbose_name="开始时间")
+    endtime = models.TimeField(verbose_name="结束时间")    
+    class Meta:
+        db_table = 'assistant_offer'
+        verbose_name = '助教报价'
+        verbose_name_plural = '助教报价'
+        
+class AssistantAppointment(models.Model):
+    assitant = models.ForeignKey(Assistant, verbose_name="助教")
+    user = models.ForeignKey(User, verbose_name="用户")
+    poolroom = models.IntegerField(verbose_name="预约的球房", blank=True)
+    goods = models.ForeignKey(Goods, verbose_name="商品id")
+    transaction = models.ForeignKey(Transaction, verbose_name="交易订单")
+    starttime = models.DateTimeField(verbose_name="预订开始时间")
+    endtime = models.DateTimeField(verbose_name="预订结束时间")
+    duration = models.IntegerField(verbose_name="时长(分钟)")
+    price = models.IntegerField(verbose_name="价钱(元/小时)")
+    createdDate = models.DateTimeField(verbose_name="预约创建时间")
+    state = IntegerChoiceTypeField(verbose_name=u'状态', choices=(
+            (1, u'等待确认'),
+            (2, u'等待退款'),
+            (3, u'交易取消'),
+            (8, u'交易完成'),
+        ), default=1)  
+    
+    class Meta:
+        db_table = 'assistant_appoinment'
+        verbose_name = '助教预约详情'
+        verbose_name_plural = '助教预约详情'
