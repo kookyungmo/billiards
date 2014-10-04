@@ -1,60 +1,214 @@
-{% extends "foundation/base.html" %}
-{% block header %}
-{% load staticfiles %}
-<link rel="stylesheet" href="{% static "css/index.css" %}?{{buildid}}">
-{% endblock %}
+{% extends "foundation/base-assistant.html" %} 
+{% load extras %} 
 {% block content %}
- <div class="large-12 medium-12 small-11 small-centered columns">
-	<br>
-	<ul class="large-block-grid-3 medium-block-grid-2 small-block-grid-1 columns">
-             <li><a href="/ruoyu"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/ruoyu-1.jpg" alt="slide {{ forloop.counter }}"></a>
-	      </li>
-             <li><a href="/ruoyu"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/ruoyu-2.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/ruoyu"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/ruoyu-3.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/ruoyu"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/ruoyu-4.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/ruoyu"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/ruoyu-5.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/yangyang"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/yangyang-1.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/yangyang"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/yangyang-2.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/shanshan"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/shanshan-1.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/shanshan"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/shanshan-2.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/shanshan"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/shanshan-3.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/meixi"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/meixi-1.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/meixi"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/meixi-2.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/meixi"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/meixi-3.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/meixi"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/meixi-4.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/xiaoxu"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/xiaoxu-1.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/wawa"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/wawa-1.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/wawa"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/wawa-2.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/wawa"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/wawa-3.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/xiaohui"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/xiaohui-1.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/xiaohui"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/xiaohui-2.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/xiaohui"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/xiaohui-3.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-             <li><a href="/xiaohui"><img style="display: block;margin-left: auto;margin-right: auto" src="http://bcs.duapp.com/billiardsalbum/2014/assistants/xiaohui-4.jpg" alt="slide {{ forloop.counter }}"></a>
-              </li>
-        </ul>
-</div>
-<br>
-{% endblock %}
-{% block foundationscript %}
-    <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/foundation/foundation.orbit.min.js"></script>
+          <ul class="provider-list small-block-grid-1 medium-block-grid-2 large-block-grid-3 xlarge-block-grid-4 xxlarge-block-grid-5">
+            <li>
+              <a href="#provider/4456501" class="showcase-wrapper">
+                  <div class="image" style="background-image: url(http://www.58game.cn/static/uploads/news/20130304/51345aebcd5f2.jpg);"></div>
+                  <div class="img-overlay"></div>
+                  <div class="profile-info">
+                    <div class="profile-name"><h1>蓝蓝</h1></div>
+                    <div class="indicators">
+                      <div class="indicator price-indicator">
+                        <span class="data">250元/小时</span>
+                      </div>
+                      <div class="indicator availability-indicator">
+                        <span class="data">随时</span>
+                      </div>
+                      <div class="indicator location-indicator">
+                        <span class="data">云渡</span>
+                      </div>
+                      <div class="indicator distance-indicator">
+                        <span class="data">1.5公里</span>
+                      </div>
+                    </div>
+                  </div>
+              </a>
+            </li>
+            <li>
+              <a href="#provider/4456501" class="showcase-wrapper">
+                  <div class="image" style="background-image: url(http://t0.fansimg.com/uploads2010/01/userid226804time20100127043752.jpg);"></div>
+                  <div class="img-overlay"></div>
+                  <div class="profile-info">
+                    <div class="profile-name"><h1>蓝蓝</h1></div>
+                    <div class="indicators">
+                      <div class="indicator price-indicator">
+                        <i class="price-icon"></i>
+                        <span class="data">250元/小时</span>
+                      </div>
+                      <div class="indicator availability-indicator">
+                        <i class="avail-icon"></i>
+                        <span class="data">随时</span>
+                      </div>
+                      <div class="indicator location-indicator">
+                        <span class="data">云渡</span>
+                      </div>
+                      <div class="indicator distance-indicator">
+                        <i class="distance-icon"></i>
+                        <span class="data">1.5公里</span>
+                      </div>
+                    </div>
+                  </div>
+              </a>
+            </li>
+            <li>
+              <a href="#provider/4456501" class="showcase-wrapper">
+                  <div class="image" style="background-image: url(http://sports.sznews.com/images/attachement/jpg/site3/20100812/001422474dbc0dcd7f2456.jpg);"></div>
+                  <div class="img-overlay"></div>
+                  <div class="profile-info">
+                    <div class="profile-name"><h1>蓝蓝</h1></div>
+                    <div class="indicators">
+                      <div class="indicator price-indicator">
+                        <i class="price-icon"></i>
+                        <span class="data">250元/小时</span>
+                      </div>
+                      <div class="indicator availability-indicator">
+                        <i class="avail-icon"></i>
+                        <span class="data">随时</span>
+                      </div>
+                      <div class="indicator location-indicator">
+                        <span class="data">云渡</span>
+                      </div>
+                      <div class="indicator distance-indicator">
+                        <i class="distance-icon"></i>
+                        <span class="data">1.5公里</span>
+                      </div>
+                    </div>
+                  </div>
+              </a>
+            </li>
+            <li>
+              <a href="#provider/4456501" class="showcase-wrapper">
+                  <div class="image" style="background-image: url(http://img1.ph.126.net/9eyiYTA0hMooysQ7CtjLkw==/1648035988658055853.jpg);"></div>
+                  <div class="img-overlay"></div>
+                  <div class="profile-info">
+                    <div class="profile-name"><h1>蓝蓝</h1></div>
+                    <div class="indicators">
+                      <div class="indicator price-indicator">
+                        <i class="price-icon"></i>
+                        <span class="data">250元/小时</span>
+                      </div>
+                      <div class="indicator availability-indicator">
+                        <i class="avail-icon"></i>
+                        <span class="data">随时</span>
+                      </div>
+                      <div class="indicator location-indicator">
+                        <span class="data">云渡</span>
+                      </div>
+                      <div class="indicator distance-indicator">
+                        <i class="distance-icon"></i>
+                        <span class="data">1.5公里</span>
+                      </div>
+                    </div>
+                  </div>
+              </a>
+            </li>
+            <li>
+              <a href="#provider/4456501" class="showcase-wrapper">
+                  <div class="image" style="background-image: url(http://www.fjsen.com/images/attachement/jpg/site2/20100811/001aa02d373c0dccaacd4e.jpg);"></div>
+                  <div class="img-overlay"></div>
+                  <div class="profile-info">
+                    <div class="profile-name"><h1>蓝蓝</h1></div>
+                    <div class="indicators">
+                      <div class="indicator price-indicator">
+                        <i class="price-icon"></i>
+                        <span class="data">250元/小时</span>
+                      </div>
+                      <div class="indicator availability-indicator">
+                        <i class="avail-icon"></i>
+                        <span class="data">随时</span>
+                      </div>
+                      <div class="indicator location-indicator">
+                        <span class="data">云渡</span>
+                      </div>
+                      <div class="indicator distance-indicator">
+                        <i class="distance-icon"></i>
+                        <span class="data">1.5公里</span>
+                      </div>
+                    </div>
+                  </div>
+              </a>
+            </li>
+            <li>
+              <a href="#provider/4456501" class="showcase-wrapper">
+                  <div class="image" style="background-image: url(http://news.cz001.com.cn/attachement/jpg/site2/20100904/001676c499510dec259437.jpg);"></div>
+                  <div class="img-overlay"></div>
+                  <div class="profile-info">
+                    <div class="profile-name"><h1>蓝蓝</h1></div>
+                    <div class="indicators">
+                      <div class="indicator price-indicator">
+                        <i class="price-icon"></i>
+                        <span class="data">250元/小时</span>
+                      </div>
+                      <div class="indicator availability-indicator">
+                        <i class="avail-icon"></i>
+                        <span class="data">随时</span>
+                      </div>
+                      <div class="indicator location-indicator">
+                        <span class="data">云渡</span>
+                      </div>
+                      <div class="indicator distance-indicator">
+                        <i class="distance-icon"></i>
+                        <span class="data">1.5公里</span>
+                      </div>
+                    </div>
+                  </div>
+              </a>
+            </li>
+            <li>
+              <a href="#provider/4456501" class="showcase-wrapper">
+                  <div class="image" style="background-image: url(http://photos.tuchong.com/23383/f/2112347.jpg);"></div>
+                  <div class="img-overlay"></div>
+                  <div class="profile-info">
+                    <div class="profile-name"><h1>蓝蓝</h1></div>
+                    <div class="indicators">
+                      <div class="indicator price-indicator">
+                        <i class="price-icon"></i>
+                        <span class="data">250元/小时</span>
+                      </div>
+                      <div class="indicator availability-indicator">
+                        <i class="avail-icon"></i>
+                        <span class="data">随时</span>
+                      </div>
+                      <div class="indicator location-indicator">
+                        <span class="data">云渡</span>
+                      </div>
+                      <div class="indicator distance-indicator">
+                        <i class="distance-icon"></i>
+                        <span class="data">1.5公里</span>
+                      </div>
+                    </div>
+                  </div>
+              </a>
+            </li>
+          </ul>
+{% endblock %} 
+{% block script %}
+<script>
+    $(function() {
+      $( "#price-slider" ).slider({
+        range: true,
+        min: 50,
+        max: 300,
+        values: [ 50, 300 ],
+        slide: function( event, ui ) {
+          $("#price-range").text( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+        }
+      });
+      $("#price-range").text( $( "#price-slider" ).slider( "values", 0 ) +
+        " - " + $( "#price-slider" ).slider( "values", 1 ) );
+
+      $( "#distance-slider" ).slider({
+        range: true,
+        min: 0,
+        max: 10,
+        values: [ 0, 10 ],
+        slide: function( event, ui ) {
+          $("#distance-range").text( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+        }
+      });
+      $("#distance-range").text( $( "#distance-slider" ).slider( "values", 0 ) +
+        " - " + $( "#price-slider" ).slider( "values", 1 ) );
+    });
+</script>
 {% endblock %}

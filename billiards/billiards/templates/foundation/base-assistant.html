@@ -1,0 +1,275 @@
+<!doctype html>
+<html class="no-js" lang="en"> 
+<!--[if (lt IE 9) & (!IEMobile)]>
+<meta http-equiv="refresh" content="0; URL={% url 'unsupportedbrowser' %}">
+<![endif]--> 
+<!--[if gt IE 8]><!--> <html lang="en"> <!--<![endif]-->
+{% load staticfiles %}
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1,minimum-scale=1,user-scalable=no">
+  <title>{{pagetitle}}</title>
+  <meta name="fragment" content="!">
+  <meta name="apple-mobile-web-app-capable" content="yes"> <!-- For iOS -->
+  <meta name="mobile-web-app-capable" content="yes"> <!-- For chrome mobile -->
+  <meta name="apple-mobile-web-app-status-bar-style" content="black"> 
+  <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
+  
+  <link rel="stylesheet" href="{% static "css/app.css" %}?{{buildid}}">
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
+  <script src="{{JS_CDN_PREFIX}}/libs/foundation/{{FOUNDATION_VER}}/js/vendor/modernizr.js"></script>
+{% block header %}{% endblock %}
+</head>
+{% url 'match_map' 'map' as mapurl %}
+{% url 'poolroom_nearby' as nearby %}
+{% url 'challenge_list' as challenge %}
+{% url 'login_3rd' 'wechat' as wechat %}
+{% url 'login_3rd' 'qq' as qq %}
+{% url 'login_3rd' 'weibo' as weibo %}
+{% url 'event_year_month_name' '2014' '03' 'my-favorite-club' as latest_event %}
+{% url 'user_logout' as user_logout %}
+{% url 'match_redbull_2014_05' as redbullurl %}
+{% url 'game_2048' as gameurl %}
+{% load extras %}
+<body>
+
+<style>
+/* Image style */
+#scrollUp {
+    background-image: url("{% static "images/top.png" %}");
+    bottom: 92%;
+    right: 50%;
+    width: 38px;    /* Width of image */
+    height: 38px;   /* Height of image */
+}
+</style>
+
+<script>
+	{% if user.is_authenticated %}
+		var AUTH = 1;
+		{% if user.cellphone %}
+		var MISSING_INFO = 0;
+		{% else %}
+		var MISSING_INFO = 1;
+		{% endif %}
+	{% else %}
+		var AUTH = 0;
+		var MISSING_INFO = 1;
+	{% endif %}
+</script>
+<div class="off-canvas-wrap doc-wrap" data-offcanvas>
+   <div class="inner-wrap">
+    {% block header-nav %}
+			<nav class="tab-bar">
+				<section class="left-small">
+					<a class="left-off-canvas-toggle menu-icon" href="#"><span></span></a>
+				</section>
+
+				<section class="middle tab-bar-section">
+					<h1 class="title">我为台球狂</h1>
+				</section>
+
+				<section class="right-small">
+					<a class="right-off-canvas-toggle menu-icon" href="#"><span></span></a>
+				</section>
+			</nav>
+
+			<aside class="left-off-canvas-menu">
+			  <ul class="off-canvas-list">
+				<li><label>我为台球狂</label></li>
+				<li><a href="http://{{ request.get_host }}">首页</a></li>
+				<li><a href="{{ mapurl }}">赛事活动</a></li>
+				<li><a href="{{ nearby }}">附近球房</a></li>
+				<li><a href="{{ challenge }}">约球公告</a></li>
+				<li><a href="{{ gameurl }}">找乐子</a></li> 
+				{% if user.is_authenticated %} 
+					{% if poolroomuser %}
+					<li><label>俱乐部会员服务</label></li>
+					<li><a href="{% url 'club_match' %}">比赛</a></li>
+					<li><a href="{% url 'club_challenge' %}">约赛</a></li> 
+					{% elif user.is_staff %}
+					<li><label>网站管理</label></li>
+					<li><a href="{% url 'wechat_activity_report' %}">微信用户互动统计</a></li>
+					{% endif %}
+				<li><label>用户中心</label></li>
+				<li><a href="javascript:void(0);">{{ user.nickname|decodeunicode }}</a></li>
+				<li><a href="{{ user_logout }}">登出</a></li> 
+				{% else %}
+				<li><label>用户登录</label></li>
+				<li id="wechatlogin" class="hide"><a href="javascript:dologin('{{ wechat }}');">微信登录</a></li>
+				<li><a href="javascript:dologin('{{ qq }}');">QQ登录</a></li>
+				<li><a href="javascript:dologin('{{ weibo }}');">微博登录</a></li> 
+				{% endif %}
+				<li><label>关于我为台球狂</label></li>
+				<li><a href="{% url 'about' %}">关于我们</font></a></li>
+				<li><a href="{% url 'join' %}">加入我们</font></a></li>
+				<li><a href="{% url 'contact' %}">联系我们</font></a></li>
+				<li><a href="{% url 'partner' %}">关注俱乐部</font></a></li>
+			  </ul>
+			</aside>
+	
+	{% block header-right-nav %}
+	    <aside class="right-off-canvas-menu">
+    	    <form>
+            <ul class="off-canvas-list filter-menu">
+              <li><label>筛选过滤</label></li>
+              <li class="filter filter-sex">
+                <label>性别：</label>
+                <div>
+                  <div class="choice-block">
+                    <input type="checkbox" id="filter-sex-female" name="filterSexFemale" checked="checked">
+                    <label for="filter-sex-female" class="checked">女性</label>
+                  </div>
+                  <div class="choice-block">
+                    <input type="checkbox" id="filter-sex-male" name="filterSexMale">
+                    <label for="filter-sex-male">男性</label>
+                  </div>
+                </div>
+              </li>
+              <li class="filter filter-sex">
+                <label>价格区间：<span id="price-range"></span>元</label>
+                <div>
+                  <div id="price-slider"></div>
+                </div>
+              </li>
+              <li class="filter filter-sex">
+                <label>距离：<span id="distance-range"></span>公里</label>
+                <div>
+                  <div id="distance-slider"></div>
+                </div>
+              </li>
+            </ul>
+          </form>
+        </aside>
+	{% endblock %}
+	<div id="quickLogin" class="reveal-modal small" data-reveal>
+	  <h2>完成操作前请先登录</h2>
+	  <a href="javascript:dologin('{{ qq }}');" class="radius button">QQ</a>
+	  <a href="javascript:dologin('{{ weibo }}');" class="radius button">新浪微博</a>
+	  <a class="close-reveal-modal">&#215;</a>
+	</div>
+	{% endblock %}
+	
+	<section role="main">
+		{% block content %}{% endblock %}
+	</section>
+
+	<a class="exit-off-canvas"></a>
+	</div>
+</div>
+
+<div id="userInfoForm" class="reveal-modal medium" data-reveal>
+  <h3>请完善您的联系方式，方便我们更好的为您提供服务。</h3>
+  <h4>您的联系方式确定一定以及肯定只用于俱乐部与您确认报名信息。</h4>
+  <form id="completeInfoForm" data-abide>
+	  <div class="row">
+	    <div class="small-8">
+	      <div class="row">
+	        <div class="small-3 columns">
+	          <label for="phone" class="right inline">移动电话</label>
+	        </div>
+	        <div class="small-9 columns">
+	          <input type="cellphone" id="phone" placeholder="移动电话号码" required>
+	          <small class="error">请输入移动电话号码</small>
+	        </div>
+	      </div>
+		  <div class="row">
+	        <div class="small-3 columns">
+	          <label for="email-label" class="right inline">Email</label>
+	        </div>
+	        <div class="small-9 columns">
+	          <input id="email-label" placeholder="email" type="email" required>
+	          <small class="error">请填入Email地址</small>
+	        </div>
+	      </div>
+	      <div class="row">
+	      		<a href="javascript:void(0);" id="doitlater" class="button radius">以后再说</a>
+	      		<button type="submit" class="medium button green radius">更新</button>
+	      </div>	      
+	    </div>
+	  </div>
+  </form>
+  <a class="close-reveal-modal">&#215;</a>
+</div>
+
+  <script src="{{JS_CDN_PREFIX}}/libs/foundation/{{FOUNDATION_VER}}/js/vendor/jquery.js"></script>
+  <script src="{{JS_CDN_PREFIX}}/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+  <script src="{{JS_CDN_PREFIX}}/libs/foundation/{{FOUNDATION_VER}}/js/foundation/foundation.min.js"></script>
+  <script src="{{JS_CDN_PREFIX}}/libs/foundation/{{FOUNDATION_VER}}/js/foundation/foundation.offcanvas.min.js"></script>
+  <script src="{{JS_CDN_PREFIX}}/libs/foundation/{{FOUNDATION_VER}}/js/foundation/foundation.reveal.min.js"></script>
+  <script src="{{JS_CDN_PREFIX}}/libs/foundation/{{FOUNDATION_VER}}/js/foundation/foundation.abide.min.js"></script>
+  <script src="{% static "js/jquery.scrollUp.js" %}"></script>
+  <script src="{% static "js/app.js" %}?{{buildid}}"></script>  
+  {% block foundationscript %}{% endblock %}
+  <script>
+  $.ajaxSetup({ 
+	     beforeSend: function(xhr, settings) {
+	         function getCookie(name) {
+	             var cookieValue = null;
+	             if (document.cookie && document.cookie != '') {
+	                 var cookies = document.cookie.split(';');
+	                 for (var i = 0; i < cookies.length; i++) {
+	                     var cookie = jQuery.trim(cookies[i]);
+	                     // Does this cookie string begin with the name we want?
+	                 if (cookie.substring(0, name.length + 1) == (name + '=')) {
+	                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+	                     break;
+	                 }
+	             }
+	         }
+	         return cookieValue;
+	         }
+	         if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+	             // Only send the token to relative URLs i.e. locally.
+	             xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+	         }
+	     } 
+	});
+  	$("#doitlater").click(function(){
+  		$("#userInfoForm .close-reveal-modal").click();
+  	});
+  	$("#completeInfoForm").submit(function (e) {
+  		e.preventDefault();
+  		phone = $("#phone").val();
+  		email = $("#email-label").val();
+  		$.ajax({
+			data : {'tel': phone, 'email': email},
+  			url : "{% url 'completeInfo' %}",
+			dataType : 'json',
+			success : function(data) {
+				$("#userInfoForm .close-reveal-modal").click();
+				location.reload(true);
+			},
+			error : function() {
+				//TODO alert error
+			}
+		});
+    });
+    $(document).foundation({
+    	abide: abideOptions,
+    });
+    $(document).on('open.fndtn.offcanvas', '[data-offcanvas]', function() {
+    	wechatLogin();
+    });
+    $(function () {
+        $.scrollUp({
+            scrollName: 'scrollUp',      // Element ID
+            scrollDistance: 300,         // Distance from top/bottom before showing element (px)
+            scrollFrom: 'top',           // 'top' or 'bottom'
+            scrollSpeed: 300,            // Speed back to top (ms)
+            easingType: 'linear',        // Scroll to top easing (see http://easings.net/)
+            animation: 'fade',           // Fade, slide, none
+            animationSpeed: 200,         // Animation speed (ms)
+            scrollTrigger: false,        // Set a custom triggering element. Can be an HTML string or jQuery object
+            scrollTarget: false,         // Set a custom target element for scrolling to. Can be element or number
+            scrollText: '', // Text for element, can contain HTML
+            scrollTitle: false,          // Set a custom <a> title if required.
+            scrollImg: false,            // Set true to use image
+            activeOverlay: false,        // Set CSS color to display scrollUp active point, e.g '#00FFFF'
+            zIndex: 2147483647           // Z-Index for the overlay
+        });
+    });
+  </script>
+{% block script %}{% endblock %}
+</body>
+</html>

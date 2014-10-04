@@ -131,14 +131,6 @@ urlpatterns += patterns('billiards.views.games',
 
 urlpatterns += patterns('billiards.views.assistant',
     url(r'^assistant$','assistant', name='assistant'),
-    url(r'^assistant1$','assistant1', name='assistant1'),
-    url(r'^xiaohui$','xiaohui', name='xiaohui'),
-    url(r'^ruoyu$','ruoyu', name='ruoyu'),
-    url(r'^meixi$','meixi', name='meixi'),
-    url(r'^shanshan$','shanshan', name='shanshan'),
-    url(r'^xiaoxu$','xiaoxu', name='xiaoxu'),
-    url(r'^wawa$','wawa', name='wawa'),
-    url(r'^yangyang$','yangyang', name='yangyang'),
 )
 
 urlpatterns += staticfiles_urlpatterns()
