@@ -164,3 +164,74 @@ function wechatLogin() {
 		$('#wechatlogin').removeClass('hide');
 	}
 }
+
+(function initialize(){
+	  $.ajaxSetup({ 
+		     beforeSend: function(xhr, settings) {
+		         function getCookie(name) {
+		             var cookieValue = null;
+		             if (document.cookie && document.cookie != '') {
+		                 var cookies = document.cookie.split(';');
+		                 for (var i = 0; i < cookies.length; i++) {
+		                     var cookie = jQuery.trim(cookies[i]);
+		                     // Does this cookie string begin with the name we want?
+		                 if (cookie.substring(0, name.length + 1) == (name + '=')) {
+		                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+		                     break;
+		                 }
+		             }
+		         }
+		         return cookieValue;
+		         }
+		         if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+		             // Only send the token to relative URLs i.e. locally.
+		             xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+		         }
+		     } 
+		});
+	  	$("#doitlater").click(function(){
+	  		$("#userInfoForm .close-reveal-modal").click();
+	  	});
+	  	$("#completeInfoForm").submit(function (e) {
+	  		e.preventDefault();
+	  		phone = $("#phone").val();
+	  		email = $("#email-label").val();
+	  		$.ajax({
+				data : {'tel': phone, 'email': email},
+	  			url : "{% url 'completeInfo' %}",
+				dataType : 'json',
+				success : function(data) {
+					$("#userInfoForm .close-reveal-modal").click();
+					location.reload(true);
+				},
+				error : function() {
+					//TODO alert error
+				}
+			});
+	    });
+	    $(document).foundation({
+	    	abide: abideOptions,
+	    });
+	    $(document).on('open.fndtn.offcanvas', '[data-offcanvas]', function() {
+	    	wechatLogin();
+	    });
+	    $(function () {
+	        $.scrollUp({
+	            scrollName: 'scrollUp',      // Element ID
+	            scrollDistance: 300,         // Distance from top/bottom before showing element (px)
+	            scrollFrom: 'top',           // 'top' or 'bottom'
+	            scrollSpeed: 300,            // Speed back to top (ms)
+	            easingType: 'linear',        // Scroll to top easing (see http://easings.net/)
+	            animation: 'fade',           // Fade, slide, none
+	            animationSpeed: 200,         // Animation speed (ms)
+	            scrollTrigger: false,        // Set a custom triggering element. Can be an HTML string or jQuery object
+	            scrollTarget: false,         // Set a custom target element for scrolling to. Can be element or number
+	            scrollText: '', // Text for element, can contain HTML
+	            scrollTitle: false,          // Set a custom <a> title if required.
+	            scrollImg: false,            // Set true to use image
+	            activeOverlay: false,        // Set CSS color to display scrollUp active point, e.g '#00FFFF'
+	            zIndex: 2147483647           // Z-Index for the overlay
+	        });
+	    });
+})
+();

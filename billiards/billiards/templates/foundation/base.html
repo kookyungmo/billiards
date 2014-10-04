@@ -1,25 +1,22 @@
-<!DOCTYPE html> 
+<!doctype html>
+<html class="no-js" lang="en"> 
 <!--[if (lt IE 9) & (!IEMobile)]>
 <meta http-equiv="refresh" content="0; URL={% url 'unsupportedbrowser' %}">
 <![endif]--> 
 <!--[if gt IE 8]><!--> <html lang="en"> <!--<![endif]-->
 {% load staticfiles %}
 <head>
-	<meta charset="utf-8" />
-
-<!-- Set the viewport width to device width for mobile -->
-<meta name="viewport" content="width=device-width" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1,minimum-scale=1,user-scalable=no">
   <title>{{pagetitle}}</title>
-  <link rel="stylesheet" href="{% static "css/app.css" %}?{{FOUNDATION_VER}}">
-  <!-- link rel="stylesheet" href="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/css/foundation.min.css"-->
-  <link rel="stylesheet" href="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/css/normalize.min.css">
-  <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/vendor/modernizr.js"></script>
-  <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/vendor/jquery.js"></script>
-  <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/vendor/fastclick.js"></script>
-  <script src="{% static "js/jquery.scrollUp.js" %}"></script>
-  <script src="{% static "js/app.js" %}?{{buildid}}"></script>
-  <link rel="stylesheet" href="{% static "css/myapp.css" %}?{{buildid}}">
+  <meta name="fragment" content="!">
+  <meta name="apple-mobile-web-app-capable" content="yes"> <!-- For iOS -->
+  <meta name="mobile-web-app-capable" content="yes"> <!-- For chrome mobile -->
+  <meta name="apple-mobile-web-app-status-bar-style" content="black"> 
   <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
+  
+  <link rel="stylesheet" href="{% static "css/app.css" %}?{{buildid}}">
+  <script src="{{JS_CDN_PREFIX}}/libs/foundation/{{FOUNDATION_VER}}/js/vendor/modernizr.js"></script>
 {% block header %}{% endblock %}
 </head>
 {% url 'match_map' 'map' as mapurl %}
@@ -36,7 +33,8 @@
 <body>
 
 <style>
-/* Image style */
+/* TODO move it
+Image style */
 #scrollUp {
     background-image: url("{% static "images/top.png" %}");
     bottom: 92%;
@@ -45,31 +43,6 @@
     height: 38px;   /* Height of image */
 }
 </style>
-<script>
-$(function () {
-    $.scrollUp({
-        scrollName: 'scrollUp',      // Element ID
-        scrollDistance: 300,         // Distance from top/bottom before showing element (px)
-        scrollFrom: 'top',           // 'top' or 'bottom'
-        scrollSpeed: 300,            // Speed back to top (ms)
-        easingType: 'linear',        // Scroll to top easing (see http://easings.net/)
-        animation: 'fade',           // Fade, slide, none
-        animationSpeed: 200,         // Animation speed (ms)
-        scrollTrigger: false,        // Set a custom triggering element. Can be an HTML string or jQuery object
-        scrollTarget: false,         // Set a custom target element for scrolling to. Can be element or number
-        scrollText: '', // Text for element, can contain HTML
-        scrollTitle: false,          // Set a custom <a> title if required.
-        scrollImg: false,            // Set true to use image
-        activeOverlay: false,        // Set CSS color to display scrollUp active point, e.g '#00FFFF'
-        zIndex: 2147483647           // Z-Index for the overlay
-    });
-});
-</script>
-
-
-
-
-
 <script>
 	{% if user.is_authenticated %}
 		var AUTH = 1;
@@ -86,7 +59,6 @@ $(function () {
 <div class="off-canvas-wrap doc-wrap" data-offcanvas>
    <div class="inner-wrap">
     {% block header-nav %}
-	 <!-- Header and Nav -->
 	 <nav class="top-bar hide-for-small">
 	    <ul class="title-area">
 	      <!-- Title Area -->
@@ -175,27 +147,33 @@ $(function () {
 	  <li><a href="{% url 'partner' %}">关注俱乐部</font></a></li>
 	  </ul>
 	</aside>
-	<a class="exit-off-canvas" href="#"></a>
+	
+	<a class="exit-off-canvas"></a>
+	{% endblock %}
+
 	<div id="quickLogin" class="reveal-modal small" data-reveal>
 	  <h2>完成操作前请先登录</h2>
 	  <a href="javascript:dologin('{{ qq }}');" class="radius button">QQ</a>
 	  <a href="javascript:dologin('{{ weibo }}');" class="radius button">新浪微博</a>
 	  <a class="close-reveal-modal">&#215;</a>
 	</div>
-	{% endblock %}
-	<!-- End Header and Nav -->
 	
 	<section role="main">
+		{% block maincontent %}
 		<div id="mainContent" class="row">
 			{% block content %}{% endblock %}
 		</div>
+		{% endblock %}
 	</section>
+	{% block share %}
 	<div id="share">
 		<div class="row">
 			<div class="medium-7 columns">关注微信公众帐号，还有更多惊喜等着您。</div>
 			<div class="medium-2 end small-4 columns"><img width="120" height="120" src="http://bcs.duapp.com/billiardsalbum/2014/06/qr-service-scene.jpg"></div>
 		</div>
 	</div>
+	{% endblock %}
+	{% block footer %}
 	<footer id="footer">
 		<div class="row">
 			<div class="columns">
@@ -215,6 +193,7 @@ $(function () {
 			</div>
 		</div>
 	</footer>
+	{% endblock %}
 	</div>
 </div>
 
@@ -251,62 +230,14 @@ $(function () {
   </form>
   <a class="close-reveal-modal">&#215;</a>
 </div>
-  <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/foundation/foundation.min.js"></script>
-  <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/foundation/foundation.offcanvas.min.js"></script>
-  <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/foundation/foundation.reveal.min.js"></script>
-  <script src="http://cdnjscn.b0.upaiyun.com/libs/foundation/{{FOUNDATION_VER}}/js/foundation/foundation.abide.min.js"></script>
+  <script src="{{JS_CDN_PREFIX}}/libs/foundation/{{FOUNDATION_VER}}/js/vendor/jquery.js"></script>
+  <script src="{{JS_CDN_PREFIX}}/libs/foundation/{{FOUNDATION_VER}}/js/foundation/foundation.min.js"></script>
+  <script src="{{JS_CDN_PREFIX}}/libs/foundation/{{FOUNDATION_VER}}/js/foundation/foundation.offcanvas.min.js"></script>
+  <script src="{{JS_CDN_PREFIX}}/libs/foundation/{{FOUNDATION_VER}}/js/foundation/foundation.reveal.min.js"></script>
+  <script src="{{JS_CDN_PREFIX}}/libs/foundation/{{FOUNDATION_VER}}/js/foundation/foundation.abide.min.js"></script>
+  <script src="{% static "js/jquery.scrollUp.js" %}"></script>
   {% block foundationscript %}{% endblock %}
-  <script>
-  $.ajaxSetup({ 
-	     beforeSend: function(xhr, settings) {
-	         function getCookie(name) {
-	             var cookieValue = null;
-	             if (document.cookie && document.cookie != '') {
-	                 var cookies = document.cookie.split(';');
-	                 for (var i = 0; i < cookies.length; i++) {
-	                     var cookie = jQuery.trim(cookies[i]);
-	                     // Does this cookie string begin with the name we want?
-	                 if (cookie.substring(0, name.length + 1) == (name + '=')) {
-	                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-	                     break;
-	                 }
-	             }
-	         }
-	         return cookieValue;
-	         }
-	         if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
-	             // Only send the token to relative URLs i.e. locally.
-	             xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-	         }
-	     } 
-	});
-  	$("#doitlater").click(function(){
-  		$("#userInfoForm .close-reveal-modal").click();
-  	});
-  	$("#completeInfoForm").submit(function (e) {
-  		e.preventDefault();
-  		phone = $("#phone").val();
-  		email = $("#email-label").val();
-  		$.ajax({
-			data : {'tel': phone, 'email': email},
-  			url : "{% url 'completeInfo' %}",
-			dataType : 'json',
-			success : function(data) {
-				$("#userInfoForm .close-reveal-modal").click();
-				location.reload(true);
-			},
-			error : function() {
-				//TODO alert error
-			}
-		});
-    });
-    $(document).foundation({
-    	abide: abideOptions,
-    });
-    $(document).on('open.fndtn.offcanvas', '[data-offcanvas]', function() {
-    	wechatLogin();
-    });
-  </script>
+  <script src="{% static "js/app.js" %}?{{buildid}}"></script>
 {% block script %}{% endblock %}
 </body>
 </html>

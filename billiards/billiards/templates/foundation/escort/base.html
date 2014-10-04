@@ -1,0 +1,96 @@
+{% extends "foundation/base.html" %}
+{% load extras %}
+{% block header %}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
+{% endblock %}
+{% block header-nav %}
+			<nav class="tab-bar">
+				<section class="left-small">
+					<a class="left-off-canvas-toggle menu-icon" href="#"><span></span></a>
+				</section>
+
+				<section class="middle tab-bar-section">
+					<h1 class="title">我为台球狂</h1>
+				</section>
+
+				<section class="right-small">
+					<a class="right-off-canvas-toggle menu-icon" href="#"><span></span></a>
+				</section>
+			</nav>
+
+			<aside class="left-off-canvas-menu">
+			  <ul class="off-canvas-list">
+				<li><label>我为台球狂</label></li>
+				<li><a href="http://{{ request.get_host }}">首页</a></li>
+				<li><a href="{{ mapurl }}">赛事活动</a></li>
+				<li><a href="{{ nearby }}">附近球房</a></li>
+				<li><a href="{{ challenge }}">约球公告</a></li>
+				<li><a href="{{ gameurl }}">找乐子</a></li> 
+				{% if user.is_authenticated %} 
+					{% if poolroomuser %}
+					<li><label>俱乐部会员服务</label></li>
+					<li><a href="{% url 'club_match' %}">比赛</a></li>
+					<li><a href="{% url 'club_challenge' %}">约赛</a></li> 
+					{% elif user.is_staff %}
+					<li><label>网站管理</label></li>
+					<li><a href="{% url 'wechat_activity_report' %}">微信用户互动统计</a></li>
+					{% endif %}
+				<li><label>用户中心</label></li>
+				<li><a href="javascript:void(0);">{{ user.nickname|decodeunicode }}</a></li>
+				<li><a href="{{ user_logout }}">登出</a></li> 
+				{% else %}
+				<li><label>用户登录</label></li>
+				<li id="wechatlogin" class="hide"><a href="javascript:dologin('{{ wechat }}');">微信登录</a></li>
+				<li><a href="javascript:dologin('{{ qq }}');">QQ登录</a></li>
+				<li><a href="javascript:dologin('{{ weibo }}');">微博登录</a></li> 
+				{% endif %}
+				<li><label>关于我为台球狂</label></li>
+				<li><a href="{% url 'about' %}">关于我们</font></a></li>
+				<li><a href="{% url 'join' %}">加入我们</font></a></li>
+				<li><a href="{% url 'contact' %}">联系我们</font></a></li>
+				<li><a href="{% url 'partner' %}">关注俱乐部</font></a></li>
+			  </ul>
+			</aside>
+	
+	    <aside class="right-off-canvas-menu">
+    	    <form>
+            <ul class="off-canvas-list filter-menu">
+              <li><label>筛选过滤</label></li>
+              <li class="filter filter-sex">
+                <label>性别：</label>
+                <div>
+                  <div class="choice-block">
+                    <input type="checkbox" id="filter-sex-female" name="filterSexFemale" checked="checked">
+                    <label for="filter-sex-female" class="checked">女性</label>
+                  </div>
+                  <div class="choice-block">
+                    <input type="checkbox" id="filter-sex-male" name="filterSexMale">
+                    <label for="filter-sex-male">男性</label>
+                  </div>
+                </div>
+              </li>
+              <li class="filter filter-sex">
+                <label>价格区间：<span id="price-range"></span>元</label>
+                <div>
+                  <div id="price-slider"></div>
+                </div>
+              </li>
+              <li class="filter filter-sex">
+                <label>距离：<span id="distance-range"></span>公里</label>
+                <div>
+                  <div id="distance-slider"></div>
+                </div>
+              </li>
+            </ul>
+          </form>
+        </aside>
+		
+		<a class="exit-off-canvas"></a>
+{% endblock %}
+{% block share %}
+{% endblock %}
+{% block footer %}
+{% endblock %}
+{% block foundationscript %}
+<script src="{{JS_CDN_PREFIX}}/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+{% endblock %}
