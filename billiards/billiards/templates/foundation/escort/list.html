@@ -1,13 +1,14 @@
 {% extends "foundation/escort/base.html" %} 
 {% load extras %} 
 {% block maincontent %}
+	<div ng-app="escortApp" ng-controller="ProviderListCtrl">
           <ul class="provider-list small-block-grid-1 medium-block-grid-2 large-block-grid-3 xlarge-block-grid-4 xxlarge-block-grid-5">
-            <li>
+            <li ng-repeat="as in assistants">
               <a href="#provider/4456501" class="showcase-wrapper">
-                  <div class="image" style="background-image: url(http://www.58game.cn/static/uploads/news/20130304/51345aebcd5f2.jpg);"></div>
+                  <div class="image" style="background-image: url(// as.fields.coverimage //);"></div>
                   <div class="img-overlay"></div>
                   <div class="profile-info">
-                    <div class="profile-name"><h1>蓝蓝</h1></div>
+                    <div class="profile-name"><h1>// as.fields.nickname //</h1></div>
                     <div class="indicators">
                       <div class="indicator price-indicator">
                         <span class="data">250元/小时</span>
@@ -19,162 +20,6 @@
                         <span class="data">云渡</span>
                       </div>
                       <div class="indicator distance-indicator">
-                        <span class="data">1.5公里</span>
-                      </div>
-                    </div>
-                  </div>
-              </a>
-            </li>
-            <li>
-              <a href="#provider/4456501" class="showcase-wrapper">
-                  <div class="image" style="background-image: url(http://t0.fansimg.com/uploads2010/01/userid226804time20100127043752.jpg);"></div>
-                  <div class="img-overlay"></div>
-                  <div class="profile-info">
-                    <div class="profile-name"><h1>蓝蓝</h1></div>
-                    <div class="indicators">
-                      <div class="indicator price-indicator">
-                        <i class="price-icon"></i>
-                        <span class="data">250元/小时</span>
-                      </div>
-                      <div class="indicator availability-indicator">
-                        <i class="avail-icon"></i>
-                        <span class="data">随时</span>
-                      </div>
-                      <div class="indicator location-indicator">
-                        <span class="data">云渡</span>
-                      </div>
-                      <div class="indicator distance-indicator">
-                        <i class="distance-icon"></i>
-                        <span class="data">1.5公里</span>
-                      </div>
-                    </div>
-                  </div>
-              </a>
-            </li>
-            <li>
-              <a href="#provider/4456501" class="showcase-wrapper">
-                  <div class="image" style="background-image: url(http://sports.sznews.com/images/attachement/jpg/site3/20100812/001422474dbc0dcd7f2456.jpg);"></div>
-                  <div class="img-overlay"></div>
-                  <div class="profile-info">
-                    <div class="profile-name"><h1>蓝蓝</h1></div>
-                    <div class="indicators">
-                      <div class="indicator price-indicator">
-                        <i class="price-icon"></i>
-                        <span class="data">250元/小时</span>
-                      </div>
-                      <div class="indicator availability-indicator">
-                        <i class="avail-icon"></i>
-                        <span class="data">随时</span>
-                      </div>
-                      <div class="indicator location-indicator">
-                        <span class="data">云渡</span>
-                      </div>
-                      <div class="indicator distance-indicator">
-                        <i class="distance-icon"></i>
-                        <span class="data">1.5公里</span>
-                      </div>
-                    </div>
-                  </div>
-              </a>
-            </li>
-            <li>
-              <a href="#provider/4456501" class="showcase-wrapper">
-                  <div class="image" style="background-image: url(http://img1.ph.126.net/9eyiYTA0hMooysQ7CtjLkw==/1648035988658055853.jpg);"></div>
-                  <div class="img-overlay"></div>
-                  <div class="profile-info">
-                    <div class="profile-name"><h1>蓝蓝</h1></div>
-                    <div class="indicators">
-                      <div class="indicator price-indicator">
-                        <i class="price-icon"></i>
-                        <span class="data">250元/小时</span>
-                      </div>
-                      <div class="indicator availability-indicator">
-                        <i class="avail-icon"></i>
-                        <span class="data">随时</span>
-                      </div>
-                      <div class="indicator location-indicator">
-                        <span class="data">云渡</span>
-                      </div>
-                      <div class="indicator distance-indicator">
-                        <i class="distance-icon"></i>
-                        <span class="data">1.5公里</span>
-                      </div>
-                    </div>
-                  </div>
-              </a>
-            </li>
-            <li>
-              <a href="#provider/4456501" class="showcase-wrapper">
-                  <div class="image" style="background-image: url(http://www.fjsen.com/images/attachement/jpg/site2/20100811/001aa02d373c0dccaacd4e.jpg);"></div>
-                  <div class="img-overlay"></div>
-                  <div class="profile-info">
-                    <div class="profile-name"><h1>蓝蓝</h1></div>
-                    <div class="indicators">
-                      <div class="indicator price-indicator">
-                        <i class="price-icon"></i>
-                        <span class="data">250元/小时</span>
-                      </div>
-                      <div class="indicator availability-indicator">
-                        <i class="avail-icon"></i>
-                        <span class="data">随时</span>
-                      </div>
-                      <div class="indicator location-indicator">
-                        <span class="data">云渡</span>
-                      </div>
-                      <div class="indicator distance-indicator">
-                        <i class="distance-icon"></i>
-                        <span class="data">1.5公里</span>
-                      </div>
-                    </div>
-                  </div>
-              </a>
-            </li>
-            <li>
-              <a href="#provider/4456501" class="showcase-wrapper">
-                  <div class="image" style="background-image: url(http://news.cz001.com.cn/attachement/jpg/site2/20100904/001676c499510dec259437.jpg);"></div>
-                  <div class="img-overlay"></div>
-                  <div class="profile-info">
-                    <div class="profile-name"><h1>蓝蓝</h1></div>
-                    <div class="indicators">
-                      <div class="indicator price-indicator">
-                        <i class="price-icon"></i>
-                        <span class="data">250元/小时</span>
-                      </div>
-                      <div class="indicator availability-indicator">
-                        <i class="avail-icon"></i>
-                        <span class="data">随时</span>
-                      </div>
-                      <div class="indicator location-indicator">
-                        <span class="data">云渡</span>
-                      </div>
-                      <div class="indicator distance-indicator">
-                        <i class="distance-icon"></i>
-                        <span class="data">1.5公里</span>
-                      </div>
-                    </div>
-                  </div>
-              </a>
-            </li>
-            <li>
-              <a href="#provider/4456501" class="showcase-wrapper">
-                  <div class="image" style="background-image: url(http://photos.tuchong.com/23383/f/2112347.jpg);"></div>
-                  <div class="img-overlay"></div>
-                  <div class="profile-info">
-                    <div class="profile-name"><h1>蓝蓝</h1></div>
-                    <div class="indicators">
-                      <div class="indicator price-indicator">
-                        <i class="price-icon"></i>
-                        <span class="data">250元/小时</span>
-                      </div>
-                      <div class="indicator availability-indicator">
-                        <i class="avail-icon"></i>
-                        <span class="data">随时</span>
-                      </div>
-                      <div class="indicator location-indicator">
-                        <span class="data">云渡</span>
-                      </div>
-                      <div class="indicator distance-indicator">
-                        <i class="distance-icon"></i>
                         <span class="data">1.5公里</span>
                       </div>
                     </div>
@@ -182,6 +27,7 @@
               </a>
             </li>
           </ul>
+    </div>
 {% endblock %} 
 {% block script %}
 <script>

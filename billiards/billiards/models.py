@@ -13,7 +13,7 @@ from django.utils.encoding import force_unicode
 from django.contrib.auth.models import User
 from billiards.storage import ImageStorage
 from billiards.settings import UPLOAD_TO, TIME_ZONE, MEDIA_URL, BAE_IMAGE,\
-    THUMBNAIL_WIDTH
+    THUMBNAIL_WIDTH, ESCORT_HEIGHT
 import datetime
 from django.core.serializers.json import Serializer as JsonSerializer 
 from django.utils.encoding import is_protected_type 
@@ -32,9 +32,9 @@ from decimal import Decimal
 from geosimple.fields import GeohashField
 from geosimple.managers import GeoManager
 
-def getThumbnailPath(path, width):
+def getThumbnailPath(path, length, prefix = 'w'):
     fileName, fileExtension = os.path.splitext(path)
-    return "%s-w%s%s" %(fileName, width, fileExtension)
+    return "%s-%s%s%s" %(fileName, prefix, length, fileExtension)
 
 def toDict(bitfield):
     flag_dict = {}
@@ -857,6 +857,7 @@ class Transaction(models.Model):
         verbose_name = '交易信息'
         verbose_name_plural = '交易信息'
         
+assistant_fields = ('uuid', 'nickname', 'birthday', 'gender', 'height', 'figure', 'haircolor')
 class Assistant(models.Model):
     uuid = UUIDField(auto=True, hyphenate=True, unique=True)
     name = models.CharField(max_length=24, verbose_name="姓名")
@@ -881,7 +882,7 @@ class Assistant(models.Model):
     drinks = models.CharField(verbose_name='喜好的饮品', max_length=64)
     scent = models.CharField(verbose_name='气味', max_length=64)
     dress = models.CharField(verbose_name='穿着风格', max_length=64)
-    fignure = models.CharField(verbose_name='个性', max_length=64)
+    figure = models.CharField(verbose_name='个性', max_length=64)
     haircolor = ChoiceTypeField(max_length=16, choices=(
             ('blank', u'黑发色'),
             ('brown', u'褐发色'),
@@ -896,14 +897,26 @@ class Assistant(models.Model):
             (1, u'有效'),
             (2, u'失效'),
             (8, u'禁用'),
-        ), default=1)    
+        ), default=1)
+    
+    _coverimage = None
+    @property
+    def coverimage(self):
+        if self._coverimage == None:
+            self._coverimage = AssistantImage.objects.filter(assistant=self).filter(iscover=True).get().imagepath.name
+        return self._coverimage
+    
+    @property
+    def images(self):
+        return AssistantImage.objects.filter(assistant=self)
+    
     class Meta:
         db_table = 'assistant'
         verbose_name = '助教个人资料'
         verbose_name_plural = '助教个人资料'
         
     def __unicode__(self):
-        return "[%s] %s(%s) - %s" %(self.gender, self.nickname, self.name, self.birthday)
+        return u"[%s] %s(%s) - %s" %(self.get_gender_display(), self.nickname, self.name, self.birthday)
         
 UPLOAD_TO_ASSISTANT = UPLOAD_TO + 'assistant/'   
 class AssistantImage(models.Model):
@@ -928,7 +941,7 @@ class AssistantImage(models.Model):
     imagetag.allow_tags = True
 
     def __unicode__(self):
-        return str(self.assistant) + "-" + self.description
+        return u"[封面-%s] %s-%s" %((u"Y" if self.iscover else u"N"), unicode(self.assistant), self.description)
     
     __imagepath = None
     
@@ -948,14 +961,14 @@ class AssistantImage(models.Model):
                 albumstorage = ImageStorage()
                 path = str(self.imagepath)
                 import base64
-                for width in THUMBNAIL_WIDTH:
+                for height in ESCORT_HEIGHT:
                     img.clearOperations()
                     img.setSource(MEDIA_URL + path)
-                    img.setZooming(BaeImage.ZOOMING_TYPE_WIDTH, width)
+                    img.setZooming(BaeImage.ZOOMING_TYPE_HEIGHT, height)
                     ret = img.process()
                     body = ret['response_params']['image_data']
                 
-                    newpath = getThumbnailPath(path, width)
+                    newpath = getThumbnailPath(path, height, 'h')
                     albumstorage.saveToBucket(newpath, base64.b64decode(body))
             except ImportError:
                 pass

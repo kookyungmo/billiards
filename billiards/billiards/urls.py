@@ -130,6 +130,7 @@ urlpatterns += patterns('billiards.views.games',
 )
 
 urlpatterns += patterns('billiards.views.assistant',
+    url(r'^assistant/list$','assistant_list', name='assistant_list'),
     url(r'^assistant$','assistant', name='assistant'),
 )
 

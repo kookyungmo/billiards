@@ -7,7 +7,7 @@ Created on 2013年10月31日
 '''
 from django import template
 from billiards.models import match_fields, poolroom_fields, PoolroomEquipment,\
-    PoolroomImage
+    PoolroomImage, getThumbnailPath
 from billiards.views import match
 from billiards.views.match import tojson
 
@@ -30,7 +30,10 @@ def matchtojsonwithenroll(matches, user):
         return jsonstr
 
 def thumbnail(imagepath, width):
-    return PoolroomImage.getThumbnailPath(imagepath.name, width)
+    return thumbnail2(imagepath.name, width)
+
+def thumbnail2(imagepath, length, prefix = 'w'):
+    return getThumbnailPath(imagepath.name, length, prefix)
 
 def classname(obj):
     classname = obj.__class__.__name__
