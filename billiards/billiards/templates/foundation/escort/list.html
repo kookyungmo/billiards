@@ -1,26 +1,32 @@
 {% extends "foundation/escort/base.html" %} 
+{% load staticfiles %}
 {% load extras %} 
+{% block escortheader %}
+<script type="text/javascript"
+	src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>
+<script src="{% static "js/map_ui.js" %}?{{buildid}}"></script>
+{% endblock %}
 {% block maincontent %}
 	<div ng-app="escortApp" ng-controller="ProviderListCtrl">
           <ul class="provider-list small-block-grid-1 medium-block-grid-2 large-block-grid-3 xlarge-block-grid-4 xxlarge-block-grid-5">
             <li ng-repeat="as in assistants">
               <a href="#provider/4456501" class="showcase-wrapper">
-                  <div class="image" style="background-image: url(// as.fields.coverimage //);"></div>
+                  <div class="image" style="background-image: url(// as.assistant.coverimage //);"></div>
                   <div class="img-overlay"></div>
                   <div class="profile-info">
-                    <div class="profile-name"><h1>// as.fields.nickname //</h1></div>
+                    <div class="profile-name"><h1>// as.assistant.nickname //</h1></div>
                     <div class="indicators">
                       <div class="indicator price-indicator">
-                        <span class="data">250元/小时</span>
+                        <span class="data">// as.price //元/小时</span>
                       </div>
                       <div class="indicator availability-indicator">
                         <span class="data">随时</span>
                       </div>
                       <div class="indicator location-indicator">
-                        <span class="data">云渡</span>
+                        <span class="data">// as.poolroom.name //</span>
                       </div>
                       <div class="indicator distance-indicator">
-                        <span class="data">1.5公里</span>
+                        <span class="data" ng-show="!!as.distance">// as.distance //</span>
                       </div>
                     </div>
                   </div>

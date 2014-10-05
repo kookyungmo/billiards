@@ -1,8 +1,11 @@
 # coding=utf-8
 from StringIO import StringIO
 from datetime import datetime, timedelta
+from random import randint
 import re
 
+from dateutil.relativedelta import relativedelta
+from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.urlresolvers import reverse
@@ -14,26 +17,24 @@ from django.utils import simplejson, timezone
 from django.utils.encoding import smart_str
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 import pytz
+from werobot.messages import TextMessage, EventMessage
 from werobot.parser import parse_user_msg
 from werobot.reply import create_reply, WeChatReply
 from werobot.robot import BaseRoBot
+from werobot.utils import to_text
 
 from billiards import settings
 from billiards.bcms import mail
+from billiards.commons import set_query_parameter, KEY_PREFIX
 from billiards.location_convertor import gcj2bd
-from billiards.models import Coupon, getCouponCriteria, Poolroom, PoolroomImage, \
-    WechatActivity, DisplayNameJsonSerializer, Event, Membership, Group,\
+from billiards.models import Coupon, getCouponCriteria, Poolroom, \
+    WechatActivity, DisplayNameJsonSerializer, Event, Membership, Group, \
     getThumbnailPath
 from billiards.settings import TEMPLATE_ROOT, TIME_ZONE, SITE_LOGO_URL
 from billiards.views.challenge import getNearbyChallenges
 from billiards.views.match import getMatchByRequest
 from billiards.views.poolroom import getNearbyPoolrooms
-from dateutil.relativedelta import relativedelta
-from werobot.utils import to_text
-from random import randint
-from werobot.messages import TextMessage, EventMessage
-from django.core.cache import cache
-from billiards.commons import set_query_parameter, KEY_PREFIX
+
 
 def set_video():
     videos = [

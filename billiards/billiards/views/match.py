@@ -5,24 +5,28 @@ Created on 2013年10月22日
 
 @author: kane
 '''
-from django.shortcuts import render_to_response, get_object_or_404, redirect
-from billiards.models import Match, MatchEnroll,\
-    DisplayNameJsonSerializer, match_fields
+from StringIO import StringIO
 import datetime
+import json
+
 from dateutil.relativedelta import relativedelta
 from django.core import serializers
-from django.http import HttpResponse
-from django.template.context import RequestContext
-from django.db.models.aggregates import Max
-from django.utils import simplejson
-from billiards.settings import TEMPLATE_ROOT, TIME_ZONE
-import json
-from django.db.models.query_utils import Q
-from StringIO import StringIO
 from django.core.exceptions import PermissionDenied
-import pytz
+from django.db.models.aggregates import Max
 from django.db.models.query import QuerySet, ValuesQuerySet
+from django.db.models.query_utils import Q
+from django.http import HttpResponse
+from django.shortcuts import render_to_response, get_object_or_404, redirect
+from django.template.context import RequestContext
+from django.utils import simplejson
+import pytz
+
 from billiards import settings
+from billiards.models import Match, MatchEnroll, \
+    DisplayNameJsonSerializer, match_fields
+from billiards.settings import TEMPLATE_ROOT, TIME_ZONE
+from billiards.commons import tojson
+
 
 def updateMatchJsonStrEnrollInfo(matchjsonstr, user, matchArray):
     enrolledMatch = MatchEnroll.objects.filter(Q(match__in=matchArray) & Q(user__exact=user))
@@ -45,16 +49,6 @@ def updateMatchQuerySetEnrollInfo(matchQuerySet, user):
                     setattr(match, 'enrolled', True)
                     break
     return matchQuerySet
-
-def tojson(data, fields = None):
-    newdata = data
-    if not isinstance(newdata, (QuerySet, ValuesQuerySet)):
-        newdata = [data]
-    json_serializer = DisplayNameJsonSerializer()
-    stream = StringIO()
-    json_serializer.serialize(newdata, fields=fields, stream=stream,
-            ensure_ascii=False, use_natural_keys=True)
-    return stream.getvalue()
 
 datefmt = "%Y-%m-%d"
 def set_to_midnight(dt):

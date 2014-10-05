@@ -9,6 +9,10 @@ from urllib import urlencode
 from urlparse import urlsplit, parse_qs, urlunsplit
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
+from django.core.serializers.json import Serializer
+from django.db.models.query import QuerySet, ValuesQuerySet
+from billiards.models import DisplayNameJsonSerializer
+from StringIO import StringIO
 
 KEY_PREFIX = 'location_%s_%s'
 
@@ -37,3 +41,20 @@ def num(s):
         return int(s)
     except ValueError:
         return float(s)
+    
+def tojson(data, fields = None):
+    json_serializer = DisplayNameJsonSerializer()
+    return tojson2(data, json_serializer, fields)
+
+def tojson2(data, serialize, fields = None):
+    newdata = data
+    if not isinstance(newdata, (QuerySet, ValuesQuerySet)):
+        newdata = [data]
+    stream = StringIO()
+    serialize.serialize(newdata, fields=fields, stream=stream,
+            ensure_ascii=False, use_natural_keys=True)
+    return stream.getvalue()
+    
+class JSONSerializer(Serializer):
+    def get_dump_object(self, obj):
+        return self._current or {}

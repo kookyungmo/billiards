@@ -917,6 +917,15 @@ class Assistant(models.Model):
         
     def __unicode__(self):
         return u"[%s] %s(%s) - %s" %(self.get_gender_display(), self.nickname, self.name, self.birthday)
+    
+    def natural_key(self):
+        coverimage = None
+        if self.coverimage is not None:
+            coverimage = "%s%s" %(settings.MEDIA_URL[:-1], self.coverimage)
+        elif len(self.images()) > 0:
+            coverimage = "%s%s" %(settings.MEDIA_URL[:-1], self.images[0].imagepath)
+        return {'uuid': str(self.uuid), 'nickname': self.nickname, 'coverimage': coverimage, 'height': self.height,
+                'birthday': self.birthday, 'occupation': self.occupation}
         
 UPLOAD_TO_ASSISTANT = UPLOAD_TO + 'assistant/'   
 class AssistantImage(models.Model):
@@ -974,11 +983,12 @@ class AssistantImage(models.Model):
                 pass
         self.__imagepath = self.imagepath
         
+assistantoffer_fields = ('assistant', 'poolroom', 'price')
 class AssistantOffer(models.Model):
-    assitant = models.ForeignKey(Assistant, verbose_name="助教")
+    assistant = models.ForeignKey(Assistant, verbose_name="助教")
     poolroom = models.IntegerField(verbose_name="预约的球房", blank=True)
     price = models.IntegerField(verbose_name="价钱(元/小时)")
-    day = ChoiceTypeField(max_length=16, choices=(
+    day = BitField(flags=(
             ('monday', u'周一'),
             ('tuesday', u'周二'),
             ('wendesday', u'周三'),
@@ -988,11 +998,23 @@ class AssistantOffer(models.Model):
             ('sunday', u'周日'),
         ), verbose_name='星期几')
     starttime = models.TimeField(verbose_name="开始时间")
-    endtime = models.TimeField(verbose_name="结束时间")    
+    endtime = models.TimeField(verbose_name="结束时间")
+    status = models.IntegerField(verbose_name=u'状态', choices=(
+            (0, u'失效'),
+            (1, u'有效'),
+        ), default=1,)
+    
     class Meta:
         db_table = 'assistant_offer'
         verbose_name = '助教报价'
         verbose_name_plural = '助教报价'
+        
+    def __unicode__(self):
+        poolroomname = ''
+        if self.poolroom is not None:
+            poolroomname = Poolroom.objects.get(id=self.poolroom)
+        return u"[%s] %s %s元/小时 (%s-%s)" %(self.assitant.nickname, poolroomname,  self.price, self.starttime, self.endtime)
+    
         
 class AssistantAppointment(models.Model):
     assitant = models.ForeignKey(Assistant, verbose_name="助教")

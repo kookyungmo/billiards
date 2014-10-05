@@ -6,10 +6,12 @@ Created on 2013年10月31日
 @author: kane
 '''
 from django import template
-from billiards.models import match_fields, poolroom_fields, PoolroomEquipment,\
-    PoolroomImage, getThumbnailPath
+
+from billiards.commons import tojson
+from billiards.models import match_fields, poolroom_fields, PoolroomEquipment, \
+     getThumbnailPath
 from billiards.views import match
-from billiards.views.match import tojson
+
 
 def poolroomtojson(data):
     return tojson(data, poolroom_fields)
