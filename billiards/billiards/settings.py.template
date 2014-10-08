@@ -267,6 +267,7 @@ BAE_IMAGE = {
 }
 
 THUMBNAIL_WIDTH = [100, 200, 300, 400]
+ESCORT_HEIGHT = [300]
 
 WECHAT_ACTIVITY_TRACE = ('text', 'image', 'location', 'link', 'event')
 
