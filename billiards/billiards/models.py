@@ -1062,7 +1062,7 @@ class AssistantOffer(models.Model):
         poolroomname = ''
         if self.poolroom is not None:
             poolroomname = Poolroom.objects.get(id=self.poolroom)
-        return u"[%s] %s %s元/小时 (%s-%s)" %(self.assitant.nickname, poolroomname,  self.price, self.starttime, self.endtime)
+        return u"[%s] %s %s元/小时 (%s-%s)" %(self.assistant.nickname, poolroomname,  self.price, self.starttime, self.endtime)
     
         
 class AssistantAppointment(models.Model):

@@ -18,7 +18,8 @@ TESTING = 'test' in sys.argv
 BAE_KEY = "lzLVWuWXTWRpmUq78cD5CEwE"
 BAE_SECRETKEY = "GjLz74wHP1QUIubKPlI5BvGYPTHxb14X"
 
-if DEBUG and TESTING:
+if DEBUG or TESTING:
+	# create an empty table named 'billiards_cache_table' in local DB
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
