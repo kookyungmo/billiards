@@ -15,18 +15,18 @@
    <div class="img-overlay"></div>
    <div class="profile-info">
      <div class="profile-name"><h1><{ assistant.nickname }></h1></div>
-     <div class="indicators">
+     <div class="indicators" ng-show="hasOffer">
        <div class="indicator price-indicator">
-         <span class="data">250元/小时</span>
+         <span class="data"><{ offerprice }>元/小时</span>
        </div>
        <div class="indicator availability-indicator">
-         <span class="data">随时</span>
+         <span class="data"><{ formatLatestOffer(latestOffer) }></span>
        </div>
        <div class="indicator location-indicator">
-         <span class="data">云渡</span>
+         <span class="data"><{ offerlocation }></span>
        </div>
        <div class="indicator distance-indicator">
-         <span class="data">1.5公里</span>
+         <span class="data" ng-show="!!offerdistance"><{ offerdistance }></span>
        </div>
      </div>
    </div>
@@ -77,7 +77,7 @@
              <div class="row collapse">
                <div class="medium-6 small-12 column">
                  <div class="small-6 column">
-                   <p>岁数</p>
+                   <p>年龄</p>
                  </div>
                  <div class="small-6 column">
                    <p><{ assistant.age }></p>
@@ -190,32 +190,36 @@
    <li>
      <dl class="accordion avail-accordion" data-accordion> 
        <dd class="accordion-navigation active">
-         <a href="#avail-panel"><b>个人信息</b></a>
+         <a href="#avail-panel"><b>预约信息</b></a>
          <div id="avail-panel" class="content active">
            <div class="row avail">
              <div class="row collapse collapse2">
                <div class="medium-6 small-12 column">
                  <div class="icon_bar">
-                    <h3>Next: Di 3:18 pm in 3 hours</h3>
+                    <h3 ng-show="hasOffer">最早可预约时间: <{ formatLatestOffer(latestOffer) }></h3>
+                    <h3 ng-show="!hasOffer">暂无预约信息</h3>
                  </div>
-                 <div class="row">
-                   <h5>Select the time </h5>
+                 <div class="row" ng-show="hasOffer">
+                   <h5>选择时间和时长</h5>
                    <div class="row">
-                     <div class="small-6 padding_3 column">
-                       <label> 
-                         <select>
-                           <option value="">12:00 pm</option>
-                           <option value="">1:00 pm</option>
-                           <option value="">2:00 pm</option>
+                     <div class="small-5 padding_3 column">
+                     	<label> 
+                         <select data-ng-model="selectedOffer" data-ng-options="getDayLabel(day) for day in offerdays">
                          </select>
                        </label>
                      </div>
-                     <div class="small-6 padding_3 column">
+                     <div class="small-4 padding_3 column">
+                       <label> 
+                         <select data-ng-model="selectedOfferHour" data-ng-options="hour+':00' for hour in selectedOffer.hours">
+                         </select>
+                       </label>
+                     </div>
+                     <div class="small-3 padding_3 column">
                        <label> 
                          <select>
-                           <option value="">12:00 pm</option>
-                           <option value="">1:00 pm</option>
-                           <option value="">2:00 pm</option>
+                           <option value="1">1小时</option>
+                           <option value="2">2小时</option>
+                           <option value="3">3小时</option>
                          </select>
                        </label>
                      </div>
@@ -223,20 +227,16 @@
                  </div>
                </div>
                <div class="medium-6 small-12 column padding_10">
-                 <h3>Pricing</h3>
-                 <p><b>+ 150/1h € to Celia</b>
-                     Min. duration: 1h
-                     Min. duration (for travels): 72h
-                     Locations: At your Hotel, At your Home, Escort
-                     Travel: City, City surroundings, National, 
-                     International</p>
+                 <h3>价格说明</h3>
+                 <p><b><{ assistant.nickname }> ￥<{getOffer().price}>/小时</b>
+                     最小时长: 1小时
+                     <{ getOffer().priceDescription }>
+                 </p>
                </div>
              </div>
              <div class="row avail extras">
-               <h5>Extras</h5>
-               <p>Free services: Blow job, Come in face, Come in mouth,
-                  Couple service, Face sitting, Fetish, Girlfriend sex, 
-                  Hand job, Nipple play, Oral sex, Shower play, Tongue kisses</p>
+               <h5>额外服务</h5>
+               <p><{ getOffer().extraService }></p>
              </div>    
            </div>
          </div>

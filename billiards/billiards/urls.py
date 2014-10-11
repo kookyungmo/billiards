@@ -1,11 +1,12 @@
 from django.conf.urls import patterns, include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
-from django.views.generic.base import RedirectView
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 admin.autodiscover()
+
+UUID_PATTERN = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
 
 urlpatterns = patterns('billiards.views.match',
     url(r'^match/(?P<matchid>\d+)/$', 'detail', name="match_detail"),
@@ -20,8 +21,8 @@ urlpatterns = patterns('billiards.views.match',
 urlpatterns += patterns('billiards.views.poolroom',
     url(r'^poolroom/(?P<poolroomid>\d+)/more$', 'more', name="poolroom_moreinfo"),
     url(r'^poolroom/(?P<poolroomid>\d+)$', 'detail', name="poolroom_detail"),
-    url(r'^poolroom/(?P<poolroom_uuid>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/more$', 'more_uuid', name="poolroom_moreinfo_uuid"),
-    url(r'^poolroom/(?P<poolroom_uuid>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$', 'detail_uuid', name="poolroom_detail_uuid"),
+    url(r'^poolroom/(?P<poolroom_uuid>%s)/more$' %(UUID_PATTERN), 'more_uuid', name="poolroom_moreinfo_uuid"),
+    url(r'^poolroom/(?P<poolroom_uuid>%s)$' %(UUID_PATTERN), 'detail_uuid', name="poolroom_detail_uuid"),
     url(r'^poolroom/nearby$', 'nearby', name="poolroom_nearby"),
     url(r'^poolroom/nearby/(?P<lat>\d+.\d+),(?P<lng>\d+.\d+)/(?P<distance>\d+)', 'nearby', name="poolroom_nearby_point_distance"),
     url(r'^poolroom/update_baidu_location', 'updateBaiduLocation', name="poolroom_internal_update_baidu_location"),
@@ -64,8 +65,8 @@ urlpatterns += patterns('billiards.views.challenge',
     url(r'^challenge/group/(?P<group>\d+)$', 'index', name='challenge_group_list'),
     url(r'^challenge$', 'index', name='challenge_list'),
     url(r'^challenge/wechatpublish', 'wechatpublish', name="challenge_wechatpublish"),
-    url(r'^challenge/(?P<uuid>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$', 'detail_uuid', name="challenge_detail_uuid"),
-    url(r'^challenge/(?P<uuid>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/apply$', 'apply_uuid', name='apply_challenge_uuid'),
+    url(r'^challenge/(?P<uuid>%s)$' %(UUID_PATTERN), 'detail_uuid', name="challenge_detail_uuid"),
+    url(r'^challenge/(?P<uuid>%s)/apply$' %(UUID_PATTERN), 'apply_uuid', name='apply_challenge_uuid'),
 )
 
 urlpatterns += patterns('billiards.views.utility',
@@ -73,7 +74,7 @@ urlpatterns += patterns('billiards.views.utility',
     url(r'^coupon/(?P<couponid>\d+)$', 'coupon', name='coupontracker'),
     url(r'^wechatshare', 'wechatsharehelp', name='wechat_share_help'),
     url(r'^survey/redbull', 'survey_redbull', name='survey_redbull_2014_04'),
-    url(r'^pkmap/(?P<mtype>\w+)/(?P<tid>\d+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$', 'pkmap', name='pk_map_type_id'),
+    url(r'^pkmap/(?P<mtype>\w+)/(?P<tid>\d+|%s)$' %(UUID_PATTERN), 'pkmap', name='pk_map_type_id'),
     url(r'^pkmap$', 'pkmap', name='pk_map'),
 )
 
@@ -131,7 +132,8 @@ urlpatterns += patterns('billiards.views.games',
 
 urlpatterns += patterns('billiards.views.assistant',
     url(r'^assistant/list$','assistant_list', name='assistant_list'),
-    url(r'^assistant/(?P<assistant_uuid>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})','assistant_by_uuid', name='assistant_detail'),
+    url(r'^assistant/(?P<assistant_uuid>%s)/offer' %(UUID_PATTERN),'assistant_offer_by_uuid', name='assistant_offer'),
+    url(r'^assistant/(?P<assistant_uuid>%s)' %(UUID_PATTERN),'assistant_by_uuid', name='assistant_detail'),
     url(r'^assistant$','assistant', name='assistant'),
 )
 

@@ -1,11 +1,6 @@
 {% extends "foundation/escort/base.html" %} 
 {% load staticfiles %}
 {% load extras %} 
-{% block escortheader %}
-<script type="text/javascript"
-	src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>
-<script src="{% static "js/map_ui.js" %}?{{buildid}}"></script>
-{% endblock %}
 {% block maincontent %}
 	<div ng-app="escortApp" ng-controller="ProviderListCtrl">
           <ul class="provider-list small-block-grid-1 medium-block-grid-2 large-block-grid-3 xlarge-block-grid-4 xxlarge-block-grid-5">

@@ -45,6 +45,9 @@ def toDict(bitfield):
 def bitLabelToList(bitfield):
     return [bitfield.get_label(f[0]) for f in bitfield if f[1]]
 
+def bitToList(bitfield):
+    return [f[0] for f in bitfield if f[1]]
+
 poolroom_fields = ('uuid', 'name', 'address', 'tel', 'lat_baidu', 'lng_baidu', 'flags', 'businesshours', 'size', 'rating')
 
 def getCouponCriteria(theday = None):
@@ -253,6 +256,10 @@ class JsonBitField(BitField):
     
     def value_to_string(self, obj):
         return " ".join(bitLabelToList(self._get_val_from_obj(obj)))
+    
+class JsonBitValueField(JsonBitField):
+    def value_to_string(self, obj):
+        return " ".join(bitToList(self._get_val_from_obj(obj)))
     
 
 class PoolroomEquipment(models.Model):
@@ -1021,11 +1028,12 @@ class AssistantImage(models.Model):
         self.__imagepath = self.imagepath
         
 assistantoffer_fields = ('assistant', 'poolroom', 'price')
+assistantoffer_fields_2 = ('poolroom', 'price', 'starttime', 'endtime', 'priceDescription', 'extraService')
 class AssistantOffer(models.Model):
     assistant = models.ForeignKey(Assistant, verbose_name="助教")
     poolroom = models.IntegerField(verbose_name="预约的球房", blank=True)
     price = models.IntegerField(verbose_name="价钱(元/小时)")
-    day = BitField(flags=(
+    day = JsonBitValueField(flags=(
             ('monday', u'周一'),
             ('tuesday', u'周二'),
             ('wendesday', u'周三'),
@@ -1033,9 +1041,11 @@ class AssistantOffer(models.Model):
             ('friday', u'周五'),
             ('saturday', u'周六'),
             ('sunday', u'周日'),
-        ), verbose_name='星期几')
+        ), verbose_name='星期几', jsonUseValue=True)
     starttime = models.TimeField(verbose_name="开始时间")
     endtime = models.TimeField(verbose_name="结束时间")
+    priceDescription = models.CharField(max_length=200, verbose_name="报价说明", blank=True)
+    extraService = models.CharField(max_length=200, verbose_name="额外服务说明", blank=True)
     status = models.IntegerField(verbose_name=u'状态', choices=(
             (0, u'失效'),
             (1, u'有效'),
