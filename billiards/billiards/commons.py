@@ -9,7 +9,6 @@ from urllib import urlencode
 from urlparse import urlsplit, parse_qs, urlunsplit
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from django.core.serializers.json import Serializer
 from django.db.models.query import QuerySet, ValuesQuerySet
 from billiards.models import DisplayNameJsonSerializer
 from StringIO import StringIO
@@ -55,6 +54,6 @@ def tojson2(data, serialize, fields = None):
             ensure_ascii=False, use_natural_keys=True)
     return stream.getvalue()
     
-class JSONSerializer(Serializer):
+class NoObjectJSONSerializer(DisplayNameJsonSerializer):
     def get_dump_object(self, obj):
         return self._current or {}

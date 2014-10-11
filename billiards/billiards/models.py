@@ -42,6 +42,9 @@ def toDict(bitfield):
         flag_dict[f[0]] = f[1]
     return flag_dict
 
+def bitLabelToList(bitfield):
+    return [bitfield.get_label(f[0]) for f in bitfield if f[1]]
+
 poolroom_fields = ('uuid', 'name', 'address', 'tel', 'lat_baidu', 'lng_baidu', 'flags', 'businesshours', 'size', 'rating')
 
 def getCouponCriteria(theday = None):
@@ -234,6 +237,23 @@ class IntegerChoiceTypeField(models.IntegerField):
     
     def json_use_value(self):
         return self.jsonUseValue
+    
+class JsonBitField(BitField):
+    ''' use value of key when serializing as json
+    '''
+    jsonUseValue = True
+    def __init__(self, *args, **kwargs):
+        if 'jsonUseValue' in kwargs:
+            self.jsonUseValue = kwargs['jsonUseValue']
+            del kwargs['jsonUseValue']
+        super(JsonBitField, self).__init__(*args, **kwargs)
+        
+    def json_use_value(self):
+        return self.jsonUseValue    
+    
+    def value_to_string(self, obj):
+        return " ".join(bitLabelToList(self._get_val_from_obj(obj)))
+    
 
 class PoolroomEquipment(models.Model):
     id = models.AutoField(primary_key=True)
@@ -857,7 +877,8 @@ class Transaction(models.Model):
         verbose_name = '交易信息'
         verbose_name_plural = '交易信息'
         
-assistant_fields = ('uuid', 'nickname', 'birthday', 'gender', 'height', 'figure', 'haircolor')
+assistant_fields = ('uuid', 'nickname', 'birthday', 'gender', 'height', 'figure', 'haircolor', 'occupation',
+                    'language', 'interest', 'food', 'drinks', 'scent', 'dress')
 class Assistant(models.Model):
     uuid = UUIDField(auto=True, hyphenate=True, unique=True)
     name = models.CharField(max_length=24, verbose_name="姓名")
@@ -866,17 +887,17 @@ class Assistant(models.Model):
     gender = IntegerChoiceTypeField(verbose_name=u'性别', choices=(
             (1, u'女'),
             (2, u'男'),
-        ), default=1)
+        ), default=1, jsonUseValue=True)
     height = models.IntegerField(verbose_name="身高(cm)")
     occupation = models.CharField(verbose_name='职业', max_length=24)
-    language = BitField(flags=(
+    language = JsonBitField(flags=(
             ('mandarin', u'普通话'),
             ('english', u'英语'),
             ('french', u'法语'),
             ('japanese', u'日语'),
             ('geman', u'德语'),
             ('cantonese', u'粤语'),
-        ), verbose_name='语言')
+        ), verbose_name='语言', jsonUseValue=True)
     interest = models.CharField(verbose_name='个人爱好', max_length=64)
     food = models.CharField(verbose_name='喜好的食物', max_length=64)
     drinks = models.CharField(verbose_name='喜好的饮品', max_length=64)
@@ -927,7 +948,8 @@ class Assistant(models.Model):
         return {'uuid': str(self.uuid), 'nickname': self.nickname, 'coverimage': coverimage, 'height': self.height,
                 'birthday': self.birthday, 'occupation': self.occupation}
         
-UPLOAD_TO_ASSISTANT = UPLOAD_TO + 'assistant/'   
+UPLOAD_TO_ASSISTANT = UPLOAD_TO + 'assistant/'
+assistantimage_fields = ('imagepath', 'iscover')
 class AssistantImage(models.Model):
     assistant = models.ForeignKey(Assistant, verbose_name='助教')
     imagepath = models.ImageField(verbose_name=u'选择本地图片/图片路径', max_length=250, upload_to=UPLOAD_TO_ASSISTANT, 

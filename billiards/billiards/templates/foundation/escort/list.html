@@ -10,23 +10,23 @@
 	<div ng-app="escortApp" ng-controller="ProviderListCtrl">
           <ul class="provider-list small-block-grid-1 medium-block-grid-2 large-block-grid-3 xlarge-block-grid-4 xxlarge-block-grid-5">
             <li ng-repeat="as in assistants">
-              <a href="#provider/4456501" class="showcase-wrapper">
-                  <div class="image" style="background-image: url(// as.assistant.coverimage //);"></div>
+              <a href="assistant/<{ as.assistant.uuid }>" class="showcase-wrapper">
+                  <div class="image" style="background-image: url(<{ as.assistant.coverimage }>);"></div>
                   <div class="img-overlay"></div>
                   <div class="profile-info">
-                    <div class="profile-name"><h1>// as.assistant.nickname //</h1></div>
+                    <div class="profile-name"><h1><{ as.assistant.nickname }></h1></div>
                     <div class="indicators">
                       <div class="indicator price-indicator">
-                        <span class="data">// as.price //元/小时</span>
+                        <span class="data"><{ as.price }>元/小时</span>
                       </div>
                       <div class="indicator availability-indicator">
                         <span class="data">随时</span>
                       </div>
                       <div class="indicator location-indicator">
-                        <span class="data">// as.poolroom.name //</span>
+                        <span class="data"><{ as.poolroom.name }></span>
                       </div>
                       <div class="indicator distance-indicator">
-                        <span class="data" ng-show="!!as.distance">// as.distance //</span>
+                        <span class="data" ng-show="!!as.distance"><{ as.distance }></span>
                       </div>
                     </div>
                   </div>
@@ -36,31 +36,5 @@
     </div>
 {% endblock %} 
 {% block script %}
-<script>
-    $(function() {
-      $( "#price-slider" ).slider({
-        range: true,
-        min: 50,
-        max: 300,
-        values: [ 50, 300 ],
-        slide: function( event, ui ) {
-          $("#price-range").text( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
-        }
-      });
-      $("#price-range").text( $( "#price-slider" ).slider( "values", 0 ) +
-        " - " + $( "#price-slider" ).slider( "values", 1 ) );
-
-      $( "#distance-slider" ).slider({
-        range: true,
-        min: 0,
-        max: 10,
-        values: [ 0, 10 ],
-        slide: function( event, ui ) {
-          $("#distance-range").text( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
-        }
-      });
-      $("#distance-range").text( $( "#distance-slider" ).slider( "values", 0 ) +
-        " - " + $( "#price-slider" ).slider( "values", 1 ) );
-    });
-</script>
+<script src="{% static "js/escort/list.js" %}"></script>
 {% endblock %}

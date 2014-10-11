@@ -14,8 +14,9 @@
   <meta name="mobile-web-app-capable" content="yes"> <!-- For chrome mobile -->
   <meta name="apple-mobile-web-app-status-bar-style" content="black"> 
   <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
-  
+{% block appheader %}
   <link rel="stylesheet" href="{% static "css/app.css" %}?{{buildid}}">
+{% endblock %}
   <script src="{{JS_CDN_PREFIX}}/libs/foundation/{{FOUNDATION_VER}}/js/vendor/modernizr.js"></script>
 {% block header %}{% endblock %}
 </head>
@@ -237,7 +238,7 @@ Image style */
   <script src="{{JS_CDN_PREFIX}}/libs/foundation/{{FOUNDATION_VER}}/js/foundation/foundation.abide.min.js"></script>
   <script src="{% static "js/jquery.scrollUp.js" %}"></script>
   {% block foundationscript %}{% endblock %}
-  <script src="{% static "js/app.js" %}?{{buildid}}"></script>
+  <script src="{% static "js/app.js" %}"></script>
 {% block script %}{% endblock %}
 </body>
 </html>

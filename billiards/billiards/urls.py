@@ -131,6 +131,7 @@ urlpatterns += patterns('billiards.views.games',
 
 urlpatterns += patterns('billiards.views.assistant',
     url(r'^assistant/list$','assistant_list', name='assistant_list'),
+    url(r'^assistant/(?P<assistant_uuid>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})','assistant_by_uuid', name='assistant_detail'),
     url(r'^assistant$','assistant', name='assistant'),
 )
 

@@ -1,7 +1,7 @@
 var escortAngularModule = angular.module("escortApp", ["ngRoute", "restangular"]);
-escortAngularModule.config(function($interpolateProvider) {
-	  $interpolateProvider.startSymbol('//');
-	  $interpolateProvider.endSymbol('//');
+escortAngularModule.config(function($interpolateProvider, $routeProvider) {
+	  $interpolateProvider.startSymbol('<{');
+	  $interpolateProvider.endSymbol('}>');
 	});
 escortAngularModule.controller("ProviderListCtrl", ["$scope", "Restangular", function($scope, Restangular) {
 	Restangular.one('assistant', 'list').get().then(function (assistants){
@@ -19,4 +19,20 @@ escortAngularModule.controller("ProviderListCtrl", ["$scope", "Restangular", fun
 			}
 		}, {enableHighAccuracy: false});
     });
+}]);
+escortAngularModule.controller('DetailCtrl', ['$scope', '$routeParams', "Restangular", function($scope, $routeParams, Restangular) {
+	$scope.init = function(uuid)
+	  {
+		Restangular.one('assistant', uuid).post().then(function (assistant){
+			escort = assistant[0];
+			escort.age = _calculateAge(escort.birthday);
+	    	$scope.assistant = escort;
+	    });
+	  };
+	  
+	function _calculateAge(birthday) { // birthday is a date
+	    var ageDifMs = Date.now() - new Date(birthday).getTime();
+	    var ageDate = new Date(ageDifMs); // miliseconds from epoch
+	    return Math.abs(ageDate.getUTCFullYear() - 1970);
+	}
 }]);
