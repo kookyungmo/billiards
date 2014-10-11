@@ -15,8 +15,6 @@ from billiards.storage import ImageStorage
 from billiards.settings import UPLOAD_TO, TIME_ZONE, MEDIA_URL, BAE_IMAGE,\
     THUMBNAIL_WIDTH, ESCORT_HEIGHT
 import datetime
-from django.core.serializers.json import Serializer as JsonSerializer 
-from django.utils.encoding import is_protected_type 
 import os
 from django.db.models.query_utils import Q
 from django.db.models.signals import pre_delete
@@ -31,6 +29,7 @@ from uuidfield.fields import UUIDField
 from decimal import Decimal
 from geosimple.fields import GeohashField
 from geosimple.managers import GeoManager
+from billiards.commons import decodeunicode
 
 def getThumbnailPath(path, length, prefix = 'w'):
     fileName, fileExtension = os.path.splitext(path)
@@ -309,25 +308,6 @@ class Group(models.Model):
     def natural_key(self):
         return {'name': self.name}
 
-class DisplayNameJsonSerializer(JsonSerializer): 
-
-    def handle_field(self, obj, field): 
-        value = field._get_val_from_obj(obj) 
-
-        #If the object has a get_field_display() method, use it. 
-        display_method = "get_%s_display" % field.name 
-        if  hasattr(field, 'json_use_value') and getattr(field, 'json_use_value')() == False:
-            self._current[field.name] = value
-        elif hasattr(obj, display_method): 
-            self._current[field.name] = getattr(obj, display_method)() 
-        # Protected types (i.e., primitives like None, numbers, dates, 
-        # and Decimals) are passed through as is. All other values are 
-        # converted to string first. 
-        elif is_protected_type(value): 
-            self._current[field.name] = value 
-        else: 
-            self._current[field.name] = field.value_to_string(obj) 
-            
 def is_expired(atime, tzinfo=pytz.timezone(TIME_ZONE)):
     if datetime.datetime.utcnow().replace(tzinfo=utc) - atime.replace(tzinfo=tzinfo) > datetime.timedelta(seconds = 5):
         return True
@@ -414,7 +394,7 @@ class Match(models.Model):
 # post_save.connect(create_profile, sender=User)
 # #         
 def getusername(self):
-    return self.nickname if self.nickname is not None and self.nickname != "" else self.username
+    return decodeunicode(self.nickname) if self.nickname is not None and self.nickname != "" else self.username
 
 class ProfileBase(type):
     def __new__(cls, name, bases, attrs):
@@ -442,6 +422,10 @@ class Profile(ProfileObject):
     expire_time = models.DateTimeField(null=True)
     refresh_token = models.CharField(max_length=512, default='', null=True)
     cellphone = models.CharField(max_length=11, null=True, blank=True, verbose_name="移动电话")
+    
+    def get_nickname(self):
+        return decodeunicode(self.nickname)
+    get_nickname.short_description = '昵称'
     
     @property
     def avatar_small(self):

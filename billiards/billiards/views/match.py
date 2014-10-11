@@ -13,7 +13,6 @@ from dateutil.relativedelta import relativedelta
 from django.core import serializers
 from django.core.exceptions import PermissionDenied
 from django.db.models.aggregates import Max
-from django.db.models.query import QuerySet, ValuesQuerySet
 from django.db.models.query_utils import Q
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404, redirect
@@ -22,10 +21,10 @@ from django.utils import simplejson
 import pytz
 
 from billiards import settings
-from billiards.models import Match, MatchEnroll, \
-    DisplayNameJsonSerializer, match_fields
-from billiards.settings import TEMPLATE_ROOT, TIME_ZONE
 from billiards.commons import tojson
+from billiards.models import Match, MatchEnroll, \
+     match_fields
+from billiards.settings import TEMPLATE_ROOT, TIME_ZONE
 
 
 def updateMatchJsonStrEnrollInfo(matchjsonstr, user, matchArray):

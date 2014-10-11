@@ -105,13 +105,13 @@ class CustomUserAdmin(UserAdmin):
             (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
                                            'groups', 'user_permissions')}),
             (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
-            (_('Social Site info'), {'fields': ('nickname', 'site_name', 'gender', 'avatar',
+            (_('Social Site info'), {'fields': ('get_nickname', 'site_name', 'gender', 'avatar',
                                                 'access_token', 'expire_time', 
                                                 'refresh_token')}),
         )
     form = CustomUserChangeForm
-    list_display = UserAdmin.list_display + ('nickname', 'site_name', 'gender', 'cellphone')
-    search_fields = UserAdmin.search_fields + ('nickname', )
+    list_display = UserAdmin.list_display + ('get_nickname', 'site_name', 'gender', 'cellphone')
+    search_fields = UserAdmin.search_fields + ('get_nickname', )
 
 class ChallengeAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj=None):

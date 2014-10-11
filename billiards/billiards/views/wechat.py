@@ -25,10 +25,11 @@ from werobot.utils import to_text
 
 from billiards import settings
 from billiards.bcms import mail
-from billiards.commons import set_query_parameter, KEY_PREFIX
+from billiards.commons import set_query_parameter, KEY_PREFIX,\
+    DisplayNameJsonSerializer
 from billiards.location_convertor import gcj2bd
 from billiards.models import Coupon, getCouponCriteria, Poolroom, \
-    WechatActivity, DisplayNameJsonSerializer, Event, Membership, Group, \
+    WechatActivity, Event, Membership, Group, \
     getThumbnailPath
 from billiards.settings import TEMPLATE_ROOT, TIME_ZONE, SITE_LOGO_URL
 from billiards.views.challenge import getNearbyChallenges

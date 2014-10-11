@@ -5,6 +5,8 @@
 <value>manage.py</value>
 <key>PROJECT_DIR_NAME</key>
 <value>billiards</value>
+<key>DJANGO_SETTINGS_MODULE</key>
+<value>billiards.settings</value>
 </pydev_variables_property>
 <pydev_pathproperty name="org.python.pydev.PROJECT_SOURCE_PATH">
 <path>/${PROJECT_DIR_NAME}</path>

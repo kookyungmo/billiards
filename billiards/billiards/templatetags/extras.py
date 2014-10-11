@@ -11,6 +11,7 @@ from billiards.commons import tojson
 from billiards.models import match_fields, poolroom_fields, PoolroomEquipment, \
      getThumbnailPath
 from billiards.views import match
+from billiards import commons
 
 
 def poolroomtojson(data):
@@ -73,10 +74,7 @@ def get_range( value ):
 
 @register.filter
 def decodeunicode(str1):
-    try:
-        return str1.decode('unicode_escape')
-    except UnicodeEncodeError:
-        return str1
+    return commons.decodeunicode(str1)
     
 @register.filter    
 def subtract(value, arg):
