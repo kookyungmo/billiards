@@ -156,7 +156,7 @@ class BJDaBengYingWechat(BJUniversityAssociationWechat):
     def text(self):
         o_handler = super(BJDaBengYingWechat, self).text()
         def text_handler(message):
-            if message.content == u'会员卡':
+            if message.content == u'申请会员卡':
                 return self.applyMember((), message, self.getOrgnizerId())
             elif message.content == u'查看会员卡':
                 return self.queryMember((), message, self.getOrgnizerId())
