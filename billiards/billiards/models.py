@@ -887,7 +887,9 @@ class Transaction(models.Model):
         verbose_name_plural = '交易信息'
         
 assistant_fields = ('uuid', 'nickname', 'birthday', 'gender', 'height', 'figure', 'haircolor', 'occupation',
-                    'language', 'interest', 'food', 'drinks', 'scent', 'dress')
+                    'language', 'interest', 'food', 'drinks', 'scent', 'dress', 'nationality',
+                    'birthplace', 'constellation', 'measurements', 'experience', 'favoriteplayers', 'bestperformance',
+                    'selfintroduce')
 class Assistant(models.Model):
     uuid = UUIDField(auto=True, hyphenate=True, unique=True)
     name = models.CharField(max_length=24, verbose_name="真实姓名")
