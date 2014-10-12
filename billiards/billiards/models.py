@@ -815,6 +815,8 @@ class CurrencyField(models.DecimalField):
     __metaclass__ = models.SubfieldBase
     
     def __init__(self, verbose_name=None, name=None, **kwargs):
+        kwargs = {key: value for key, value in kwargs.items() 
+             if key not in ('decimal_places', 'max_digits')}
         super(CurrencyField, self). __init__(
         verbose_name=verbose_name, name=name, max_digits=10,
         decimal_places=2, **kwargs)
@@ -881,14 +883,31 @@ assistant_fields = ('uuid', 'nickname', 'birthday', 'gender', 'height', 'figure'
                     'language', 'interest', 'food', 'drinks', 'scent', 'dress')
 class Assistant(models.Model):
     uuid = UUIDField(auto=True, hyphenate=True, unique=True)
-    name = models.CharField(max_length=24, verbose_name="姓名")
+    name = models.CharField(max_length=24, verbose_name="真实姓名")
     nickname = models.CharField(max_length=24, verbose_name="昵称")
     birthday = models.DateField(verbose_name="生日")
     gender = IntegerChoiceTypeField(verbose_name=u'性别', choices=(
             (1, u'女'),
             (2, u'男'),
         ), default=1, jsonUseValue=True)
+    
+    nationality = models.CharField(max_length=16, verbose_name="国籍")
+    birthplace = models.CharField(max_length=24, verbose_name="籍贯")
+    constellation = models.CharField(max_length=8, verbose_name="星座")
+    
     height = models.IntegerField(verbose_name="身高(cm)")
+    measurements = models.CharField(verbose_name="三围", max_length=24)
+    haircolor = ChoiceTypeField(max_length=16, choices=(
+            ('blank', u'黑发色'),
+            ('brown', u'褐发色'),
+            ('blond', u'金发发'),
+            ('auburn', u'赤褐发色'),
+            ('chestnut', u'栗发色'),
+            ('ginger/red', u'红发色'),
+            ('gray-white', u'灰白发色'),
+        ), verbose_name='头发颜色')
+    pubichair = models.CharField(verbose_name='阴毛', blank=True, max_length=64)
+    
     occupation = models.CharField(verbose_name='职业', max_length=24)
     language = JsonBitField(flags=(
             ('mandarin', u'普通话'),
@@ -904,16 +923,12 @@ class Assistant(models.Model):
     scent = models.CharField(verbose_name='气味', max_length=64)
     dress = models.CharField(verbose_name='穿着风格', max_length=64)
     figure = models.CharField(verbose_name='个性', max_length=64)
-    haircolor = ChoiceTypeField(max_length=16, choices=(
-            ('blank', u'黑发色'),
-            ('brown', u'褐发色'),
-            ('blond', u'金发发'),
-            ('auburn', u'赤褐发色'),
-            ('chestnut', u'栗发色'),
-            ('ginger/red', u'红发色'),
-            ('gray-white', u'灰白发色'),
-        ), verbose_name='头发颜色')
-    pubichair = models.CharField(verbose_name='阴毛', blank=True, max_length=64)
+    
+    experience = models.IntegerField(verbose_name="球龄(年)")
+    favoriteplayers = models.CharField(verbose_name="喜爱的台球选手", max_length=64)
+    selfintroduce = models.CharField(verbose_name="自我介绍", max_length=1024)
+    bestperformance = models.CharField(verbose_name="最佳清台记录", max_length=128)
+
     state = IntegerChoiceTypeField(verbose_name=u'状态', choices=(
             (1, u'有效'),
             (2, u'失效'),
