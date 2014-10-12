@@ -1060,3 +1060,12 @@ class AssistantAppointment(models.Model):
         db_table = 'assistant_appoinment'
         verbose_name = '助教预约详情'
         verbose_name_plural = '助教预约详情'
+
+try:
+    from south.modelsinspector import add_introspection_rules
+    add_introspection_rules([], ["^billiards\.models\.ChoiceTypeField"])
+    add_introspection_rules([], ["^billiards\.models\.IntegerChoiceTypeField"])
+    add_introspection_rules([], ["^billiards\.models\.JsonBitField"])
+    add_introspection_rules([], ["^billiards\.models\.CurrencyField"])
+except:
+    pass

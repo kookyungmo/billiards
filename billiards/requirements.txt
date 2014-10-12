@@ -14,3 +14,4 @@ hiredis
 django-mobi
 geopy==0.94.2
 python-geohash
+South
