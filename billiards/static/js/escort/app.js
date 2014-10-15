@@ -101,12 +101,15 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 				var start = now.clone().add(buffer, 'h');
 				for (var i in dayRange) {
 					for (var j = 0; j < $scope.offers[i].length; j++) {
-						if (start.diff(end, 'd') < 0) {
+						var diffdays = start.clone().startOf("day").diff(end.clone().startOf("day"), 'd');
+						if (diffdays < 0 || (diffdays == 0 && start.diff(
+								setTime($scope.offers[i][j].starttime, end)) <= 0)) {
 							return setTime($scope.offers[i][j].starttime, end);
 						}
-						var timearray = $scope.offers[i][j].endtime.split(":");
-						end.hour(timearray[0]);
-						end.minute(timearray[1]);
+						var end2 = setTime($scope.offers[i][j].endtime, end);
+						
+						if (end2.diff(end) > 0)
+							end = end2;
 					}
 					if (start.diff(end) < 0)
 						return start;
@@ -195,6 +198,8 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 					$scope.offerdistance = formatDistance(min) + "-" + formatDistance(max);
 				$scope.$apply();
 			});
+			//TODO load comments from server
+			$scope.comments = [];
 		});
 	  };
 	  

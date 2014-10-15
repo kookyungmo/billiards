@@ -277,116 +277,14 @@
  <div class="row coments">
    <div class="row icon_bar">
      <div class="small-6 column profile">
-       <h3>4 Reviews</h3>
+       <h3><{comments.length}> Reviews</h3>
      </div>
      <div class="small-6 column">
      </div>
    </div>
    <div class="row replys">
      <ul class="small-block-grid-1 medium-block-grid-1 large-block-grid-2 clearfix">
-       <li>
-         <div class="row coment_first padding_tb">
-           <div class="small-3 column medium-2">
-             <img src="{% static 'images/escort/comments_pic.png' %}" alt="#">
-           </div>
-           <div class="small-9 column medium-10">
-             <h4>
-               <a href="#">The Greatest Investment</a>
-               <span>Posted by Kyle on February 2nd, 2014</span>
-             </h4>
-             <p>Quisque condimentum, quam vel eleifend faucibus, felis
-              nulla porttitor enim, ac auctor turpis velit a massa. Vivamus tempor,
-              augue id commodo fringilla, diam massa aliquam enim.</p>
-           </div>
-         </div>
-         <ul>
-           <li>
-             <div class="row coment_first">
-               <div class="small-3 column medium-2">
-                 <img src="{% static 'images/escort/comments_pic.png' %}" alt="#">
-               </div>
-               <div class="small-9 column medium-10">
-                 <h4>
-                   <a href="#">The Greatest Investment</a>
-                   <span>Posted by Kyle on February 2nd, 2014</span>
-                 </h4>
-                 <p>Quisque condimentum, quam vel eleifend faucibus, felis
-                    nulla porttitor enim, ac auctor turpis velit a massa. Vivamus tempor,
-                    augue id commodo fringilla, diam massa aliquam enim.</p>
-               </div>
-             </div>
-           </li>
-         </ul>
-       </li>
-       <li>
-         <div class="row coment_first padding_tb">
-           <div class="small-3 column medium-2">
-             <img src="{% static 'images/escort/comments_pic.png' %}" alt="#">
-           </div>
-           <div class="small-9 column medium-10">
-             <h4>
-               <a href="#">The Greatest Investment</a>
-               <span>Posted by Kyle on February 2nd, 2014</span>
-             </h4>
-             <p>Quisque condimentum, quam vel eleifend faucibus, felis
-              nulla porttitor enim, ac auctor turpis velit a massa. Vivamus tempor,
-              augue id commodo fringilla, diam massa aliquam enim.</p>
-           </div>
-         </div>
-         <ul>
-           <li>
-             <div class="row coment_first">
-               <div class="small-3 column medium-2">
-                 <img src="{% static 'images/escort/comments_pic.png' %}" alt="#">
-               </div>
-               <div class="small-9 column medium-10">
-                 <h4>
-                   <a href="#">The Greatest Investment</a>
-                   <span>Posted by Kyle on February 2nd, 2014</span>
-                 </h4>
-                 <p>Quisque condimentum, quam vel eleifend faucibus, felis
-                    nulla porttitor enim, ac auctor turpis velit a massa. Vivamus tempor,
-                    augue id commodo fringilla, diam massa aliquam enim.</p>
-               </div>
-             </div>
-           </li>
-         </ul>
-       </li>
-       <li>
-         <div class="row coment_first padding_tb">
-           <div class="small-3 column medium-2">
-             <img src="{% static 'images/escort/comments_pic.png' %}" alt="#">
-           </div>
-           <div class="small-9 column medium-10">
-             <h4>
-               <a href="#">The Greatest Investment</a>
-               <span>Posted by Kyle on February 2nd, 2014</span>
-             </h4>
-             <p>Quisque condimentum, quam vel eleifend faucibus, felis
-              nulla porttitor enim, ac auctor turpis velit a massa. Vivamus tempor,
-              augue id commodo fringilla, diam massa aliquam enim.</p>
-           </div>
-         </div>
-         <ul>
-           <li>
-             <div class="row coment_first">
-               <div class="small-3 column medium-2">
-                 <img src="{% static 'images/escort/comments_pic.png' %}" alt="#">
-               </div>
-               <div class="small-9 column medium-10">
-                 <h4>
-                   <a href="#">The Greatest Investment</a>
-                   <span>Posted by Kyle on February 2nd, 2014</span>
-                 </h4>
-                 <p>Quisque condimentum, quam vel eleifend faucibus, felis
-                    nulla porttitor enim, ac auctor turpis velit a massa. Vivamus tempor,
-                    augue id commodo fringilla, diam massa aliquam enim.</p>
-               </div>
-             </div>
-           </li>
-         </ul>
-       </li>
-       <li>
+       <li ng-repeat="comment in comments">
          <div class="row coment_first padding_tb">
            <div class="small-3 column medium-2">
              <img src="{% static 'images/escort/comments_pic.png' %}" alt="#">
