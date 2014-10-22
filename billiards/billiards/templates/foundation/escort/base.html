@@ -17,10 +17,8 @@
 				<section class="middle tab-bar-section">
 					<h1 class="title">我为台球狂</h1>
 				</section>
-
-				<section class="right-small">
-					<a class="right-off-canvas-toggle menu-icon" href="#"><span></span></a>
-				</section>
+				{% block right-menu-section %}
+				{% endblock %}
 			</nav>
 
 			<aside class="left-off-canvas-menu">
@@ -57,39 +55,8 @@
 			  </ul>
 			</aside>
 	
-	    <aside class="right-off-canvas-menu">
-    	    <form>
-            <ul class="off-canvas-list filter-menu">
-              <li><label>筛选条件</label></li>
-              <li class="filter filter-sex">
-                <label>性别：</label>
-                <div>
-                  <div class="choice-block">
-                    <input type="checkbox" id="filter-sex-female" name="filterSexFemale" checked="checked">
-                    <label for="filter-sex-female" class="checked">女性</label>
-                  </div>
-                  <div class="choice-block">
-                    <input type="checkbox" id="filter-sex-male" name="filterSexMale">
-                    <label for="filter-sex-male">男性</label>
-                  </div>
-                </div>
-              </li>
-              <li class="filter filter-sex">
-                <label>价格区间：<span id="price-range"></span>元</label>
-                <div>
-                  <div id="price-slider"></div>
-                </div>
-              </li>
-              <li class="filter filter-sex">
-                <label>距离：<span id="distance-range"></span>公里</label>
-                <div>
-                  <div id="distance-slider"></div>
-                </div>
-              </li>
-            </ul>
-          </form>
-        </aside>
-		
+			{% block right-menu %}
+			{% endblock %}
 		<a class="exit-off-canvas"></a>
 {% endblock %}
 {% block share %}
@@ -106,6 +73,6 @@
 <script src="{{JS_CDN_PREFIX}}/libs/restangular/1.3.1/restangular.min.js"></script>
 <script src="{{JS_CDN_PREFIX}}/libs/moment.js/2.7.0/moment.min.js"></script>
 <script src="{{JS_CDN_PREFIX}}/libs/moment.js/2.7.0/lang/zh-cn.min.js"></script>
-<script src="{% static "js/escort/app.js" %}"></script>
 {% block escortfoundationscript %}{% endblock %}
+<script src="{% static "js/escort/app.js" %}"></script>
 {% endblock %}

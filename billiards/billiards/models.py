@@ -819,13 +819,14 @@ class CurrencyField(models.DecimalField):
             return None
         
 class Goods(models.Model):
-    id = models.AutoField(primary_key=True)
+    hash = models.CharField(max_length=32, verbose_name='商品hash值', unique=True)
     sku = models.CharField(max_length=32, verbose_name='商品sku', default=generator(32))
-    name = models.CharField(max_length=32, verbose_name='商品名称')
+    name = models.CharField(max_length=256, verbose_name='商品名称')
     description = models.CharField(max_length=512, verbose_name='描述')
     price = CurrencyField(verbose_name='价格(元)')
     type = IntegerChoiceTypeField(verbose_name=u'类别', choices=(
             (1, u'电子卡'),
+            (2, u'预约'),
         ), default=1)
     state = IntegerChoiceTypeField(verbose_name=u'状态', choices=(
             (1, u'可购买'),
@@ -1050,21 +1051,23 @@ class AssistantOffer(models.Model):
     
         
 class AssistantAppointment(models.Model):
-    assitant = models.ForeignKey(Assistant, verbose_name="助教")
+    assistant = models.ForeignKey(Assistant, verbose_name="助教")
     user = models.ForeignKey(User, verbose_name="用户")
     poolroom = models.IntegerField(verbose_name="预约的球房", blank=True)
     goods = models.ForeignKey(Goods, verbose_name="商品id")
     transaction = models.ForeignKey(Transaction, verbose_name="交易订单")
     starttime = models.DateTimeField(verbose_name="预订开始时间")
     endtime = models.DateTimeField(verbose_name="预订结束时间")
-    duration = models.IntegerField(verbose_name="时长(分钟)")
+    duration = models.IntegerField(verbose_name="时长(小时)")
     price = models.IntegerField(verbose_name="价钱(元/小时)")
     createdDate = models.DateTimeField(verbose_name="预约创建时间")
     state = IntegerChoiceTypeField(verbose_name=u'状态', choices=(
-            (1, u'等待确认'),
-            (2, u'等待退款'),
-            (3, u'交易取消'),
-            (8, u'交易完成'),
+            (1, u'等待付款'),
+            (2, u'等待确认'),
+            (4, u'等待退款'),
+            (8, u'交易取消'),
+            (16, u'交易关闭'),
+            (256, u'交易完成'),
         ), default=1)  
     
     class Meta:

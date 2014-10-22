@@ -1,6 +1,45 @@
 {% extends "foundation/escort/base.html" %} 
 {% load staticfiles %}
 {% load extras %} 
+{% block right-menu-section %}
+<section class="right-small">
+	<a class="right-off-canvas-toggle menu-icon" href="#"><span></span></a>
+</section>
+{% endblock %}
+{% block right-menu %}
+<aside class="right-off-canvas-menu">
+    <form>
+       <ul class="off-canvas-list filter-menu">
+         <li><label>筛选条件</label></li>
+         <li class="filter filter-sex">
+           <label>性别：</label>
+           <div>
+             <div class="choice-block">
+               <input type="checkbox" id="filter-sex-female" name="filterSexFemale" checked="checked">
+               <label for="filter-sex-female" class="checked">女性</label>
+             </div>
+             <div class="choice-block">
+               <input type="checkbox" id="filter-sex-male" name="filterSexMale">
+               <label for="filter-sex-male">男性</label>
+             </div>
+           </div>
+         </li>
+         <li class="filter filter-sex">
+           <label>价格区间：<span id="price-range"></span>元</label>
+           <div>
+             <div id="price-slider"></div>
+           </div>
+         </li>
+         <li class="filter filter-sex">
+           <label>距离：<span id="distance-range"></span>公里</label>
+           <div>
+             <div id="distance-slider"></div>
+           </div>
+         </li>
+       </ul>
+   </form>
+</aside>
+{% endblock %}
 {% block maincontent %}
 	<div ng-app="escortApp" ng-controller="ProviderListCtrl">
           <ul class="provider-list small-block-grid-1 medium-block-grid-2 large-block-grid-3 xlarge-block-grid-4 xxlarge-block-grid-5">

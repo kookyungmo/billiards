@@ -21,6 +21,13 @@ if(!Object.keys) Object.keys = function(o){
 
 moment.lang("zh-CN");
 
+function refreshAuthentication() {
+	if (isWechat())
+		dologin('user/login/wechat');
+	else
+		loginFirst();
+}
+
 angular.module("escortApp", ["ngRoute", "restangular"])
 
 .config(function($interpolateProvider, $routeProvider) {
@@ -100,19 +107,26 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 				var end = moment();
 				var start = now.clone().add(buffer, 'h');
 				for (var i in dayRange) {
+					var min_start = null;
+					var diffdays = moment().clone().startOf("day").diff(end.clone().startOf("day"), 'd');
+					var inRange = false;
 					for (var j = 0; j < $scope.offers[i].length; j++) {
-						var diffdays = start.clone().startOf("day").diff(end.clone().startOf("day"), 'd');
-						if (diffdays < 0 || (diffdays == 0 && start.diff(
-								setTime($scope.offers[i][j].starttime, end)) <= 0)) {
-							return setTime($scope.offers[i][j].starttime, end);
-						}
-						var end2 = setTime($scope.offers[i][j].endtime, end);
-						
-						if (end2.diff(end) > 0)
-							end = end2;
+						if (min_start == null)
+							min_start = setTime($scope.offers[i][j].starttime, end.clone());
+						else if (min_start.diff(setTime($scope.offers[i][j].starttime, end.clone())) > 0)
+							min_start = setTime($scope.offers[i][j].starttime, end.clone());
+						if (start.diff(setTime($scope.offers[i][j].endtime, end.clone())) < 0)
+							inRange = true;
 					}
-					if (start.diff(end) < 0)
-						return start;
+					
+					if (diffdays == 0) {
+						if (start.diff(min_start) < 0)
+							return min_start;
+						else if (inRange)
+							return start;
+					} else if (min_start != null)
+						return min_start;
+					
 					end.add(1, 'd');
 				}
 				return null;
@@ -133,11 +147,12 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 					for (var j = 0; j < $scope.offers[i].length; j++) {
 						var start, end;
 						if (starthour.clone().startOf('day').diff(day, 'd') == 0) {
-							start = starthour.clone();
-							end = setTime($scope.offers[i][j].endtime, moment());
+							var start2 = setTime($scope.offers[i][j].starttime, day.clone());
+							start = starthour.diff(start2) > 0 ? starthour.clone() : start2;
+							end = setTime($scope.offers[i][j].endtime, day.clone());
 						} else {
-							start = setTime($scope.offers[i][j].starttime, moment());
-							end = setTime($scope.offers[i][j].endtime, moment());
+							start = setTime($scope.offers[i][j].starttime, day.clone());
+							end = setTime($scope.offers[i][j].endtime, day.clone());
 						}
 						if (end.diff(start, 'h') > 0) {
 							hours = hours.concat(_.range(start.hour(), end.hour()));
@@ -198,6 +213,19 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 					$scope.offerdistance = formatDistance(min) + "-" + formatDistance(max);
 				$scope.$apply();
 			});
+			
+			$scope.offerDuring = 1;
+			$scope.booking = function() {
+				if (AUTH === 1) {
+					var params = {offerDay: $scope.selectedOffer.day.unix(), offerHour: $scope.selectedOfferHour, offerDuring: $scope.offerDuring};
+					baseEscort.one('offer', 'booking').customPOST(params).then(function (rt){
+						if (rt.code == 0)
+							window.location = rt.payurl;
+				    });
+				} else {
+					refreshAuthentication();
+				}
+			};
 			//TODO load comments from server
 			$scope.comments = [];
 		});

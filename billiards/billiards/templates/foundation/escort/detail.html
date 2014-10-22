@@ -234,7 +234,7 @@
                      </div>
                      <div class="small-3 padding_3 column">
                        <label> 
-                         <select>
+                         <select data-ng-model="offerDuring">
                            <option value="1">1小时</option>
                            <option value="2">2小时</option>
                            <option value="3">3小时</option>
@@ -270,8 +270,8 @@
 
  <div class="row  bttnz_div collapse">
    <div class="small-12 medium-4 large-3 column">
-     <a class="button expand" href="#">i want to book Now</a>
-   </div>
+     <a class="button expand" ng-click="booking();" ng-disabled="selectedOfferHour == null">我要预订</a>
+  </div>
  </div>
 
  <div class="row coments">
@@ -341,4 +341,5 @@
 {% endblock %} 
 {% block escortfoundationscript %}
 <script src="{{JS_CDN_PREFIX}}/libs/foundation/{{FOUNDATION_VER}}/js/foundation/foundation.orbit.min.js"></script>
+<script src="{% static "js/app.js" %}"></script>
 {% endblock %}
