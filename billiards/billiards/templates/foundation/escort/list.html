@@ -1,6 +1,9 @@
 {% extends "foundation/escort/base.html" %} 
 {% load staticfiles %}
 {% load extras %} 
+{% block appheader %}
+<link rel="stylesheet" href="{% static "css/escort/list.css" %}?{{scsshash}}">
+{% endblock %}
 {% block right-menu-section %}
 <section class="right-small">
 	<a class="right-off-canvas-toggle menu-icon" href="#"><span></span></a>
