@@ -88,7 +88,7 @@ class Poolroom(models.Model):
             (1, u'正常'),
             (2, u'已倒闭'),
             (3, u'暂时停业'),
-        ), default=1,)
+        ), default=1)
     location = GeohashField()
 
     class Meta:
@@ -111,6 +111,9 @@ class Poolroom(models.Model):
                 'businesshours': self.businesshours, 'size': self.size,
                 'address': self.address, 'flags': toDict(self.flags), 'rating': self.rating,
                 'images': images}
+
+    def natural_key_simple(self):
+        return {'uuid': str(self.uuid), 'name': self.name, 'lat': self.lat_baidu, 'lng': self.lng_baidu}
         
     objects = GeoManager()
         
@@ -836,6 +839,9 @@ class Goods(models.Model):
     
     def __unicode__(self):
         return u'[%s] %s(%s元) -- %s' %(self.get_type_display(), self.name, self.price, self.get_state_display())
+    
+    def natural_key(self):
+        return {'sku': self.sku, 'price': self.price, 'id': self.hash}
         
     class Meta:
         db_table = 'goods'
@@ -864,7 +870,11 @@ class Transaction(models.Model):
             (3, u'已取消'),
             (4, u'已过期'),
             (5, u'已完成')
-        ), default=1)
+        ), default=1, jsonUseValue=True)
+    
+    def natural_key(self):
+        return {'tradenum': self.tradenum, 'goods': self.goods.natural_key(), 'fee': self.fee, 'tradeStatus': self.tradeStatus,
+                'state': int(self.state)}
     
     class Meta:
         db_table = 'transaction'
@@ -1050,6 +1060,8 @@ class AssistantOffer(models.Model):
         return u"[%s] %s %s元/小时 (%s-%s)" %(self.assistant.nickname, poolroomname,  self.price, self.starttime, self.endtime)
     
         
+assistant_appointment_fields = ('assistant', 'poolroom', 'starttime', 'endtime', 'duration', 'price', 'createdDate',
+            'state', 'transaction')
 class AssistantAppointment(models.Model):
     assistant = models.ForeignKey(Assistant, verbose_name="助教")
     user = models.ForeignKey(User, verbose_name="用户")
@@ -1068,7 +1080,7 @@ class AssistantAppointment(models.Model):
             (8, u'交易取消'),
             (16, u'交易关闭'),
             (256, u'交易完成'),
-        ), default=1)  
+        ), default=1, jsonUseValue=True)  
     
     class Meta:
         db_table = 'assistant_appoinment'

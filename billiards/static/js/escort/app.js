@@ -236,4 +236,23 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 	    var ageDate = new Date(ageDifMs); // miliseconds from epoch
 	    return Math.abs(ageDate.getUTCFullYear() - 1970);
 	}
+}])
+
+.controller('OrderCtrl', ['$scope', '$routeParams', "Restangular", function($scope, $routeParams, Restangular) {
+	var myOrder = Restangular.one('user', 'order');
+	myOrder.post().then(function (orders){
+    	$scope.orders = orders;
+    });
+	
+	function parseTime(timestr) {
+		return moment(timestr, moment.ISO_8601).zone('+0800');
+	}
+	
+	$scope.orderTime = function(timestr) {
+		return parseTime(timestr).format('HH mm');
+	};
+	
+	$scope.orderDate = function(timestr) {
+		return parseTime(timestr).format('YYYY-MM-DD');
+	};
 }]);

@@ -62,7 +62,7 @@ class DisplayNameJsonSerializer(Serializer):
 
         #If the object has a get_field_display() method, use it. 
         display_method = "get_%s_display" % field.name 
-        if  hasattr(field, 'json_use_value') and getattr(field, 'json_use_value')() == False:
+        if  hasattr(field, 'json_use_value') and getattr(field, 'json_use_value')() == True:
             self._current[field.name] = value
         elif hasattr(obj, display_method): 
             self._current[field.name] = getattr(obj, display_method)() 

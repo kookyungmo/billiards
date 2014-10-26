@@ -11,14 +11,15 @@ from django.http.response import HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template.context import RequestContext
 from django.utils import simplejson
-from django.utils.timezone import localtime, pytz, utc
+from django.utils.timezone import pytz, utc
 from django.views.decorators.csrf import csrf_exempt
 from mobi.decorators import detect_mobile
 
 from billiards.commons import tojson2, NoObjectJSONSerializer
 from billiards.models import Assistant, AssistantOffer, assistantoffer_fields, Poolroom, \
     assistant_fields, AssistantImage, \
-    assistantimage_fields, assistantoffer_fields_2, AssistantAppointment, Goods
+    assistantimage_fields, assistantoffer_fields_2, AssistantAppointment, Goods,\
+    assistant_appointment_fields
 from billiards.settings import TEMPLATE_ROOT
 from billiards.views.transaction import createTransaction
 from billiards import settings
@@ -32,7 +33,7 @@ class AssistantJSONSerializer(NoObjectJSONSerializer):
         if field.name == 'poolroom':
             value = field._get_val_from_obj(obj)
             if value is not None:
-                self._current[field.name] = Poolroom.objects.get(id=value).natural_key()
+                self._current[field.name] = Poolroom.objects.get(id=value).natural_key_simple()
             else:
                 self._current[field.name] = '{}';
         else:
@@ -47,6 +48,16 @@ def assistant_list(request):
         .annotate(dcount=Count('assistant'))
     jsonstr = tojson2(assistantsOffers, AssistantJSONSerializer(), assistantoffer_fields)
     return HttpResponse(jsonstr)
+
+@csrf_exempt
+def assistant_order(request):
+    if request.user.is_authenticated():
+        if request.method == 'GET':
+            return render_to_response(TEMPLATE_ROOT + 'escort/order.html', context_instance=RequestContext(request))
+        else:
+            appoints = AssistantAppointment.objects.filter(ASSISTANTAPPOINTMENT_FILTER).filter(user=request.user).order_by("-createdDate")
+            return HttpResponse(tojson2(appoints, AssistantJSONSerializer(), assistant_appointment_fields))
+    raise PermissionDenied("login firstly.") 
 
 @csrf_exempt
 def assistant_by_uuid(request, assistant_uuid):
