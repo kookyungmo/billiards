@@ -38,6 +38,12 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 .controller("ProviderListCtrl", ["$scope", "Restangular", function($scope, Restangular) {
 	Restangular.one('assistant', 'list').get().then(function (assistants){
     	$scope.assistants = assistants;
+    	for (var i = 0; i < $scope.assistants.length; i++) {
+    		if ($scope.assistants[i].minprice == $scope.assistants[i].maxprice)
+				$scope.assistants[i].price = $scope.assistants[i].minprice;
+			else
+				$scope.assistants[i].price = $scope.assistants[i].minprice + "-" + $scope.assistants[i].maxprice;
+    	}
 		fetchBMapLocation(function(mypoint) {
 			for (var i = 0; i < $scope.assistants.length; i++) {
 				$scope.assistants[i].distance = formatDistance(distance(mypoint, new BMap.Point(

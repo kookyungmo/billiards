@@ -13,6 +13,7 @@ from django.db.models.query import QuerySet, ValuesQuerySet
 from StringIO import StringIO
 from django.core.serializers.json import Serializer
 from django.utils.encoding import is_protected_type
+from datetime import datetime
 
 KEY_PREFIX = 'location_%s_%s'
 
@@ -83,3 +84,10 @@ def decodeunicode(str1):
         return str1.decode('unicode_escape')
     except UnicodeEncodeError:
         return str1
+    
+def json_serial(obj):
+    """JSON serializer for objects not serializable by default json code"""
+
+    if isinstance(obj, datetime):
+        serial = obj.isoformat()
+        return serial

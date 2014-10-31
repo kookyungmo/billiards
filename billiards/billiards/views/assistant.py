@@ -5,7 +5,7 @@ import hashlib
 import uuid
 
 from django.core.exceptions import PermissionDenied
-from django.db.models.aggregates import Count
+from django.db.models.aggregates import Count, Max, Min
 from django.db.models.query_utils import Q
 from django.http.response import HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404
@@ -15,15 +15,15 @@ from django.utils.timezone import pytz, utc
 from django.views.decorators.csrf import csrf_exempt
 from mobi.decorators import detect_mobile
 
-from billiards.commons import tojson2, NoObjectJSONSerializer
-from billiards.models import Assistant, AssistantOffer, assistantoffer_fields, Poolroom, \
+from billiards.commons import tojson2, NoObjectJSONSerializer, json_serial
+from billiards.models import Assistant, AssistantOffer, Poolroom, \
     assistant_fields, AssistantImage, \
     assistantimage_fields, assistantoffer_fields_2, AssistantAppointment, Goods,\
     assistant_appointment_fields
 from billiards.settings import TEMPLATE_ROOT
 from billiards.views.transaction import createTransaction
 from billiards import settings
-
+import json
 
 def assistant(request):
     return render_to_response(TEMPLATE_ROOT + 'escort/list.html', context_instance=RequestContext(request))
@@ -38,15 +38,22 @@ class AssistantJSONSerializer(NoObjectJSONSerializer):
                 self._current[field.name] = '{}';
         else:
             super(AssistantJSONSerializer, self).handle_field(obj, field)
+            
+def updateOffers(offers):
+    for offer in offers:
+        offer['assistant'] = Assistant.objects.get(id=offer['assistant']).natural_key()
+        offer['poolroom'] = Poolroom.objects.get(id=offer['poolroom']).natural_key_simple()
+    return offers
 
 ASSISTANT_FILTER = Q(state=1)
 ASSISTANT_OFFER_FILTER = Q(status=1)
 ASSISTANT_IMAGE_FILTER = Q(status=1)
 ASSISTANTAPPOINTMENT_FILTER = ~Q(state=8) & ~Q(state=16)
 def assistant_list(request):
-    assistantsOffers = AssistantOffer.objects.filter(ASSISTANT_OFFER_FILTER).filter(assistant__in=Assistant.objects.filter(ASSISTANT_FILTER))\
-        .annotate(dcount=Count('assistant'))
-    jsonstr = tojson2(assistantsOffers, AssistantJSONSerializer(), assistantoffer_fields)
+    # really tricky
+    assistantsOffers = AssistantOffer.objects.values('assistant').filter(ASSISTANT_OFFER_FILTER).filter(assistant__in=Assistant.objects.filter(ASSISTANT_FILTER))\
+        .annotate(maxprice = Max('price'), minprice = Min('price'), poolroom = Min('poolroom'))
+    jsonstr = json.dumps(list(updateOffers(assistantsOffers)), default=json_serial)
     return HttpResponse(jsonstr)
 
 @csrf_exempt

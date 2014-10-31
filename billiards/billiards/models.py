@@ -1027,7 +1027,7 @@ class AssistantImage(models.Model):
 assistantoffer_fields = ('assistant', 'poolroom', 'price')
 assistantoffer_fields_2 = ('poolroom', 'price', 'starttime', 'endtime', 'priceDescription', 'extraService')
 class AssistantOffer(models.Model):
-    assistant = models.ForeignKey(Assistant, verbose_name="助教")
+    assistant = models.ForeignKey(Assistant, verbose_name="助教", related_name="offer")
     poolroom = models.IntegerField(verbose_name="预约的球房", blank=True)
     price = models.IntegerField(verbose_name="价钱(元/小时)")
     day = JsonBitValueField(flags=(
