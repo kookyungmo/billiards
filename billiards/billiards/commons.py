@@ -14,6 +14,7 @@ from StringIO import StringIO
 from django.core.serializers.json import Serializer
 from django.utils.encoding import is_protected_type
 from datetime import datetime
+from bitfield.models import BitField
 
 KEY_PREFIX = 'location_%s_%s'
 
@@ -64,7 +65,10 @@ class DisplayNameJsonSerializer(Serializer):
         #If the object has a get_field_display() method, use it. 
         display_method = "get_%s_display" % field.name 
         if  hasattr(field, 'json_use_value') and getattr(field, 'json_use_value')() == True:
-            self._current[field.name] = value
+            if isinstance(field, BitField):
+                self._current[field.name] = int(value)
+            else:
+                self._current[field.name] = value
         elif hasattr(obj, display_method): 
             self._current[field.name] = getattr(obj, display_method)() 
         # Protected types (i.e., primitives like None, numbers, dates, 
