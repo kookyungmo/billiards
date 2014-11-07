@@ -10,6 +10,7 @@ from billiards.settings import STATIC_URL, SITE_LOGO_URL
 
 BUILDID = 20131210
 REV = '2013.12.15.abcdef'
+SCSSHASH = 'abcdefg'
 def siteconf(request):
     """
     Adds ibilliards global context variables to the context.
@@ -17,6 +18,7 @@ def siteconf(request):
     """
     return {
             'buildid': int(time.time()) if settings.DEBUG else BUILDID,
+            'scsshash': SCSSHASH,
             'rev': REV,
             'STATIC_URL': STATIC_URL,
             'SITE_LOGO_URL': SITE_LOGO_URL,
