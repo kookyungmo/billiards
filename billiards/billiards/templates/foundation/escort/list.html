@@ -1,0 +1,77 @@
+{% extends "foundation/escort/base.html" %} 
+{% load staticfiles %}
+{% load extras %} 
+{% block appheader %}
+<link rel="stylesheet" href="{% static "css/escort/list.css" %}?{{scsshash}}">
+{% endblock %}
+{% block right-menu-section %}
+<section class="right-small">
+	<a class="right-off-canvas-toggle menu-icon" href="#"><span></span></a>
+</section>
+{% endblock %}
+{% block right-menu %}
+<aside class="right-off-canvas-menu">
+    <form>
+       <ul class="off-canvas-list filter-menu">
+         <li><label>筛选条件</label></li>
+         <li class="filter filter-sex">
+           <label>性别：</label>
+           <div>
+             <div class="choice-block">
+               <input type="checkbox" id="filter-sex-female" name="filterSexFemale" checked="checked">
+               <label for="filter-sex-female" class="checked">女性</label>
+             </div>
+             <div class="choice-block">
+               <input type="checkbox" id="filter-sex-male" name="filterSexMale">
+               <label for="filter-sex-male">男性</label>
+             </div>
+           </div>
+         </li>
+         <li class="filter filter-sex">
+           <label>价格区间：<span id="price-range"></span>元</label>
+           <div>
+             <div id="price-slider"></div>
+           </div>
+         </li>
+         <li class="filter filter-sex">
+           <label>距离：<span id="distance-range"></span>公里</label>
+           <div>
+             <div id="distance-slider"></div>
+           </div>
+         </li>
+       </ul>
+   </form>
+</aside>
+{% endblock %}
+{% block maincontent %}
+	<div ng-app="escortApp" ng-controller="ProviderListCtrl">
+          <ul class="provider-list small-block-grid-1 medium-block-grid-2 large-block-grid-3 xlarge-block-grid-4 xxlarge-block-grid-5">
+            <li ng-repeat="as in assistants">
+              <a href="assistant/<{ as.assistant.uuid }>" class="showcase-wrapper">
+                  <div class="image" style="background-image: url(<{ as.assistant.coverimage }>);"></div>
+                  <div class="img-overlay"></div>
+                  <div class="profile-info">
+                    <div class="profile-name"><h1><{ as.assistant.nickname }></h1></div>
+                    <div class="indicators">
+                      <div class="indicator price-indicator">
+                        <span class="data"><{ as.price }>元/小时</span>
+                      </div>
+                      <div class="indicator availability-indicator">
+                        <span class="data">随时</span>
+                      </div>
+                      <div class="indicator location-indicator">
+                        <span class="data"><{ as.poolroom.name }></span>
+                      </div>
+                      <div class="indicator distance-indicator">
+                        <span class="data" ng-show="!!as.distance"><{ as.distance }></span>
+                      </div>
+                    </div>
+                  </div>
+              </a>
+            </li>
+          </ul>
+    </div>
+{% endblock %} 
+{% block script %}
+<script src="{% static "js/escort/list.js" %}"></script>
+{% endblock %}

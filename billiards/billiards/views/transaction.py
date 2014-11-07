@@ -34,35 +34,38 @@ def getWapAlipay():
 def getGoods(sku):
     return get_object_or_404(Goods, sku=sku)
 
+def createTransaction(request, goods):
+    isMobile = request.mobile
+    account, alipay = getWapAlipay() if isMobile else getAlipay()
+    nativetime = datetime.utcnow()
+    localtz = pytz.timezone(settings.TIME_ZONE)
+    localtime = localtz.localize(nativetime)
+    extendtime = localtime + timedelta(days=-15)
+    transaction, created = Transaction.objects.get_or_create(payaccount=account, subject=goods.name, user=request.user, goods=goods, fee=goods.price, 
+        state=1, createdDate__gt=extendtime, 
+        defaults={'createdDate': datetime.utcnow(), 'payaccount': account, 'subject': goods.name, 'user': request.user,
+                  'goods': goods, 'fee': goods.price, 'state': 1})
+    if created == True:
+        transaction.save()
+    returnurl = request.build_absolute_uri(reverse('transaction_alipay_wapreturn')) if isMobile else request.build_absolute_uri(reverse('transaction_alipay_return'))
+    notifyurl = request.build_absolute_uri(reverse('transaction_alipay_wapnotify')) if isMobile else request.build_absolute_uri(reverse('transaction_alipay_notify'))
+    if isMobile:
+        params = {'out_trade_no': transaction.tradenum,
+              'subject': transaction.subject,
+              'total_fee': transaction.fee,
+              'seller_account_name': alipay.seller_email,
+              'call_back_url': returnurl,
+              'notify_url': notifyurl}
+    else:
+        params = {'out_trade_no': transaction.tradenum, 'subject': transaction.subject, 'total_fee': transaction.fee, 
+        'return_url': returnurl, 'notify_url': notifyurl}
+    return (transaction, alipay.create_direct_pay_by_user_url(**params))
+
 @detect_mobile
 def alipay_goods(request, sku):
     if request.user.is_authenticated():
         goods = getGoods(sku)
-        isMobile = request.mobile
-        account, alipay = getWapAlipay() if isMobile else getAlipay()
-        nativetime = datetime.utcnow()
-        localtz = pytz.timezone(settings.TIME_ZONE)
-        localtime = localtz.localize(nativetime)
-        extendtime = localtime + timedelta(days=-15)
-        transaction, created = Transaction.objects.get_or_create(payaccount=account, subject=goods.name, user=request.user, goods=goods, fee=goods.price, 
-            state=1, createdDate__gt=extendtime, 
-            defaults={'createdDate': datetime.utcnow(), 'payaccount': account, 'subject': goods.name, 'user': request.user,
-                      'goods': goods, 'fee': goods.price, 'state': 1})
-        if created == True:
-            transaction.save()
-        returnurl = request.build_absolute_uri(reverse('transaction_alipay_wapreturn')) if isMobile else request.build_absolute_uri(reverse('transaction_alipay_return'))
-        notifyurl = request.build_absolute_uri(reverse('transaction_alipay_wapnotify')) if isMobile else request.build_absolute_uri(reverse('transaction_alipay_notify'))
-        if isMobile:
-            params = {'out_trade_no': transaction.tradenum,
-                  'subject': transaction.subject,
-                  'total_fee': transaction.fee,
-                  'seller_account_name': alipay.seller_email,
-                  'call_back_url': returnurl,
-                  'notify_url': notifyurl}
-        else:
-            params = {'out_trade_no': transaction.tradenum, 'subject': transaction.subject, 'total_fee': transaction.fee, 
-            'return_url': returnurl, 'notify_url': notifyurl}
-        url = alipay.create_direct_pay_by_user_url(**params)
+        url = createTransaction(request, goods)[1]
         return HttpResponseRedirect(url)
     return HttpResponse(json.dumps({'rt': -1, 'msg': 'login first'}), content_type="application/json")
 

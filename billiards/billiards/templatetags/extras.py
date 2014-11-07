@@ -6,10 +6,13 @@ Created on 2013年10月31日
 @author: kane
 '''
 from django import template
-from billiards.models import match_fields, poolroom_fields, PoolroomEquipment,\
-    PoolroomImage
+
+from billiards.commons import tojson
+from billiards.models import match_fields, poolroom_fields, PoolroomEquipment, \
+     getThumbnailPath
 from billiards.views import match
-from billiards.views.match import tojson
+from billiards import commons
+
 
 def poolroomtojson(data):
     return tojson(data, poolroom_fields)
@@ -30,7 +33,10 @@ def matchtojsonwithenroll(matches, user):
         return jsonstr
 
 def thumbnail(imagepath, width):
-    return PoolroomImage.getThumbnailPath(imagepath.name, width)
+    return thumbnail2(imagepath.name, width)
+
+def thumbnail2(imagepath, length, prefix = 'w'):
+    return getThumbnailPath(imagepath.name, length, prefix)
 
 def classname(obj):
     classname = obj.__class__.__name__
@@ -68,10 +74,7 @@ def get_range( value ):
 
 @register.filter
 def decodeunicode(str1):
-    try:
-        return str1.decode('unicode_escape')
-    except UnicodeEncodeError:
-        return str1
+    return commons.decodeunicode(str1)
     
 @register.filter    
 def subtract(value, arg):

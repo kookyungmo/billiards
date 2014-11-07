@@ -1,0 +1,77 @@
+{% extends "foundation/base.html" %}
+{% load staticfiles %}
+{% load extras %}
+{% block header %}
+<script type="text/javascript"
+	src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>
+<script src="{% static "js/map_ui.js" %}?{{buildid}}"></script>
+{% block escortheader %}{% endblock %}
+{% endblock %}
+{% block header-nav %}
+			<nav class="tab-bar">
+				<section class="left-small">
+					<a class="left-off-canvas-toggle menu-icon" href="#"><span></span></a>
+				</section>
+
+				<section class="middle tab-bar-section">
+					<h1 class="title">我为台球狂</h1>
+				</section>
+				{% block right-menu-section %}
+				{% endblock %}
+			</nav>
+
+			<aside class="left-off-canvas-menu">
+			  <ul class="off-canvas-list">
+				<li><label>我为台球狂</label></li>
+				<li><a href="http://{{ request.get_host }}">首页</a></li>
+				<li><a href="{{ mapurl }}">赛事活动</a></li>
+				<li><a href="{{ nearby }}">附近球房</a></li>
+				<li><a href="{{ challenge }}">约球公告</a></li>
+				<li><a href="{{ gameurl }}">找乐子</a></li> 
+				{% if user.is_authenticated %} 
+					{% if poolroomuser %}
+					<li><label>俱乐部会员服务</label></li>
+					<li><a href="{% url 'club_match' %}">比赛</a></li>
+					<li><a href="{% url 'club_challenge' %}">约赛</a></li> 
+					{% elif user.is_staff %}
+					<li><label>网站管理</label></li>
+					<li><a href="{% url 'wechat_activity_report' %}">微信用户互动统计</a></li>
+					{% endif %}
+				<li><label>用户中心</label></li>
+				<li><a href="javascript:void(0);">{{ user.nickname|decodeunicode }}</a></li>
+				<li><a href="{{ user_logout }}">登出</a></li> 
+				{% else %}
+				<li><label>用户登录</label></li>
+				<li id="wechatlogin" class="hide"><a href="javascript:dologin('{{ wechat }}');">微信登录</a></li>
+				<li><a href="javascript:dologin('{{ qq }}');">QQ登录</a></li>
+				<li><a href="javascript:dologin('{{ weibo }}');">微博登录</a></li> 
+				{% endif %}
+				<li><label>关于我为台球狂</label></li>
+				<li><a href="{% url 'about' %}">关于我们</font></a></li>
+				<li><a href="{% url 'join' %}">加入我们</font></a></li>
+				<li><a href="{% url 'contact' %}">联系我们</font></a></li>
+				<li><a href="{% url 'partner' %}">关注俱乐部</font></a></li>
+			  </ul>
+			</aside>
+	
+			{% block right-menu %}
+			{% endblock %}
+		<a class="exit-off-canvas"></a>
+{% endblock %}
+{% block share %}
+    <span id="menu-tip" class="tooltip" style="">菜单<span class="nub"></span></span>
+    <span id="filter-tip" class="tooltip">筛选条件<span class="nub"></span></span>
+{% endblock %}
+{% block footer %}
+{% endblock %}
+{% block foundationscript %}
+<script src="{{JS_CDN_PREFIX}}/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+<script src="{{JS_CDN_PREFIX}}/libs/angular.js/1.2.20/angular.min.js"></script>
+<script src="{{JS_CDN_PREFIX}}/libs/lodash.js/2.4.1/lodash.min.js"></script>
+<script src="{{JS_CDN_PREFIX}}/libs/angular.js/1.2.20/angular-route.min.js"></script>
+<script src="{{JS_CDN_PREFIX}}/libs/restangular/1.3.1/restangular.min.js"></script>
+<script src="{{JS_CDN_PREFIX}}/libs/moment.js/2.7.0/moment.min.js"></script>
+<script src="{{JS_CDN_PREFIX}}/libs/moment.js/2.7.0/lang/zh-cn.min.js"></script>
+{% block escortfoundationscript %}{% endblock %}
+<script src="{% static "js/escort/app.js" %}"></script>
+{% endblock %}

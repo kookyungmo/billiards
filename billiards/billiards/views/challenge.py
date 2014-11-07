@@ -7,7 +7,7 @@ Created on 2014年1月4日
 '''
 import datetime
 from billiards.models import Challenge, ChallengeApply,\
-    DisplayNameJsonSerializer, Poolroom, Group
+     Poolroom, Group
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from billiards.settings import TEMPLATE_ROOT, TIME_ZONE, PREFER_LOGIN_SITE
 from django.template.context import RequestContext
@@ -26,7 +26,7 @@ from billiards.views.club import challenge, saveChallenge, saveChallenge2
 from urlparse import urlparse
 from django.core.urlresolvers import reverse
 from django.core.cache import cache
-from billiards.commons import KEY_PREFIX, forceLogin
+from billiards.commons import KEY_PREFIX, forceLogin, DisplayNameJsonSerializer
 import uuid
 from django.contrib.auth.models import User
 from billiards.annotation import deprecated

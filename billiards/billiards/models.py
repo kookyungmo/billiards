@@ -13,10 +13,8 @@ from django.utils.encoding import force_unicode
 from django.contrib.auth.models import User
 from billiards.storage import ImageStorage
 from billiards.settings import UPLOAD_TO, TIME_ZONE, MEDIA_URL, BAE_IMAGE,\
-    THUMBNAIL_WIDTH
+    THUMBNAIL_WIDTH, ESCORT_HEIGHT
 import datetime
-from django.core.serializers.json import Serializer as JsonSerializer 
-from django.utils.encoding import is_protected_type 
 import os
 from django.db.models.query_utils import Q
 from django.db.models.signals import pre_delete
@@ -31,12 +29,23 @@ from uuidfield.fields import UUIDField
 from decimal import Decimal
 from geosimple.fields import GeohashField
 from geosimple.managers import GeoManager
+from billiards.commons import decodeunicode
+
+def getThumbnailPath(path, length, prefix = 'w'):
+    fileName, fileExtension = os.path.splitext(path)
+    return "%s-%s%s%s" %(fileName, prefix, length, fileExtension)
 
 def toDict(bitfield):
     flag_dict = {}
     for f in bitfield:
         flag_dict[f[0]] = f[1]
     return flag_dict
+
+def bitLabelToList(bitfield):
+    return [bitfield.get_label(f[0]) for f in bitfield if f[1]]
+
+def bitToList(bitfield):
+    return [f[0] for f in bitfield if f[1]]
 
 poolroom_fields = ('uuid', 'name', 'address', 'tel', 'lat_baidu', 'lng_baidu', 'flags', 'businesshours', 'size', 'rating')
 
@@ -79,7 +88,7 @@ class Poolroom(models.Model):
             (1, u'正常'),
             (2, u'已倒闭'),
             (3, u'暂时停业'),
-        ), default=1,)
+        ), default=1)
     location = GeohashField()
 
     class Meta:
@@ -102,6 +111,9 @@ class Poolroom(models.Model):
                 'businesshours': self.businesshours, 'size': self.size,
                 'address': self.address, 'flags': toDict(self.flags), 'rating': self.rating,
                 'images': images}
+
+    def natural_key_simple(self):
+        return {'uuid': str(self.uuid), 'name': self.name, 'lat': self.lat_baidu, 'lng': self.lng_baidu}
         
     objects = GeoManager()
         
@@ -173,16 +185,11 @@ class PoolroomImage(models.Model):
                     ret = img.process()
                     body = ret['response_params']['image_data']
                 
-                    newpath = PoolroomImage.getThumbnailPath(path, width)
+                    newpath = getThumbnailPath(path, width)
                     albumstorage.saveToBucket(newpath, base64.b64decode(body))
             except ImportError:
                 pass
         self.__imagepath = self.imagepath
-
-    @staticmethod
-    def getThumbnailPath(path, width):
-        fileName, fileExtension = os.path.splitext(path)
-        return "%s-w%s%s" %(fileName, width, fileExtension)
 
 @receiver(pre_delete, sender=PoolroomImage)
 def delete_image(instance, **kwargs):
@@ -235,6 +242,27 @@ class IntegerChoiceTypeField(models.IntegerField):
     
     def json_use_value(self):
         return self.jsonUseValue
+    
+class JsonBitField(BitField):
+    ''' use value of key when serializing as json
+    '''
+    jsonUseValue = True
+    def __init__(self, *args, **kwargs):
+        if 'jsonUseValue' in kwargs:
+            self.jsonUseValue = kwargs['jsonUseValue']
+            del kwargs['jsonUseValue']
+        super(JsonBitField, self).__init__(*args, **kwargs)
+        
+    def json_use_value(self):
+        return self.jsonUseValue    
+    
+    def value_to_string(self, obj):
+        return " ".join(bitLabelToList(self._get_val_from_obj(obj)))
+    
+class JsonBitValueField(JsonBitField):
+    def value_to_string(self, obj):
+        return " ".join(bitToList(self._get_val_from_obj(obj)))
+    
 
 class PoolroomEquipment(models.Model):
     id = models.AutoField(primary_key=True)
@@ -283,25 +311,6 @@ class Group(models.Model):
     def natural_key(self):
         return {'name': self.name}
 
-class DisplayNameJsonSerializer(JsonSerializer): 
-
-    def handle_field(self, obj, field): 
-        value = field._get_val_from_obj(obj) 
-
-        #If the object has a get_field_display() method, use it. 
-        display_method = "get_%s_display" % field.name 
-        if  hasattr(field, 'json_use_value') and getattr(field, 'json_use_value')() == False:
-            self._current[field.name] = value
-        elif hasattr(obj, display_method): 
-            self._current[field.name] = getattr(obj, display_method)() 
-        # Protected types (i.e., primitives like None, numbers, dates, 
-        # and Decimals) are passed through as is. All other values are 
-        # converted to string first. 
-        elif is_protected_type(value): 
-            self._current[field.name] = value 
-        else: 
-            self._current[field.name] = field.value_to_string(obj) 
-            
 def is_expired(atime, tzinfo=pytz.timezone(TIME_ZONE)):
     if datetime.datetime.utcnow().replace(tzinfo=utc) - atime.replace(tzinfo=tzinfo) > datetime.timedelta(seconds = 5):
         return True
@@ -388,7 +397,7 @@ class Match(models.Model):
 # post_save.connect(create_profile, sender=User)
 # #         
 def getusername(self):
-    return self.nickname if self.nickname is not None and self.nickname != "" else self.username
+    return decodeunicode(self.nickname) if self.nickname is not None and self.nickname != "" else self.username
 
 class ProfileBase(type):
     def __new__(cls, name, bases, attrs):
@@ -416,6 +425,10 @@ class Profile(ProfileObject):
     expire_time = models.DateTimeField(null=True)
     refresh_token = models.CharField(max_length=512, default='', null=True)
     cellphone = models.CharField(max_length=11, null=True, blank=True, verbose_name="移动电话")
+    
+    def get_nickname(self):
+        return decodeunicode(self.nickname)
+    get_nickname.short_description = '昵称'
     
     @property
     def avatar_small(self):
@@ -796,6 +809,8 @@ class CurrencyField(models.DecimalField):
     __metaclass__ = models.SubfieldBase
     
     def __init__(self, verbose_name=None, name=None, **kwargs):
+        kwargs = {key: value for key, value in kwargs.items() 
+             if key not in ('decimal_places', 'max_digits')}
         super(CurrencyField, self). __init__(
         verbose_name=verbose_name, name=name, max_digits=10,
         decimal_places=2, **kwargs)
@@ -807,13 +822,14 @@ class CurrencyField(models.DecimalField):
             return None
         
 class Goods(models.Model):
-    id = models.AutoField(primary_key=True)
+    hash = models.CharField(max_length=32, verbose_name='商品hash值', unique=True)
     sku = models.CharField(max_length=32, verbose_name='商品sku', default=generator(32))
-    name = models.CharField(max_length=32, verbose_name='商品名称')
+    name = models.CharField(max_length=256, verbose_name='商品名称')
     description = models.CharField(max_length=512, verbose_name='描述')
     price = CurrencyField(verbose_name='价格(元)')
     type = IntegerChoiceTypeField(verbose_name=u'类别', choices=(
             (1, u'电子卡'),
+            (2, u'预约'),
         ), default=1)
     state = IntegerChoiceTypeField(verbose_name=u'状态', choices=(
             (1, u'可购买'),
@@ -823,6 +839,9 @@ class Goods(models.Model):
     
     def __unicode__(self):
         return u'[%s] %s(%s元) -- %s' %(self.get_type_display(), self.name, self.price, self.get_state_display())
+    
+    def natural_key(self):
+        return {'sku': self.sku, 'price': self.price, 'id': self.hash}
         
     class Meta:
         db_table = 'goods'
@@ -851,9 +870,228 @@ class Transaction(models.Model):
             (3, u'已取消'),
             (4, u'已过期'),
             (5, u'已完成')
-        ), default=1)
+        ), default=1, jsonUseValue=True)
+    
+    def natural_key(self):
+        return {'tradenum': self.tradenum, 'goods': self.goods.natural_key(), 'fee': self.fee, 'tradeStatus': self.tradeStatus,
+                'state': int(self.state)}
     
     class Meta:
         db_table = 'transaction'
         verbose_name = '交易信息'
         verbose_name_plural = '交易信息'
+        
+assistant_fields = ('uuid', 'nickname', 'birthday', 'gender', 'height', 'figure', 'haircolor', 'occupation',
+                    'language', 'interest', 'food', 'drinks', 'scent', 'dress', 'nationality',
+                    'birthplace', 'constellation', 'measurements', 'experience', 'favoriteplayers', 'bestperformance',
+                    'selfintroduce')
+class Assistant(models.Model):
+    uuid = UUIDField(auto=True, hyphenate=True, unique=True)
+    name = models.CharField(max_length=24, verbose_name="真实姓名")
+    nickname = models.CharField(max_length=24, verbose_name="昵称")
+    birthday = models.DateField(verbose_name="生日")
+    gender = IntegerChoiceTypeField(verbose_name=u'性别', choices=(
+            (1, u'女'),
+            (2, u'男'),
+        ), default=1, jsonUseValue=True)
+    
+    nationality = models.CharField(max_length=16, verbose_name="国籍")
+    birthplace = models.CharField(max_length=24, verbose_name="籍贯")
+    constellation = models.CharField(max_length=8, verbose_name="星座")
+    
+    height = models.IntegerField(verbose_name="身高(cm)")
+    measurements = models.CharField(verbose_name="三围", max_length=24)
+    haircolor = ChoiceTypeField(max_length=16, choices=(
+            ('blank', u'黑发色'),
+            ('brown', u'褐发色'),
+            ('blond', u'金发发'),
+            ('auburn', u'赤褐发色'),
+            ('chestnut', u'栗发色'),
+            ('ginger/red', u'红发色'),
+            ('gray-white', u'灰白发色'),
+        ), verbose_name='头发颜色')
+    pubichair = models.CharField(verbose_name='阴毛', blank=True, max_length=64)
+    
+    occupation = models.CharField(verbose_name='职业', max_length=24)
+    language = JsonBitField(flags=(
+            ('mandarin', u'普通话'),
+            ('english', u'英语'),
+            ('french', u'法语'),
+            ('japanese', u'日语'),
+            ('geman', u'德语'),
+            ('cantonese', u'粤语'),
+        ), verbose_name='语言', jsonUseValue=True)
+    interest = models.CharField(verbose_name='个人爱好', max_length=64)
+    food = models.CharField(verbose_name='喜好的食物', max_length=64)
+    drinks = models.CharField(verbose_name='喜好的饮品', max_length=64)
+    scent = models.CharField(verbose_name='气味', max_length=64)
+    dress = models.CharField(verbose_name='穿着风格', max_length=64)
+    figure = models.CharField(verbose_name='个性', max_length=64)
+    
+    experience = models.IntegerField(verbose_name="球龄(年)")
+    favoriteplayers = models.CharField(verbose_name="喜爱的台球选手", max_length=64)
+    selfintroduce = models.CharField(verbose_name="自我介绍", max_length=1024)
+    bestperformance = models.CharField(verbose_name="最佳清台记录", max_length=128)
+
+    state = IntegerChoiceTypeField(verbose_name=u'状态', choices=(
+            (1, u'有效'),
+            (2, u'失效'),
+            (8, u'禁用'),
+        ), default=1)
+    
+    _coverimage = None
+    @property
+    def coverimage(self):
+        if self._coverimage == None:
+            self._coverimage = AssistantImage.objects.filter(assistant=self).filter(iscover=True).get().imagepath.name
+        return self._coverimage
+    
+    @property
+    def images(self):
+        return AssistantImage.objects.filter(assistant=self)
+    
+    class Meta:
+        db_table = 'assistant'
+        verbose_name = '助教个人资料'
+        verbose_name_plural = '助教个人资料'
+        
+    def __unicode__(self):
+        return u"[%s] %s(%s) - %s" %(self.get_gender_display(), self.nickname, self.name, self.birthday)
+    
+    def natural_key(self):
+        coverimage = None
+        if self.coverimage is not None:
+            coverimage = "%s%s" %(settings.MEDIA_URL[:-1], self.coverimage)
+        elif len(self.images()) > 0:
+            coverimage = "%s%s" %(settings.MEDIA_URL[:-1], self.images[0].imagepath)
+        return {'uuid': str(self.uuid), 'nickname': self.nickname, 'coverimage': coverimage, 'height': self.height,
+                'birthday': self.birthday, 'occupation': self.occupation}
+        
+UPLOAD_TO_ASSISTANT = UPLOAD_TO + 'assistant/'
+assistantimage_fields = ('imagepath', 'iscover')
+class AssistantImage(models.Model):
+    assistant = models.ForeignKey(Assistant, verbose_name='助教')
+    imagepath = models.ImageField(verbose_name=u'选择本地图片/图片路径', max_length=250, upload_to=UPLOAD_TO_ASSISTANT, 
+                                  storage=ImageStorage())
+    description = models.CharField(verbose_name=u'图片说明', null=True, blank=True, max_length=50)
+    iscover = models.BooleanField(verbose_name=u'是否是封面图片', default=False)
+    status = models.IntegerField(verbose_name=u'状态', choices=(
+            (0, u'不可用'),
+            (1, u'可用'),
+        ), default=1,)
+    
+    class Meta:
+        db_table = 'assistant_images'
+        verbose_name = '助教图片'
+        verbose_name_plural = '助教图片'
+        
+    def imagetag(self):
+        return u'<img src="%s%s" />' %(MEDIA_URL, self.imagepath)
+    imagetag.short_description = u'图片预览'
+    imagetag.allow_tags = True
+
+    def __unicode__(self):
+        return u"[封面-%s] %s-%s" %((u"Y" if self.iscover else u"N"), unicode(self.assistant), self.description)
+    
+    __imagepath = None
+    
+    def __init__(self, *args, **kwargs):
+        super(AssistantImage, self).__init__(*args, **kwargs)
+        self.__imagepath = self.imagepath
+    
+    def save(self):
+        super(AssistantImage, self).save()
+        
+        if self.imagepath != self.__imagepath:
+            # avoid import issue in local env
+            # https://github.com/BaiduAppEngine/bae-python-sdk/issues/1
+            try:
+                from bae_image.image import BaeImage
+                img = BaeImage(BAE_IMAGE['key'], BAE_IMAGE['secret'], BAE_IMAGE['host'])
+                albumstorage = ImageStorage()
+                path = str(self.imagepath)
+                import base64
+                for height in ESCORT_HEIGHT:
+                    img.clearOperations()
+                    img.setSource(MEDIA_URL + path)
+                    img.setZooming(BaeImage.ZOOMING_TYPE_HEIGHT, height)
+                    ret = img.process()
+                    body = ret['response_params']['image_data']
+                
+                    newpath = getThumbnailPath(path, height, 'h')
+                    albumstorage.saveToBucket(newpath, base64.b64decode(body))
+            except ImportError:
+                pass
+        self.__imagepath = self.imagepath
+        
+assistantoffer_fields = ('assistant', 'poolroom', 'price')
+assistantoffer_fields_2 = ('poolroom', 'price', 'starttime', 'endtime', 'priceDescription', 'extraService')
+class AssistantOffer(models.Model):
+    assistant = models.ForeignKey(Assistant, verbose_name="助教", related_name="offer")
+    poolroom = models.IntegerField(verbose_name="预约的球房", blank=True)
+    price = models.IntegerField(verbose_name="价钱(元/小时)")
+    day = JsonBitValueField(flags=(
+            ('monday', u'周一'),
+            ('tuesday', u'周二'),
+            ('wendesday', u'周三'),
+            ('thursday', u'周四'),
+            ('friday', u'周五'),
+            ('saturday', u'周六'),
+            ('sunday', u'周日'),
+        ), verbose_name='星期几', jsonUseValue=True)
+    starttime = models.TimeField(verbose_name="开始时间")
+    endtime = models.TimeField(verbose_name="结束时间")
+    priceDescription = models.CharField(max_length=200, verbose_name="报价说明", blank=True)
+    extraService = models.CharField(max_length=200, verbose_name="额外服务说明", blank=True)
+    status = models.IntegerField(verbose_name=u'状态', choices=(
+            (0, u'失效'),
+            (1, u'有效'),
+        ), default=1,)
+    
+    class Meta:
+        db_table = 'assistant_offer'
+        verbose_name = '助教报价'
+        verbose_name_plural = '助教报价'
+        
+    def __unicode__(self):
+        poolroomname = ''
+        if self.poolroom is not None:
+            poolroomname = Poolroom.objects.get(id=self.poolroom)
+        return u"[%s] %s %s元/小时 (%s-%s)" %(self.assistant.nickname, poolroomname,  self.price, self.starttime, self.endtime)
+    
+        
+assistant_appointment_fields = ('assistant', 'poolroom', 'starttime', 'endtime', 'duration', 'price', 'createdDate',
+            'state', 'transaction')
+class AssistantAppointment(models.Model):
+    assistant = models.ForeignKey(Assistant, verbose_name="助教")
+    user = models.ForeignKey(User, verbose_name="用户")
+    poolroom = models.IntegerField(verbose_name="预约的球房", blank=True)
+    goods = models.ForeignKey(Goods, verbose_name="商品id")
+    transaction = models.ForeignKey(Transaction, verbose_name="交易订单")
+    starttime = models.DateTimeField(verbose_name="预订开始时间")
+    endtime = models.DateTimeField(verbose_name="预订结束时间")
+    duration = models.IntegerField(verbose_name="时长(小时)")
+    price = models.IntegerField(verbose_name="价钱(元/小时)")
+    createdDate = models.DateTimeField(verbose_name="预约创建时间")
+    state = IntegerChoiceTypeField(verbose_name=u'状态', choices=(
+            (1, u'等待付款'),
+            (2, u'等待确认'),
+            (4, u'等待退款'),
+            (8, u'交易取消'),
+            (16, u'交易关闭'),
+            (256, u'交易完成'),
+        ), default=1, jsonUseValue=True)  
+    
+    class Meta:
+        db_table = 'assistant_appoinment'
+        verbose_name = '助教预约详情'
+        verbose_name_plural = '助教预约详情'
+
+try:
+    from south.modelsinspector import add_introspection_rules
+    add_introspection_rules([], ["^billiards\.models\.ChoiceTypeField"])
+    add_introspection_rules([], ["^billiards\.models\.IntegerChoiceTypeField"])
+    add_introspection_rules([], ["^billiards\.models\.JsonBitField"])
+    add_introspection_rules([], ["^billiards\.models\.CurrencyField"])
+except:
+    pass
