@@ -107,13 +107,13 @@ class Poolroom(models.Model):
             newimage['iscover'] = image.iscover
             newimage['description'] = image.description
             images['img' + str(idx)] = newimage
-        return {'uuid': str(self.uuid), 'name': self.name, 'lat': self.lat_baidu, 'lng': self.lng_baidu,
+        return {'uuid': str(self.uuid), 'name': self.name, 'lat': float(self.lat_baidu), 'lng': float(self.lng_baidu),
                 'businesshours': self.businesshours, 'size': self.size,
                 'address': self.address, 'flags': toDict(self.flags), 'rating': self.rating,
                 'images': images}
 
     def natural_key_simple(self):
-        return {'uuid': str(self.uuid), 'name': self.name, 'lat': self.lat_baidu, 'lng': self.lng_baidu}
+        return {'uuid': str(self.uuid), 'name': self.name, 'lat': float(self.lat_baidu), 'lng': float(self.lng_baidu)}
         
     objects = GeoManager()
         
