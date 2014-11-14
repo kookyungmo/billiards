@@ -117,7 +117,8 @@ def assistant_offer_booking_by_uuid(request, assistant_uuid):
                     if offer.starttime.hour <= offerhour and offer.endtime.hour > offerhour and offer.endtime.hour >= (offerhour + offerduring):
                         appoints = AssistantAppointment.objects.filter(ASSISTANTAPPOINTMENT_FILTER).filter(assistant=assistant).filter(
                             (Q(starttime__gte=offertimerange[0]) & Q(starttime__lt=offertimerange[1])) | 
-                            (Q(endtime__lt=offertimerange[0]) & Q(endtime__lte=offertimerange[1])))
+                            (Q(endtime__gt=offertimerange[0]) & Q(endtime__lte=offertimerange[1])))
+                        print appoints.query
                         if appoints.exists():
                             for appoint in appoints:
                                 if appoint.user == request.user:
