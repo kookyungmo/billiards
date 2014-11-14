@@ -152,13 +152,12 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 					hours = [];
 					for (var j = 0; j < $scope.offers[i].length; j++) {
 						var start, end;
-						if (starthour.clone().startOf('day').diff(day, 'd') == 0) {
+						if (starthour.clone().startOf('day').diff(day, 'd') <= 0) {
 							var start2 = setTime($scope.offers[i][j].starttime, day.clone());
 							start = starthour.diff(start2) > 0 ? starthour.clone() : start2;
 							end = setTime($scope.offers[i][j].endtime, day.clone());
 						} else {
-							start = setTime($scope.offers[i][j].starttime, day.clone());
-							end = setTime($scope.offers[i][j].endtime, day.clone());
+							continue;
 						}
 						if (end.diff(start, 'h') > 0) {
 							hours = hours.concat(_.range(start.hour(), end.hour()));
