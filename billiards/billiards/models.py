@@ -893,7 +893,7 @@ class Assistant(models.Model):
     gender = IntegerChoiceTypeField(verbose_name=u'性别', choices=(
             (1, u'女'),
             (2, u'男'),
-        ), default=1, jsonUseValue=True)
+        ), default=1, jsonUseValue=False)
     
     nationality = models.CharField(max_length=16, verbose_name="国籍")
     birthplace = models.CharField(max_length=24, verbose_name="籍贯")
@@ -909,7 +909,7 @@ class Assistant(models.Model):
             ('chestnut', u'栗发色'),
             ('ginger/red', u'红发色'),
             ('gray-white', u'灰白发色'),
-        ), verbose_name='头发颜色')
+        ), verbose_name='头发颜色', jsonUseValue=False)
     pubichair = models.CharField(verbose_name='阴毛', blank=True, max_length=64)
     
     occupation = models.CharField(verbose_name='职业', max_length=24)
@@ -920,7 +920,7 @@ class Assistant(models.Model):
             ('japanese', u'日语'),
             ('geman', u'德语'),
             ('cantonese', u'粤语'),
-        ), verbose_name='语言', jsonUseValue=True)
+        ), verbose_name='语言', jsonUseValue=False)
     interest = models.CharField(verbose_name='个人爱好', max_length=64)
     food = models.CharField(verbose_name='喜好的食物', max_length=64)
     drinks = models.CharField(verbose_name='喜好的饮品', max_length=64)
