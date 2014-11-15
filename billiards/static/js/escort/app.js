@@ -28,36 +28,173 @@ function refreshAuthentication() {
 		loginFirst();
 }
 
+function calcDistance(mypoint, locations) {
+	var max = min = 0;
+	for (var i = 0; i < locations.length; i++) {
+		var dist = distance(mypoint, locations[i]);
+		if (min == 0 || min > dist)
+			min = dist;
+		if (max == 0 || max < dist)
+			max = dist;
+	}
+	if (min == max)
+		offerdistance = formatDistance(min);
+	else
+		offerdistance = formatDistance(min) + "-" + formatDistance(max);
+	return {'min': min, 'max': max, 'distanceLabel': offerdistance};
+}
+
+var offerServicesModule = angular.module('offerServices',[]);
+offerServicesModule.service('NetworkService', function($http){});
+
 angular.module("escortApp", ["ngRoute", "restangular"])
 
 .config(function($interpolateProvider, $routeProvider) {
 	  $interpolateProvider.startSymbol('<{');
 	  $interpolateProvider.endSymbol('}>');
 	})
+	
+.service('offerService', function(){
+	var dayRange = _.range(3);
+	var buffer = 2;
+	
+	
+	function setTime(timestr, time) {
+		var timearray = timestr.split(":");
+		time.hour(timearray[0]);
+		time.minute(0);
+		return time;
+	}
+	
+	this.offerPriceLocation = function(offers) {
+		var maxprice = minprice = 0;
+		var poolrooms = [];
+		var locations = [];
+		for (var i in dayRange) {
+			for (var j = 0; j < offers[i].length; j++) {
+				if (minprice == 0 || minprice > offers[i][j].price)
+					minprice = offers[i][j].price;
+				if (maxprice == 0 || maxprice < offers[i][j].price)
+					maxprice = offers[i][j].price;
+				if ($.inArray(offers[i][j].poolroom.name, poolrooms) == -1) {
+					poolrooms.push(offers[i][j].poolroom);
+					locations.push(new BMap.Point(
+						offers[i][j].poolroom.lng, offers[i][j].poolroom.lat
+					));
+				}
+			}
+		}
+		if (maxprice != minprice)
+			offerprice = minprice + "-" + maxprice;
+		else
+			offerprice = minprice;
+		
+		return {'offerprice': offerprice, 'locations': locations, 'poolrooms': poolrooms, 'minprice': minprice,
+			'maxprice': maxprice};
+	}
+	
+	this.poolroomsDisplay = function(poolrooms) {
+		var pnames = [];
+		var pobj = {};
+		for (var idx in poolrooms) {
+			if (pobj[poolrooms[idx].name])
+				continue;
+			pobj[poolrooms[idx].name] = true;
+			pnames.push(poolrooms[idx].name);
+		}
+		var pdisplay = '';
+		if (pnames.length > 0)
+			pdisplay = pnames.join("/");
+		else
+			pdisplay = pnames[0];
+		return pdisplay;
+	}
+	
+	this.latestOffer = function(offers){
+		var now = moment().startOf("hour").add(1, 'h');
+		var end = moment();
+		var start = now.clone().add(buffer, 'h');
+		for (var i in dayRange) {
+			var min_start = null;
+			var diffdays = moment().clone().startOf("day").diff(end.clone().startOf("day"), 'd');
+			var inRange = false;
+			for (var j = 0; j < offers[i].length; j++) {
+				if (min_start == null)
+					min_start = setTime(offers[i][j].starttime, end.clone());
+				else if (min_start.diff(setTime(offers[i][j].starttime, end.clone())) > 0)
+					min_start = setTime(offers[i][j].starttime, end.clone());
+				if (start.diff(setTime(offers[i][j].endtime, end.clone())) < 0)
+					inRange = true;
+			}
+			
+			if (diffdays == 0) {
+				if (start.diff(min_start) < 0)
+					return min_start;
+				else if (inRange)
+					return start;
+			} else if (min_start != null)
+				return min_start;
+			
+			end.add(1, 'd');
+		}
+		return null;
+	}
+	
+	this.formatLatestOffer = function(start) {
+		return start.calendar();
+	}
+	
+	this.offerDays = function(offers) {
+		var offerdays = [];
+		var starthour = moment().startOf("hour").add(buffer + 1, 'h');
+		for (var i in dayRange) {
+			var day = moment().startOf('day');
+			day.add(i, 'd');
+			hours = [];
+			for (var j = 0; j < offers[i].length; j++) {
+				var start, end;
+				if (starthour.clone().startOf('day').diff(day, 'd') <= 0) {
+					var start2 = setTime(offers[i][j].starttime, day.clone());
+					start = starthour.diff(start2) > 0 ? starthour.clone() : start2;
+					end = setTime(offers[i][j].endtime, day.clone());
+				} else {
+					continue;
+				}
+				if (end.diff(start, 'h') > 0) {
+					hours = hours.concat(_.range(start.hour(), end.hour()));
+				}
+			}
+			if (hours.length > 0) {
+				offerdays.push({'hours': hours, 'day': day, 'offer': offers[i], 'idx': i});
+			}
+		}
+		return offerdays;
+	}
+})
 
-.controller("ProviderListCtrl", ["$scope", "Restangular", function($scope, Restangular) {
+.controller("ProviderListCtrl", ["$scope", "Restangular", "offerService", function($scope, Restangular, offerService) {
 	Restangular.one('assistant', 'list').get().then(function (assistants){
     	$scope.assistants = assistants;
     	for (var i = 0; i < $scope.assistants.length; i++) {
-    		if ($scope.assistants[i].minprice == $scope.assistants[i].maxprice)
-				$scope.assistants[i].price = $scope.assistants[i].minprice;
-			else
-				$scope.assistants[i].price = $scope.assistants[i].minprice + "-" + $scope.assistants[i].maxprice;
+    		
+    		var obj = offerService.offerPriceLocation($scope.assistants[i].offers);
+			$scope.assistants[i].price = obj['offerprice'];
+			$scope.assistants[i].locations = obj['locations'];
+    		$scope.assistants[i].poolrooms = offerService.poolroomsDisplay(obj['poolrooms']);
+    		$scope.assistants[i].latestOffer = offerService.formatLatestOffer(
+    				offerService.latestOffer($scope.assistants[i].offers));
     	}
 		fetchBMapLocation(function(mypoint) {
 			for (var i = 0; i < $scope.assistants.length; i++) {
-				$scope.assistants[i].distance = formatDistance(distance(mypoint, new BMap.Point(
-						$scope.assistants[i].poolroom.lng, $scope.assistants[i].poolroom.lat
-					)));
+				$scope.assistants[i].distance = calcDistance(mypoint, $scope.assistants[i].locations)['distanceLabel'];
 			}
 			$scope.$apply();
 		});
     });
 }])
 
-.controller('DetailCtrl', ['$scope', '$routeParams', "Restangular", function($scope, $routeParams, Restangular) {
-	var dayRange = _.range(3);
-	var buffer = 2;
+.controller('DetailCtrl', ['$scope', '$routeParams', "Restangular", "offerService", 
+                           function($scope, $routeParams, Restangular, offerService) {
 	
 	$scope.init = function(uuid)
 	  {
@@ -69,110 +206,28 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 	    });
 		baseEscort.getList("offer").then(function (offers){
 			offers = offers[0];
-			var maxprice = minprice = 0;
-			var poolrooms = [];
-			var locations = [];
-			for (var i in dayRange) {
-				for (var j = 0; j < offers[i].length; j++) {
-					if (minprice == 0 || minprice > offers[i][j].price)
-						minprice = offers[i][j].price;
-					if (maxprice == 0 || maxprice < offers[i][j].price)
-						maxprice = offers[i][j].price;
-					if ($.inArray(offers[i][j].poolroom.name, poolrooms) == -1) {
-						poolrooms.push(offers[i][j].poolroom.name);
-						locations.push(new BMap.Point(
-							offers[i][j].poolroom.lng, offers[i][j].poolroom.lat
-						));
-					}
-				}
-			}
-			if (maxprice != minprice)
-				$scope.offerprice = minprice + "-" + maxprice;
-			else
-				$scope.offerprice = minprice;
-			
-			var output = '';
-			for (i=0;i<poolrooms.length;i++){
-				output += poolrooms[i];
-				if (i != poolrooms.length - 1)
-					output += "/";
-			}
-			 
-			$scope.offerlocation = output;
 			$scope.offers = offers;
 			
-			function setTime(timestr, time) {
-				var timearray = timestr.split(":");
-				time.hour(timearray[0]);
-				time.minute(0);
-				return time;
-			}
+			var pricelocation = offerService.offerPriceLocation($scope.offers);
+			 
+			$scope.offerprice = pricelocation['offerprice'];
+			$scope.offerlocation = offerService.poolroomsDisplay(pricelocation['poolrooms']);;
+			
+			
 			// calculate latest offer
-			$scope.latestOffer = function(){
-				var now = moment().startOf("hour").add(1, 'h');
-				var end = moment();
-				var start = now.clone().add(buffer, 'h');
-				for (var i in dayRange) {
-					var min_start = null;
-					var diffdays = moment().clone().startOf("day").diff(end.clone().startOf("day"), 'd');
-					var inRange = false;
-					for (var j = 0; j < $scope.offers[i].length; j++) {
-						if (min_start == null)
-							min_start = setTime($scope.offers[i][j].starttime, end.clone());
-						else if (min_start.diff(setTime($scope.offers[i][j].starttime, end.clone())) > 0)
-							min_start = setTime($scope.offers[i][j].starttime, end.clone());
-						if (start.diff(setTime($scope.offers[i][j].endtime, end.clone())) < 0)
-							inRange = true;
-					}
-					
-					if (diffdays == 0) {
-						if (start.diff(min_start) < 0)
-							return min_start;
-						else if (inRange)
-							return start;
-					} else if (min_start != null)
-						return min_start;
-					
-					end.add(1, 'd');
-				}
-				return null;
-			}();
+			$scope.latestOffer = offerService.latestOffer($scope.offers);
 			$scope.hasOffer = $scope.latestOffer != null;
 			
-			$scope.formatLatestOffer = function(start) {
-				return start.calendar();
-			};
+			$scope.formatLatestOffer = offerService.formatLatestOffer;
 			
 			$scope.offerdays = function() {
-				var offerdays = [];
-				var starthour = moment().startOf("hour").add(buffer + 1, 'h');
-				for (var i in dayRange) {
-					var day = moment().startOf('day');
-					day.add(i, 'd');
-					hours = [];
-					for (var j = 0; j < $scope.offers[i].length; j++) {
-						var start, end;
-						if (starthour.clone().startOf('day').diff(day, 'd') <= 0) {
-							var start2 = setTime($scope.offers[i][j].starttime, day.clone());
-							start = starthour.diff(start2) > 0 ? starthour.clone() : start2;
-							end = setTime($scope.offers[i][j].endtime, day.clone());
-						} else {
-							continue;
-						}
-						if (end.diff(start, 'h') > 0) {
-							hours = hours.concat(_.range(start.hour(), end.hour()));
-						}
-					}
-					if (hours.length > 0) {
-						offerdays.push({'hours': hours, 'day': day, 'offer': $scope.offers[i], 'idx': i});
-					}
-				}
+				var offerdays = offerService.offerDays($scope.offers);
 				if (offerdays.length > 0) {
 					$scope.selectedOffer = offerdays[0];
 					$scope.selectedOfferHour = offerdays[0].hours[0];
 				}
 				return offerdays;
-			}();
+			}($scope.offers);
 			
 			$scope.getDayLabel = function(offerday) {
 				var dayofweek = offerday.day.format('D号(ddd)');
@@ -204,18 +259,7 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 			};
 			
 			fetchBMapLocation(function(mypoint) {
-				var max = min = 0;
-				for (var i = 0; i < locations.length; i++) {
-					var dist = distance(mypoint, locations[i]);
-					if (min == 0 || min > dist)
-						min = dist;
-					if (max == 0 || max < dist)
-						max = dist;
-				}
-				if (min == max)
-					$scope.offerdistance = formatDistance(min);
-				else
-					$scope.offerdistance = formatDistance(min) + "-" + formatDistance(max);
+				$scope.offerdistance = calcDistance(mypoint, locations)['distanceLabel'];
 				$scope.$apply();
 			});
 			

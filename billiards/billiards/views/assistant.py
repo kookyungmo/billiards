@@ -42,7 +42,7 @@ class AssistantJSONSerializer(NoObjectJSONSerializer):
 def updateOffers(offers):
     for offer in offers:
         offer['assistant'] = Assistant.objects.get(id=offer['assistant']).natural_key()
-        offer['poolroom'] = Poolroom.objects.get(id=offer['poolroom']).natural_key_simple()
+        offer['offers'] = getOffers(offer['assistant']['uuid'])
     return offers
 
 ASSISTANT_FILTER = Q(state=1)
@@ -81,22 +81,23 @@ def assistant_by_uuid(request, assistant_uuid):
             return HttpResponse(simplejson.dumps(assistantobj))
         except Assistant.DoesNotExist:
             return HttpResponse("{'error': 'not found', 'code': 0}")
+
+def getOffers(assistant_uuid):
+    offers = {}
+    weekday = datetime.datetime.today().weekday()
+    weekdays = [(weekday + i) % 7 for i in range(3)]
+    for idx, weekday in enumerate(weekdays):
+        assistantsOffers = AssistantOffer.objects.filter(ASSISTANT_OFFER_FILTER).filter(
+            assistant=Assistant.objects.filter(ASSISTANT_FILTER).get(uuid=uuid.UUID(assistant_uuid))).filter(day=getattr(AssistantOffer.day, AssistantOffer.day._flags[weekday]))
+        offers[idx] = simplejson.loads(tojson2(assistantsOffers, AssistantJSONSerializer(), assistantoffer_fields_2))
+    return offers 
         
 @csrf_exempt
 def assistant_offer_by_uuid(request, assistant_uuid):
     try:
-        offers = {}
-        weekday = datetime.datetime.today().weekday()
-        weekdays = [(weekday + i) % 7 for i in range(3)]
-        for idx, weekday in enumerate(weekdays):
-            assistantsOffers = AssistantOffer.objects.filter(ASSISTANT_OFFER_FILTER).filter(
-                assistant=Assistant.objects.filter(ASSISTANT_FILTER).get(uuid=uuid.UUID(assistant_uuid))).filter(day=getattr(AssistantOffer.day, AssistantOffer.day._flags[weekday]))
-            offers[idx] = simplejson.loads(tojson2(assistantsOffers, AssistantJSONSerializer(), assistantoffer_fields_2))
-        
-        return HttpResponse(simplejson.dumps([offers]))
+        return HttpResponse(simplejson.dumps([getOffers(assistant_uuid)]))
     except Assistant.DoesNotExist:
         return HttpResponse("{'error': 'not found', 'code': 0}") 
-
 
 @csrf_exempt
 @detect_mobile
