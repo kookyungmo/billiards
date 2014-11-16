@@ -304,4 +304,31 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 	$scope.orderDate = function(timestr) {
 		return parseTime(timestr).format('YYYY-MM-DD');
 	};
+	
+	$scope.canPay = function(order) {
+		if (order.transaction.state == 1 && parseTime(order.starttime).diff(moment()) > 60*60*2)
+			return true;
+		return false;
+	}
+	
+	$scope.pay = function(order) {
+		window.location = ORDER_URL.replace(/12345678901234567890123456789012/g, order.transaction.goods.sku);
+	};
+	
+	$scope.orderStateDisplay = function(order) {
+		switch (order.transaction.state) {
+		case 5:
+			return "订单已完成";
+		case 4:
+			return "订单已过期";
+		case 3:
+			return "订单已取消";
+		case 2:
+			return "订单已支付";
+		case 1:
+			if ($scope.canPay(order))
+				return "等待支付";
+			return "订单已过期";
+		}
+	};
 }]);

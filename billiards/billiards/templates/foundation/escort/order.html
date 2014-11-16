@@ -13,9 +13,9 @@
          <h3><{ order.assistant.nickname }></h3>
           <span><label class="time"><i class="icon icon-clock"></i><{ orderTime(order.starttime) }></label> <label class="date"><i class="icon icon-calendar"></i><{ orderDate(order.starttime) }></label></span>
        </div>
-       <a href="#" style="height: 166px;"><img src="<{ order.assistant.coverimage }>" alt="#"></a>
+       <a href="#" style="height: 166px;"><img ng-src="<{ order.assistant.coverimage }>" alt="#"></a>
        <div class="userCode clearfix">
-         <small>123456</small>
+         <small><{ order.transaction.tradenum|limitTo:7 }></small>
          <h4>
            订单金额:
            <label>￥<{ order.price }></label>
@@ -77,7 +77,8 @@
            <strong>订单状态: </strong>
          </div>
          <div class="large-9 medium-9 small-7 column">
-           <span>Ready to consume / Consumed</span>
+           <span ng-show="canPay(order)"><{ orderStateDisplay(order) }>，<a ng-click="pay(order)">去付款</a></span>
+           <span ng-hide="canPay(order)"><{ orderStateDisplay(order) }></span>
          </div>
        </div>
      </div>
@@ -87,6 +88,8 @@
 {% endblock %} 
 {% block escortfoundationscript %}
 <script>
+var ORDER_URL = "{% url 'transaction_alipay_goods' '12345678901234567890123456789012' %}";
+
 function equalHeight(group) {
     var tallest = 0;
     group.each(function() {
