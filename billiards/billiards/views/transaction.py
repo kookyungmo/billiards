@@ -13,7 +13,7 @@ from django.core.urlresolvers import reverse
 from django.utils.timezone import pytz, utc
 from billiards.settings import TIME_ZONE
 from billiards import settings
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 import json
 from mobi.decorators import detect_mobile
 from urlparse import unquote
@@ -65,7 +65,10 @@ def createTransaction(request, goods):
 def alipay_goods(request, sku):
     if request.user.is_authenticated():
         goods = getGoods(sku)
-        url = createTransaction(request, goods)[1]
+        transaction, url = createTransaction(request, goods)
+        if transacation.state != 1 or 
+            (transaction.validUntilDate and transaction.validUntilDate - datetime.datetime.now() > datetime.timedelta(seconds = 1)):
+            return redirect('assistant_order')
         return HttpResponseRedirect(url)
     return HttpResponse(json.dumps({'rt': -1, 'msg': 'login first'}), content_type="application/json")
 
@@ -87,6 +90,8 @@ def alipay_wapreturn(request):
             #TODO handle error case
             pass
         # add a page here
+        if transaction.goods.type == 2:
+            return redirect('assistant_order')
         return HttpResponse("Payment completed.")
     return HttpResponse("Error.")
 
@@ -114,7 +119,9 @@ def alipay_wapnotify(request):
                     datetime.strptime(notifydata['gmt_payment'], TRANSACTION_TIME_FORMAT).replace(tzinfo=pytz.timezone(TIME_ZONE))
                 transaction.state = 2 if notifydata['trade_status'] == 'TRADE_SUCCESS' else 5
                 transaction.save()
-                return HttpResponse("success")
+                if transaction.goods.type == 2:
+                    return redirect('assistant_order')
+                return HttpResponse("success.")
             except Transaction.DoesNotExist:
                 #TODO handle error case
                 pass
