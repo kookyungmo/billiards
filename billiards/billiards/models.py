@@ -1071,7 +1071,7 @@ class AssistantAppointment(models.Model):
     starttime = models.DateTimeField(verbose_name="预订开始时间")
     endtime = models.DateTimeField(verbose_name="预订结束时间")
     duration = models.IntegerField(verbose_name="时长(小时)")
-    price = models.IntegerField(verbose_name="价钱(元/小时)")
+    price = CurrencyField(verbose_name="价钱(元/小时)")
     createdDate = models.DateTimeField(verbose_name="预约创建时间")
     state = IntegerChoiceTypeField(verbose_name=u'状态', choices=(
             (1, u'等待付款'),

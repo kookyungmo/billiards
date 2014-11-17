@@ -5,10 +5,10 @@ import hashlib
 import uuid
 
 from django.core.exceptions import PermissionDenied
-from django.db.models.aggregates import Count, Max, Min
+from django.db.models.aggregates import Max, Min
 from django.db.models.query_utils import Q
 from django.http.response import HttpResponse
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template.context import RequestContext
 from django.utils import simplejson
 from django.utils.timezone import pytz, utc
@@ -42,7 +42,7 @@ class AssistantJSONSerializer(NoObjectJSONSerializer):
 def updateOffers(offers):
     for offer in offers:
         offer['assistant'] = Assistant.objects.get(id=offer['assistant']).natural_key()
-        offer['poolroom'] = Poolroom.objects.get(id=offer['poolroom']).natural_key_simple()
+        offer['offers'] = getOffers(offer['assistant']['uuid'])
     return offers
 
 ASSISTANT_FILTER = Q(state=1)
@@ -64,7 +64,7 @@ def assistant_order(request):
         else:
             appoints = AssistantAppointment.objects.filter(ASSISTANTAPPOINTMENT_FILTER).filter(user=request.user).order_by("-createdDate")
             return HttpResponse(tojson2(appoints, AssistantJSONSerializer(), assistant_appointment_fields))
-    raise PermissionDenied("login firstly.") 
+    return redirect('assistant_list')
 
 @csrf_exempt
 def assistant_by_uuid(request, assistant_uuid):
@@ -81,22 +81,23 @@ def assistant_by_uuid(request, assistant_uuid):
             return HttpResponse(simplejson.dumps(assistantobj))
         except Assistant.DoesNotExist:
             return HttpResponse("{'error': 'not found', 'code': 0}")
+
+def getOffers(assistant_uuid):
+    offers = {}
+    weekday = datetime.datetime.today().weekday()
+    weekdays = [(weekday + i) % 7 for i in range(3)]
+    for idx, weekday in enumerate(weekdays):
+        assistantsOffers = AssistantOffer.objects.filter(ASSISTANT_OFFER_FILTER).filter(
+            assistant=Assistant.objects.filter(ASSISTANT_FILTER).get(uuid=uuid.UUID(assistant_uuid))).filter(day=getattr(AssistantOffer.day, AssistantOffer.day._flags[weekday]))
+        offers[idx] = simplejson.loads(tojson2(assistantsOffers, AssistantJSONSerializer(), assistantoffer_fields_2))
+    return offers 
         
 @csrf_exempt
 def assistant_offer_by_uuid(request, assistant_uuid):
     try:
-        offers = {}
-        weekday = datetime.datetime.today().weekday()
-        weekdays = [(weekday + i) % 7 for i in range(3)]
-        for idx, weekday in enumerate(weekdays):
-            assistantsOffers = AssistantOffer.objects.filter(ASSISTANT_OFFER_FILTER).filter(
-                assistant=Assistant.objects.filter(ASSISTANT_FILTER).get(uuid=uuid.UUID(assistant_uuid))).filter(day=getattr(AssistantOffer.day, AssistantOffer.day._flags[weekday]))
-            offers[idx] = simplejson.loads(tojson2(assistantsOffers, AssistantJSONSerializer(), assistantoffer_fields_2))
-        
-        return HttpResponse(simplejson.dumps([offers]))
+        return HttpResponse(simplejson.dumps([getOffers(assistant_uuid)]))
     except Assistant.DoesNotExist:
         return HttpResponse("{'error': 'not found', 'code': 0}") 
-
 
 @csrf_exempt
 @detect_mobile
@@ -127,7 +128,8 @@ def assistant_offer_booking_by_uuid(request, assistant_uuid):
                         # retrieve/create a goods
                         name = u"预约%s %s点 至 %s点" %(offer.assistant.nickname, offertimerange[0].strftime("%Y-%m-%d %H"), offertimerange[1].strftime("%H"))
                         hashvalue = hashlib.md5(u"%s %s-%s" %(offer.assistant.uuid, offertimerange[0], offertimerange[1])).hexdigest()
-                        goods, created = Goods.objects.get_or_create(hash=hashvalue, defaults={'name': name, 'description': name, 'price':offer.price*offerduring, 
+#                         goods, created = Goods.objects.get_or_create(hash=hashvalue, defaults={'name': name, 'description': name, 'price':offer.price*offerduring,
+                        goods, created = Goods.objects.get_or_create(hash=hashvalue, defaults={'name': name, 'description': name, 'price':0.01,  
                                     'type': 2, 'hash': hashvalue})
                         transaction, url = createTransaction(request, goods)
                         AssistantAppointment.objects.create(assistant=assistant, user=request.user, poolroom=offer.poolroom, 
