@@ -210,6 +210,7 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 			
 			var pricelocation = offerService.offerPriceLocation($scope.offers);
 			 
+			$scope.locations = pricelocation['locations'];
 			$scope.offerprice = pricelocation['offerprice'];
 			$scope.offerlocation = offerService.poolroomsDisplay(pricelocation['poolrooms']);;
 			
@@ -259,7 +260,7 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 			};
 			
 			fetchBMapLocation(function(mypoint) {
-				$scope.offerdistance = calcDistance(mypoint, locations)['distanceLabel'];
+				$scope.offerdistance = calcDistance(mypoint, $scope.locations)['distanceLabel'];
 				$scope.$apply();
 			});
 			
