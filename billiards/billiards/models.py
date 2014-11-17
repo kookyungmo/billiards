@@ -859,6 +859,7 @@ class Transaction(models.Model):
     createdDate = models.DateTimeField(verbose_name='交易生成时间')
     paidDate = models.DateTimeField(verbose_name='交易付款时间', null=True, blank=True)
     closedDate = models.DateTimeField(verbose_name='交易关闭时间', null=True, blank=True)
+    validUntilDate = models.DateTimeField(verbose_name='有效期截止时间(null代表一直有效)', null=True, blank=True)
     paytradeNum = models.CharField(max_length=64, verbose_name='交易号')
     tradeStatus = models.CharField(max_length=32, verbose_name='交易状态')
     notifyid = models.CharField(max_length=128, verbose_name='通知校验ID')

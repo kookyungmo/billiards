@@ -24,6 +24,7 @@ from billiards.settings import TEMPLATE_ROOT
 from billiards.views.transaction import createTransaction
 from billiards import settings
 import json
+from datetime import timedelta
 
 def assistant(request):
     return render_to_response(TEMPLATE_ROOT + 'escort/list.html', context_instance=RequestContext(request))
@@ -132,6 +133,8 @@ def assistant_offer_booking_by_uuid(request, assistant_uuid):
                         goods, created = Goods.objects.get_or_create(hash=hashvalue, defaults={'name': name, 'description': name, 'price':0.01,  
                                     'type': 2, 'hash': hashvalue})
                         transaction, url = createTransaction(request, goods)
+                        transaction.validUntilDate = offertimerange[0] - timedelta(hours=2)
+                        transaction.save()
                         AssistantAppointment.objects.create(assistant=assistant, user=request.user, poolroom=offer.poolroom, 
                                     goods=goods, transaction=transaction, starttime=offertimerange[0], endtime=offertimerange[1],
                                     duration=offerduring, price=goods.price, createdDate=datetime.datetime.now(), state=1)
