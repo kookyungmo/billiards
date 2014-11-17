@@ -26,7 +26,7 @@
    <div class="small-7  large-10 equal_contant medium-9 columns padding_0 rightContant">
      <div class="row orderSlot">
        <div class="small-12 title columns">
-         <h2><i class="icon icon-user"></i>{{ request.user.nickname }}</h2>
+         <h2><i class="icon icon-user"></i>{{ request.user.nickname|decodeunicode }}</h2>
        </div>
      </div>
      <div class="row orderSlot mobPad">
