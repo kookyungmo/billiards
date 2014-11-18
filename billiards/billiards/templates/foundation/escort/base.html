@@ -73,5 +73,5 @@
 <script src="{{JS_CDN_PREFIX}}/libs/moment.js/2.7.0/moment.min.js"></script>
 <script src="{{JS_CDN_PREFIX}}/libs/moment.js/2.7.0/lang/zh-cn.min.js"></script>
 {% block escortfoundationscript %}{% endblock %}
-<script src="{% static "js/escort/app.js" %}"></script>
+<script src="{% static "js/escort/app.js" %}?{{buildid}}"></script>
 {% endblock %}

@@ -23,7 +23,7 @@ moment.lang("zh-CN");
 
 function refreshAuthentication() {
 	if (isWechat())
-		dologin('user/login/wechat');
+		dologin('/user/login/wechat');
 	else
 		loginFirst();
 }

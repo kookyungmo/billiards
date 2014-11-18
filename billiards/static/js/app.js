@@ -18,7 +18,7 @@ function setGetParameter(url, paramName, paramValue)
 }
 
 function dologin(url) {
-	window.location = setGetParameter(url, 'returnurl', window.location.pathname + window.location.search);
+	window.location.href = setGetParameter(url, 'returnurl', window.location.pathname + window.location.search);
 }
 
 function getParameterByName(name) {
