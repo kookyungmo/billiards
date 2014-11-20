@@ -1080,6 +1080,7 @@ class AssistantAppointment(models.Model):
             (4, u'等待退款'),
             (8, u'交易取消'),
             (16, u'交易关闭'),
+            (32, u'已确认'),
             (256, u'交易完成'),
         ), default=1, jsonUseValue=True)  
     

@@ -60,11 +60,15 @@ def assistant_list(request):
 @csrf_exempt
 def assistant_order(request):
     if request.user.is_authenticated():
-        if request.method == 'GET':
-            return render_to_response(TEMPLATE_ROOT + 'escort/order.html', context_instance=RequestContext(request))
-        else:
+        if request.method == 'POST':
             appoints = AssistantAppointment.objects.filter(ASSISTANTAPPOINTMENT_FILTER).filter(user=request.user).order_by("-createdDate")
+            for appoint in appoints:
+                if appoint.state == 1 and (appoint.transaction.state == 2 or appoint.transaction.state == 5):
+                    appoint.state = 2
+                    appoint.save()
             return HttpResponse(tojson2(appoints, AssistantJSONSerializer(), assistant_appointment_fields))
+        else:
+            return render_to_response(TEMPLATE_ROOT + 'escort/order.html', context_instance=RequestContext(request))
     return redirect('assistant_list')
 
 @csrf_exempt

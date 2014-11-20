@@ -325,6 +325,10 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 		case 3:
 			return "订单已取消";
 		case 2:
+			if (order.state == 2)
+				return "订单已支付，等待确认";
+			else if (order.state == 32)
+				return "订单已确认，等待消费";
 			return "订单已支付";
 		case 1:
 			if ($scope.canPay(order))
