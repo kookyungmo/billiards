@@ -239,7 +239,7 @@ Image style */
   <script src="{{JS_CDN_PREFIX}}/libs/foundation/{{FOUNDATION_VER}}/js/foundation/foundation.abide.min.js"></script>
   <script src="{% static "js/jquery.scrollUp.js" %}"></script>
   {% block foundationscript %}{% endblock %}
-  <script src="{% static "js/app.js" %}"></script>
+  <script src="{% static "js/app.js" %}?{{buildid}}"></script>
   {% block script %}{% endblock %}
   <script>
   var ga = ga || function() {(ga.q = ga.q || []).push(arguments)};

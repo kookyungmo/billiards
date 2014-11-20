@@ -10,7 +10,8 @@
 </section>
 {% endblock %}
 {% block right-menu %}
-<aside class="right-off-canvas-menu">
+<!-- disabled -->
+<!-- aside class="right-off-canvas-menu">
     <form>
        <ul class="off-canvas-list filter-menu">
          <li><label>筛选条件</label></li>
@@ -41,7 +42,7 @@
          </li>
        </ul>
    </form>
-</aside>
+</aside-->
 {% endblock %}
 {% block maincontent %}
 	<div ng-app="escortApp" ng-controller="ProviderListCtrl">
@@ -52,7 +53,7 @@
                   <div class="img-overlay"></div>
                   <div class="profile-info">
                     <div class="profile-name"><h1><{ as.assistant.nickname }></h1></div>
-                    <div class="indicators">
+                    <div class="indicators" ng-show="as.price !== 0">
                       <div class="indicator price-indicator">
                         <span class="data"><{ as.price }>元/小时</span>
                       </div>
