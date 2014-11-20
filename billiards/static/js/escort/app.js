@@ -141,7 +141,7 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 	}
 	
 	this.formatLatestOffer = function(start) {
-		return start.calendar();
+		return start === null ? "" : start.calendar();
 	}
 	
 	this.offerDays = function(offers) {
