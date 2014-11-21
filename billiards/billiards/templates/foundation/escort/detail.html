@@ -273,8 +273,13 @@
      <a class="button expand" ng-click="booking();" ng-disabled="selectedOfferHour == null">我要预订</a>
   </div>
  </div>
+<div class="row" ng-show="!!bookingErrMessage">
+	<div class="small-12 medium-4 large-3 column">
+		<div data-alert class="alert-box info radius" ng-bind-html="bookingErrMessage"></div>
+	</div>
+</div>
 
- <div class="row coments">
+	<div class="row coments">
    <div class="row icon_bar">
      <div class="small-6 column profile">
        <h3><{comments.length}> Reviews</h3>
