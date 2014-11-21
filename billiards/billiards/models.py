@@ -822,8 +822,7 @@ class CurrencyField(models.DecimalField):
             return None
         
 class Goods(models.Model):
-    hash = models.CharField(max_length=32, verbose_name='商品hash值', unique=True)
-    sku = models.CharField(max_length=32, verbose_name='商品sku', default=generator(32))
+    sku = models.CharField(max_length=32, verbose_name='商品sku', unique=True)
     name = models.CharField(max_length=256, verbose_name='商品名称')
     description = models.CharField(max_length=512, verbose_name='描述')
     price = CurrencyField(verbose_name='价格(元)')
@@ -841,7 +840,7 @@ class Goods(models.Model):
         return u'[%s] %s(%s元) -- %s' %(self.get_type_display(), self.name, self.price, self.get_state_display())
     
     def natural_key(self):
-        return {'sku': self.sku, 'price': self.price, 'id': self.hash}
+        return {'sku': self.sku, 'price': self.price, 'id': self.sku}
         
     class Meta:
         db_table = 'goods'

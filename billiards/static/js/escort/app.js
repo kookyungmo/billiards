@@ -193,8 +193,8 @@ angular.module("escortApp", ["ngRoute", "restangular"])
     });
 }])
 
-.controller('DetailCtrl', ['$scope', '$routeParams', "Restangular", "offerService", 
-                           function($scope, $routeParams, Restangular, offerService) {
+.controller('DetailCtrl', ['$scope', '$routeParams', "Restangular", "offerService", "$sce",
+                           function($scope, $routeParams, Restangular, offerService, $sce) {
 	
 	$scope.init = function(uuid)
 	  {
@@ -277,13 +277,15 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 								$scope.bookingErrMessage = "此时段已被其他用户预订，请选择其他时段";
 								break;
 							case 2:
-								$scope.bookingErrMessage = "你已经预订了此时段，去订单中心查看";
+								$scope.bookingErrMessage = $sce.trustAsHtml("你已经预订了此时段，去<a href=\"/user/order\">订单中心</a>查看");
 								break;
 							default:
 								$scope.bookingErrMessage = "服务器错误，请稍后再试";
 								break;
 							}
 						}
+				    }, function(response) {
+				    	$scope.bookingErrMessage = "服务器错误，请稍后再试";
 				    });
 				} else {
 					refreshAuthentication();
