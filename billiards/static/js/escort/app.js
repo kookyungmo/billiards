@@ -271,6 +271,19 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 					baseEscort.one('offer', 'booking').customPOST(params).then(function (rt){
 						if (rt.code == 0)
 							window.location = rt.payurl;
+						else {
+							switch(rt.code){
+							case 1:
+								$scope.bookingErrMessage = "此时段已被其他用户预订，请选择其他时段";
+								break;
+							case 2:
+								$scope.bookingErrMessage = "你已经预订了此时段，去订单中心查看";
+								break;
+							default:
+								$scope.bookingErrMessage = "服务器错误，请稍后再试";
+								break;
+							}
+						}
 				    });
 				} else {
 					refreshAuthentication();
