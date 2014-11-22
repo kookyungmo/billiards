@@ -135,6 +135,8 @@ def assistant_offer_booking_by_uuid(request, assistant_uuid):
 #                         goods, created = Goods.objects.get_or_create(sku=hashvalue, defaults={'name': name, 'description': name, 'price':offer.price*offerduring,
                         goods, created = Goods.objects.get_or_create(sku=hashvalue, defaults={'name': name, 'description': name, 'price':0.01,  
                                     'type': 2, 'sku': hashvalue})
+                        if not created:
+                            return HttpResponse(simplejson.dumps({'code': 1, 'msg': 'unavailable'}))
                         transaction, url = createTransaction(request, goods)
                         transaction.validUntilDate = offertimerange[0] - timedelta(hours=2)
                         transaction.save()
