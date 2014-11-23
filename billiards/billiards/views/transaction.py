@@ -66,8 +66,7 @@ def alipay_goods(request, sku):
     if request.user.is_authenticated():
         goods = getGoods(sku)
         transaction, url = createTransaction(request, goods)
-        if transaction.state != 1 or \
-            (transaction.validUntilDate and transaction.validUntilDate.replace(tzinfo=utc) - datetime.utcnow().replace(tzinfo=utc) < timedelta(seconds = 1)):
+        if transaction.paymentExpired:
             return redirect('assistant_order')
         return HttpResponseRedirect(url)
     return HttpResponse(json.dumps({'rt': -1, 'msg': 'login first'}), content_type="application/json")

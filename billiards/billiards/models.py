@@ -30,6 +30,7 @@ from decimal import Decimal
 from geosimple.fields import GeohashField
 from geosimple.managers import GeoManager
 from billiards.commons import decodeunicode
+import time
 
 def getThumbnailPath(path, length, prefix = 'w'):
     fileName, fileExtension = os.path.splitext(path)
@@ -850,7 +851,7 @@ class Goods(models.Model):
 class Transaction(models.Model):
     id = models.AutoField(primary_key=True)
     payaccount = models.ForeignKey(PayAccount, verbose_name='交易账户', db_column='payaccount')
-    tradenum = models.CharField(max_length=64, verbose_name='唯一交易订单号', default=generator(64))
+    tradenum = models.CharField(max_length=64, verbose_name='唯一交易订单号', unique=True)
     subject = models.CharField(max_length=256, verbose_name='商品名称')
     user = models.ForeignKey(User, verbose_name='用户标识', db_column='uid')
     goods = models.ForeignKey(Goods, verbose_name='商品唯一id', db_column='goods')
@@ -872,9 +873,21 @@ class Transaction(models.Model):
             (5, u'已完成')
         ), default=1, jsonUseValue=True)
     
+    @property
+    def paymentExpired(self):
+        if self.state != 1 or \
+            (self.validUntilDate and self.validUntilDate.replace(tzinfo=utc) - datetime.datetime.utcnow().replace(tzinfo=utc) < datetime.timedelta(seconds = 1)):
+            return True
+        return False
+        
     def natural_key(self):
         return {'tradenum': self.tradenum, 'goods': self.goods.natural_key(), 'fee': self.fee, 'tradeStatus': self.tradeStatus,
                 'state': int(self.state)}
+        
+    def save(self, *args, **kwargs):
+        if not self.tradenum:
+            self.tradenum = "YY" + generator(6, string.ascii_uppercase) + str(long(round(time.time() * 1000)))
+        super(Transaction, self).save()
     
     class Meta:
         db_table = 'transaction'

@@ -61,10 +61,15 @@ def assistant_list(request):
 def assistant_order(request):
     if request.user.is_authenticated():
         if request.method == 'POST':
-            appoints = AssistantAppointment.objects.filter(ASSISTANTAPPOINTMENT_FILTER).filter(user=request.user).order_by("-createdDate")
+            appoints = AssistantAppointment.objects.filter(user=request.user).order_by("-createdDate")
             for appoint in appoints:
                 if appoint.state == 1 and (appoint.transaction.state == 2 or appoint.transaction.state == 5):
                     appoint.state = 2
+                    appoint.save()
+                elif appoint.state != 8 and appoint.transaction.paymentExpired:
+                    appoint.transaction.state = 3
+                    appoint.transaction.save()
+                    appoint.state = 8
                     appoint.save()
             return HttpResponse(tojson2(appoints, AssistantJSONSerializer(), assistant_appointment_fields))
         else:
@@ -125,20 +130,28 @@ def assistant_offer_booking_by_uuid(request, assistant_uuid):
                             (Q(starttime__gte=offertimerange[0]) & Q(starttime__lt=offertimerange[1])) | 
                             (Q(endtime__gt=offertimerange[0]) & Q(endtime__lte=offertimerange[1])))
                         if appoints.exists():
+                            available_payment = True
                             for appoint in appoints:
-                                if appoint.user == request.user:
-                                    return HttpResponse(simplejson.dumps({'code': 2, 'msg': 'order has been created', 'state': appoint.state}))
-                            return HttpResponse(simplejson.dumps({'code': 1, 'msg': 'unavailable'}))
+                                if not appoint.transaction.paymentExpired:
+                                    if appoint.user == request.user:
+                                        return HttpResponse(simplejson.dumps({'code': 2, 'msg': 'order has been created', 'state': appoint.state}))
+                                    else:
+                                        available_payment = False
+                                else:
+                                    appoint.state = 8
+                                    appoint.transaction.state = 3
+                                    appoint.transaction.save()
+                                    appoint.save()
+                            if not available_payment:
+                                return HttpResponse(simplejson.dumps({'code': 1, 'msg': 'unavailable'}))
                         # retrieve/create a goods
                         name = u"预约%s %s点 至 %s点" %(offer.assistant.nickname, offertimerange[0].strftime("%Y-%m-%d %H"), offertimerange[1].strftime("%H"))
                         hashvalue = hashlib.md5(u"%s %s-%s" %(offer.assistant.uuid, offertimerange[0], offertimerange[1])).hexdigest().upper()
 #                         goods, created = Goods.objects.get_or_create(sku=hashvalue, defaults={'name': name, 'description': name, 'price':offer.price*offerduring,
                         goods, created = Goods.objects.get_or_create(sku=hashvalue, defaults={'name': name, 'description': name, 'price':0.01,  
                                     'type': 2, 'sku': hashvalue})
-                        if not created:
-                            return HttpResponse(simplejson.dumps({'code': 1, 'msg': 'unavailable'}))
                         transaction, url = createTransaction(request, goods)
-                        transaction.validUntilDate = offertimerange[0] - timedelta(hours=2)
+                        transaction.validUntilDate = datetime.datetime.now() + timedelta(minutes=15)
                         transaction.save()
                         AssistantAppointment.objects.create(assistant=assistant, user=request.user, poolroom=offer.poolroom, 
                                     goods=goods, transaction=transaction, starttime=offertimerange[0], endtime=offertimerange[1],
