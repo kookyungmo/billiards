@@ -63,10 +63,11 @@ def assistant_order(request):
         if request.method == 'POST':
             appoints = AssistantAppointment.objects.filter(user=request.user).order_by("-createdDate")
             for appoint in appoints:
-                if appoint.state == 1 and (appoint.transaction.state == 2 or appoint.transaction.state == 5):
-                    appoint.state = 2
-                    appoint.save()
-                elif appoint.state != 8 and appoint.transaction.paymentExpired:
+                if appoint.transaction.state == 2 or appoint.transaction.state == 5:
+                    if appoint.state == 1:
+                        appoint.state = 2
+                        appoint.save()
+                elif appoint.transaction.state != 3 and appoint.transaction.paymentExpired:
                     appoint.transaction.state = 3
                     appoint.transaction.save()
                     appoint.state = 8
@@ -132,7 +133,8 @@ def assistant_offer_booking_by_uuid(request, assistant_uuid):
                         if appoints.exists():
                             available_payment = True
                             for appoint in appoints:
-                                if not appoint.transaction.paymentExpired:
+                                if (appoint.transaction.state == 2 or appoint.transaction.state == 5) or \
+                                    (appoint.transaction.state == 1 and not appoint.transaction.paymentExpired):
                                     if appoint.user == request.user:
                                         return HttpResponse(simplejson.dumps({'code': 2, 'msg': 'order has been created', 'state': appoint.state}))
                                     else:
