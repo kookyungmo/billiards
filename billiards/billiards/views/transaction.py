@@ -50,14 +50,14 @@ def createTransaction(request, goods):
     returnurl = request.build_absolute_uri(reverse('transaction_alipay_wapreturn')) if isMobile else request.build_absolute_uri(reverse('transaction_alipay_return'))
     notifyurl = request.build_absolute_uri(reverse('transaction_alipay_wapnotify')) if isMobile else request.build_absolute_uri(reverse('transaction_alipay_notify'))
     if isMobile:
-        params = {'out_trade_no': transaction.tradenum,
+        params = {'out_trade_no': transaction.tradeNum,
               'subject': transaction.subject,
               'total_fee': transaction.fee,
               'seller_account_name': alipay.seller_email,
               'call_back_url': returnurl,
               'notify_url': notifyurl}
     else:
-        params = {'out_trade_no': transaction.tradenum, 'subject': transaction.subject, 'total_fee': transaction.fee, 
+        params = {'out_trade_no': transaction.tradeNum, 'subject': transaction.subject, 'total_fee': transaction.fee, 
         'return_url': returnurl, 'notify_url': notifyurl}
     return (transaction, alipay.create_direct_pay_by_user_url(**params))
 
@@ -72,13 +72,17 @@ def alipay_goods(request, sku):
     return HttpResponse(json.dumps({'rt': -1, 'msg': 'login first'}), content_type="application/json")
 
 TRANSACTION_TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+
+def getIdFromTradeNum(tradenum):
+    return int(tradenum[8:])
+
 def alipay_wapreturn(request):
     account, alipay = getWapAlipay()
     parameters = {k: unquote(v) for k, v in request.GET.iteritems()}
     if alipay.verify_notify(**parameters):
         tradenum = request.GET.get('out_trade_no')
         try:
-            transaction = Transaction.objects.get(tradenum=tradenum)
+            transaction = Transaction.objects.get(id=getIdFromTradeNum(tradenum))
             if transaction.state != 2 and transaction.state != 5:
                 transaction.paytradeNum = request.GET.get('trade_no')
                 transaction.tradeStatus = 'TRADE_SUCCESS'
@@ -106,7 +110,7 @@ def alipay_wapnotify(request):
             notifydata = {node.tag: node.text for node in tree.iter()}
             tradenum = notifydata['out_trade_no']
             try:
-                transaction = Transaction.objects.get(tradenum=tradenum)
+                transaction = Transaction.objects.get(id=getIdFromTradeNum(tradenum))
                 if transaction.tradeStatus == 'TRADE_FINISHED' or transaction.tradeStatus == 'TRADE_CLOSED':
                     # already completed transaction
                     return HttpResponse("success")
@@ -137,7 +141,7 @@ def alipay_return(request):
         if request.GET.get('is_success') == 'T':
             tradenum = request.GET.get('out_trade_no')
             try:
-                transaction = Transaction.objects.get(tradenum=tradenum)
+                transaction = Transaction.objects.get(id=getIdFromTradeNum(tradenum))
                 if transaction.state != 2 and transaction.state != 5:
                     transaction.paytradeNum = request.GET.get('trade_no')
                     transaction.tradeStatus = request.GET.get('trade_status')
@@ -165,7 +169,7 @@ def alipay_notify(request):
         if alipay.verify_notify(**parameters):
             tradenum = request.GET.get('out_trade_no')
             try:
-                transaction = Transaction.objects.get(tradenum=tradenum)
+                transaction = Transaction.objects.get(id=getIdFromTradeNum(tradenum))
                 if transaction.tradeStatus == 'TRADE_FINISHED' or transaction.tradeStatus == 'TRADE_CLOSED':
                     # already completed transaction
                     return HttpResponse("success")
