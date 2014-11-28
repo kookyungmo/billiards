@@ -11,19 +11,27 @@ from django.db.models.query_utils import Q
 from billiards.settings import TEMPLATE_ROOT, PREFER_LOGIN_SITE
 from django.template.context import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404, redirect
-from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
+from django.views.decorators.csrf import csrf_exempt
 import json
-from django.contrib.auth.models import User
-from billiards.commons import KEY_PREFIX, forceLogin
+from billiards.commons import forceLogin
+from django.utils import simplejson
+from django.core.exceptions import PermissionDenied
+import re
+from validate_email import validate_email
 
+PHONE_PATTERN = re.compile(r'^1\d{10}$')    
+@csrf_exempt
 def completeInfo(request):
     user = request.user
     if user.is_authenticated():
-        user.cellphone = request.GET.get('tel')
-        user.email = request.GET.get('email')
-        user.save()
-    # return empty json data
-    return HttpResponse("{}")
+        contactInfo = simplejson.loads(request.body)
+        if contactInfo['tel'].strip() != '' and PHONE_PATTERN.search(contactInfo['tel'].strip()) and validate_email(contactInfo['email']):
+            user.cellphone = contactInfo['tel'].strip()
+            user.email = contactInfo['email'].strip()
+            user.save()
+            return HttpResponse(simplejson.dumps({'code': 0}))
+        return HttpResponse(simplejson.dumps({'code': -1}))
+    raise PermissionDenied("login firstly.")    
 
 MEMBERSHIP_PAGE = 'user/membership.html'
 @csrf_exempt

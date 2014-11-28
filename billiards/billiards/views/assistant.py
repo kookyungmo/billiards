@@ -114,6 +114,8 @@ def assistant_offer_by_uuid(request, assistant_uuid):
 @detect_mobile
 def assistant_offer_booking_by_uuid(request, assistant_uuid):
     if request.user.is_authenticated():
+        if request.user.cellphone is None or request.user.cellphone == '':
+            return HttpResponse(simplejson.dumps({'code': 16, 'msg': 'missing contact information'}))
         try:
             offer_booking = simplejson.loads(request.body)
             offerday = datetime.datetime.utcfromtimestamp(float(offer_booking['offerDay'])).replace(tzinfo=utc).astimezone(pytz.timezone(settings.TIME_ZONE))

@@ -279,6 +279,10 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 							case 2:
 								$scope.bookingErrMessage = $sce.trustAsHtml("你已经预订了此时段，去<a href=\"/user/order\">订单中心</a>查看");
 								break;
+							case 16:
+								$scope.bookingErrMessage = null;
+								$('#contactInfo').foundation('reveal', 'open');
+								break;
 							default:
 								$scope.bookingErrMessage = $sce.trustAsHtml("服务器错误，请稍后再试");
 								break;
@@ -290,6 +294,21 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 				} else {
 					refreshAuthentication();
 				}
+			};
+			$scope.completeContactInfoLater = function() {
+				$scope.bookingErrMessage = $sce.trustAsHtml("缺少必要的联系方式。请重新提交你的预约");
+				$("#contactInfo .close-reveal-modal").click();
+			};
+			$scope.completeContactInfo = function($event) {
+				$event.preventDefault();
+				Restangular.one('user', 'completeInfo').customPOST(
+		  				{tel: $scope.contactCellphone, email: $scope.contactEmail}).then(function (data) {
+		  					$("#contactInfo .close-reveal-modal").click();
+							$scope.booking();
+		  				}, function (error){
+		  					$("#contactInfo .close-reveal-modal").click();
+							$scope.bookingErrMessage = $sce.trustAsHtml("更新联系方式错误，请重试");
+		  				});
 			};
 			//TODO load comments from server
 			$scope.comments = [];
