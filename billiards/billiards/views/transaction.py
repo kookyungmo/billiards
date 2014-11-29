@@ -20,6 +20,7 @@ from urlparse import unquote
 from xml.etree import ElementTree
 from django.views.decorators.csrf import csrf_exempt
 import logging
+from billiards.commons import notification
 
 logger = logging.getLogger("transaction")
 
@@ -89,6 +90,8 @@ def alipay_wapreturn(request):
                 transaction.paidDate = datetime.now().replace(tzinfo=utc).astimezone(pytz.timezone(TIME_ZONE))
                 transaction.state = 2
                 transaction.save()
+                
+                notification(u"手机订单%s支付完成" %(transaction.tradeNum), u"%s - %s元" %(transaction.goods.name, transaction.fee))
         except Transaction.DoesNotExist:
             #TODO handle error case
             pass
@@ -122,6 +125,8 @@ def alipay_wapnotify(request):
                     datetime.strptime(notifydata['gmt_payment'], TRANSACTION_TIME_FORMAT).replace(tzinfo=pytz.timezone(TIME_ZONE))
                 transaction.state = 2 if notifydata['trade_status'] == 'TRADE_SUCCESS' else 5
                 transaction.save()
+                
+                notification(u"手机订单%s支付完成" %(transaction.tradeNum), u"%s - %s元" %(transaction.goods.name, transaction.fee))
                 if transaction.goods.type == 2:
                     return redirect('assistant_order')
                 return HttpResponse("success.")
@@ -152,6 +157,8 @@ def alipay_return(request):
                         transaction.paidDate = datetime.strptime(request.GET.get('notify_time'), TRANSACTION_TIME_FORMAT).replace(tzinfo=pytz.timezone(TIME_ZONE))
                         transaction.state = 2
                     transaction.save()
+                    
+                    notification(u"订单%s支付完成" %(transaction.tradeNum), u"%s - %s元" %(transaction.goods.name, transaction.fee))
             except Transaction.DoesNotExist:
                 #TODO handle error case
                 pass
@@ -182,6 +189,7 @@ def alipay_notify(request):
                 if transaction.tradeStatus == 'TRADE_FINISHED' or transaction.tradeStatus == 'TRADE_SUCCESS':
                     transaction.paidDate = datetime.strptime(request.GET.get('gmt_payment'), TRANSACTION_TIME_FORMAT).replace(tzinfo=pytz.timezone(TIME_ZONE))
                     transaction.state = 2
+                    notification(u"订单%s支付完成" %(transaction.tradeNum), u"%s - %s元" %(transaction.goods.name, transaction.fee))
                 elif transaction.tradeStatus == 'TRADE_CLOSED':
                     transaction.closedDate = datetime.strptime(request.GET.get('gmt_close'), TRANSACTION_TIME_FORMAT).replace(tzinfo=pytz.timezone(TIME_ZONE))
                     transaction.state = 4
