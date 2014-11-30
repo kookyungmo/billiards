@@ -203,6 +203,13 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 			escort = assistant[0];
 			escort.age = _calculateAge(escort.birthday);
 	    	$scope.assistant = escort;
+	    	
+	    	baseEscore.customGET("stats", {}).then(function (stats){
+	    		if (stats['code'] == 0){
+	    			$scope.pageview = stats['pageview'];
+	    			$scope.likes = stats['likes'];
+	    		}
+	    	});
 	    });
 		baseEscort.getList("offer").then(function (offers){
 			offers = offers[0];
