@@ -24,7 +24,6 @@ from werobot.robot import BaseRoBot
 from werobot.utils import to_text
 
 from billiards import settings
-from billiards.bcms import mail
 from billiards.commons import set_query_parameter, KEY_PREFIX,\
     DisplayNameJsonSerializer
 from billiards.location_convertor import gcj2bd
@@ -144,9 +143,9 @@ def recordUserActivity(rawmessage, event, keyword, message, reply, target = 1):
         newactivity.save()
         
     if  not settings.TESTING and (shouldNotifyEvent(rawmessage, event, settings.WECHAT_ACTIVITY_NOTIFICATION) or (keyword and keyword in settings.WECHAT_ACTIVITY_NOTIFICATION_KEYWORDS)):
-        mail(settings.NOTIFICATION_EMAIL, u'New wechat activity -- %s' %(localtime), 
+        notification(u'New wechat activity -- %s' %(localtime), 
              u'[%s][%s] The "%s" message %s from "%s" was received at %s.' %(newactivity.get_target_display(), event, keyword, simplejson.dumps(message).decode('unicode-escape'), userid, localtime))
-
+       
 def buildPoolroomImageURL(poolroom):
     if poolroom.images.count() > 0:
         coverimage = poolroom.images.filter(iscover=1)

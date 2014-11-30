@@ -15,6 +15,8 @@ from django.core.serializers.json import Serializer
 from django.utils.encoding import is_protected_type
 from datetime import datetime
 from bitfield.models import BitField
+from billiards import settings
+from billiards.bcms import mail
 
 KEY_PREFIX = 'location_%s_%s'
 
@@ -95,3 +97,8 @@ def json_serial(obj):
     if isinstance(obj, datetime):
         serial = obj.isoformat()
         return serial
+    
+def notification(subject, body):
+    notification_mail(subject, body)
+def notification_mail(subject, body):
+    mail(settings.NOTIFICATION_EMAIL, subject, body)

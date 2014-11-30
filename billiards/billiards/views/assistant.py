@@ -19,12 +19,13 @@ from billiards.commons import tojson2, NoObjectJSONSerializer, json_serial
 from billiards.models import Assistant, AssistantOffer, Poolroom, \
     assistant_fields, AssistantImage, \
     assistantimage_fields, assistantoffer_fields_2, AssistantAppointment, Goods,\
-    assistant_appointment_fields
+    assistant_appointment_fields, AssistantLikeStats
 from billiards.settings import TEMPLATE_ROOT
 from billiards.views.transaction import createTransaction
 from billiards import settings
 import json
 from datetime import timedelta
+from django.core.cache import cache
 
 def assistant(request):
     return render_to_response(TEMPLATE_ROOT + 'escort/list.html', context_instance=RequestContext(request))
@@ -108,12 +109,14 @@ def assistant_offer_by_uuid(request, assistant_uuid):
     try:
         return HttpResponse(simplejson.dumps([getOffers(assistant_uuid)]))
     except Assistant.DoesNotExist:
-        return HttpResponse("{'error': 'not found', 'code': 0}") 
-
+        return HttpResponse("{'error': 'not found', 'code': 0}")
+    
 @csrf_exempt
 @detect_mobile
 def assistant_offer_booking_by_uuid(request, assistant_uuid):
     if request.user.is_authenticated():
+        if request.user.cellphone is None or request.user.cellphone == '':
+            return HttpResponse(simplejson.dumps({'code': 16, 'msg': 'missing contact information'}))
         try:
             offer_booking = simplejson.loads(request.body)
             offerday = datetime.datetime.utcfromtimestamp(float(offer_booking['offerDay'])).replace(tzinfo=utc).astimezone(pytz.timezone(settings.TIME_ZONE))
@@ -161,7 +164,77 @@ def assistant_offer_booking_by_uuid(request, assistant_uuid):
                         return HttpResponse(simplejson.dumps({'code': 0, 'msg': 'order is created.', 'payurl': url}))
                 return HttpResponse(simplejson.dumps({'code': -3, 'msg': 'illegal data'}))
             return HttpResponse(simplejson.dumps({'code': -2, 'msg': 'illegal day'}))
-        except ValueError, e:
+        except Assistant.DoesNotExist:
+            return HttpResponse(simplejson.dumps({'code': -1, 'msg': 'illegal data'}))
+        except ValueError:
             return HttpResponse(simplejson.dumps({'code': -1, 'msg': 'illegal data'}))
     
-    raise PermissionDenied("login firstly.")    
+    raise PermissionDenied("login firstly.")
+
+@csrf_exempt
+def assistant_like_by_uuid(request, assistant_uuid):
+    if request.user.is_authenticated():
+        try:
+            assistant = Assistant.objects.filter(ASSISTANT_FILTER).get(uuid=uuid.UUID(assistant_uuid))
+            likeStat, created = AssistantLikeStats.objects.get_or_create(assistant=assistant, user=request.user,
+                    defaults={'assistant': assistant, 'user': request.user, 'lastUpdated': datetime.datetime.now()})
+            if created:
+                updateAssistantLike(assistant, 1)
+                return HttpResponse(simplejson.dumps({'code': 0, 'msg': 'liked'}))
+            elif not likeStat.isLiked:
+                likeStat.isLiked = True
+                likeStat.lastUpdated = datetime.datetime.now()
+                likeStat.save()
+                return HttpResponse(simplejson.dumps({'code': 0, 'msg': 'reliked'}))
+            else:
+                return HttpResponse(simplejson.dumps({'code': 0, 'msg': 'already liked'}))
+        except Assistant.DoesNotExist:
+            return HttpResponse(simplejson.dumps({'code': -1, 'msg': 'illegal data'}))
+    raise PermissionDenied("login firstly.")
+
+@csrf_exempt
+def assistant_unlike_by_uuid(request, assistant_uuid):
+    if request.user.is_authenticated():
+        try:
+            assistant = Assistant.objects.filter(ASSISTANT_FILTER).get(uuid=uuid.UUID(assistant_uuid))
+            likeStat = AssistantLikeStats.objects.get(assistant=assistant, user=request.user)
+            if likeStat.isLiked:
+                likeStat.isLiked = False
+                likeStat.lastUpdated = datetime.datetime.now()
+                likeStat.save()
+                updateAssistantLike(assistant, -1)
+                return HttpResponse(simplejson.dumps({'code': 0, 'msg': 'unliked'}))
+            else:
+                return HttpResponse(simplejson.dumps({'code': 0, 'msg': 'already unliked'}))
+        except AssistantLikeStats.DoesNotExist:
+            return HttpResponse(simplejson.dumps({'code': -2, 'msg': 'illegal request'}))
+        except Assistant.DoesNotExist:
+            return HttpResponse(simplejson.dumps({'code': -1, 'msg': 'illegal data'}))
+    raise PermissionDenied("login firstly.")
+
+TIMEOUT = 60 * 60 * 24 * 2
+def updateAssistantLike(assistant, delta):
+    likes = cache.get(ASSISTANT_LIKE %(str(assistant.uuid)))
+    if likes == None:
+        likes = AssistantLikeStats.objects.filter(Q(assistant=assistant) & Q(isLiked=True)).count()
+    if delta != 0:
+        cache.set(ASSISTANT_LIKE %(assistant.uuidstr), likes + delta, TIMEOUT)
+    return likes + delta
+
+ASSISTANT_PAGEVIEW = "%s_pageview"
+ASSISTANT_LIKE = "%s_like"
+def assistant_stats_by_uuid(request, assistant_uuid):
+    try:
+        assistant = Assistant.objects.filter(ASSISTANT_FILTER).get(uuid=uuid.UUID(assistant_uuid))
+        pageView = cache.get(ASSISTANT_PAGEVIEW %(assistant_uuid))
+        if pageView == None:
+            pageView = assistant.pageview + 1
+        else:
+            pageView += 1
+            if pageView % 100 == 0:
+                assistant.pageview = pageView
+                assistant.save()
+        cache.set(ASSISTANT_PAGEVIEW %(assistant_uuid), pageView, None)
+        return HttpResponse(simplejson.dumps({'code': 0, 'likes': updateAssistantLike(assistant, 0), 'pageview': pageView}))
+    except Assistant.DoesNotExist:
+        return HttpResponse(simplejson.dumps({'code': -1, 'msg': 'illegal data'}))

@@ -944,6 +944,8 @@ class Assistant(models.Model):
     selfintroduce = models.CharField(verbose_name="自我介绍", max_length=1024)
     bestperformance = models.CharField(verbose_name="最佳清台记录", max_length=128)
 
+    pageview = models.BigIntegerField(default=0, verbose_name="浏览次数")
+    
     state = IntegerChoiceTypeField(verbose_name=u'状态', choices=(
             (1, u'有效'),
             (2, u'失效'),
@@ -1034,6 +1036,21 @@ class AssistantImage(models.Model):
             except ImportError:
                 pass
         self.__imagepath = self.imagepath
+        
+class AssistantLikeStats(models.Model):
+    assistant = models.ForeignKey(Assistant, verbose_name='助教')
+    user = models.ForeignKey(User, verbose_name='用户')
+    isLiked = models.BooleanField(verbose_name='是否喜欢', default=True)
+    lastUpdated = models.DateTimeField(verbose_name='最后更新日期')
+    
+    class Meta:
+        db_table = 'assistant_likes'
+        verbose_name = '赞助教统计'
+        verbose_name_plural = '赞助教统计'
+        unique_together = ('assistant', 'user',)
+        index_together = [
+            ["assistant", "isLiked"],
+        ]
         
 assistantoffer_fields = ('assistant', 'poolroom', 'price')
 assistantoffer_fields_2 = ('poolroom', 'price', 'starttime', 'endtime', 'priceDescription', 'extraService')

@@ -67,7 +67,7 @@ function getSmartTime(datetime) {
 
 abideOptions = {
 		patterns : {
-			cellphone: /^(1(([35][0-9])|(47)|[8][012356789]))\d{8}$/,
+			cellphone: /^1\d{10}$/,
 			qq: /^\d{5,13}$/,
 		},
 		validators: {
