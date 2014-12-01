@@ -163,6 +163,8 @@ def alipay_return(request):
                 #TODO handle error case
                 pass
             # TODO add a page for it
+            if transaction.goods.type == 2:
+                    return redirect('assistant_order')
             return HttpResponse("Payment completed.")
     return HttpResponse("Error.")
 
@@ -194,6 +196,8 @@ def alipay_notify(request):
                     transaction.closedDate = datetime.strptime(request.GET.get('gmt_close'), TRANSACTION_TIME_FORMAT).replace(tzinfo=pytz.timezone(TIME_ZONE))
                     transaction.state = 4
                 transaction.save()
+                if transaction.goods.type == 2:
+                    return redirect('assistant_order')
                 return HttpResponse("success")
             except Transaction.DoesNotExist:
                 #TODO handle error case

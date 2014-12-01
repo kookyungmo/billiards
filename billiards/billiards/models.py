@@ -1089,7 +1089,7 @@ class AssistantOffer(models.Model):
     
         
 assistant_appointment_fields = ('assistant', 'poolroom', 'starttime', 'endtime', 'duration', 'price', 'createdDate',
-            'state', 'transaction')
+            'state', 'transaction', 'chargeCode')
 class AssistantAppointment(models.Model):
     assistant = models.ForeignKey(Assistant, verbose_name="助教")
     user = models.ForeignKey(User, verbose_name="用户")
@@ -1101,6 +1101,7 @@ class AssistantAppointment(models.Model):
     duration = models.IntegerField(verbose_name="时长(小时)")
     price = CurrencyField(verbose_name="价钱(元/小时)")
     createdDate = models.DateTimeField(verbose_name="预约创建时间")
+    chargeCode = models.CharField(max_length=12, verbose_name="消费代码", default=generator(6))
     state = IntegerChoiceTypeField(verbose_name=u'状态', choices=(
             (1, u'等待付款'),
             (2, u'等待确认'),

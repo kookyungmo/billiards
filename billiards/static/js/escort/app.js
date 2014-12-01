@@ -377,4 +377,21 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 			return "订单已过期";
 		}
 	};
+	
+	$scope.chargeCode = function(order) {
+		switch (order.transaction.state) {
+		case 4:
+			return null;
+		case 3:
+			return null;
+		case 2:
+			if (order.state == 2)
+				return null;
+			return order.chargeCode;
+		case 1:
+			return null;
+		default:
+			return order.chargeCode;
+		}
+	}
 }]);

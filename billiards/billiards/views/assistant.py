@@ -38,6 +38,11 @@ class AssistantJSONSerializer(NoObjectJSONSerializer):
                 self._current[field.name] = Poolroom.objects.get(id=value).natural_key_simple()
             else:
                 self._current[field.name] = '{}';
+        elif field.name == 'chargeCode':
+            if obj.state == 1 or obj.state == 4 or obj.state == 8:
+                self._current[field.name] = 'Paid First'
+            else:
+                super(AssistantJSONSerializer, self).handle_field(obj, field)
         else:
             super(AssistantJSONSerializer, self).handle_field(obj, field)
             

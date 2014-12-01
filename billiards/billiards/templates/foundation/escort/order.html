@@ -61,13 +61,13 @@
          </div>
        </div>
      </div>
-     <div class="row orderSlot mobPad mobpadLast">
+     <div class="row orderSlot mobPad mobpadLast" ng-show="!!chargeCode(order)">
        <div class="large-10 small-12 clearfix">
          <div class="large-3 medium-3 small-6 columns">
            <strong>消费代码: </strong>
          </div>
          <div class="large-9 medium-9 small-6 column">
-           <span class="cust_code"><i class="icon icon-qrcode"></i>12345678</span>
+           <span class="cust_code"><i class="icon icon-qrcode"></i><{ chargeCode(order) }></span>
          </div>
        </div>
      </div>
