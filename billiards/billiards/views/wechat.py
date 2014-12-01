@@ -25,7 +25,7 @@ from werobot.utils import to_text
 
 from billiards import settings
 from billiards.commons import set_query_parameter, KEY_PREFIX,\
-    DisplayNameJsonSerializer
+    DisplayNameJsonSerializer, notification
 from billiards.location_convertor import gcj2bd
 from billiards.models import Coupon, getCouponCriteria, Poolroom, \
     WechatActivity, Event, Membership, Group, \
