@@ -30,7 +30,6 @@ from decimal import Decimal
 from geosimple.fields import GeohashField
 from geosimple.managers import GeoManager
 from billiards.commons import decodeunicode
-import time
 
 def getThumbnailPath(path, length, prefix = 'w'):
     fileName, fileExtension = os.path.splitext(path)
@@ -1116,6 +1115,9 @@ class AssistantAppointment(models.Model):
         db_table = 'assistant_appoinment'
         verbose_name = '助教预约详情'
         verbose_name_plural = '助教预约详情'
+        
+    def __unicode__(self):
+        return u"[%s] %s %s" %(self.get_state_display(), self.user, self.goods.name)
 
 try:
     from south.modelsinspector import add_introspection_rules

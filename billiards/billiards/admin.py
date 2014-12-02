@@ -160,10 +160,12 @@ class MembershipAdmin(admin.ModelAdmin):
 class AssistantAppointmentAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj=None):
         if self.declared_fieldsets:
-            return flatten_fieldsets(self.declared_fieldsets)
+            fieldsets = flatten_fieldsets(self.declared_fieldsets)
+            fieldsets.remove('state')
+            return fieldsets
         else:
             return list(set(
-                [field.name for field in self.opts.local_fields] +
+                [field.name for field in self.opts.local_fields if field.name != 'state'] +
                 [field.name for field in self.opts.local_many_to_many]
             ))
     
