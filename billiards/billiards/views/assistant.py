@@ -21,7 +21,7 @@ from billiards.models import Assistant, AssistantOffer, Poolroom, \
     assistantimage_fields, assistantoffer_fields_2, AssistantAppointment, Goods,\
     assistant_appointment_fields, AssistantLikeStats
 from billiards.settings import TEMPLATE_ROOT
-from billiards.views.transaction import createTransaction
+from billiards.views.transaction import createTransaction, PAYMENT_TIMEOUT
 from billiards import settings
 import json
 from datetime import timedelta
@@ -161,7 +161,7 @@ def assistant_offer_booking_by_uuid(request, assistant_uuid):
                         goods, created = Goods.objects.get_or_create(sku=hashvalue, defaults={'name': name, 'description': name, 'price':0.01,  
                                     'type': 2, 'sku': hashvalue})
                         transaction, url = createTransaction(request, goods)
-                        transaction.validUntilDate = datetime.datetime.now() + timedelta(minutes=15)
+                        transaction.validUntilDate = datetime.datetime.now() + timedelta(minutes=PAYMENT_TIMEOUT)
                         transaction.save()
                         AssistantAppointment.objects.create(assistant=assistant, user=request.user, poolroom=offer.poolroom, 
                                     goods=goods, transaction=transaction, starttime=offertimerange[0], endtime=offertimerange[1],

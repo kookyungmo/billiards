@@ -1115,6 +1115,9 @@ class AssistantAppointment(models.Model):
         db_table = 'assistant_appoinment'
         verbose_name = '助教预约详情'
         verbose_name_plural = '助教预约详情'
+        index_together = [
+            ["chargeCode", "state"]
+        ]
         
     def __unicode__(self):
         return u"[%s] %s %s" %(self.get_state_display(), self.user, self.goods.name)
