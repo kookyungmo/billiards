@@ -29,11 +29,12 @@ from billiards.commons import set_query_parameter, KEY_PREFIX,\
 from billiards.location_convertor import gcj2bd
 from billiards.models import Coupon, getCouponCriteria, Poolroom, \
     WechatActivity, Event, Membership, Group, \
-    getThumbnailPath
+    getThumbnailPath, AssistantUser
 from billiards.settings import TEMPLATE_ROOT, TIME_ZONE, SITE_LOGO_URL
 from billiards.views.challenge import getNearbyChallenges
 from billiards.views.match import getMatchByRequest
 from billiards.views.poolroom import getNearbyPoolrooms
+from django.contrib.auth.models import User
 
 
 def set_video():
@@ -553,7 +554,15 @@ class PKWechat(BaseRoBot):
             reply = [(u"你还不是'%s'会员" %(group.name), u"点击我只需一步就成为'%s'会员" %(group.name), '', self.buildAbsoluteURI(reverse('membership_apply', args=(message.source, targetgroup,))))]
         return reply
     
-    def text(self):
+    def getAssistantInfo(self, message):
+        try:
+            user = User.objects.get(username=message.source)
+            return AssistantUser.objects.get(user=user)
+        except User.DoesNotExist:
+            return None
+        except AssistantUser.DoesNotExist:
+            return None
+    def text(self):    
         def text_handler(message):
             qqface = "/::\\)|/::~|/::B|/::\\||/:8-\\)|/::<|/::$|/::X|/::Z|/::'\\(|/::-\\||/::@|/::P|/::D|/::O|/::\\(|/::\\+|/:--b|/::Q|/::T|/:,@P|/:,@-D|/::d|/:,@o|/::g|/:\\|-\\)|/::!|/::L|/::>|/::,@|/:,@f|/::-S|/:\\?|/:,@x|/:,@@|/::8|/:,@!|/:!!!|/:xx|/:bye|/:wipe|/:dig|/:handclap|/:&-\\(|/:B-\\)|/:<@|/:@>|/::-O|/:>-\\||/:P-\\(|/::'\\||/:X-\\)|/::\\*|/:@x|/:8\\*|/:pd|/:<W>|/:beer|/:basketb|/:oo|/:coffee|/:eat|/:pig|/:rose|/:fade|/:showlove|/:heart|/:break|/:cake|/:li|/:bome|/:kn|/:footb|/:ladybug|/:shit|/:moon|/:sun|/:gift|/:hug|/:strong|/:weak|/:share|/:v|/:@\\)|/:jj|/:@@|/:bad|/:lvu|/:no|/:ok|/:love|/:<L>|/:jump|/:shake|/:<O>|/:circle|/:kotow|/:turn|/:skip|/:oY|/:#-0|/:hiphot|/:kiss|/:<&|/:&>"
             match = re.search(message.content, qqface)
@@ -600,6 +609,11 @@ class PKWechat(BaseRoBot):
                     reply = self.queryMember(reply, message, 4)
                 elif message.content in HELP_KEYWORDS:
                     reply += self.getHelpMesg()
+                elif message.content == u'我的助教订单' and self.getAssistantInfo(message) != None:
+                    au = self.getAssistantInfo(message)
+                    reply = []
+                    reply.append((u'%s的订单' %(au.assistant.nickname), u'订单详情', au.assistant.coverimage, 
+                                  self.buildAbsoluteURI(reverse('assistant_orders', args=(str(au.assistant.uuid), )))))
                 else:
                     reply += self.getHelpMesg()
                     recordUserActivity(message, 'text', message.content, {'content': message.content}, 

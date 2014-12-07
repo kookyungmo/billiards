@@ -102,3 +102,8 @@ def notification(subject, body):
     notification_mail(subject, body)
 def notification_mail(subject, body):
     mail(settings.NOTIFICATION_EMAIL, subject, body)
+    
+def isWechatBrowser(useragent):
+    if "micromessenger" in useragent.lower():
+        return True
+    return False

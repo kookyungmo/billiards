@@ -35,6 +35,7 @@ def getWapAlipay():
 def getGoods(sku):
     return get_object_or_404(Goods, sku=sku)
 
+PAYMENT_TIMEOUT = 15
 def createTransaction(request, goods):
     isMobile = request.mobile
     account, alipay = getWapAlipay() if isMobile else getAlipay()
@@ -56,10 +57,11 @@ def createTransaction(request, goods):
               'total_fee': transaction.fee,
               'seller_account_name': alipay.seller_email,
               'call_back_url': returnurl,
-              'notify_url': notifyurl}
+              'notify_url': notifyurl,
+              'pay_expire': PAYMENT_TIMEOUT}
     else:
         params = {'out_trade_no': transaction.tradeNum, 'subject': transaction.subject, 'total_fee': transaction.fee, 
-        'return_url': returnurl, 'notify_url': notifyurl}
+        'return_url': returnurl, 'notify_url': notifyurl, 'it_b_pay': '%sm' %(PAYMENT_TIMEOUT)}
     return (transaction, alipay.create_direct_pay_by_user_url(**params))
 
 @detect_mobile
@@ -127,8 +129,6 @@ def alipay_wapnotify(request):
                 transaction.save()
                 
                 notification(u"手机订单%s支付完成" %(transaction.tradeNum), u"%s - %s元" %(transaction.goods.name, transaction.fee))
-                if transaction.goods.type == 2:
-                    return redirect('assistant_order')
                 return HttpResponse("success.")
             except Transaction.DoesNotExist:
                 #TODO handle error case
@@ -163,6 +163,8 @@ def alipay_return(request):
                 #TODO handle error case
                 pass
             # TODO add a page for it
+            if transaction.goods.type == 2:
+                return redirect('assistant_order')
             return HttpResponse("Payment completed.")
     return HttpResponse("Error.")
 

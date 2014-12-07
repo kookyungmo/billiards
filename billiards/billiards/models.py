@@ -30,7 +30,6 @@ from decimal import Decimal
 from geosimple.fields import GeohashField
 from geosimple.managers import GeoManager
 from billiards.commons import decodeunicode
-import time
 
 def getThumbnailPath(path, length, prefix = 'w'):
     fileName, fileExtension = os.path.splitext(path)
@@ -208,10 +207,14 @@ class ChoiceTypeField(models.CharField):
     ''' use value of key when serializing as json
     '''
     jsonUseValue = True
+    exportUseValue = True
     def __init__(self, *args, **kwargs):
         if 'jsonUseValue' in kwargs:
             self.jsonUseValue = kwargs['jsonUseValue']
             del kwargs['jsonUseValue']
+        if 'exportUseValue' in kwargs:
+            self.exportUseValue = kwargs['exportUseValue']
+            del kwargs['exportUseValue']
         super(ChoiceTypeField, self).__init__(*args, **kwargs)
         
     def value_to_string(self, obj):
@@ -222,15 +225,22 @@ class ChoiceTypeField(models.CharField):
     
     def json_use_value(self):
         return self.jsonUseValue
-
+    
+    def export_use_value(self):
+        return self.exportUseValue
+    
 class IntegerChoiceTypeField(models.IntegerField):
     ''' use value of key when serializing as json
     '''
     jsonUseValue = True
+    exportUseValue = True
     def __init__(self, *args, **kwargs):
         if 'jsonUseValue' in kwargs:
             self.jsonUseValue = kwargs['jsonUseValue']
             del kwargs['jsonUseValue']
+        if 'exportUseValue' in kwargs:
+            self.exportUseValue = kwargs['exportUseValue']
+            del kwargs['exportUseValue']
         super(IntegerChoiceTypeField, self).__init__(*args, **kwargs)
         
     def value_to_string(self, obj):
@@ -244,18 +254,28 @@ class IntegerChoiceTypeField(models.IntegerField):
     def json_use_value(self):
         return self.jsonUseValue
     
+    def export_use_value(self):
+        return self.exportUseValue
+    
 class JsonBitField(BitField):
     ''' use value of key when serializing as json
     '''
     jsonUseValue = True
+    exportUseValue = True
     def __init__(self, *args, **kwargs):
         if 'jsonUseValue' in kwargs:
             self.jsonUseValue = kwargs['jsonUseValue']
             del kwargs['jsonUseValue']
+        if 'exportUseValue' in kwargs:
+            self.exportUseValue = kwargs['exportUseValue']
+            del kwargs['exportUseValue']
         super(JsonBitField, self).__init__(*args, **kwargs)
         
     def json_use_value(self):
-        return self.jsonUseValue    
+        return self.jsonUseValue
+    
+    def export_use_value(self):
+        return self.exportUseValue  
     
     def value_to_string(self, obj):
         return " ".join(bitLabelToList(self._get_val_from_obj(obj)))
@@ -920,7 +940,7 @@ class Assistant(models.Model):
             ('chestnut', u'栗发色'),
             ('ginger/red', u'红发色'),
             ('gray-white', u'灰白发色'),
-        ), verbose_name='头发颜色', jsonUseValue=False)
+        ), verbose_name='头发颜色', jsonUseValue=False, exportUseValue=True)
     pubichair = models.CharField(verbose_name='阴毛', blank=True, max_length=64)
     
     occupation = models.CharField(verbose_name='职业', max_length=24)
@@ -931,7 +951,7 @@ class Assistant(models.Model):
             ('japanese', u'日语'),
             ('geman', u'德语'),
             ('cantonese', u'粤语'),
-        ), verbose_name='语言', jsonUseValue=False)
+        ), verbose_name='语言', jsonUseValue=False, exportUseValue=True)
     interest = models.CharField(verbose_name='个人爱好', max_length=64)
     food = models.CharField(verbose_name='喜好的食物', max_length=64)
     drinks = models.CharField(verbose_name='喜好的饮品', max_length=64)
@@ -950,13 +970,16 @@ class Assistant(models.Model):
             (1, u'有效'),
             (2, u'失效'),
             (8, u'禁用'),
-        ), default=1)
+        ), default=1, exportUseValue=True)
     
     _coverimage = None
     @property
     def coverimage(self):
         if self._coverimage == None:
-            self._coverimage = AssistantImage.objects.filter(assistant=self).filter(iscover=True).get().imagepath.name
+            try:
+                self._coverimage = AssistantImage.objects.filter(assistant=self).filter(iscover=True).get().imagepath.name
+            except AssistantImage.DoesNotExist:
+                pass
         return self._coverimage
     
     @property
@@ -1089,18 +1112,19 @@ class AssistantOffer(models.Model):
     
         
 assistant_appointment_fields = ('assistant', 'poolroom', 'starttime', 'endtime', 'duration', 'price', 'createdDate',
-            'state', 'transaction')
+            'state')
 class AssistantAppointment(models.Model):
     assistant = models.ForeignKey(Assistant, verbose_name="助教")
     user = models.ForeignKey(User, verbose_name="用户")
     poolroom = models.IntegerField(verbose_name="预约的球房", blank=True)
     goods = models.ForeignKey(Goods, verbose_name="商品id")
-    transaction = models.ForeignKey(Transaction, verbose_name="交易订单")
+    transaction = models.ForeignKey(Transaction, verbose_name="交易订单", unique=True)
     starttime = models.DateTimeField(verbose_name="预订开始时间")
     endtime = models.DateTimeField(verbose_name="预订结束时间")
     duration = models.IntegerField(verbose_name="时长(小时)")
     price = CurrencyField(verbose_name="价钱(元/小时)")
     createdDate = models.DateTimeField(verbose_name="预约创建时间")
+    chargeCode = models.CharField(max_length=12, verbose_name="消费代码", default=generator(6))
     state = IntegerChoiceTypeField(verbose_name=u'状态', choices=(
             (1, u'等待付款'),
             (2, u'等待确认'),
@@ -1115,6 +1139,25 @@ class AssistantAppointment(models.Model):
         db_table = 'assistant_appoinment'
         verbose_name = '助教预约详情'
         verbose_name_plural = '助教预约详情'
+        index_together = [
+            ["chargeCode", "state"]
+        ]
+        
+    def __unicode__(self):
+        return u"[%s] %s %s" %(self.get_state_display(), self.user, self.goods.name)
+    
+class AssistantUser(models.Model):
+    assistant = models.ForeignKey(Assistant, verbose_name="助教")
+    user = models.ForeignKey(User, verbose_name="用户")
+    
+    class Meta:
+        db_table = 'assistant_user'
+        verbose_name = '助教用户管理'
+        verbose_name_plural = '助教用户管理'
+        unique_together = ('assistant', 'user',)
+        
+    def __unicode__(self):
+        return u"助教(%s) 对应用户 '%s'" %(self.assistant.nickname, self.user)
 
 try:
     from south.modelsinspector import add_introspection_rules

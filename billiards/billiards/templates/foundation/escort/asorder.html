@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="{% static "css/escort/order.css" %}?{{scsshash}}">
 {% endblock %}
 {% block maincontent %}
-<div ng-app="escortApp" ng-controller="OrderCtrl" ng-init="init()">
+<div ng-app="escortApp" ng-controller="ASOrderCtrl" ng-init="init('{{as.uuid}}')">
  <div class="row orderListing" ng-repeat="order in orders">
    <div class="small-5 large-2 medium-3 equal_contant columns orderPic_main">
      <div class="orderPic">
@@ -26,7 +26,7 @@
    <div class="small-7  large-10 equal_contant medium-9 columns padding_0 rightContant">
      <div class="row orderSlot">
        <div class="small-12 title columns">
-         <h2><i class="icon icon-user"></i>{{ request.user.nickname|decodeunicode }}</h2>
+         <h2><i class="icon icon-user"></i><{ order.user.name }></h2>
        </div>
      </div>
      <div class="row orderSlot mobPad">
@@ -61,13 +61,19 @@
          </div>
        </div>
      </div>
-     <div class="row orderSlot mobPad mobpadLast" ng-show="!!chargeCode(order)">
+     <div class="row orderSlot mobPad mobpadLast" ng-show="requireChargeCode(order)">
        <div class="large-10 small-12 clearfix">
-         <div class="large-3 medium-3 small-6 columns">
-           <strong>消费代码: </strong>
+         <div class="large-3 medium-12 small-12 columns">
+           <strong>输入消费代码，完成交易确认: </strong>
          </div>
-         <div class="large-9 medium-9 small-6 column">
-           <span class="cust_code"><i class="icon icon-qrcode"></i><{ chargeCode(order) }></span>
+         <div class="large-9 medium-12 small-12 columns">
+         	<div class="row collapse">
+         		<div class="small-6 columns cust_code"><input type="text" placeholder="六位消费码" ng-model="order.chargecode" required></div>
+         		<div class="small-6 columns"><a ng-click="chargeOrder(order)" ng-disable="!!order.chargecode" class="small button success radius">提交</a></div>
+         	</div>
+         	<div class="row collapse" ng-show="!!order.chargeCodeError">
+         		<div class="small-12 column" ng-bind-html="order.chargeCodeError"></div>
+         	</div>
          </div>
        </div>
      </div>
@@ -77,8 +83,7 @@
            <strong>订单状态: </strong>
          </div>
          <div class="large-9 medium-9 small-7 column">
-           <span ng-show="canPay(order)"><{ orderStateDisplay(order) }>，<a ng-click="pay(order)">去付款</a></span>
-           <span ng-hide="canPay(order)"><{ orderStateDisplay(order) }></span>
+           <span><{ orderStateDisplay(order) }></span>
          </div>
        </div>
      </div>
@@ -88,8 +93,6 @@
 {% endblock %} 
 {% block escortfoundationscript %}
 <script>
-var ORDER_URL = "{% url 'transaction_alipay_goods' '12345678901234567890123456789012' %}";
-
 function equalHeight(group) {
     var tallest = 0;
     group.each(function() {

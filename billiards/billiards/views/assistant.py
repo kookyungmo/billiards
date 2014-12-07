@@ -7,7 +7,7 @@ import uuid
 from django.core.exceptions import PermissionDenied
 from django.db.models.aggregates import Max, Min
 from django.db.models.query_utils import Q
-from django.http.response import HttpResponse
+from django.http.response import HttpResponse, Http404
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template.context import RequestContext
 from django.utils import simplejson
@@ -15,13 +15,14 @@ from django.utils.timezone import pytz, utc
 from django.views.decorators.csrf import csrf_exempt
 from mobi.decorators import detect_mobile
 
-from billiards.commons import tojson2, NoObjectJSONSerializer, json_serial
+from billiards.commons import tojson2, NoObjectJSONSerializer, json_serial,\
+    forceLogin, isWechatBrowser
 from billiards.models import Assistant, AssistantOffer, Poolroom, \
     assistant_fields, AssistantImage, \
     assistantimage_fields, assistantoffer_fields_2, AssistantAppointment, Goods,\
-    assistant_appointment_fields, AssistantLikeStats
+    assistant_appointment_fields, AssistantLikeStats, AssistantUser
 from billiards.settings import TEMPLATE_ROOT
-from billiards.views.transaction import createTransaction
+from billiards.views.transaction import createTransaction, PAYMENT_TIMEOUT
 from billiards import settings
 import json
 from datetime import timedelta
@@ -38,8 +39,26 @@ class AssistantJSONSerializer(NoObjectJSONSerializer):
                 self._current[field.name] = Poolroom.objects.get(id=value).natural_key_simple()
             else:
                 self._current[field.name] = '{}';
+        elif field.name == 'chargeCode':
+            if obj.state == 1 or obj.state == 4 or obj.state == 8:
+                self._current[field.name] = 'Paid First'
+            else:
+                super(AssistantJSONSerializer, self).handle_field(obj, field)
         else:
             super(AssistantJSONSerializer, self).handle_field(obj, field)
+            
+    def handle_fk_field(self, obj, field):
+        if field.name == 'user':
+            self._current[field.name] = {'name': u"%s" %(getattr(obj, field.name))}
+        else:
+            NoObjectJSONSerializer.handle_fk_field(self, obj, field)
+            
+class AssistantOrdersJSONSerializer(AssistantJSONSerializer):
+    def handle_fk_field(self, obj, field):
+        if field.name == 'transaction':
+            self._current[field.name] = field._get_val_from_obj(obj)
+        else:
+            AssistantJSONSerializer.handle_fk_field(self, obj, field)
             
 def updateOffers(offers):
     for offer in offers:
@@ -73,7 +92,7 @@ def assistant_order(request):
                     appoint.transaction.save()
                     appoint.state = 8
                     appoint.save()
-            return HttpResponse(tojson2(appoints, AssistantJSONSerializer(), assistant_appointment_fields))
+            return HttpResponse(tojson2(appoints, AssistantJSONSerializer(), assistant_appointment_fields + ('transaction', 'chargeCode', )))
         else:
             return render_to_response(TEMPLATE_ROOT + 'escort/order.html', context_instance=RequestContext(request))
     return redirect('assistant_list')
@@ -156,7 +175,7 @@ def assistant_offer_booking_by_uuid(request, assistant_uuid):
                         goods, created = Goods.objects.get_or_create(sku=hashvalue, defaults={'name': name, 'description': name, 'price':0.01,  
                                     'type': 2, 'sku': hashvalue})
                         transaction, url = createTransaction(request, goods)
-                        transaction.validUntilDate = datetime.datetime.now() + timedelta(minutes=15)
+                        transaction.validUntilDate = datetime.datetime.now() + timedelta(minutes=PAYMENT_TIMEOUT)
                         transaction.save()
                         AssistantAppointment.objects.create(assistant=assistant, user=request.user, poolroom=offer.poolroom, 
                                     goods=goods, transaction=transaction, starttime=offertimerange[0], endtime=offertimerange[1],
@@ -238,3 +257,51 @@ def assistant_stats_by_uuid(request, assistant_uuid):
         return HttpResponse(simplejson.dumps({'code': 0, 'likes': updateAssistantLike(assistant, 0), 'pageview': pageView}))
     except Assistant.DoesNotExist:
         return HttpResponse(simplejson.dumps({'code': -1, 'msg': 'illegal data'}))
+    
+@csrf_exempt
+def assistant_orders_by_uuid(request, assistant_uuid):
+    if request.user.is_authenticated():
+        try:
+            assistant = Assistant.objects.filter(ASSISTANT_FILTER).get(uuid=uuid.UUID(assistant_uuid))
+            aUser = AssistantUser.objects.filter(Q(user=request.user)).get(assistant=assistant)
+            if request.method == 'POST':
+                appoints = AssistantAppointment.objects.filter(Q(assistant=assistant)).filter(
+                    Q(state=2) | Q(state=4) | Q(state=32) | Q(state=256)).order_by("-createdDate")
+                return HttpResponse(tojson2(appoints, AssistantOrdersJSONSerializer(), assistant_appointment_fields + ('user', 'transaction',)))
+            else:
+                return render_to_response(TEMPLATE_ROOT + 'escort/asorder.html', {'as': assistant}, context_instance=RequestContext(request))
+        except Assistant.DoesNotExist:
+            raise Http404("illegal access.")
+        except AssistantUser.DoesNotExist:
+            raise PermissionDenied("illegal access.")
+    if isWechatBrowser(request.META['HTTP_USER_AGENT']):
+        return forceLogin(request, 'wechat')
+    raise PermissionDenied("login firstly.")
+
+@csrf_exempt
+def assistant_order_complete_by_tid(request, assistant_uuid, transaction_id):
+    if request.user.is_authenticated():
+        try:
+            assistant = Assistant.objects.filter(ASSISTANT_FILTER).get(uuid=uuid.UUID(assistant_uuid))
+            aUser = AssistantUser.objects.filter(Q(user=request.user)).get(assistant=assistant)
+            appoint = AssistantAppointment.objects.get(assistant=assistant, transaction=transaction_id)
+            orderCode = simplejson.loads(request.body)
+            if appoint.state == 32:
+                if appoint.chargeCode.lower() == orderCode['code'].strip().lower() and \
+                    (appoint.transaction.state == 2 or appoint.transaction.state == 5):
+                    appoint.state = 256
+                    appoint.save()
+                    return HttpResponse(simplejson.dumps({'code': 0, 'msg': 'Completed.'}))
+                return HttpResponse(simplejson.dumps({'code': -2, 'msg': 'Mismatched charged code.'}))
+            elif appoint.state == 256:
+                return HttpResponse(simplejson.dumps({'code': 1, 'msg': 'Already completed.'}))
+            else:
+                return HttpResponse(simplejson.dumps({'code': -3, 'msg': 'Illegal request.'}))
+        except Assistant.DoesNotExist:
+            raise Http404("illegal access.")
+        except AssistantUser.DoesNotExist:
+            raise PermissionDenied("illegal access.")
+        except ValueError:
+            return HttpResponse(simplejson.dumps({'code': -1, 'msg': 'illegal data'}))
+
+    raise PermissionDenied("login firstly.")
