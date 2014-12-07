@@ -9,7 +9,7 @@ from billiards.models import Poolroom, Match, PoolroomEquipment, User,\
     MatchEnroll, Challenge, ChallengeApply, PoolroomUser,\
     PoolroomUserApply, PoolroomImage, Group, Coupon, WechatActivity, Event,\
     Membership, Goods, Assistant, AssistantOffer, AssistantAppointment,\
-    AssistantImage
+    AssistantImage, AssistantUser
 from django.contrib import admin
 from bitfield import BitField
 from bitfield.forms import BitFieldCheckboxSelectMultiple
@@ -197,3 +197,4 @@ admin.site.register(Assistant, ModelWithFlagsAdmin)
 admin.site.register(AssistantOffer, ModelWithFlagsAdmin)
 admin.site.register(AssistantAppointment, AssistantAppointmentAdmin)
 admin.site.register(AssistantImage, ImageAdmin)
+admin.site.register(AssistantUser)

@@ -44,7 +44,7 @@ def parse_msg(content):
 class WechatTest(TestCase):
     
     fixtures = ['poolroom.json', 'match.json', 'group.json', 'coupon.json', 'event.json', 
-                'challenge.json', 'poolroomuser.json']
+                'challenge.json', 'poolroomuser.json', 'assistantuser.json']
     
     def setUp(self):
         self.client = Client()
@@ -570,3 +570,36 @@ class WechatTest(TestCase):
         self.assertEqual('148,137', reply['id'])
         utctime = datetime.datetime.utcfromtimestamp(1393628400)
         self.assertEqual(utctime.replace(tzinfo=timezone.utc), activity.receivedtime)
+        
+    def test_invalid_assistant_orders_request(self):
+        data = u"""
+        <xml>
+        <ToUserName><![CDATA[toUser]]></ToUserName>
+        <FromUserName><![CDATA[fromUser]]></FromUserName> 
+        <CreateTime>1391212800</CreateTime>
+        <MsgType><![CDATA[text]]></MsgType>
+        <Content><![CDATA[我的助教订单]]></Content>
+        <MsgId>1234567890123456</MsgId>
+        </xml>
+        """
+        msg = self._send_wechat_message(data)
+        self.assertTrue('ArticleCount' in msg)
+        self.assertEqual(1, int(msg['ArticleCount']))
+        self.assertTrue(msg['Articles']['item']['Title'].startswith(u'"我为台球狂"微信帮助手册'))
+        
+    def test_assistant_orders_request(self):
+        data = u"""
+        <xml>
+        <ToUserName><![CDATA[toUser]]></ToUserName>
+        <FromUserName><![CDATA[075F3CE411F54B563EDAADC829E86]]></FromUserName> 
+        <CreateTime>1391212800</CreateTime>
+        <MsgType><![CDATA[text]]></MsgType>
+        <Content><![CDATA[我的助教订单]]></Content>
+        <MsgId>1234567890123456</MsgId>
+        </xml>
+        """
+        msg = self._send_wechat_message(data)
+        self.assertTrue('ArticleCount' in msg)
+        self.assertEqual(1, int(msg['ArticleCount']))
+        self.assertEqual(msg['Articles']['item']['Title'], u'陌陌测试数据的订单')
+        self.assertTrue('assistant/ebc807f3-4897-4891-a6a6-bc4915e8d10e/orders' in msg['Articles']['item']['Url'])

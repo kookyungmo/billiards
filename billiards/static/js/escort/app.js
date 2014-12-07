@@ -44,6 +44,10 @@ function calcDistance(mypoint, locations) {
 	return {'min': min, 'max': max, 'distanceLabel': offerdistance};
 }
 
+function parseTime(timestr) {
+	return moment(timestr, moment.ISO_8601).zone('+0800');
+}
+
 var offerServicesModule = angular.module('offerServices',[]);
 offerServicesModule.service('NetworkService', function($http){});
 
@@ -330,14 +334,12 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 }])
 
 .controller('OrderCtrl', ['$scope', '$routeParams', "Restangular", function($scope, $routeParams, Restangular) {
-	var myOrder = Restangular.one('user', 'order');
-	myOrder.post().then(function (orders){
-    	$scope.orders = orders;
-    });
-	
-	function parseTime(timestr) {
-		return moment(timestr, moment.ISO_8601).zone('+0800');
-	}
+	$scope.init = function(){
+		var myOrder = Restangular.one('user', 'order');
+		myOrder.post().then(function (orders){
+	    	$scope.orders = orders;
+	    });
+	};
 	
 	$scope.orderTime = function(timestr) {
 		return parseTime(timestr).format('HH mm');
@@ -351,7 +353,7 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 		if (order.transaction.state == 1 && parseTime(order.starttime).diff(moment()) > 60*60*2)
 			return true;
 		return false;
-	}
+	};
 	
 	$scope.pay = function(order) {
 		window.location = ORDER_URL.replace(/12345678901234567890123456789012/g, order.transaction.goods.sku);
@@ -393,5 +395,75 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 		default:
 			return order.chargeCode;
 		}
-	}
-}]);
+	};
+}])
+
+.controller('ASOrderCtrl', ['$scope', '$controller', '$routeParams', "Restangular", "$sce", function($scope, $controller, $routeParams, Restangular, $sce) {
+	$controller('OrderCtrl', {$scope: $scope});
+	$scope.init = function(aid) {
+		var assistant = Restangular.one('assistant', aid);
+		$scope.basicRestful = assistant;
+		assistant.customPOST({}, "orders", {}).then(function (orders){
+	    	$scope.orders = orders;
+	    }, function (error){
+	    	//TODO handle with error
+			console.log(error);
+		});
+	};
+	$scope.orderStateDisplay = function(order) {
+		switch (order.state) {
+		case 2:
+			return "订单已支付，等待确认";
+		case 4:
+			return "订单已申请退款";
+		case 32:
+			return "订单已确认，等待消费确认";
+		case 256:
+			return "订单已消费完成";
+		default:
+			return "";
+		}
+	};
+	$scope.requireChargeCode = function(order) {
+		if (order.state == 32 && parseTime(order.starttime).diff(moment()) < 0)
+			return true;
+		else
+			return false;
+	};
+	$scope.chargeOrder = function(order) {
+		$scope.basicRestful.one('order', order.transaction).customPOST({code: order.chargecode}).then(function(result){
+			switch (result.code){
+			case -2:
+				order.chargeCodeError = $sce.trustAsHtml("<small>消费码不匹配，请重试。</small>");
+				break;
+			case 0:
+				order.state = 256;
+			case 1:
+				order.chargeCodeError = null;
+				break;
+			default:
+				order.chargeCodeError = $sce.trustAsHtml("<small>订单状态不正确，无法确认消费完成。</small>");
+				break;
+			}
+			for (var i = 0; i < $scope.orders.length; i++) {
+				if($scope.orders[i].transaction == order.transaction) {
+					$scope.orders[i] = order;
+					break;
+				}
+			}
+		}, function(error) {
+			if (error.status == 403) {
+				order.chargeCodeError = $sce.trustAsHtml("<small>请重现登录后再提交。</small>");
+			} else {
+				order.chargeCodeError = $sce.trustAsHtml("<small>服务器错误，稍后再试。</small>");
+			}
+			for (var i = 0; i < $scope.orders.length; i++) {
+				if($scope.orders[i].transaction == order.transaction) {
+					$scope.orders[i] = order;
+					break;
+				}
+			}
+		});
+	};
+}])
+;
