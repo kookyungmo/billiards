@@ -307,21 +307,21 @@ strong.important {
     background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/billiards-04-107x107.png'); }
     @media screen and (max-width: 520px) {
       .tile.tile-16 .tile-inner {
-        background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/billiards-04-57x57');
+        background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/billiards-04-57x57.png');
         font-size: 25px; } }
   .tile.tile-32 .tile-inner {
     color: #f9f6f2;
     background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/billiards-05-107x107.png'); }
     @media screen and (max-width: 520px) {
       .tile.tile-32 .tile-inner {
-        background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/billiards-05-57x57');
+        background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/billiards-05-57x57.png');
         font-size: 25px; } }
   .tile.tile-64 .tile-inner {
     color: #f9f6f2;
     background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/billiards-06-107x107.png'); }
     @media screen and (max-width: 520px) {
       .tile.tile-64 .tile-inner {
-        background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/billiards-06-57x57');
+        background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/billiards-06-57x57.png');
         font-size: 25px; } }
   .tile.tile-128 .tile-inner {
     color: #f9f6f2;
@@ -330,7 +330,7 @@ strong.important {
     font-size: 45px; }
     @media screen and (max-width: 520px) {
       .tile.tile-128 .tile-inner {
-        background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/billiards-07-57x57');
+        background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/billiards-07-57x57.png');
         font-size: 25px; } }
   .tile.tile-256 .tile-inner {
     color: #f9f6f2;
@@ -339,7 +339,7 @@ strong.important {
     font-size: 45px; }
     @media screen and (max-width: 520px) {
       .tile.tile-256 .tile-inner {
-        background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/billiards-08-57x57');
+        background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/billiards-08-57x57.png');
 	font-size: 25px; } }
   .tile.tile-512 .tile-inner {
     color: #f9f6f2;
@@ -348,7 +348,7 @@ strong.important {
     font-size: 45px; }
     @media screen and (max-width: 520px) {
       .tile.tile-512 .tile-inner {
-        background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/billiards-09-57x57');
+        background-image: url('http://bcs.duapp.com/billiardsalbum/2014/game_2048/billiards-09-57x57.png');
         font-size: 25px; } }
   .tile.tile-1024 .tile-inner {
     color: #f9f6f2;
