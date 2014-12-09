@@ -6,7 +6,8 @@ Created on 2014年6月14日
 @author: kane
 '''
 from alipay import Alipay, WapAlipay
-from billiards.models import PayAccount, Transaction, Goods
+from billiards.models import PayAccount, Transaction, Goods,\
+    AssistantAppointment
 from datetime import datetime, timedelta
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
@@ -21,6 +22,7 @@ from xml.etree import ElementTree
 from django.views.decorators.csrf import csrf_exempt
 import logging
 from billiards.commons import notification
+from django.http.response import HttpResponseBadRequest
 
 logger = logging.getLogger("transaction")
 
@@ -69,6 +71,13 @@ def alipay_goods(request, sku):
     if request.user.is_authenticated():
         goods = getGoods(sku)
         transaction, url = createTransaction(request, goods)
+        if goods.type == 2:
+            try:
+                aa = AssistantAppointment.objects.get(transaction=transaction)
+                if aa.state != 1:
+                    return redirect('assistant_order')
+            except AssistantAppointment.DoesNotExist:
+                raise HttpResponseBadRequest('illegal request')
         if transaction.paymentExpired:
             return redirect('assistant_order')
         return HttpResponseRedirect(url)
