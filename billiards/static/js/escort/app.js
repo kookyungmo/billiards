@@ -360,24 +360,24 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 	};
 	
 	$scope.orderStateDisplay = function(order) {
-		switch (order.transaction.state) {
-		case 5:
-			return "订单已完成";
-		case 4:
-			return "订单已过期";
-		case 3:
-			return "订单已取消";
+		switch (order.state) {
 		case 2:
-			if (order.state == 2)
-				return "订单已支付，等待确认";
-			else if (order.state == 32)
-				return "订单已确认，等待消费";
-			return "订单已支付";
+			return "订单已支付，等待确认";
+		case 4:
+			return "订单已申请退款";
+		case 8:
+			return "订单已取消";
+		case 32:
+			return "订单已确认，等待消费";
+		case 256:
+			return "订单已消费完成";
 		case 1:
 			if ($scope.canPay(order))
 				return "等待支付";
 			return "订单已过期";
-		}
+		default:
+			return "";
+		}		
 	};
 	
 	$scope.chargeCode = function(order) {
