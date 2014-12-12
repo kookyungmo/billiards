@@ -5,9 +5,9 @@
 <link rel="stylesheet" href="{% static "css/escort/list.css" %}?{{scsshash}}">
 {% endblock %}
 {% block right-menu-section %}
-<section class="right-small">
+<!--section class="right-small">
 	<a class="right-off-canvas-toggle menu-icon" href="#"><span></span></a>
-</section>
+</section-->
 {% endblock %}
 {% block right-menu %}
 <!-- disabled -->
@@ -73,6 +73,10 @@
           </ul>
     </div>
 {% endblock %} 
+{% block share %}
+    <span id="menu-tip" class="tooltip" style="">菜单<span class="nub"></span></span>
+    <!--span id="filter-tip" class="tooltip">筛选条件<span class="nub"></span></span-->
+{% endblock %}
 {% block script %}
 <script src="{% static "js/escort/list.js" %}"></script>
 {% endblock %}
