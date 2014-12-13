@@ -177,7 +177,8 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 })
 
 .controller("ProviderListCtrl", ["$scope", "Restangular", "offerService", function($scope, Restangular, offerService) {
-	Restangular.one('assistant', 'list').get().then(function (assistants){
+	var listEscort = Restangular.one('assistant', 'list');
+	listEscort.get().then(function (assistants){
     	$scope.assistants = assistants;
     	for (var i = 0; i < $scope.assistants.length; i++) {
     		
@@ -208,10 +209,11 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 			escort.age = _calculateAge(escort.birthday);
 	    	$scope.assistant = escort;
 	    	
-	    	baseEscore.customGET("stats", {}).then(function (stats){
+	    	baseEscort.customGET("stats", {}).then(function (stats){
 	    		if (stats['code'] == 0){
 	    			$scope.pageview = stats['pageview'];
 	    			$scope.likes = stats['likes'];
+	    			$scope.$apply();
 	    		}
 	    	});
 	    });

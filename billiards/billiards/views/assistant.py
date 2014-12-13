@@ -62,8 +62,10 @@ class AssistantOrdersJSONSerializer(AssistantJSONSerializer):
             
 def updateOffers(offers):
     for offer in offers:
-        offer['assistant'] = Assistant.objects.get(id=offer['assistant']).natural_key()
+        assistant = Assistant.objects.get(id=offer['assistant'])
+        offer['assistant'] = assistant.natural_key()
         offer['offers'] = getOffers(offer['assistant']['uuid'])
+        offer['pageview'] = getPageView(assistant, 0)
     return offers
 
 ASSISTANT_FILTER = Q(state=1)
@@ -240,20 +242,29 @@ def updateAssistantLike(assistant, delta):
         cache.set(ASSISTANT_LIKE %(assistant.uuidstr), likes + delta, TIMEOUT)
     return likes + delta
 
+def getPageView(assistant, delta = 1):
+    assistant_uuid = str(assistant.uuid)
+    pageView = cache.get(ASSISTANT_PAGEVIEW %(assistant_uuid))
+    if pageView == None:
+        pageView = assistant.pageview
+        if delta != 0:
+            pageView += delta
+            cache.set(ASSISTANT_PAGEVIEW %(assistant_uuid), pageView, None)
+    else:
+        if delta != 0:
+            pageView += delta
+            if pageView % 100 == 0:
+                assistant.pageview = pageView
+                assistant.save()
+            cache.set(ASSISTANT_PAGEVIEW %(assistant_uuid), pageView, None)
+    return pageView
+
 ASSISTANT_PAGEVIEW = "%s_pageview"
 ASSISTANT_LIKE = "%s_like"
 def assistant_stats_by_uuid(request, assistant_uuid):
     try:
         assistant = Assistant.objects.filter(ASSISTANT_FILTER).get(uuid=uuid.UUID(assistant_uuid))
-        pageView = cache.get(ASSISTANT_PAGEVIEW %(assistant_uuid))
-        if pageView == None:
-            pageView = assistant.pageview + 1
-        else:
-            pageView += 1
-            if pageView % 100 == 0:
-                assistant.pageview = pageView
-                assistant.save()
-        cache.set(ASSISTANT_PAGEVIEW %(assistant_uuid), pageView, None)
+        pageView = getPageView(assistant)
         return HttpResponse(simplejson.dumps({'code': 0, 'likes': updateAssistantLike(assistant, 0), 'pageview': pageView}))
     except Assistant.DoesNotExist:
         return HttpResponse(simplejson.dumps({'code': -1, 'msg': 'illegal data'}))
