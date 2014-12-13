@@ -53,19 +53,22 @@
                   <div class="img-overlay"></div>
                   <div class="profile-info">
                     <div class="profile-name"><h1><{ as.assistant.nickname }></h1></div>
-                    <div class="indicators" ng-show="as.price !== 0">
-                      <div class="indicator price-indicator">
+                    <div class="indicators" >
+                      <div class="indicator price-indicator" ng-show="as.price !== 0">
                         <span class="data"><{ as.price }>元/小时</span>
                       </div>
-                      <div class="indicator availability-indicator">
+                      <div class="indicator availability-indicator" ng-show="as.price !== 0">
                         <span class="data"><i class="icon icon-clock" style="color: #c4271a;font-size: 1.2em; margin-right: 0.2em; vertical-align: text-bottom;"></i><{ as.latestOffer }></span>
                       </div>
-                      <div class="indicator location-indicator">
+                      <div class="indicator location-indicator" ng-show="as.price !== 0">
                         <span class="data"><i class="icon icon-location"></i><{ as.poolrooms }></span>
                       </div>
-                      <div class="indicator distance-indicator">
-                        <span class="data" ng-show="!!as.distance"><i class="icon icon-meter"></i><{ as.distance }></span>
+                      <div class="indicator distance-indicator" ng-show="!!as.distance">
+                        <span class="data"><i class="icon icon-meter"></i><{ as.distance }></span>
                       </div>
+                      <div class="indicator distance-indicator">
+                        <span class="data"><i class="icon icon-eye"></i><{as.pageview}>次查看</span>
+                      </div>                       
                     </div>
                   </div>
               </a>
