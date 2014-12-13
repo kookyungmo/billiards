@@ -11,6 +11,8 @@ from datetime import datetime
 BUILDID = 20131210
 REV = '2013.12.15.abcdef'
 SCSSHASH = 'abcdefg'
+APPJSHASH = 'abcdefg'
+ESCORTJSHASH = 'abcdefg'
 def siteconf(request):
     """
     Adds ibilliards global context variables to the context.
@@ -19,6 +21,8 @@ def siteconf(request):
     return {
             'buildid': datetime.now().strftime("%y%m%d%H") if settings.DEBUG else BUILDID,
             'scsshash': SCSSHASH,
+            'appjshash': APPJSHASH,
+            'escortjshash': ESCORTJSHASH,
             'rev': REV,
             'STATIC_URL': STATIC_URL,
             'SITE_LOGO_URL': SITE_LOGO_URL,

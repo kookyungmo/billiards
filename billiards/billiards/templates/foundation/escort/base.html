@@ -4,7 +4,7 @@
 {% block header %}
 <script type="text/javascript"
 	src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>
-<script src="{% static "js/map_ui.js" %}?{{buildid}}"></script>
+<script src="{% static "js/map_ui.js" %}?{{buildid}}"></script>	
 {% block escortheader %}{% endblock %}
 {% endblock %}
 {% block header-nav %}
@@ -69,5 +69,5 @@
 <script src="{{JS_CDN_PREFIX}}/libs/moment.js/2.7.0/moment.min.js"></script>
 <script src="{{JS_CDN_PREFIX}}/libs/moment.js/2.7.0/lang/zh-cn.min.js"></script>
 {% block escortfoundationscript %}{% endblock %}
-<script src="{% static "js/escort/app.js" %}?{{buildid}}"></script>
+<script src="{% static "js/escort/app.min.js" %}?{{ESCORTJSHASH}}"></script>
 {% endblock %}

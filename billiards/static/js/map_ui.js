@@ -425,7 +425,7 @@ var PKPoolrooms = function(pkMap) {
 		if (coupons.length > 0) {
 			view["coupon"] = {"coupons": []};
 			for (i in coupons) {
-				coupon = poolroom.fields.coupons[coupons[i]]
+				coupon = poolroom.fields.coupons[coupons[i]];
 				view["coupon"]["coupons"].push({"url": COUPON_URL.replace(/000/g, coupon.pk), 
 					"title": coupon.fields.title});
 			}
@@ -479,7 +479,7 @@ var PKPoolrooms = function(pkMap) {
 function createInfo(text) {
 	if ($("#info .subheader").length == 0) {
 		var infoobj = jQuery('<div/>', {
-			class : 'panel',
+			'class' : 'panel',
 			id : 'info'
 		});
 		infoobj.append("<h3 class=\"subheader\">" + text + "</h3>");
@@ -1013,7 +1013,7 @@ var PKMatches = function(pkMap) {
 		} else {
 			ITEM_PARENT_ELEMENT = '.cbp_tmtimeline';
 			jQuery('<ul/>', {
-			    class: 'cbp_tmtimeline'
+			    'class': 'cbp_tmtimeline'
 			}).appendTo('#items');
 			MatchTemplate = '\
 				<li>\
@@ -1312,7 +1312,7 @@ function setUpViewSwitch() {
 function addPlaceholder(length) {
 	if (length % 3 == 2) {
 		var emptyobj = jQuery('<div/>', {
-			class : 'medium-pull-1 medium-offset-1 medium-3 columns',
+			'class' : 'medium-pull-1 medium-offset-1 medium-3 columns',
 		});
 		emptyobj.appendTo('#items');
 	}

@@ -27,6 +27,17 @@ main(){
 	git submodule update
 	commit=`git log -1 --pretty=format:%h --no-merges`
 	scsscommit=`cd $SHELLHOME/..;git ls-tree HEAD foundation-libsass-template|awk '{print $3}'|cut -c1-7`
+	appjshash=`cd $SHELLHOME;git log -n 1 --pretty=format:%h -- static/js/app.js static/js/jquery.scrollUp.js`
+	escortjshash=`cd $SHELLHOME;git log -n 1 --pretty=format:%h -- static/js/escort/app.js static/js/escort/list.js`
+
+	pecho "Minifying JS files"
+	npm install node-minify
+	node minify.js
+	rc=$?
+	if [[ $rc != 0 ]] ; then
+            perr "Failed to minifying JS files."
+	    exit $rc
+	fi
 
 	pecho "Deploying project to DIR $TARGET..."
 	cd $TARGET
@@ -40,11 +51,13 @@ main(){
 	cp -RfH $SHELLHOME/* .
 	find . -name "*.pyc" -exec rm -f {} \;
 	find . -name ".git*" -exec rm -f {} \;
+	rm -rf node_modules/
 	rm deploy.sh
 	rm *.launch
 	rm bitfield
 	mv django-bitfield/bitfield .
 	rm -rf django-bitfield/
+	rm static/js/escort/app.js static/js/escort/list.js
 	cp -f static/images/favicon.ico .
 	cp -f billiards/settings.py.template billiards/settings.py
 	pecho "Updating release version..."
@@ -52,7 +65,7 @@ main(){
 	DATE2=`date '+%Y.%m.%d'`
         HOUR=`date '+%H'`
         MINUTE=`date '+%M'`	
-	sed -e "s/BUILDID = [1-9][0-9]*/BUILDID = $DATE$HOUR$MINUTE/g" billiards/context_processors.py | sed -e "s/REV = '[0-9]\{4\}.[0-9]\{2\}.[0-9]\{2\}.[[:alnum:]]\{6\}'/REV = '$DATE2.$commit'/g" | sed -e "s/SCSSHASH = '[[:alnum:]]\{7\}'/SCSSHASH = '$scsscommit'/g" > billiards/context_processors.py.new
+	sed -e "s/BUILDID = [1-9][0-9]*/BUILDID = $DATE$HOUR$MINUTE/g" billiards/context_processors.py | sed -e "s/REV = '[0-9]\{4\}.[0-9]\{2\}.[0-9]\{2\}.[[:alnum:]]\{6\}'/REV = '$DATE2.$commit'/g" | sed -e "s/SCSSHASH = '[[:alnum:]]\{7\}'/SCSSHASH = '$scsscommit'/g" | sed -e "s/APPJSHASH = '[[:alnum:]]\{7\}'/APPJSHASH = '$appjshash'/g" | sed -e "s/ESCORTJSHASH = '[[:alnum:]]\{7\}'/ESCORTJSHASH = '$escortjshash'/g" > billiards/context_processors.py.new
 	cp -f billiards/context_processors.py.new billiards/context_processors.py
 	rm -f billiards/context_processors.py.new
 	pecho "Commit and push new version to BAE..."
