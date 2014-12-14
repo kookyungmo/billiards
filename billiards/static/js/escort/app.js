@@ -49,14 +49,14 @@ function parseTime(timestr) {
 }
 
 var offerServicesModule = angular.module('offerServices',[]);
-offerServicesModule.service('NetworkService', function($http){});
+offerServicesModule.service('NetworkService', ['$http', function($http){}]);
 
 angular.module("escortApp", ["ngRoute", "restangular"])
 
-.config(function($interpolateProvider, $routeProvider) {
+.config(['$interpolateProvider', function($interpolateProvider) {
 	  $interpolateProvider.startSymbol('<{');
 	  $interpolateProvider.endSymbol('}>');
-	})
+	}])
 	
 .service('offerService', function(){
 	var dayRange = _.range(3);

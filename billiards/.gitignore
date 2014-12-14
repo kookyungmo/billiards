@@ -1,3 +1,6 @@
 *.pyc
 billiards/settings.py
 billiards/billiards.log
+node_modules/
+static/js/app.min.js
+static/js/escort/app.min.js
