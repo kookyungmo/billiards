@@ -48,7 +48,7 @@ main(){
 	rm -rf $TARGET/*
 
 	pecho "Clean unnecessary files..."
-	cp -RfH $SHELLHOME/* .
+	cp -rf $SHELLHOME/* .
 	find . -name "*.pyc" -exec rm -f {} \;
 	find . -name ".git*" -exec rm -f {} \;
 	rm -rf node_modules/
