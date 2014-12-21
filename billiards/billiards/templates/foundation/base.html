@@ -29,6 +29,7 @@
 {% url 'user_logout' as user_logout %}
 {% url 'match_redbull_2014_05' as redbullurl %}
 {% url 'game_2048' as gameurl %}
+{% url 'assistant' as asurl %}
 {% load extras %}
 <body>
 
@@ -75,10 +76,10 @@ Image style */
 	      <!-- Left Nav Section -->
 	      <ul class="left">
 	        <li class="divider"></li>
-	        <li {% if request.path == mapurl %} class="active" {% endif %}><a href="{{ mapurl }}">赛事活动</a></li>
+<!--	        <li {% if request.path == mapurl %} class="active" {% endif %}><a href="{{ mapurl }}">赛事活动</a></li> -->
 	        <li {% if request.path == nearby %} class="active" {% endif %}><a href="{{ nearby }}">附近球房</a></li>
-	        <li {% if request.path == challenge %} class="active" {% endif %}><a href="{{ challenge }}">约球公告</a></li>
-		<li {% if request.path == gameurl %} class="active" {% endif %}><a href="{{ gameurl }}">找乐子</a></li>
+	        <li {% if request.path == asurl %} class="active" {% endif %}><a href="{{ asurl }}">预约教练</a></li>
+		<li {% if request.path == gameurl %} class="active" {% endif %}><a href="{{ gameurl }}">小游戏</a></li>
 	        {% if user.is_authenticated and user.is_staff %}
 			<li><a href="{% url 'wechat_activity_report' %}">微信用户互动统计</a></li>
 			{% endif %}
@@ -118,10 +119,10 @@ Image style */
 	    <li><a href="http://{{ request.get_host }}">首页</a></li>
 	  </ul>
 	  <ul class="off-canvas-list">
-	    <li><a href="{{ mapurl }}">赛事活动</a></li>
+	   <!--  <li><a href="{{ mapurl }}">赛事活动</a></li> -->
 	    <li><a href="{{ nearby }}">附近球房</a></li>
-	    <li><a href="{{ challenge }}">约球公告</a></li>
-	    <li><a href="{{ gameurl }}">找乐子</a></li>
+	    <li><a href="{{ asurl }}">预约教练</a></li>
+	    <li><a href="{{ gameurl }}">小游戏</a></li>
 	    {% if user.is_authenticated %}
 	    {% if poolroomuser %}
 	    <li><label>俱乐部会员服务</label></li>
