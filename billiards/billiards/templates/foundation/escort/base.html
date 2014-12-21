@@ -24,10 +24,10 @@
 			  <ul class="off-canvas-list">
 				<li><label>我为台球狂</label></li>
 				<li><a href="http://{{ request.get_host }}">首页</a></li>
-				<li><a href="{{ mapurl }}">赛事活动</a></li>
+<!--				<li><a href="{{ mapurl }}">赛事活动</a></li> -->
 				<li><a href="{{ nearby }}">附近球房</a></li>
-				<li><a href="{{ challenge }}">约球公告</a></li>
-				<li><a href="{{ gameurl }}">找乐子</a></li> 
+				<li><a href="{{ asurl }}">预约教练</a></li>
+				<li><a href="{{ gameurl }}">小游戏</a></li> 
 				{% if user.is_authenticated %} 
 					{% if poolroomuser %}
 					<li><label>俱乐部会员服务</label></li>
