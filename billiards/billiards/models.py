@@ -935,7 +935,7 @@ class Assistant(models.Model):
     haircolor = ChoiceTypeField(max_length=16, choices=(
             ('blank', u'黑发色'),
             ('brown', u'褐发色'),
-            ('blond', u'金发发'),
+            ('blond', u'金发色'),
             ('auburn', u'赤褐发色'),
             ('chestnut', u'栗发色'),
             ('ginger/red', u'红发色'),

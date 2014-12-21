@@ -173,8 +173,8 @@ def assistant_offer_booking_by_uuid(request, assistant_uuid):
                         # retrieve/create a goods
                         name = u"预约%s %s点 至 %s点" %(offer.assistant.nickname, offertimerange[0].strftime("%Y-%m-%d %H"), offertimerange[1].strftime("%H"))
                         hashvalue = hashlib.md5(u"%s %s-%s" %(offer.assistant.uuid, offertimerange[0], offertimerange[1])).hexdigest().upper()
-#                         goods, created = Goods.objects.get_or_create(sku=hashvalue, defaults={'name': name, 'description': name, 'price':offer.price*offerduring,
-                        goods, created = Goods.objects.get_or_create(sku=hashvalue, defaults={'name': name, 'description': name, 'price':0.01,  
+                        goods, created = Goods.objects.get_or_create(sku=hashvalue, defaults={'name': name, 'description': name, 'price':offer.price*offerduring,
+#                        goods, created = Goods.objects.get_or_create(sku=hashvalue, defaults={'name': name, 'description': name, 'price':0.01,  
                                     'type': 2, 'sku': hashvalue})
                         transaction, url = createTransaction(request, goods)
                         transaction.validUntilDate = datetime.datetime.now() + timedelta(minutes=PAYMENT_TIMEOUT)
