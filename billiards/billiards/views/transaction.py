@@ -75,11 +75,11 @@ def alipay_goods(request, sku):
             try:
                 aa = AssistantAppointment.objects.get(transaction=transaction)
                 if aa.state != 1:
-                    return redirect('assistant_order')
+                    return redirect('user_assistant_order')
             except AssistantAppointment.DoesNotExist:
                 raise HttpResponseBadRequest('illegal request')
         if transaction.paymentExpired:
-            return redirect('assistant_order')
+            return redirect('user_assistant_order')
         return HttpResponseRedirect(url)
     return HttpResponse(json.dumps({'rt': -1, 'msg': 'login first'}), content_type="application/json")
 
@@ -108,7 +108,7 @@ def alipay_wapreturn(request):
             pass
         # add a page here
         if transaction.goods.type == 2:
-            return redirect('assistant_order')
+            return redirect('user_assistant_order')
         return HttpResponse("Payment completed.")
     return HttpResponse("Error.")
 
@@ -173,7 +173,7 @@ def alipay_return(request):
                 pass
             # TODO add a page for it
             if transaction.goods.type == 2:
-                return redirect('assistant_order')
+                return redirect('user_assistant_order')
             return HttpResponse("Payment completed.")
     return HttpResponse("Error.")
 
