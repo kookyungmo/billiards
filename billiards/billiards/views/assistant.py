@@ -80,7 +80,7 @@ def assistant_list(request):
     return HttpResponse(jsonstr)
 
 @csrf_exempt
-def assistant_order(request):
+def user_assistant_order(request):
     if request.user.is_authenticated():
         if request.method == 'POST':
             appoints = AssistantAppointment.objects.filter(user=request.user).order_by("-createdDate")
