@@ -18,7 +18,21 @@ function setGetParameter(url, paramName, paramValue)
 }
 
 function dologin(url) {
-	window.location.href = setGetParameter(url, 'returnurl', window.location.pathname + window.location.search);
+	dologin2(url, window.location.pathname + window.location.search);
+}
+
+function dologin2(url, returnurl) {
+	window.location.href = setGetParameter(url, 'returnurl', returnurl);
+}
+
+function safeLogoutSOHOCS() {
+	var img = new Image(); 
+	img.src='http://changyan.sohu.com/api/2/logout?client_id=cyrxYk4s5';
+}
+
+function doLogout(url) {
+	safeLogoutSOHOCS();
+	window.location.href = url;
 }
 
 function getParameterByName(name) {

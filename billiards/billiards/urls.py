@@ -40,6 +40,10 @@ urlpatterns += patterns('billiards.views.user.manage',
     url(r'^user/completeInfo','completeInfo', name='completeInfo'),
     url(r'^user/(?P<wechatid>\w+)/membership/(?P<group>\d+)/apply', 'membership_apply', name='membership_apply'),
     url(r'^user/(?P<wechatid>\w+)/membership/(?P<group>\d+)$', 'membership', name='membership'),
+    url(r'^sohucs/info', 'sohucs_getinfo', name='sohucs_getinfo'),
+    url(r'^sohucs/login', 'sohucs_login', name='sohucs_login'),
+    url(r'^sohucs/logout', 'sohucs_logout', name='sohucs_logout'),
+    url(r'^sohucs/waplogin', 'sohucs_waplogin', name='sohucs_waplogin'),
 )
 
 urlpatterns += patterns('',

@@ -1,0 +1,16 @@
+{% extends "foundation/escort/base.html" %} 
+{% load staticfiles %}
+{% load extras %} 
+{% block appheader %}
+<link href="http://cdnjscn.b0.upaiyun.com/libs/font-awesome/{{AWESOME_FONT}}/css/font-awesome.min.css" rel="stylesheet">
+{% endblock %}
+{% block maincontent %}
+<div class="row">
+	<div class="small-6 medium-3 medium-offset-3 columns text-center">
+	    <a href="javascript:dologin2('{{ qq }}', '{{from}}');" class="button info radius"><i class="fa fa-qq fa-4x"></i>QQ登录</a>
+	</div>
+	<div class="small-6 medium-3 end columns text-center">
+		<a href="javascript:dologin2('{{ weibo }}', '{{from}}');" class="button info radius"><i class="fa fa-weibo fa-4x"></i>微博登录</a>
+	</div>
+</div>
+{% endblock %}

@@ -8,16 +8,23 @@ Created on 2014年1月1日
 from django.http import HttpResponse
 from billiards.models import Group, Membership
 from django.db.models.query_utils import Q
-from billiards.settings import TEMPLATE_ROOT, PREFER_LOGIN_SITE
+from billiards.settings import TEMPLATE_ROOT, PREFER_LOGIN_SITE,\
+    SOCIALOAUTH_SITES, STATIC_URL
 from django.template.context import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
 import json
-from billiards.commons import forceLogin
+from billiards.commons import forceLogin, isWechatBrowser
 from django.utils import simplejson
 from django.core.exceptions import PermissionDenied
 import re
 from validate_email import validate_email
+from rest_framework.response import Response
+from rest_framework_jsonp.renderers import JSONPRenderer
+from rest_framework.decorators import api_view, renderer_classes
+from django.contrib import auth
+from django.http.response import HttpResponseRedirect
+from urlparse import urlparse
 
 PHONE_PATTERN = re.compile(r'^1\d{10}$')    
 @csrf_exempt
@@ -68,3 +75,67 @@ def membership(request, wechatid, group):
         return renderMemberPage(request, member, groupobj)
     except Membership.DoesNotExist:
         return redirect('membership_apply', wechatid=wechatid, group=group)
+
+def sign_request(raw, key):
+    from hashlib import sha1
+    import hmac
+    hashed = hmac.new(key, raw, sha1)
+    # The signature
+    return hashed.digest().encode("base64").rstrip('\n')
+
+@api_view(['GET'])
+@renderer_classes((JSONPRenderer,))
+def sohucs_getinfo(request):
+    if request.user.is_authenticated():
+        strToBeSigned = u'img_url=%s&nickname=%s&profile_url=%s&user_id=%s' %(request.user.avatar, request.user.get_nickname(),
+                                                '', request.user.username)
+        content = {u'is_login': 1, u'user': {u'user_id': request.user.username, u'nickname': request.user.get_nickname(),
+                    u'img_url': request.user.avatar, u'profile_url': u'', u'sign': sign_request(strToBeSigned.encode('utf-8'), SOCIALOAUTH_SITES[3][3]['client_secret'])}}
+    else:
+        content = {u'is_login': 0}
+    return Response(content)
+
+@api_view(['GET'])
+@renderer_classes((JSONPRenderer,))
+def sohucs_login(request):
+    content = None
+    try:
+        userid = request.GET['user_id']
+        if request.user.is_authenticated():
+            if request.user.username != userid:
+                #will logout changyan
+                pass
+        else:
+            strToBeSigned = u'cy_user_id=%s&img_url=%s&nickname=%s&profile_url=%s&user_id=%s'\
+                %(request.GET['cy_user_id'], request.GET['img_url'], request.GET['nickname'], request.GET['profile_url'], userid)
+            if request.GET['sign'] == sign_request(strToBeSigned.encode('utf-8'),  SOCIALOAUTH_SITES[3][3]['client_secret']):
+                # TODO user login
+                content = {u'user_id': userid, 'reload_page': 1}
+    except KeyError:
+        pass
+    if content is None:
+        #logout changyan
+        content = {u'user_id': '', 'reload_page': 1, 'js_src': [request.build_absolute_uri('%sjs/sohucs/logout.js' %(STATIC_URL))]}
+    return Response(content)
+
+def sohucs_waplogin(request):
+    try:
+        fromurl = request.GET['from']
+        fromurl = urlparse(fromurl).path
+        if not request.user.is_authenticated():
+            if isWechatBrowser(request.META['HTTP_USER_AGENT']):
+                return forceLogin(request, 'wechat', fromurl)
+            return render_to_response(TEMPLATE_ROOT + 'escort/waplogin.html', {'from': fromurl}, context_instance=RequestContext(request))
+    except KeyError:
+        response = HttpResponse("invalid request")
+        response.status_code = 400
+        return response
+    return HttpResponseRedirect(fromurl)
+        
+@api_view(['GET'])
+@renderer_classes((JSONPRenderer,))
+def sohucs_logout(request):
+    if request.user.is_authenticated():
+        auth.logout(request)
+    content = {u'code': 1, 'reload_page': 1}
+    return Response(content)

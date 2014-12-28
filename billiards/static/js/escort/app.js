@@ -213,7 +213,6 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 	    		if (stats['code'] == 0){
 	    			$scope.pageview = stats['pageview'];
 	    			$scope.likes = stats['likes'];
-	    			$scope.$apply();
 	    		}
 	    	});
 	    });
