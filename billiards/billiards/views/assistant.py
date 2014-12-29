@@ -27,6 +27,7 @@ from billiards import settings
 import json
 from datetime import timedelta
 from django.core.cache import cache
+from random import randint
 
 def assistant(request):
     return render_to_response(TEMPLATE_ROOT + 'escort/list.html', context_instance=RequestContext(request))
@@ -264,7 +265,7 @@ ASSISTANT_LIKE = "%s_like"
 def assistant_stats_by_uuid(request, assistant_uuid):
     try:
         assistant = Assistant.objects.filter(ASSISTANT_FILTER).get(uuid=uuid.UUID(assistant_uuid))
-        pageView = getPageView(assistant)
+        pageView = getPageView(assistant, randint(1, 6))
         return HttpResponse(simplejson.dumps({'code': 0, 'likes': updateAssistantLike(assistant, 0), 'pageview': pageView}))
     except Assistant.DoesNotExist:
         return HttpResponse(simplejson.dumps({'code': -1, 'msg': 'illegal data'}))
