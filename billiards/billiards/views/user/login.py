@@ -16,6 +16,8 @@ from billiards.models import PoolroomUser
 import copy
 from socialoauth import SocialSites
 from socialoauth.exception import SocialAPIError
+import requests
+import logging
 
 # because social site is singleton that has different behavior on different environment
 def getSocialSite(request, site_name):
@@ -99,11 +101,13 @@ def callback(request, site_name):
     auth.login(request, user)
     
     return HttpResponseRedirect(returnurl)
-    
+
+logger = logging.getLogger("login")
 
 def logout(request):
-
-    auth.logout(request)
+    if request.user.is_authenticated():
+        auth.logout(request)
+       
     return HttpResponseRedirect('/')
     
     

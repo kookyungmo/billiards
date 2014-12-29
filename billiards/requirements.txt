@@ -16,3 +16,6 @@ geopy==0.94.2
 python-geohash
 South
 validate-email
+djangorestframework-jsonp
+djangorestframework
+requests < 2.6

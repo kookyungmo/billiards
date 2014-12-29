@@ -40,7 +40,7 @@
 				<li><label>用户中心</label></li>
 				<li><a href="javascript:void(0);">{{ user.nickname|decodeunicode }}</a></li>
 				<li><a href="{% url 'user_assistant_order' %}">订单中心</a></li>
-				<li><a href="{{ user_logout }}">登出</a></li> 
+				<li><a href="javascript:doLogout('{{ user_logout }}');">登出</a></li>
 				{% else %}
 				<li><label>用户登录</label></li>
 				<li id="wechatlogin" class="hide"><a href="javascript:dologin('{{ wechat }}');">微信登录</a></li>

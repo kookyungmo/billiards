@@ -249,6 +249,12 @@ SOCIALOAUTH_SITES = (
                 'SCOPE': 'snsapi_userinfo',
               }
     ), 
+    ('changyan', '', u'畅言',
+                {
+                 'redirect_uri': '$hostname/user/oauth/changyan',
+                 'client_id': 'cyrxYk4s5',
+                 'client_secret': 'd8dc52269a50b29c855db1539cf23d78',
+                 })
 )
 
 TEMPLATE_ROOT = 'foundation/'
@@ -282,3 +288,9 @@ SITE_LOGO_URL = 'http://bcs.duapp.com/billiardsalbum/2014/03/website_logo1.png'
 PREFER_LOGIN_SITE = 'wechat'
 
 ALLOWED_HOSTS = ['*']
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework_jsonp.renderers.JSONPRenderer',
+    )
+}

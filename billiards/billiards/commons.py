@@ -36,8 +36,8 @@ def set_query_parameter(url, param_name, param_value):
 
     return urlunsplit((scheme, netloc, path, new_query_string, fragment))
 
-def forceLogin(request, sitename):
-    url = set_query_parameter(reverse('login_3rd', args=(sitename,)), 'returnurl', request.build_absolute_uri(request.get_full_path()))
+def forceLogin(request, sitename, redirecturl = None):
+    url = set_query_parameter(reverse('login_3rd', args=(sitename,)), 'returnurl', request.build_absolute_uri(request.get_full_path()) if redirecturl == None else redirecturl)
     return HttpResponseRedirect(url)
 
 def num(s):
