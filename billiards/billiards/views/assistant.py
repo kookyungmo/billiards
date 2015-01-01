@@ -7,7 +7,7 @@ import uuid
 from django.core.exceptions import PermissionDenied
 from django.db.models.aggregates import Max, Min
 from django.db.models.query_utils import Q
-from django.http.response import HttpResponse, Http404
+from django.http.response import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template.context import RequestContext
 from django.utils import simplejson
@@ -16,7 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 from mobi.decorators import detect_mobile
 
 from billiards.commons import tojson2, NoObjectJSONSerializer, json_serial,\
-    forceLogin, isWechatBrowser
+    forceLogin, isWechatBrowser, set_query_parameter
 from billiards.models import Assistant, AssistantOffer, Poolroom, \
     assistant_fields, AssistantImage, \
     assistantimage_fields, assistantoffer_fields_2, AssistantAppointment, Goods,\
@@ -28,6 +28,7 @@ import json
 from datetime import timedelta
 from django.core.cache import cache
 from random import randint
+from django.core.urlresolvers import reverse
 
 def assistant(request):
     return render_to_response(TEMPLATE_ROOT + 'escort/list.html', context_instance=RequestContext(request))
@@ -98,7 +99,10 @@ def user_assistant_order(request):
             return HttpResponse(tojson2(appoints, AssistantJSONSerializer(), assistant_appointment_fields + ('transaction', 'chargeCode', )))
         else:
             return render_to_response(TEMPLATE_ROOT + 'escort/order.html', context_instance=RequestContext(request))
-    return redirect('assistant_list')
+    if isWechatBrowser(request.META['HTTP_USER_AGENT']):
+        return forceLogin(request, 'wechat')
+    url = set_query_parameter(reverse('login_3rd_page'), 'from', request.build_absolute_uri(request.get_full_path()))
+    return HttpResponseRedirect(url)
 
 @csrf_exempt
 def assistant_by_uuid(request, assistant_uuid):
@@ -276,6 +280,8 @@ def assistant_orders_by_uuid(request, assistant_uuid):
         try:
             assistant = Assistant.objects.filter(ASSISTANT_FILTER).get(uuid=uuid.UUID(assistant_uuid))
             aUser = AssistantUser.objects.filter(Q(user=request.user)).get(assistant=assistant)
+            if aUser.isEmpty():
+                raise PermissionDenied("illegal access.") 
             if request.method == 'POST':
                 appoints = AssistantAppointment.objects.filter(Q(assistant=assistant)).filter(
                     Q(state=2) | Q(state=4) | Q(state=32) | Q(state=256)).order_by("-createdDate")
@@ -288,7 +294,8 @@ def assistant_orders_by_uuid(request, assistant_uuid):
             raise PermissionDenied("illegal access.")
     if isWechatBrowser(request.META['HTTP_USER_AGENT']):
         return forceLogin(request, 'wechat')
-    raise PermissionDenied("login firstly.")
+    url = set_query_parameter(reverse('login_3rd_page'), 'from', request.build_absolute_uri(request.get_full_path()))
+    return HttpResponseRedirect(url)
 
 @csrf_exempt
 def assistant_order_complete_by_tid(request, assistant_uuid, transaction_id):

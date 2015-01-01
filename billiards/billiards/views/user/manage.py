@@ -25,6 +25,7 @@ from rest_framework.decorators import api_view, renderer_classes
 from django.contrib import auth
 from django.http.response import HttpResponseRedirect
 from urlparse import urlparse
+from billiards.views.user.login import login_3rd_page
 
 PHONE_PATTERN = re.compile(r'^1\d{10}$')    
 @csrf_exempt
@@ -119,18 +120,7 @@ def sohucs_login(request):
     return Response(content)
 
 def sohucs_waplogin(request):
-    try:
-        fromurl = request.GET['from']
-        fromurl = urlparse(fromurl).path
-        if not request.user.is_authenticated():
-            if isWechatBrowser(request.META['HTTP_USER_AGENT']):
-                return forceLogin(request, 'wechat', fromurl)
-            return render_to_response(TEMPLATE_ROOT + 'escort/waplogin.html', {'from': fromurl}, context_instance=RequestContext(request))
-    except KeyError:
-        response = HttpResponse("invalid request")
-        response.status_code = 400
-        return response
-    return HttpResponseRedirect(fromurl)
+    login_3rd_page(request)
         
 @api_view(['GET'])
 @renderer_classes((JSONPRenderer,))

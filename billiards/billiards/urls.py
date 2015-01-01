@@ -35,6 +35,7 @@ urlpatterns += patterns('billiards.views.user.login',
     url(r'^user/oauth/(?P<site_name>\w+)', 'callback', name="oauth_code"),
     url(r'^user/oautherror/$', 'oautherror', name='oautherror'),
     url(r'^user/logout/$', 'logout', name='user_logout'),
+    url(r'^user/login','login_3rd_page', name='login_3rd_page'),
 )
 
 urlpatterns += patterns('billiards.views.user.manage',
