@@ -7,7 +7,7 @@ Created on 2013年12月11日
 '''
 
 from django.http import HttpResponseRedirect, Http404
-from billiards.settings import SOCIALOAUTH_SITES
+from billiards.settings import SOCIALOAUTH_SITES, TEMPLATE_ROOT
 from django.contrib.auth.models import User
 from django.contrib import auth
 from time import mktime, localtime
@@ -16,8 +16,12 @@ from billiards.models import PoolroomUser
 import copy
 from socialoauth import SocialSites
 from socialoauth.exception import SocialAPIError
-import requests
 import logging
+from urlparse import urlparse
+from billiards.commons import isWechatBrowser, forceLogin
+from django.shortcuts import render_to_response
+from django.http.response import HttpResponse
+from django.template.context import RequestContext
 
 # because social site is singleton that has different behavior on different environment
 def getSocialSite(request, site_name):
@@ -115,5 +119,17 @@ def oautherror(request):
     print "OAuth Error"
     return HttpResponseRedirect('/')    #should have some ERROR info here, TBD
     
-    
+def login_3rd_page(request):
+    try:
+        fromurl = request.GET['from']
+        fromurl = urlparse(fromurl).path
+        if not request.user.is_authenticated():
+            if isWechatBrowser(request.META['HTTP_USER_AGENT']):
+                return forceLogin(request, 'wechat', fromurl)
+            return render_to_response(TEMPLATE_ROOT + 'escort/waplogin.html', {'from': fromurl}, context_instance=RequestContext(request))
+    except KeyError:
+        response = HttpResponse("invalid request")
+        response.status_code = 400
+        return response
+    return HttpResponseRedirect(fromurl)
     
