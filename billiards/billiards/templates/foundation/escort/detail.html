@@ -22,14 +22,14 @@
        <div class="indicator availability-indicator">
          <span class="data"><i class="icon icon-clock" style="color: #c4271a;font-size: 1.2em; margin-right: 0.2em; vertical-align: text-bottom;"></i><{ formatLatestOffer(latestOffer) }></span>
        </div>
+       <div class="indicator distance-indicator">
+         <span class="data" ng-show="!!pageview"><i class="icon icon-eye"></i>人气指数:<{ pageview }></span>
+       </div>
        <div class="indicator location-indicator">
          <span class="data"><i class="icon icon-location"></i><{ offerlocation }></span>
        </div>
        <div class="indicator distance-indicator">
          <span class="data" ng-show="!!offerdistance"><i class="icon icon-meter"></i><{ offerdistance }></span>
-       </div>
-       <div class="indicator distance-indicator">
-         <span class="data" ng-show="!!pageview"><i class="icon icon-eye"></i>人气指数:<{ pageview }></span>
        </div>
      </div>
    </div>
