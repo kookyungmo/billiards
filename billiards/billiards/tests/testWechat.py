@@ -295,7 +295,7 @@ class WechatTest(TestCase):
         self.assertTrue('ArticleCount' in msg)
         self.assertEqual(2, int(msg['ArticleCount']))
         self.assertEqual(u'抢台费送话费', msg['Articles']['item'][0]['Title'])
-        self.assertTrue(msg['Articles']['item'][0]['Url'].startswith('http://www.pktaiqiu.com/event/2014/04/qiang-tai-fei-yue-qiu'))
+        self.assertTrue(msg['Articles']['item'][0]['Url'].startswith('http://www.pkbilliard.com/event/2014/04/qiang-tai-fei-yue-qiu'))
         
     def test_nearby_challenges(self):
         data = """
@@ -346,7 +346,7 @@ class WechatTest(TestCase):
         msg = self._send_wechat_message(data)
         self.assertTrue('ArticleCount' in msg)
         self.assertEqual(1, int(msg['ArticleCount']))
-        self.assertTrue(msg['Articles']['item']['Title'].startswith(u'"我为台球狂"微信帮助手册'))
+        self.assertTrue(msg['Articles']['item']['Title'].index(u'帮助手册') > 0)
         
     def test_wechat_bj_university_event(self):
         data = """
@@ -381,8 +381,8 @@ class WechatTest(TestCase):
         """
         msg = self._send_wechat_message(data, reverse('wechat_bj_dabenying'))
         self.assertTrue('ArticleCount' in msg)
-        self.assertTrue(msg['Articles']['item'][1]['Url'].startswith('http://www.pktaiqiu.com/challenge/publish/4/'))
-        self.assertTrue(msg['Articles']['item'][2]['Url'].startswith('http://www.pktaiqiu.com/challenge/4/'))
+        self.assertTrue(msg['Articles']['item'][1]['Url'].startswith('http://www.pkbilliard.com/challenge/publish/4/'))
+        self.assertTrue(msg['Articles']['item'][2]['Url'].startswith('http://www.pkbilliard.com/challenge/4/'))
         activityquery = WechatActivity.objects.filter(eventtype='location')
         self.assertEqual(1, activityquery.count())
         activity = activityquery[:1][0]
@@ -545,7 +545,7 @@ class WechatTest(TestCase):
         msg = self._send_wechat_message(data) 
         self.assertTrue('ArticleCount' in msg)
         self.assertEqual(1, int(msg['ArticleCount']))
-        self.assertTrue(msg['Articles']['item']['Url'].startswith('http://www.pktaiqiu.com/poolroom/nearby'))
+        self.assertTrue(msg['Articles']['item']['Url'].startswith('http://www.pkbilliard.com/poolroom/nearby'))
         
     """ location nearby
         <MsgType><![CDATA[location]]></MsgType>
@@ -585,7 +585,7 @@ class WechatTest(TestCase):
         msg = self._send_wechat_message(data)
         self.assertTrue('ArticleCount' in msg)
         self.assertEqual(1, int(msg['ArticleCount']))
-        self.assertTrue(msg['Articles']['item']['Title'].startswith(u'"我为台球狂"微信帮助手册'))
+        self.assertTrue(msg['Articles']['item']['Title'].index(u'帮助手册') > 0)
         
     def test_assistant_orders_request(self):
         data = u"""

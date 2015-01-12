@@ -30,7 +30,8 @@ from billiards.location_convertor import gcj2bd
 from billiards.models import Coupon, getCouponCriteria, Poolroom, \
     WechatActivity, Event, Membership, Group, \
     getThumbnailPath, AssistantUser
-from billiards.settings import TEMPLATE_ROOT, TIME_ZONE, SITE_LOGO_URL
+from billiards.settings import TEMPLATE_ROOT, TIME_ZONE, SITE_LOGO_URL,\
+    SITE_DOMAIN
 from billiards.views.challenge import getNearbyChallenges
 from billiards.views.match import getMatchByRequest
 from billiards.views.poolroom import getNearbyPoolrooms
@@ -304,11 +305,11 @@ class PKWechat(BaseRoBot):
     
     def buildAbsoluteURI(self, relativeURI):
         try:
-            if 'pktaiqiu.com' in self.request.META['HTTP_HOST']:
+            if 'pktaiqiu.com' in self.request.META['HTTP_HOST'] or 'pkbilliard.com' in self.request.META['HTTP_HOST']:
                 return set_query_parameter(self.request.build_absolute_uri(relativeURI), 'from', self.getFromSoureStr())
         except KeyError:
             pass
-        return set_query_parameter("http://www.pktaiqiu.com%s" %(relativeURI), 'from', self.getFromSoureStr())
+        return set_query_parameter("http://%s%s" %(SITE_DOMAIN, relativeURI), 'from', self.getFromSoureStr())
     
     def getSpecialEventItem(self, receivedtime):
         reply = []
@@ -320,7 +321,8 @@ class PKWechat(BaseRoBot):
         return reply
         
     def getWelcomeMsg(self):
-        return [(u'欢迎您关注我为台球狂官方微信', u'获取更多身边俱乐部信息，请访问：http://www.pktaiqiu.com，与我们更多互动，发送您的位置信息给我们，为您推荐身边的台球俱乐部。发送 ？，帮助，获取帮助手册。',
+        return [(u'欢迎您关注我为台球狂官方微信', 
+                 u'获取更多身边俱乐部信息，请访问：http://%s，与我们更多互动，发送您的位置信息给我们，为您推荐身边的台球俱乐部。发送 ？，帮助，获取帮助手册。' %(SITE_DOMAIN),
                 LOGO_IMG_URL, 'http://mp.weixin.qq.com/s?__biz=MzA5MzY0MTYxMw==&mid=201347481&idx=1&sn=a161be66781bee620e915a1b3aa2293b#rd')]
         
     def getHelpMesg(self):
