@@ -418,7 +418,8 @@ class Match(models.Model):
 # post_save.connect(create_profile, sender=User)
 # #         
 def getusername(self):
-    return decodeunicode(self.nickname) if self.nickname is not None and self.nickname != "" else self.username
+    return u'%s(Tel: %s)' %(decodeunicode(self.nickname) if self.nickname is not None and self.nickname != "" else self.username,\
+                            self.cellphone)
 
 class ProfileBase(type):
     def __new__(cls, name, bases, attrs):
@@ -821,6 +822,9 @@ class PayAccount(models.Model):
             (1, u'Alipay'),
         ), default=1)
     
+    def __unicode__(self):
+        return u"%s:%s" %(self.get_type_display(), self.name)
+    
     class Meta:
         db_table = 'payaccount'
         verbose_name = '交易账户信息'
@@ -906,6 +910,9 @@ class Transaction(models.Model):
     def natural_key(self):
         return {'tradenum': self.tradeNum, 'goods': self.goods.natural_key(), 'fee': self.fee, 'tradeStatus': self.tradeStatus,
                 'state': int(self.state)}
+        
+    def __unicode__(self):
+        return u"[%s] %s" %(self.payaccount, self.paytradeNum)
         
     class Meta:
         db_table = 'transaction'
