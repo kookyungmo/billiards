@@ -979,6 +979,8 @@ class Assistant(models.Model):
             (8, u'禁用'),
         ), default=1, exportUseValue=True)
     
+    order = models.IntegerField(verbose_name='助教排序(默认大的在前)', default=100)
+    
     _coverimage = None
     @property
     def coverimage(self):
