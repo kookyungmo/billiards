@@ -29,13 +29,14 @@ from billiards.commons import set_query_parameter, KEY_PREFIX,\
 from billiards.location_convertor import gcj2bd
 from billiards.models import Coupon, getCouponCriteria, Poolroom, \
     WechatActivity, Event, Membership, Group, \
-    getThumbnailPath, AssistantUser
+    getThumbnailPath, AssistantUser, AssistantOffer
 from billiards.settings import TEMPLATE_ROOT, TIME_ZONE, SITE_LOGO_URL,\
     SITE_DOMAIN
 from billiards.views.challenge import getNearbyChallenges
 from billiards.views.match import getMatchByRequest
 from billiards.views.poolroom import getNearbyPoolrooms
 from django.contrib.auth.models import User
+from billiards.views.assistant import ASSISTANT_OFFER_FILTER, getAssistantOffers
 
 
 def set_video():
@@ -202,6 +203,7 @@ class PKWechat(BaseRoBot):
             "PK_ACTIVITY": self.getPKActivity,
             "PK_MATCH": self.getPKMatch,
             "PK_POOLROOM_NEARBY": self.getPKPoolroomNearby,
+            "PK_ASSISTANT_RECOMMEND": self.getPKAssistantRecommend,
         }
         self.keysHandlers = keyHandlers
         self.add_handler(self.click(), "click")
@@ -514,6 +516,32 @@ class PKWechat(BaseRoBot):
             reply.append((u"在您附近3公里以内，没有推荐的台球俱乐部，去其他地方试试吧", '', LOGO_IMG_URL, ''))
             recordUserActivity(message, 'location', 'click', {'lat': latlngs[0], 'lng': latlngs[1], 'user': message.source}, 
                                None, self.target)
+        return reply
+    
+    def getPKAssistantRecommend(self, reply, message, source = 'event'):
+        def assistantReply(offer):
+            try:
+                poolroomname = Poolroom.objects.get(id=offer.poolroom).name
+            except:
+                poolroomname = ''
+            return (offer.assistant.nickname, poolroomname, offer.assistant.coverimage, 
+                    self.buildAbsoluteURI(reverse('assistant_detail', args=(str(offer.assistant.uuid), ))))
+        latlngstr = cache.get(KEY_PREFIX %('latlng', message.source))
+        reply = self.getSpecialEventItem(message.time)
+        if latlngstr == None:
+            offer = getAssistantOffers().order_by('?')[0]
+            ar = assistantReply(AssistantOffer.objects.get(id=offer['id']))
+            reply.append(ar)
+            return reply
+        
+        latlngs = latlngstr.split(',')
+        baidu_loc = gcj2bd(float(latlngs[0]),float(latlngs[1]))
+        baidu_loc_lat = unicode(baidu_loc[0])
+        baidu_loc_lng = unicode(baidu_loc[1])
+        poolrooms = AssistantOffer.objects.filter(ASSISTANT_OFFER_FILTER).values_list('poolroom', flat=True).distinct()
+        nearby = getNearbyPoolrooms(baidu_loc_lat, baidu_loc_lng, None, None).filter(id__in=poolrooms)[0]
+        ar = assistantReply(AssistantOffer.objects.filter(ASSISTANT_OFFER_FILTER).filter(poolroom=nearby.id).order_by('?')[0])
+        reply.append(ar)
         return reply
         
     def getPKMatch(self, reply, message, source = 'text'):

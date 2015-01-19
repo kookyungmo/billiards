@@ -223,5 +223,28 @@
         "iscover": false, 
         "poolroom": 15
     }
+},
+{
+    "pk": 279, 
+    "model": "billiards.poolroom", 
+    "fields": {
+        "rating": 4, 
+        "tel": "010-65019096", 
+        "uuid": "eb8a1c2d-a5b1-496f-8434-550a122d8c12", 
+        "district": "\u671d\u9633\u533a", 
+        "city": 10, 
+        "review": "\u5bab\u5bb5\u53f0\u7403\u4f4d\u4e8e\u4e1c\u5927\u6865\u8def\u53e3\u4e1c\u5357\u89d2\u5bab\u5bb5\u9152\u5e97\u5730\u4e0b\u4e8c\u5c42\uff0c\u4ee5\u4e13\u4e1a\u7684\u914d\u5957\u8bbe\u65bd\uff0c\u8d34\u5fc3\u7684\u670d\u52a1\uff0c\u4f18\u96c5\u7684\u73af\u5883\u5438\u5f15\u4e86\u5e7f\u5927\u6d88\u8d39\u8005\uff0c\u4e3a\u5e7f\u5927\u6d88\u8d39\u8005\u521b\u9020\u4e86\u4e00\u4e2a\u826f\u597d\u7684\u6d88\u8d39\u73af\u5883\u3002", 
+        "lng_baidu": "116.4590407", 
+        "flags": "10", 
+        "location": "wx4g1gq5ftnj", 
+        "businesshours": "10:00AM-2:00AM", 
+        "address": "\u5317\u4eac\u671d\u9633\u533a\u4e1c\u5927\u6865\u8def\u5173\u4e1c\u5e9728\u53f7\u5bab\u9704\u9152\u5e97B2\u697c(\u8fd1SOHO\u5c1a\u90fd)", 
+        "lat": "39.9208680", 
+        "exist": 1, 
+        "lng": "116.4524470", 
+        "size": 2000, 
+        "lat_baidu": "39.9265398", 
+        "name": "\u5317\u4eac\u661f\u7403\u6c47\u5bab\u9704\u53f0\u7403\u4ff1\u4e50\u90e8\uff08\u4e1c\u5927\u6865\u5bab\u9704\u9152\u5e97B2\uff09"
+    }
 }
 ]

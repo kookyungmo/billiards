@@ -7,7 +7,7 @@ A utility tool to create test data from product db.
 from django.core import serializers
 from django.db.models.query_utils import Q
 from billiards.models import Poolroom, Match, Group, Coupon, PoolroomImage,\
-    Event, Assistant, AssistantUser
+    Event, Assistant, AssistantUser, AssistantOffer, AssistantImage
 from django.core.management.base import NoArgsCommand
 import billiards
 import os
@@ -81,5 +81,10 @@ class Command(NoArgsCommand):
         export_serializer = ExportSerializer()
         data = export_serializer.serialize(chain(userQuery, assistantQuery, auQuery), indent=4)
         out = open("%s/fixtures/assistantuser.json" %(self.apppath), "w")
+        out.write(data)
+        out.close()
+        
+        data = export_serializer.serialize(chain(Assistant.objects.all(), AssistantOffer.objects.all(), AssistantImage.objects.all()), indent = 4)
+        out = open("%s/fixtures/assistants.json" %(self.apppath), "w")
         out.write(data)
         out.close()

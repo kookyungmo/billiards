@@ -1020,10 +1020,10 @@ class AssistantImage(models.Model):
                                   storage=ImageStorage())
     description = models.CharField(verbose_name=u'图片说明', null=True, blank=True, max_length=50)
     iscover = models.BooleanField(verbose_name=u'是否是封面图片', default=False)
-    status = models.IntegerField(verbose_name=u'状态', choices=(
+    status = IntegerChoiceTypeField(verbose_name=u'状态', choices=(
             (0, u'不可用'),
             (1, u'可用'),
-        ), default=1,)
+        ), default=1, exportUseValue=True)
     
     class Meta:
         db_table = 'assistant_images'
@@ -1098,15 +1098,15 @@ class AssistantOffer(models.Model):
             ('friday', u'周五'),
             ('saturday', u'周六'),
             ('sunday', u'周日'),
-        ), verbose_name='星期几', jsonUseValue=True)
+        ), verbose_name='星期几', jsonUseValue=True, exportUseValue=True)
     starttime = models.TimeField(verbose_name="开始时间")
     endtime = models.TimeField(verbose_name="结束时间")
     priceDescription = models.CharField(max_length=200, verbose_name="报价说明", blank=True)
     extraService = models.CharField(max_length=200, verbose_name="额外服务说明", blank=True)
-    status = models.IntegerField(verbose_name=u'状态', choices=(
+    status = IntegerChoiceTypeField(verbose_name=u'状态', choices=(
             (0, u'失效'),
             (1, u'有效'),
-        ), default=1,)
+        ), default=1, exportUseValue=True)
     
     class Meta:
         db_table = 'assistant_offer'
