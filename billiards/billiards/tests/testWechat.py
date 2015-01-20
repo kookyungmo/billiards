@@ -15,6 +15,9 @@ from django.utils import simplejson, timezone
 import datetime
 from urlparse import parse_qsl, urlparse
 from django.core.cache import cache
+from billiards.urls import UUID_PATTERN
+import re
+from billiards.commons import KEY_PREFIX
 
 def parse_tree(root):
     msg = {}
@@ -41,10 +44,13 @@ def parse_msg(content):
     root = ET.fromstring(recvmsg)
     return parse_tree(root)
 
+ASSISTANT_PATTERN = re.compile(r'assistant/%s' %(UUID_PATTERN))
+    
 class WechatTest(TestCase):
     
     fixtures = ['poolroom.json', 'match.json', 'group.json', 'coupon.json', 'event.json', 
-                'challenge.json', 'poolroomuser.json', 'assistantuser.json']
+                'challenge.json', 'poolroomuser.json', 'assistantuser.json',
+                'assistants.json']
     
     def setUp(self):
         self.client = Client()
@@ -601,5 +607,38 @@ class WechatTest(TestCase):
         msg = self._send_wechat_message(data)
         self.assertTrue('ArticleCount' in msg)
         self.assertEqual(1, int(msg['ArticleCount']))
-        self.assertEqual(msg['Articles']['item']['Title'], u'陌陌测试数据的订单')
+        self.assertEqual(msg['Articles']['item']['Title'], u'即将上线，敬请期待的订单')
         self.assertTrue('assistant/ebc807f3-4897-4891-a6a6-bc4915e8d10e/orders' in msg['Articles']['item']['Url'])
+        
+    def test_assistant_recommendation_without_location(self):
+        data = u"""
+        <xml>
+        <ToUserName><![CDATA[toUser]]></ToUserName>
+        <FromUserName><![CDATA[FromUser]]></FromUserName>
+        <CreateTime>1393628400</CreateTime>
+        <MsgType><![CDATA[event]]></MsgType>
+        <Event><![CDATA[CLICK]]></Event>
+        <EventKey><![CDATA[PK_ASSISTANT_RECOMMEND]]></EventKey>
+        </xml>
+        """
+        msg = self._send_wechat_message(data)
+        self.assertTrue('ArticleCount' in msg)
+        self.assertEqual(1, int(msg['ArticleCount']))
+        self.assertTrue(ASSISTANT_PATTERN.search(msg['Articles']['item']['Url']))
+        
+    def test_assistant_recommendation_location(self):
+        data = u"""
+        <xml>
+        <ToUserName><![CDATA[toUser]]></ToUserName>
+        <FromUserName><![CDATA[FromUser]]></FromUserName>
+        <CreateTime>1393628400</CreateTime>
+        <MsgType><![CDATA[event]]></MsgType>
+        <Event><![CDATA[CLICK]]></Event>
+        <EventKey><![CDATA[PK_ASSISTANT_RECOMMEND]]></EventKey>
+        </xml>
+        """
+        cache.set(KEY_PREFIX %('latlng', 'FromUser'), '%s,%s' %(str(39.91488908), str(116.40387397)), 60)
+        msg = self._send_wechat_message(data)
+        self.assertTrue('ArticleCount' in msg)
+        self.assertEqual(1, int(msg['ArticleCount']))
+        self.assertEqual(u"北京星球汇宫霄台球俱乐部（东大桥宫霄酒店B2）", msg['Articles']['item']['Description'])

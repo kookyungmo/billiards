@@ -1,0 +1,2620 @@
+[
+{
+    "pk": 3, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u6e29\u67d4\uff0c\u5f00\u6717\uff0c\u5954\u653e", 
+        "selfintroduce": "\u7231\u81ea\u7531\uff0c\u7231\u7761\u89c9\uff0c\u7231\u5531\u6b4c\uff0c\u7231\u5c0f\u8bf4;\u4e5f\u7231\u5e7b\u60f3\uff0c\u66f4\u7231\u7f8e\u68a6\u6210\u771f\u7684\u65f6\u5019\u3002\u6211\u4e0d\u662f\u8c01\u7684\u9644\u5c5e\u54c1\uff0c\u6211\u5c31\u6211\u3002\u594b\u6597\u62fc\u640f\uff0c\u51b2\u5411\u9ad8\u6821\u5927\u95e8\uff0c\u5e78\u798f\u751f\u6d3b\u3002\u6211\u662f\u6234\u5bde\u3002", 
+        "favoriteplayers": "\u6f58\u6653\u5a77", 
+        "height": 170, 
+        "dress": "\u65f6\u5c1a", 
+        "drinks": "\u53ef\u53e3\u53ef\u4e50", 
+        "birthplace": "\u4e0a\u6d77", 
+        "uuid": "ebc807f3-4897-4891-a6a6-bc4915e8d10e", 
+        "scent": "\u590f\u5929\u96e8\u540e\u7684\u6de1\u6de1\u82ac\u82b3", 
+        "constellation": "\u53cc\u9c7c", 
+        "measurements": "88/68/90", 
+        "state": 2, 
+        "interest": "\u53f0\u7403\uff0c\u5531\u6b4c\uff0c\u8bfb\u4e66\uff0c\u7626\u8eab", 
+        "haircolor": "blank", 
+        "occupation": "\u52a9\u6559", 
+        "bestperformance": "4\u6746\u6e05\u53f0", 
+        "food": "\u4e0a\u6d77\u83dc\uff0c\u897f\u9910", 
+        "pageview": 20, 
+        "birthday": "1990-11-30", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u5373\u5c06\u4e0a\u7ebf\uff0c\u656c\u8bf7\u671f\u5f85", 
+        "name": "\u6234\u5bde", 
+        "language": 51, 
+        "gender": 1, 
+        "experience": 3, 
+        "pubichair": "", 
+        "order": 100
+    }
+},
+{
+    "pk": 4, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u5f20\u626c\uff0c\u5973\u6c49\u5b50", 
+        "selfintroduce": "\u7231\u8868\u73b0\u771f\u6b63\u81ea\u6211\uff0c\u4e0d\u7231\u626d\u634f\u505a\u4f5c\u3002\u7231\u73cd\u60dc\u73b0\u5728\uff0c\u4e5f\u7231\u60f3\u8c61\u672a\u6765\u3002\u7231\u6210\u7ee9\u84b8\u84b8\u65e5\u4e0a\uff0c\u66f4\u7231\u7236\u6bcd\u5f00\u989c\u6b22\u7b11\u3002\u6211\u4e0d\u662f\u80c6\u5c0f\uff0c\u4e0d\u662f\u5e73\u51e1;\u6211\u62e5\u6709\u4ee3\u8868\u683c\u5170\u82ac\u591a\u7684\u52c7\u6562\uff0c\u6211\u8981\u4ee5\u5b83\u53bb\u8fce\u63a5\u7cbe\u5f69\u7684\u672a\u6765\u3002\u6211\u4e0d\u662f\u4ed6\u4eba\u7684\u5f71\u5b50\uff0c\u6211\u662f\u72ec\u7279\u7684\u81ea\u5df1\u3002\u6211\u662f\u5bd2\u5440\u5bd2\u3002", 
+        "favoriteplayers": "\u7279\u9c81\u59c6\u666e", 
+        "height": 169, 
+        "dress": "\u8212\u9002\uff0c\u968f\u610f", 
+        "drinks": "\u7ea2\u8336\uff0c\u4e4c\u9f99\u8336", 
+        "birthplace": "\u5317\u4eac", 
+        "uuid": "6f83a3f5-2e16-451a-98fc-217768f17088", 
+        "scent": "\u73ab\u7470\uff0c\u8702\u871c", 
+        "constellation": "\u5929\u874e\u5ea7", 
+        "measurements": "88/60/90", 
+        "state": 2, 
+        "interest": "\u53f0\u7403\uff0c\u5531\u6b4c", 
+        "haircolor": "blank", 
+        "occupation": "\u53f0\u7403\u6559\u7ec3", 
+        "bestperformance": "2\u6746\u6e05\u53f0", 
+        "food": "\u69b4\u83b2\uff0c\u6838\u6843", 
+        "pageview": 0, 
+        "birthday": "1995-09-21", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u656c\u8bf7\u671f\u5f85", 
+        "name": "\u5bd2\u5440\u5bd2", 
+        "language": 5, 
+        "gender": 1, 
+        "experience": 2, 
+        "pubichair": "", 
+        "order": 100
+    }
+},
+{
+    "pk": 5, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u81ea\u7531\uff0c\u968f\u610f", 
+        "selfintroduce": "\u7231\u81ea\u7531\uff0c\u4e0d\u7231\u675f\u7f1a;\u7231\u505a\u86cb\u7cd5\uff0c\u7231\u505a\u5de7\u514b\u529b\uff0c\u4e5f\u7231\u8df3\u821e\uff0c\u66f4\u7231\u5531\u6b4c\u3002\u6211\u4e0d\u662f\u5b8c\u7f8e\u5c0f\u5b69\uff0c\u6211\u53ea\u4ee3\u8868\u6211\u81ea\u5df1\uff0c\u6211\u662f\u5218\u5c0f\u6c34\u3002", 
+        "favoriteplayers": "\u5965\u6c99\u5229\u6587", 
+        "height": 167, 
+        "dress": "\u4f53\u6064\uff0c\u677f\u978b", 
+        "drinks": "\u767e\u4e8b\u53ef\u4e50", 
+        "birthplace": "\u5e7f\u5dde", 
+        "uuid": "ec624b1c-7efe-497c-8edd-5a6a20480dfe", 
+        "scent": "\u767e\u7075\u9e1f\u7fbd\u6bdb\u7684\u5473\u9053", 
+        "constellation": "\u53cc\u9c7c\u5ea7", 
+        "measurements": "86/64/88", 
+        "state": 2, 
+        "interest": "\u5531\u6b4c\uff0c\u8df3\u821e\uff0c\u53f0\u7403", 
+        "haircolor": "blank", 
+        "occupation": "\u5b66\u751f", 
+        "bestperformance": "3\u6746\u6e05\u53f0", 
+        "food": "\u5de7\u514b\u529b\uff0c\u86cb\u7cd5", 
+        "pageview": 0, 
+        "birthday": "1994-05-28", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u5373\u5c06\u4e0a\u7ebf", 
+        "name": "\u5218\u5c0f\u6c34", 
+        "language": 33, 
+        "gender": 1, 
+        "experience": 2, 
+        "pubichair": "", 
+        "order": 100
+    }
+},
+{
+    "pk": 6, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u6e29\u67d4\uff0c\u5f00\u6717\uff0c\u5954\u653e", 
+        "selfintroduce": "\u6682\u65f6\u6ca1\u6709", 
+        "favoriteplayers": "\u6f58\u6653\u5a77", 
+        "height": 172, 
+        "dress": "\u65f6\u5c1a", 
+        "drinks": "\u53ef\u4e50", 
+        "birthplace": "\u5317\u4eac", 
+        "uuid": "d505218d-74d1-4630-a7dd-fdf2dcf99c6d", 
+        "scent": "\u82b3\u8349", 
+        "constellation": "\u5c04\u624b", 
+        "measurements": "98/77/95", 
+        "state": 2, 
+        "interest": "\u7f8e\u98df", 
+        "haircolor": "blank", 
+        "occupation": "\u884c\u653f", 
+        "bestperformance": "1\u6746", 
+        "food": "\u725b\u6392", 
+        "pageview": 0, 
+        "birthday": "1988-10-13", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u5927\u989d\u6d4b\u8bd5", 
+        "name": "\u5927\u989d\u6d4b\u8bd5", 
+        "language": 3, 
+        "gender": 1, 
+        "experience": 2, 
+        "pubichair": "", 
+        "order": 100
+    }
+},
+{
+    "pk": 7, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u76f4\u723d\uff0c\u5927\u65b9\uff0c\u5f00\u6717", 
+        "selfintroduce": "\u6211\u662f\u4e00\u4e2a\u7231\u7b11\u7684\u5973\u5b69\u513f\uff0c\u6211\u7684\u6027\u683c\u7528\u73b0\u5728\u7684\u8bdd\u6765\u8bf4\u90a3\u5c31\u662f\u201c\u6ca1\u8c01\u4e86\u201d\uff0c\u563b\u563b\uff0c\u6211\u7684\u670b\u53cb\u8bf4\u6211\u7684\u6027\u683c\u662f\u6211\u6700\u5927\u7684\u4f18\u70b9\uff01\u6211\u559c\u6b22\u53f0\u7403\uff0c\u4e5f\u70ed\u7231\u201c\u53f0\u7403\u52a9\u6559\u201d\u8fd9\u4e2a\u884c\u4e1a\uff01\u53ea\u80fd\u8bf4\u662f\u201c\u51c6\u201d\u5230\u6ca1\u6709\u670b\u53cb\u54e6^_^\u7b49\u4f60\u5466\uff5e\u4eb2", 
+        "favoriteplayers": "\u585e\u5c14\u6bd4\uff0c\u5965\u6c99\u5229\u6587", 
+        "height": 165, 
+        "dress": "\u7b80\u7ea6\uff0c\u65f6\u5c1a\uff0c\u4f11\u95f2", 
+        "drinks": "\u5317\u51b0\u6d0b\uff0c\u7f8e\u5f0f\u5496\u5561", 
+        "birthplace": "\u5317\u4eac", 
+        "uuid": "9685e211-9124-4fc1-b8fa-91dbd466216d", 
+        "scent": "\u6e05\u9999", 
+        "constellation": "\u5929\u874e\u5ea7", 
+        "measurements": "90/78/90", 
+        "state": 2, 
+        "interest": "\u53f0\u7403\uff0c\u5531\u6b4c\uff0c\u65c5\u6e38\uff0c\u7fbd\u6bdb\u7403", 
+        "haircolor": "blond", 
+        "occupation": "\u53f0\u7403\u52a9\u6559", 
+        "bestperformance": "1\u6746\u6e05\u53f0\uff0c3\u6b21", 
+        "food": "\u51b0\u6fc0\u51cc", 
+        "pageview": 3700, 
+        "birthday": "1987-10-30", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u4f73\u4f73\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u5218\u4f73", 
+        "language": 1, 
+        "gender": 1, 
+        "experience": 2, 
+        "pubichair": "", 
+        "order": 101
+    }
+},
+{
+    "pk": 8, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u5f00\u6717", 
+        "selfintroduce": "\u6211\u5c31\u662f\u4f20\u8bf4\u4e2d\u7684\u7ffb\u888b\u5c0f\u7687\u540e\u2014\u4efb\u4e1c\u4e1c\u5f00\u6717\u5927\u65b9\u7684\u6027\u683c\u548c\u6211\u5bf9\u53f0\u7403\u7684\u5fe0\u7231\uff0c\u8ba9\u6211\u7ed3\u4ea4\u4e86\u56db\u9762\u516b\u65b9\u7684\u53f0\u7403\u5c4a\u7684\u7cbe\u82f1\uff01\u4ee5\u7403\u4f1a\u53cb\uff1b\u4e0d\u65ad\u5b66\u4e60\uff1b\u4e1c\u4e1c\u5728\u8fd9\u91cc\u7b49\u4f60^_^", 
+        "favoriteplayers": "\u5965\u6c99\u5229\u6587", 
+        "height": 170, 
+        "dress": "\u519b\u65c5", 
+        "drinks": "\u53ef\u53e3\u53ef\u4e50", 
+        "birthplace": "\u5317\u4eac", 
+        "uuid": "d5065751-44f8-447a-aa74-2c825ad00a7c", 
+        "scent": "\u9999\u8349\u5473", 
+        "constellation": "\u5c04\u624b\u5ea7", 
+        "measurements": "80/64/80", 
+        "state": 1, 
+        "interest": "\u53f0\u7403\uff0c\u7f8e\u98df", 
+        "haircolor": "blank", 
+        "occupation": "\u53f0\u7403\u52a9\u6559", 
+        "bestperformance": "\u4e00\u6746\u6e05\u53f0", 
+        "food": "\u5de7\u514b\u529b", 
+        "pageview": 1600, 
+        "birthday": "1991-12-03", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u4e1c\u4e1c\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u4efb\u4e1c\u4e1c", 
+        "language": 1, 
+        "gender": 1, 
+        "experience": 3, 
+        "pubichair": "", 
+        "order": 102
+    }
+},
+{
+    "pk": 9, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u6709\u70b9\u5185\u5411", 
+        "selfintroduce": "\u6211\u662f\u65b9\u4edf\uff0c\u81ea\u4ece\u63a5\u89e6\u5230\u4e86\u53f0\u7403\uff0c\u4fbf\u5bf9\u5b83\u4ea7\u751f\u4e86\u4e0d\u53ef\u78e8\u706d\u7684\u5174\u8da3\uff0c\u76f4\u5230\u73b0\u5728\u4e3a\u6b62\uff0c\u4f9d\u7136\u70ed\u7231\u8fd9\u9879\u8fd0\u52a8\u3002\u4e3a\u4e86\u7ec3\u597d\u53f0\u7403\uff0c\u4ed8\u51fa\u4e86\u5f88\u5927\u7684\u52aa\u529b\uff0c\u66f4\u5e0c\u671b\u901a\u8fc7\u53f0\u7403\uff0c\u53ef\u4ee5\u7ed3\u4ea4\u5230\u8bb8\u591a\u5174\u8da3\u7231\u597d\u76f8\u540c\u7684\u5c0f\u4f19\u4f34~\u6211\u5728\u661f\u7403\u6c47\u53f0\u7403\u4ff1\u4e50\u90e8\u73af\u8d38\u603b\u5e97\uff0c\u60f3\u548c\u6211\u8fd9\u6837\u4e00\u4e2a\u6bd4\u8f83\u5185\u5411\u7684\u4eba\u4ea4\u670b\u53cb\uff0c\u90a3\u4e48\u5c31\u9996\u5148\u901a\u8fc7\u53f0\u7403\u8ba9\u6211\u4eec\u76f8\u8bc6\u5427~\uff01", 
+        "favoriteplayers": "\u4e01\u4fca\u6656", 
+        "height": 160, 
+        "dress": "\u65f6\u88c5", 
+        "drinks": "\u767d\u5f00\u6c34", 
+        "birthplace": "\u6e56\u5317", 
+        "uuid": "2644f325-93b7-4a00-9d6d-c1d309292f14", 
+        "scent": "\u679c\u9999", 
+        "constellation": "\u6c34\u74f6\u5ea7", 
+        "measurements": "88/67/90", 
+        "state": 1, 
+        "interest": "\u53f0\u7403\uff0c\u7535\u5f71", 
+        "haircolor": "blank", 
+        "occupation": "\u53f0\u7403\u52a9\u6559", 
+        "bestperformance": "1\u6746\u6e05\u53f0\uff0c\u7ecf\u5e38", 
+        "food": "\u51b0\u6fc0\u51cc", 
+        "pageview": 0, 
+        "birthday": "1986-02-20", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u65b9\u4edf\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u65b9\u4edf", 
+        "language": 1, 
+        "gender": 1, 
+        "experience": 3, 
+        "pubichair": "", 
+        "order": 101
+    }
+},
+{
+    "pk": 10, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u5f00\u6717\u3001\u6d3b\u6cfc", 
+        "selfintroduce": "\u6211\u53eb\u80e1\u598d\uff0c\u662f\u50b2\u7acb\u5728\u4e25\u51ac\u4e2d\u4e00\u6735\u5a07\u8273\u7684\u6885\u82b1\uff01\u4e0d\u8981\u4eba\u5938\u597d\u989c\u8272\uff0c\u53ea\u7559\u9999\u6c14\u6ee1\u4e7e\u5764\uff01\u5728\u6211\u5fc3\u91cc\uff0c\u957f\u5f97\u6f02\u4eae\uff0c\u4e0d\u5982\u6d3b\u5f97\u6f02\u4eae\uff0c\u5f53\u7136\u5566\uff0c\u5176\u5b9e\u6211\u4e5f\u662f\u5f88\u6f02\u4eae\u7684~~\u563f\u563f\uff0c\u6709\u4e00\u70b9\u5c0f\u81ea\u604b\uff01\u6211\u5728\u661f\u7403\u6c47\u53f0\u7403\u4ff1\u4e50\u90e8\u73af\u8d38\u603b\u5e97\uff0c\u7b49\u7740\u5c0f\u4f19\u4f34\u4eec\u6765\u627e\u6211\u6253\u7403\uff01", 
+        "favoriteplayers": "\u5965\u6c99\u5229\u6587", 
+        "height": 165, 
+        "dress": "\u65f6\u88c5\u517c\u8fd0\u52a8\u4f11\u95f2", 
+        "drinks": "\u5496\u5561\uff0c\u8336", 
+        "birthplace": "\u5c71\u4e1c", 
+        "uuid": "d669e435-a77a-40c9-8734-8929b6ac35d7", 
+        "scent": "\u751c\u9999\u3001\u5927\u6d77\u7684\u5473\u9053", 
+        "constellation": "\u53cc\u9c7c\u5ea7", 
+        "measurements": "88/70/96", 
+        "state": 1, 
+        "interest": "\u65c5\u6e38\uff0c\u901b\u8857", 
+        "haircolor": "blank", 
+        "occupation": "\u53f0\u7403\u8fd0\u52a8\u5458", 
+        "bestperformance": "\u4e00\u6746\u6e05\u53f0\uff0c\u5076\u5c14", 
+        "food": "\u897f\u9910\uff0c\u6d77\u9c9c", 
+        "pageview": 0, 
+        "birthday": "1985-03-24", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u80e1\u598d\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u80e1\u598d", 
+        "language": 1, 
+        "gender": 1, 
+        "experience": 5, 
+        "pubichair": "", 
+        "order": 101
+    }
+},
+{
+    "pk": 11, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u5f00\u6717\u3001\u76f4\u723d", 
+        "selfintroduce": "\u6211\u53eb\u82e5\u7fbd\uff0c\u6d6e\u751f\u82e5\u68a6\uff0c\u96f6\u5149\u7247\u7fbd\u3002\u6211\u53ef\u4ee5\u5c11\u5973\u60c5\u6000\u822c\u7684\u751f\u6da9\u77eb\u60c5\uff0c\u4e5f\u53ef\u4ee5\u4f83\u4f83\u800c\u8c08\uff0c\u843d\u843d\u5927\u65b9\u3002\u5f00\u5fc3\u7684\u65f6\u5019\uff0c\u6211\u53ef\u4ee5\u72af\u4e8c\uff0c\u4f46\u96be\u8fc7\u7684\u65f6\u5019\uff0c\u6211\u4f1a\u5341\u5206\u7684\u5b89\u9759\uff0c\u60f3\u8981\u4e00\u4e2a\u4eba\u72ec\u5904\u3002\u6211\u559c\u6b22\u9605\u8bfb\uff0c\u90a3\u4e9b\u552f\u7f8e\u7684\u6587\u5b57\u53ef\u4ee5\u8ba9\u6211\u7ec6\u7ec6\u54c1\u5473\uff0c\u4e5f\u53ef\u4ee5\u8ba9\u6211\u9677\u5165\u65e0\u9650\u7684\u601d\u8003\u3002\u6211\u5728\u661f\u7403\u6c47\u53f0\u7403\u4ff1\u4e50\u90e8\u73af\u8d38\u603b\u5e97\uff0c\u7b49\u7740\u548c\u4f60\u4e00\u8f83\u9ad8\u4e0b\uff01", 
+        "favoriteplayers": "\u97e9\u96e8", 
+        "height": 174, 
+        "dress": "\u6709\u65f6\u4f11\u95f2\u8fd0\u52a8\uff0c\u6709\u65f6\u65f6\u5c1a\u8fbe\u4eba", 
+        "drinks": "\u679c\u6c41", 
+        "birthplace": "\u9ed1\u9f99\u6c5f", 
+        "uuid": "d45779a2-2bc8-4bfe-891e-e7161edf0428", 
+        "scent": "\u7f8e\u5473\u53ef\u53e3\u7684\u996d\u83dc\u9999", 
+        "constellation": "\u53cc\u9c7c\u5ea7", 
+        "measurements": "88/77/93", 
+        "state": 1, 
+        "interest": "\u7535\u5f71\u3001\u97f3\u4e50", 
+        "haircolor": "blank", 
+        "occupation": "\u53f0\u7403\u52a9\u6559\u961f\u957f", 
+        "bestperformance": "\u4e00\u6746\u6e05\u53f0\uff0c\u5076\u5c14", 
+        "food": "\u751c\u54c1", 
+        "pageview": 0, 
+        "birthday": "1988-03-16", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u82e5\u7fbd\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u82e5\u7fbd", 
+        "language": 1, 
+        "gender": 1, 
+        "experience": 1, 
+        "pubichair": "", 
+        "order": 101
+    }
+},
+{
+    "pk": 12, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u5f00\u6717\u3001\u6d3b\u6cfc\u3001\u7231\u7b11", 
+        "selfintroduce": "\u6211\u7684\u4e2d\u6587\u540d\u5b57\u53eb\u73ca\u73ca\uff0c\u6211\u7684\u82f1\u6587\u540d\u5b57\u53ebShan Shan\uff01\u600e\u4e48\u6837\uff1f\u662f\u4e0d\u662f\u7279\u522b\u9ad8\u7aef\u5927\u6c14\u4e0a\u6863\u6b21\u7684\u611f\u89c9\uff1f\u4f60\u60f3\u4e0d\u60f3\u4e5f\u8981\u4e00\u4e2a\u4e2d\u6587\u548c\u82f1\u6587\u8bfb\u6cd5\u662f\u4e00\u6837\u7684\u540d\u5b57\u5462\uff1f\u53ef\u4ee5\u6765\u661f\u7403\u6c47\u53f0\u7403\u4ff1\u4e50\u90e8\u73af\u8d38\u603b\u5e97\u627e\u6211\uff0c\u6211\u7ed9\u4f60\u53d6\u4e00\u4e2a\u548c\u6211\u4e00\u6837\u9ad8\u5927\u4e0a\u7684\u540d\u5b57\uff01\u6211\u662f\u4e00\u4e2a\u7b80\u5355\u5f97\u4e0d\u80fd\u518d\u7b80\u5355\u7684\u5973\u5b69\uff0c\u5f00\u5fc3\u4e86\u5c31\u7b11\uff0c\u4e0d\u5f00\u5fc3\u7684\u5c31\u54ed\u3002\u6211\u4e0d\u559c\u6b22\u800d\u5fc3\u673a\uff0c\u53ea\u60f3\u505a\u4e00\u4e2a\u8fd9\u6837\u72ec\u4e00\u65e0\u4e8c\u7684\u81ea\u5df1\u3002", 
+        "favoriteplayers": "\u6f58\u6653\u5a77", 
+        "height": 175, 
+        "dress": "\u4f11\u95f2\u3001\u6027\u611f\u3001\u5927\u65b9", 
+        "drinks": "\u5976\u8336", 
+        "birthplace": "\u8fbd\u5b81", 
+        "uuid": "c6db02b6-9e75-4bb3-94eb-f987b2495219", 
+        "scent": "\u6e05\u65b0\u3001\u4e2d\u6027\u9999\u6c34\u5473", 
+        "constellation": "\u72ee\u5b50\u5ea7", 
+        "measurements": "88/68/91", 
+        "state": 1, 
+        "interest": "\u5531\u6b4c\u3001\u8df3\u821e\u3001\u53f0\u7403", 
+        "haircolor": "blank", 
+        "occupation": "\u53f0\u7403\u52a9\u6559", 
+        "bestperformance": "\u4e00\u6746\u6e05\u53f0\uff0c\u5076\u5c14", 
+        "food": "\u6c34\u679c\u3001\u9178\u5976", 
+        "pageview": 0, 
+        "birthday": "1986-08-02", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u73ca\u73ca\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u73ca\u73ca", 
+        "language": 1, 
+        "gender": 1, 
+        "experience": 1, 
+        "pubichair": "", 
+        "order": 101
+    }
+},
+{
+    "pk": 13, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u5916\u51b7\u5185\u70ed", 
+        "selfintroduce": "\u6211\u53eb\u738b\u53cc\uff0c\u5916\u51b7\u5185\u70ed\uff01\u4e5f\u8bb8\u7b2c\u4e00\u773c\u4f60\u89c9\u5f97\u6211\u5f88\u96be\u63a5\u8fd1\uff0c\u4f46\u662f\u65f6\u95f4\u4e45\u4e86\uff0c\u4f60\u4f1a\u53d1\u73b0\u6211\u5341\u5206\u7684\u70ed\u5fc3\uff0c\u4e0d\u8981\u88ab\u6211\u7b2c\u4e00\u773c\u7684\u611f\u89c9\u5413\u8dd1\uff0c\u6211\u53ea\u662f\u5bf9\u4eba\u5bf9\u4e8b\u6709\u4e00\u79cd\u5f88\u7b80\u5355\u7684\u6001\u5ea6\uff0c\u4e0d\u559c\u6b22\u865a\u6784\uff0c\u4e0d\u559c\u6b22\u4f2a\u88c5\u3002\u6211\u5728\u661f\u7403\u6c47\u53f0\u7403\u4ff1\u4e50\u90e8\u73af\u8d38\u603b\u5e97\uff0c\u7b49\u7740\u4f60\u6765\u6311\u6218\uff01\u5bf9\u6211\u7684\u53f0\u7403\u6280\u672f\u6211\u8fd8\u662f\u5341\u5206\u6709\u4fe1\u5fc3\u7684\uff0c\u6ca1\u4e8b\u70b8\u6e05\u51e0\u6b21\uff0c\u8ba9\u5927\u5bb6\u5f00\u5fc3\u4e00\u4e0b\u554a~~~", 
+        "favoriteplayers": "\u5965\u6c99\u5229\u6587", 
+        "height": 160, 
+        "dress": "\u65f6\u5c1a\u8fbe\u4eba", 
+        "drinks": "\u767d\u5f00\u6c34", 
+        "birthplace": "\u9ed1\u9f99\u6c5f", 
+        "uuid": "b3f6c68b-02f4-4ea2-8762-6e385345ac3d", 
+        "scent": "\u5927\u81ea\u7136\u7684\u6c14\u5473", 
+        "constellation": "\u5929\u79e4\u5ea7", 
+        "measurements": "80/67/90", 
+        "state": 1, 
+        "interest": "\u7535\u5f71\u3001\u65c5\u6e38", 
+        "haircolor": "blank", 
+        "occupation": "\u53f0\u7403\u8fd0\u52a8\u5458", 
+        "bestperformance": "\u4e00\u6746\u6e05\u53f0\uff0c\u7ecf\u5e38", 
+        "food": "\u5c71\u7af9\u3001\u69b4\u83b2", 
+        "pageview": 0, 
+        "birthday": "1986-10-19", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u738b\u53cc\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u738b\u53cc", 
+        "language": 1, 
+        "gender": 1, 
+        "experience": 10, 
+        "pubichair": "", 
+        "order": 101
+    }
+},
+{
+    "pk": 14, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u5916\u5411\u3001\u5f00\u6717\u3001\u76f4\u7387", 
+        "selfintroduce": "\u6211\u53eb\u82f1\u83f2\uff0c\u4f60\u4e5f\u53ef\u4ee5\u53eb\u6211\u5973\u738b\u965b\u4e0b\uff01\u6211\u5c31\u662f\u90a3\u4f20\u8bf4\u4e2d\u65e2\u5356\u7684\u4e86\u840c\uff0c\u4e5f\u72af\u5f97\u4e86\u4e8c\u7684\u5947\u8469\u5973\uff01\u6211\u5411\u6765\u8bf4\u8bdd\u76f4\u723d\uff0c\u4ece\u4e0d\u62d0\u5f2f\u62b9\u89d2\uff0c\u6709\u4e00\u70b9\u70b9\u5973\u6c49\u5b50\u7684\u6027\u683c\uff0c\u5341\u5206\u597d\u76f8\u5904\u3002\u867d\u7136\u6211\u6709\u65f6\u6709\u4e00\u70b9\u70b9\u8ff7\u7cca\uff0c\u53ef\u662f\u53f0\u7403\u6280\u672f\u4e0d\u662f\u5439\u7684\uff01\u7ecf\u5e38\u8650\u7684\u522b\u4eba\u5bf9\u53f0\u7403\u5931\u53bb\u4e86\u4fe1\u5fc3\uff0c\u54c8\u54c8\uff01\u60f3\u6311\u6218\u6211\u7684\u5c0f\u4f19\u4f34\uff0c\u661f\u7403\u6c47\u73af\u8d38\u603b\u5e97\uff01Come Baby\uff01", 
+        "favoriteplayers": "\u5f20\u7389\u9f99", 
+        "height": 168, 
+        "dress": "\u4f11\u95f2", 
+        "drinks": "\u67da\u5b50\u8336", 
+        "birthplace": "\u5185\u8499\u53e4", 
+        "uuid": "347d7dbe-4564-4529-b41f-30fd9f73dcb0", 
+        "scent": "\u9999\u6c34\u9082\u9005\u7684\u5473\u9053", 
+        "constellation": "\u5c04\u624b\u5ea7", 
+        "measurements": "96/80/93", 
+        "state": 1, 
+        "interest": "\u53f0\u7403\u3001\u5531\u6b4c", 
+        "haircolor": "blank", 
+        "occupation": "\u53f0\u7403\u8fd0\u52a8\u5458", 
+        "bestperformance": "\u8fde\u7eed\u70b8\u6e053\u53f0", 
+        "food": "\u86cb\u7cd5\u3001\u6c34\u679c", 
+        "pageview": 0, 
+        "birthday": "1990-12-25", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u82f1\u83f2\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u82f1\u83f2", 
+        "language": 1, 
+        "gender": 1, 
+        "experience": 10, 
+        "pubichair": "", 
+        "order": 101
+    }
+},
+{
+    "pk": 15, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u53cc\u91cd\u6027\u683c", 
+        "selfintroduce": "\u6211\u53eb\u6708\u6708\uff0c\u4e0d\u8bf4\u8bdd\uff0c\u6e05\u4e3d\u8131\u4fd7\uff0c\u5f15\u4eba\u72af\u7f6a\uff0c\u4e00\u5f20\u5634\uff0c\u6211\u6015\u4f60\u4f1a\u60f3\u6b63\u5f53\u9632\u536b\uff01\u54c8\u54c8\uff0c\u6211\u89c9\u5f97\u81ea\u5df1\u5c31\u662f\u6709\u4e00\u70b9\u70b9\u7684\u795e\u7ecf\u75c5\u6f5c\u8d28\uff0c\u836f\u836f\uff0c\u5207\u514b\u95f9\uff0c\u5feb\u6765\u548c\u6211\u4e00\u8d77\u95f9~~~\u53ef\u80fd\u662f\u6709\u70b9\u6d3b\u6cfc\u5f00\u6717\u7684\u8fc7\u4e86\u5934\uff0c\u4e5f\u662f\u5973\u6c49\u5b50\u4e00\u679a\uff01\u96f7\u5fb7\u65afand\u6770\u7279\u66fc\uff0c\u4e61\u4eb2\u4eec\u548c\u8001\u5c11\u7237\u4eec\u513f\u4eec\uff0c\u6211\u5728\u661f\u7403\u6c47\u73af\u8d38\u603b\u5e97\u7b49\u4f60\u4e00\u8d77\u73a9\u800d\uff0c\u6253\u7403\u65f6\u6211\u5c31\u4e0d\u72af\u795e\u7ecf\u5566\uff0c\u653e\u5fc3\uff0c\u6211\u5584\u4e8e\u7528\u5de6\u624b\uff0c\u884c\u7403\u98ce\u683c\u76f4\u7387\u800c\u7cbe\u51c6\uff0c\u8650\u4f60\u6ca1\u813e\u6c14\uff01\uff01\uff01", 
+        "favoriteplayers": "\u5e0c\u91d1\u65af", 
+        "height": 166, 
+        "dress": "\u4e0d\u56fa\u5b9a", 
+        "drinks": "\u767d\u5f00\u6c34\u3001\u77ff\u6cc9\u6c34", 
+        "birthplace": "\u5185\u8499\u53e4", 
+        "uuid": "62146fbd-6750-4e3d-8529-30d3fe862a00", 
+        "scent": "\u996d\u83dc\u7684\u5473\u9053", 
+        "constellation": "\u6469\u7faf\u5ea7", 
+        "measurements": "88/76/93", 
+        "state": 1, 
+        "interest": "\u53f0\u7403\u3001\u5531\u6b4c\u3001\u65c5\u6e38", 
+        "haircolor": "chestnut", 
+        "occupation": "\u53f0\u7403\u8fd0\u52a8\u5458", 
+        "bestperformance": "\u4e00\u6746\u6e05\u53f0\uff0c\u7ecf\u5e38", 
+        "food": "\u69b4\u83b2\u3001\u5c71\u7af9", 
+        "pageview": 0, 
+        "birthday": "1992-01-22", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u6708\u6708\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u6708\u6708", 
+        "language": 1, 
+        "gender": 1, 
+        "experience": 4, 
+        "pubichair": "", 
+        "order": 101
+    }
+},
+{
+    "pk": 16, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u4e0d\u56fa\u5b9a", 
+        "selfintroduce": "\u6211\u662f\u5f20\u8389\uff0c\u4f60\u4e5f\u53ef\u4ee5\u53eb\u6211\u5c0f\u8389~~\u6211\u6700\u660e\u786e\u7684\u5fc3\u60c5\u5c31\u662f\u770b\u5fc3\u60c5\uff0c\u6700\u5927\u7684\u4e2a\u6027\u5c31\u662f\u6ca1\u6709\u4e2a\u6027\uff01\u968f\u65f6\u968f\u5730\u90fd\u53ef\u4ee5\u5f88\u997f\uff0c\u7ecf\u5e38\u6302\u5728\u5634\u8fb9\u7684\u4e00\u53e5\u8bdd\u5c31\u662f\uff1a\u201c\u6211\u7684\u996d\u5462\uff1f\u201d\u6709\u70b9\u5929\u7136\u5446\u7684\u611f\u89c9\uff0c\u8ff7\u8ff7\u7cca\u7cca\u7684\uff01\u6700\u5927\u7684\u7279\u957f\u5c31\u662f\u6253\u53f0\u7403\u5566\uff0c\u5404\u79cd\u6e05\u53f0\uff0c\u5404\u79cd\u70b8\u6e05\uff0c\u63a5\u6e05\u2026\u2026\u6e05\uff01\u6e05\uff01\u6e05\uff01\u4e0d\u8981\u4e0d\u76f8\u4fe1\u6211\uff0c\u6211\u4e00\u5411\u4e0d\u8bf4\u8c0e\u8bdd\u7684\u3002\u661f\u7403\u6c47\u53f0\u7403\u4ff1\u4e50\u90e8\u73af\u8d38\u603b\u5e97\uff0cCome Baby\uff01", 
+        "favoriteplayers": "\u585e\u5c14\u6bd4", 
+        "height": 175, 
+        "dress": "\u4e0d\u5b9a", 
+        "drinks": "\u9178\u9178\u751c\u751c", 
+        "birthplace": "\u5c71\u4e1c", 
+        "uuid": "c2bc084d-6bc0-4f80-a658-68d1cde1db4b", 
+        "scent": "\u6d77\u6d0b\u7684\u6c14\u606f", 
+        "constellation": "\u5904\u5973\u5ea7", 
+        "measurements": "92/76/92", 
+        "state": 1, 
+        "interest": "\u53f0\u7403\u3001\u542c\u6b4c\u3001\u65c5\u6e38", 
+        "haircolor": "chestnut", 
+        "occupation": "\u53f0\u7403\u8fd0\u52a8\u5458", 
+        "bestperformance": "\u4e00\u6746\u6e05\u53f0\uff0c\u7ecf\u5e38", 
+        "food": "\u9178\u7684", 
+        "pageview": 0, 
+        "birthday": "1992-09-25", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u5f20\u8389\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u5f20\u8389", 
+        "language": 1, 
+        "gender": 1, 
+        "experience": 5, 
+        "pubichair": "", 
+        "order": 101
+    }
+},
+{
+    "pk": 17, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u72ec\u7acb\u3001\u5916\u70ed\u5185\u51b7", 
+        "selfintroduce": "\u4f60\u53ef\u4ee5\u53eb\u6211\u7f8e\u7199\uff0c\u4e5f\u53ef\u4ee5\u53eb\u6211\u7684\u65e5\u672c\u540d\u5b57\uff0c\u7f8e\u7199\u5b50\uff01\u6211\u662f\u4e00\u4e2a\u6bd4\u8f83\u5947\u602a\u7684\u4eba\uff0c\u4e5f\u559c\u6b22\u7814\u7a76\u4e00\u4e9b\u6bd4\u8f83\u5947\u602a\u7684\u4e1c\u897f\uff0c\u4f60\u662f\u4e00\u4e2a\u602a\u4eba\u5417\uff1f\u4f60\u53ef\u4ee5\u56de\u7b54\u51fa\u6211\u63d0\u51fa\u6765\u7684\u6bd4\u8f83\u5947\u602a\u7684\u95ee\u9898\u5417\uff1f\u4f60\u63a5\u53d7\u7684\u4e86\u6211\u90a3\u4e9b\u4ee4\u4eba\u557c\u7b11\u7686\u975e\u7684\u602a\u5f02\u4e3e\u52a8\u5417\uff1f\u5982\u679c\u4f60\u4e5f\u662f\u4e00\u4e2a\u5947\u602a\u7684\u4eba\uff0c\u90a3\u5c31\u6765\u661f\u7403\u6c47\u53f0\u7403\u4ff1\u4e50\u90e8\u73af\u8d38\u603b\u5e97\u627e\u6211\uff0c\u6211\u4eec\u4e00\u8d77\u201c\u5947\u602a\u201d\u5427\uff01\u53e6\u5916\uff0c\u6211\u8fd8\u662f\u4e00\u4f4d\u201c\u661f\u5ea7\u5927\u5e08\u201d\uff0c\u5982\u679c\u4f60\u60f3\u548c\u6211\u505a\u670b\u53cb\uff0c\u8bf7\u4e3b\u52a8\u544a\u8bc9\u6211\u4f60\u7684\u661f\u5ea7\uff01", 
+        "favoriteplayers": "\u7279\u9c81\u59c6\u666e", 
+        "height": 170, 
+        "dress": "\u6210\u719f", 
+        "drinks": "\u67e0\u6aac\u8336\u3001\u62b9\u8336", 
+        "birthplace": "\u5317\u4eac", 
+        "uuid": "ffc46256-305c-467e-a5a1-79f68c91889e", 
+        "scent": "\u84dd\u8393\u5473\u9053", 
+        "constellation": "\u5929\u874e\u5ea7", 
+        "measurements": "88/75/95", 
+        "state": 1, 
+        "interest": "\u7535\u5f71\u3001\u661f\u5ea7\u3001\u97f3\u4e50", 
+        "haircolor": "chestnut", 
+        "occupation": "\u53f0\u7403\u8fd0\u52a8\u5458", 
+        "bestperformance": "\u4e00\u6746\u6e05\u53f0\uff0c\u5076\u5c14", 
+        "food": "\u6d77\u9c9c\u3001\u751c\u54c1", 
+        "pageview": 0, 
+        "birthday": "1989-11-23", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u7f8e\u7199\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u7f8e\u7199\u5b50", 
+        "language": 1, 
+        "gender": 1, 
+        "experience": 1, 
+        "pubichair": "", 
+        "order": 101
+    }
+},
+{
+    "pk": 18, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u5916\u5411", 
+        "selfintroduce": "\u6211\u662f\u8bb8\u6b63\u4f9d\uff0c\u4f60\u4e5f\u53ef\u4ee5\u53eb\u6211\u4f9d\u4f9d\uff0c\u6216\u8005\u4f9d\u59d0\uff01\u66fe\u53c2\u52a0\u8fc7\u8bb8\u591a\u7684\u53f0\u7403\u6bd4\u8d5b\uff0c\u62ff\u8fc7\u5f88\u591a\u7684\u5956\uff01\u767e\u5ea6\u641c\u7d22\u4e00\u4e0b\uff0c\u4f60\u53ef\u4ee5\u770b\u5230\u6211\u6bd4\u8d5b\u65f6\u5019\u7684\u98d2\u723d\u82f1\u59ff~~\u54c8\u54c8\uff01\u6211\u5728\u661f\u7403\u6c47\u53f0\u7403\u4ff1\u4e50\u90e8\u73af\u8d38\u603b\u5e97\uff0c\u5feb\u6765\u6311\u6218\u6211\u5427\uff0c\u6c42\u8650\u554a\uff01\u867d\u7136\u6211\u53f0\u7403\u6280\u672f\u5f88\u9738\u9053\uff0c\u4f46\u662f\u751f\u6d3b\u4e2d\u8fd8\u662f\u6bd4\u8f83\u5c0f\u5973\u4eba\u7684\uff0c\u79c0\u5916\u6167\u4e2d\u8bf4\u7684\u5c31\u662f\u6211\u5566\uff01", 
+        "favoriteplayers": "\u5965\u6c99\u5229\u6587", 
+        "height": 169, 
+        "dress": "\u6b27\u7f8e\u3001\u65f6\u5c1a\u3001\u4f11\u95f2", 
+        "drinks": "\u8336\u3001\u529f\u592b\u8336", 
+        "birthplace": "\u9ed1\u9f99\u6c5f", 
+        "uuid": "82a1c6e1-f72e-4b40-9333-35ae2bd25070", 
+        "scent": "\u751c\u9999\u3001\u6de1\u9999\u3001\u6a80\u9999", 
+        "constellation": "\u6469\u7faf\u5ea7", 
+        "measurements": "94/80/96", 
+        "state": 1, 
+        "interest": "\u6587\u4f53", 
+        "haircolor": "chestnut", 
+        "occupation": "\u53f0\u7403\u8fd0\u52a8\u5458", 
+        "bestperformance": "\u4e00\u6746\u6e05\u53f0\uff0c\u7ecf\u5e38", 
+        "food": "\u8089\u8089\u3001\u6d77\u9c9c", 
+        "pageview": 0, 
+        "birthday": "1981-01-07", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u6b63\u4f9d\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u6b63\u4f9d", 
+        "language": 1, 
+        "gender": 1, 
+        "experience": 10, 
+        "pubichair": "", 
+        "order": 101
+    }
+},
+{
+    "pk": 19, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u6d3b\u6cfc\u5f00\u6717", 
+        "selfintroduce": "\u6211\u53eb\u667a\u6167\uff0c\u5145\u6ee1\u4e86\u667a\u6167\uff01\u723d\u6717\u7684\u6027\u683c\uff0c\u707f\u70c2\u7684\u7b11\u5bb9\uff0c\u8089\u8089\u7684\u5c0f\u8138\u86cb\uff0c\u5927\u5bb6\u90fd\u53eb\u6211\u201c\u5c0f\u5305\u5b50\u201d\uff01\u662f\u4e0d\u662f\u975e\u5e38\u7684\u53ef\u7231\u5462\uff1f\u522b\u770b\u6211\u957f\u5f97\u50cf\u4e2a\u5c0f\u5305\u5b50\uff0c\u6211\u4e5f\u662f\u80fd\u7ed9\u5927\u5bb6\u5e26\u6765\u5feb\u4e50\u7684\uff0c\u800c\u4e14\u6211\u7684\u53f0\u7403\u5b9e\u529b\u4e0d\u5bb9\u5c0f\u89d1\u7684\u54e6\uff0c\u6280\u672f\u4e00\u70b9\u4e5f\u4e0d\u201c\u5305\u5b50\u201d\uff01\u6211\u53c2\u52a0\u8fc7\u8bb8\u591a\u7684\u53f0\u7403\u6bd4\u8d5b\uff0c\u5747\u83b7\u5f97\u4e86\u4e0d\u9519\u7684\u540d\u6b21\uff01\u6211\u5728\u661f\u7403\u6c47\u53f0\u7403\u4ff1\u4e50\u90e8\u73af\u8d38\u603b\u5e97\u7b49\u4f60\uff0c\u5404\u79cd\u6e05\u4f60\u6ca1\u5546\u91cf\uff01\u8f93\u4e86\u4e0d\u51c6\u54ed\u9f3b\u5b50\u54e6\uff01", 
+        "favoriteplayers": "\u5965\u6c99\u5229\u6587", 
+        "height": 165, 
+        "dress": "\u4f11\u95f2\u8fd0\u52a8", 
+        "drinks": "\u82cf\u6253\u6c34", 
+        "birthplace": "\u5185\u8499\u53e4", 
+        "uuid": "cf5d8062-d6cb-4a9d-a28b-603bebfa3274", 
+        "scent": "\u559c\u6b22\u7684\u9999\u6c34", 
+        "constellation": "\u5929\u874e\u5ea7", 
+        "measurements": "104/90/98", 
+        "state": 1, 
+        "interest": "\u53f0\u7403", 
+        "haircolor": "ginger/red", 
+        "occupation": "\u53f0\u7403\u8fd0\u52a8\u5458", 
+        "bestperformance": "\u8fde\u7eed\u4e24\u70b8\u4e24\u63a5", 
+        "food": "\u996d\u3001\u8089", 
+        "pageview": 0, 
+        "birthday": "1990-10-29", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u667a\u6167\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u667a\u6167", 
+        "language": 1, 
+        "gender": 1, 
+        "experience": 8, 
+        "pubichair": "", 
+        "order": 101
+    }
+},
+{
+    "pk": 20, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u5f00\u6717", 
+        "selfintroduce": "\u6211\u662f\u8d1d\u8d1d\uff0c\u6765\u81ea\u547c\u4f26\u8d1d\u5c14\u5927\u8349\u539f\uff0c\u4eba\u9001\u5916\u53f7\u201c\u957f\u817f\u9102\u6e29\u514b\u516c\u4e3b\u201d\uff01\u5982\u679c\u4f60\u6765\u5230\u661f\u7403\u6c47\u53f0\u7403\u4ff1\u4e50\u90e8\u73af\u8d38\u603b\u5e97\uff0c\u522b\u5fd8\u4e86\u5411\u672c\u516c\u4e3b\u201c\u8bf7\u5b89\u201d\u554a\uff01\u5076\u5c14\u6709\u4e00\u70b9\u5b69\u5b50\u6c14\uff0c\u5076\u5c14\u6709\u4e00\u70b9\u4efb\u6027\uff0c\u4f60\u53ef\u4ee5\u8bf4\u6211\u6709\u4e00\u70b9\u70b9\u7684\u201c\u516c\u4e3b\u75c5\u201d\uff0c\u4f46\u662f\u771f\u7684\u53ea\u662f\u4e00\u70b9\u70b9\u54e6\uff01\u6211\u7684\u68a6\u60f3\u662f\u559d\u7740\u6765\u81ea\u661f\u7403\u6c47\u7684\u5564\u9152\uff0c\u5403\u7740\u4f60\u9001\u5230\u661f\u7403\u6c47\u6765\u7684\u70b8\u9e21\uff01", 
+        "favoriteplayers": "\u6f58\u6653\u5a77", 
+        "height": 173, 
+        "dress": "\u4f11\u95f2\u8fd0\u52a8", 
+        "drinks": "\u8292\u679c\u6c41", 
+        "birthplace": "\u547c\u4f26\u8d1d\u5c14", 
+        "uuid": "1cd29edd-0e79-4223-aed7-d69d8d2ec5ad", 
+        "scent": "\u9999\u5948\u513fCoCo", 
+        "constellation": "\u53cc\u5b50\u5ea7", 
+        "measurements": "87/66/89", 
+        "state": 1, 
+        "interest": "\u53f0\u7403\u3001\u5531\u6b4c", 
+        "haircolor": "brown", 
+        "occupation": "\u53f0\u7403\u52a9\u6559", 
+        "bestperformance": "\u4e00\u6746\u6e05\u53f0\uff0c\u7ecf\u5e38", 
+        "food": "\u5de7\u514b\u529b\u3001\u7cd6\u679c\u3001\u70b8\u9e21", 
+        "pageview": 0, 
+        "birthday": "1991-06-02", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u8d1d\u8d1d\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u8d1d\u8d1d", 
+        "language": 1, 
+        "gender": 1, 
+        "experience": 3, 
+        "pubichair": "", 
+        "order": 101
+    }
+},
+{
+    "pk": 21, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u5f00\u6717\u70ed\u60c5", 
+        "selfintroduce": "\u6211\u662f\u4e00\u4e2a\u7231\u73a9\u7231\u95f9\u7684\u5973\u5b69\u513f\uff0c\u662f\u5927\u5bb6\u7684\u5f00\u5fc3\u679c\uff0c\u4f46\u6211\u5bf9\u5de5\u4f5c\u5f88\u6709\u70ed\u60c5\uff0c\u662f\u4e00\u4e2a\u5f88\u6709\u8d23\u4efb\u5fc3\u7684\u5973\u751f\uff0c\u6211\u8fd8\u662f\u4e00\u540d\u6a21\u7279\uff0c\u6211\u559c\u6b22\u4e0a\u955c\u7684\u611f\u89c9\uff0c\u6211\u662f\u4e00\u4e2a\u5f88\u6709\u81ea\u4fe1\u7684\u5973\u751f\uff0c\u800c\u4e14\u6211\u7684\u6c9f\u901a\u80fd\u529b\u5f88\u5f3a\uff0c\u5927\u5bb6\u90fd\u559c\u6b22\u8ddf\u6211\u804a\u5929\uff0c\u6211\u4e5f\u559c\u6b22\u8ddf\u670b\u53cb\u5728\u4e00\u8d77\u804a\u5929\uff0c\u4e5f\u5e0c\u671b\u80fd\u8ba4\u8bc6\u66f4\u591a\u7684\u670b\u53cb\u3002", 
+        "favoriteplayers": "\u8f66\u4f91\u84dd", 
+        "height": 175, 
+        "dress": "\u840c\u840c\u54d2", 
+        "drinks": "\u6a59\u6c41", 
+        "birthplace": "\u6cb3\u5317", 
+        "uuid": "54198d00-cb0e-484b-bd19-0a23f572c558", 
+        "scent": "\u9999\u6c34", 
+        "constellation": "\u5929\u79e4\u5ea7", 
+        "measurements": "85/62/88", 
+        "state": 1, 
+        "interest": "\u53f0\u7403 \u7f51\u6e38 ", 
+        "haircolor": "auburn", 
+        "occupation": "\u6a21\u7279\u3001\u53f0\u7403\u52a9\u6559", 
+        "bestperformance": "\u4e00\u6746\u6e05\u53f0\uff0c\u5076\u5c14", 
+        "food": "\u706b\u9505", 
+        "pageview": 0, 
+        "birthday": "1993-10-18", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u68a6\u742a\uff08\u5373\u5c06\u4e0a\u7ebf\uff09", 
+        "name": "\u68a6\u742a", 
+        "language": 1, 
+        "gender": 1, 
+        "experience": 3, 
+        "pubichair": "", 
+        "order": 100
+    }
+},
+{
+    "pk": 22, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u9634\u6674\u4e0d\u5b9a", 
+        "selfintroduce": "HELLO!\u5927\u5bb6\u597d\uff0c\u6211\u53eb\u95eb\u5ca9\uff0c\u5927\u5bb6\u90fd\u559c\u6b22\u53eb\u6211\u957f\u817f\u6b27\u5c3c\uff0c\u54c8\u54c8\uff0c\u6211\u6027\u683c\u5f00\u6717\uff0c\u559c\u6b22\u7ed3\u4ea4\u65b0\u670b\u53cb\uff0c\u559c\u6b22\u6253\u6253\u53f0\u7403\uff0c\u542c\u542c\u97f3\u4e50\uff0c\u9047\u5230\u804a\u5f97\u6765\u7684\u670b\u53cb\u5076\u5c14\u4e5f\u4f1a\u4e00\u8d77\u5c0f\u914c\u51e0\u676f\uff0c\u6211\u7684\u751f\u6d3b\u7279\u522b\u6709\u60c5\u8c03\uff0c\u5982\u679c\u4f60\u60f3\u4e86\u89e3\u6211\uff0c\u60f3\u8ba4\u8bc6\u6211\uff0c\u90a3\u4e48\u2026\u6211\u5728\u661f\u7403\u6c47\u5bab\u9704\u5e97\uff0c\u8bb0\u4f4f\u6211\u662f\u4f60\u7684\u957f\u817f\u6b27\u5c3c\uff0c\u6211\u5728\u7b49\u4f60", 
+        "favoriteplayers": "\u8f66\u4f91\u84dd", 
+        "height": 172, 
+        "dress": "\u968f\u5fc3\u60c5\u5b9a", 
+        "drinks": "\u9178\u751c", 
+        "birthplace": "\u5409\u6797", 
+        "uuid": "d2fe8317-9c90-46df-831f-f2d67b741580", 
+        "scent": "\u9999\u6c34", 
+        "constellation": "\u6c34\u74f6\u5ea7", 
+        "measurements": "86/60/94", 
+        "state": 1, 
+        "interest": "\u53f0\u7403 \u7761\u89c9", 
+        "haircolor": "blank", 
+        "occupation": "\u53f0\u7403\u52a9\u6559", 
+        "bestperformance": "\u4e00\u6746\u6e05\u53f0\uff0c\u5076\u5c14", 
+        "food": "\u4e0d\u6311\u98df", 
+        "pageview": 0, 
+        "birthday": "1993-02-07", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u95eb\u5ca9\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u95eb\u5ca9", 
+        "language": 1, 
+        "gender": 1, 
+        "experience": 3, 
+        "pubichair": "", 
+        "order": 101
+    }
+},
+{
+    "pk": 23, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u5f00\u6717\u6d3b\u6cfc", 
+        "selfintroduce": "\u672c\u4eba\u6027\u683c\u6d3b\u6cfc\u5f00\u6717\uff0c\u5de5\u4f5c\u8ba4\u771f\uff0c\u5177\u6709\u5f88\u597d\u7684\u4eb2\u548c\u529b\uff0c\u5584\u4e8e\u4e0e\u4eba\u6c9f\u901a\uff0c\u800c\u4e14\u7231\u597d\u5e7f\u6cdb\uff0c\u559c\u6b22\u53f0\u7403\uff0c\u5531\u6b4c\u548c\u6e38\u6cf3\uff0c\u8ffd\u6c42\u65b0\u9c9c\u4e8b\u7269\uff0c\u6bd5\u4e1a\u4e8e2007\u5e74\uff0c\u6b65\u5165\u793e\u4f1a\u540e\u4e00\u76f4\u5b66\u4e60\u9152\u5e97\u7ba1\u7406\uff0c\u6709\u4e00\u5b9a\u7684\u5de5\u4f5c\u80fd\u529b\u548c\u8bed\u8a00\u6c9f\u901a\u80fd\u529b\uff0c\u505a\u4e8b\u4e5f\u6bd4\u8f83\u8ba4\u771f\u8d1f\u8d23\uff0c\u4e0d\u8fc7\u6700\u7ec8\u6211\u8fd8\u662f\u9009\u62e9\u4e86\u661f\u7403\u6c47\uff0c\u70ed\u8877\u4e8e\u53f0\u7403\u7684\u6211\u8fd8\u662f\u9009\u62e9\u4e86\u53f0\u7403\u8fd9\u4e2a\u804c\u4e1a\uff0c\u5728\u81ea\u5df1\u559c\u6b22\u7684\u5de5\u4f5c\u4e2d\u6211\u4f1a\u66f4\u52a0\u8ba4\u771f\u5bf9\u5f85\uff0c\u4f7f\u81ea\u5df1\u4e0d\u65ad\u7684\u8fdb\u6b65", 
+        "favoriteplayers": "\u6f58\u6653\u5a77", 
+        "height": 165, 
+        "dress": "\u6210\u719f", 
+        "drinks": "\u77ff\u6cc9\u6c34", 
+        "birthplace": "\u6e56\u5317", 
+        "uuid": "80ed8dfd-1784-4ac0-84a7-7c62477d0e6b", 
+        "scent": "DIOR\u9999\u6c34", 
+        "constellation": "\u72ee\u5b50\u5ea7", 
+        "measurements": "87/58/90", 
+        "state": 1, 
+        "interest": "\u5531\u6b4c \u65c5\u6e38", 
+        "haircolor": "blank", 
+        "occupation": "\u53f0\u7403\u52a9\u6559", 
+        "bestperformance": "\u4e00\u6746\u6e05\u53f0\uff0c\u5076\u5c14", 
+        "food": "\u4e0d\u6311\u98df", 
+        "pageview": 0, 
+        "birthday": "1989-08-08", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u6768\u5a77\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u6768\u5a77", 
+        "language": 1, 
+        "gender": 1, 
+        "experience": 5, 
+        "pubichair": "", 
+        "order": 101
+    }
+},
+{
+    "pk": 24, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u606c\u9759\uff0c\u968f\u6027", 
+        "selfintroduce": "\u5927\u5bb6\u597d\uff0c\u6211\u662f\u897f\u897f\uff0c\u4e00\u4e2a\u5b89\u9759\u751c\u7f8e\u7684\u5973\u5b69\uff0c\u62e5\u6709\u4e00\u53cc\u6676\u4eae\u7684\u773c\u7738\uff0c\u660e\u955c\u6e05\u6f88\uff0c\u6211\u6027\u683c\u65f6\u800c\u5f00\u6717\u65f6\u800c\u5b89\u9759\uff0c\u559c\u6b22\u8ddf\u597d\u670b\u53cb\u4eec\u5750\u5728\u4e00\u8d77\u8c08\u5929\u8bf4\u5730\uff0c\u6211\u7279\u522b\u559c\u7231\u53f0\u7403\uff0c\u603b\u611f\u89c9\u53f0\u7403\u6709\u5f88\u591a\u4e1c\u897f\u503c\u5f97\u6211\u53bb\u53d1\u6398\uff0c\u661f\u7403\u6c47\u7ed9\u4e0e\u6211\u4e00\u4e2a\u5f88\u597d\u7684\u5e73\u53f0\u8ba9\u6211\u53bb\u5b66\u4e60\u53bb\u63a2\u7d22\uff0c\u6211\u5e0c\u671b\u80fd\u8ba4\u8bc6\u66f4\u591a\u7684\u53f0\u7403\u7231\u597d\u8005", 
+        "favoriteplayers": "\u6f58\u6653\u5a77", 
+        "height": 168, 
+        "dress": "OL", 
+        "drinks": "\u5976\u8336", 
+        "birthplace": "\u6cb3\u5357", 
+        "uuid": "da2b0839-5acd-41b2-9ec7-389cddfc0300", 
+        "scent": "\u679c\u9999", 
+        "constellation": "\u6469\u7faf\u5ea7", 
+        "measurements": "84/62/86", 
+        "state": 1, 
+        "interest": "\u53f0\u7403 \u65c5\u884c \u97f3\u4e50", 
+        "haircolor": "chestnut", 
+        "occupation": "\u53f0\u7403\u52a9\u6559", 
+        "bestperformance": "\u4e00\u6746\u6e05\u53f0\uff0c\u5076\u5c14", 
+        "food": "\u62b9\u8336\u86cb\u7cd5", 
+        "pageview": 0, 
+        "birthday": "1993-01-02", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u5f20\u897f\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u5f20\u897f", 
+        "language": 1, 
+        "gender": 1, 
+        "experience": 2, 
+        "pubichair": "", 
+        "order": 101
+    }
+},
+{
+    "pk": 25, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u968f\u548c", 
+        "selfintroduce": "\u6211\u662f\u8d75\u78ca\uff0c\u56e0\u4e3a\u559c\u6b22\u53f0\u7403\uff0c\u5728\u9ad8\u4e00\u7684\u65f6\u5019\u5f00\u59cb\u6253\u53f0\u7403\u5a31\u4e50\uff0c\u4ece\u6b64\u6df1\u6df1\u7684\u7231\u4e0a\u4e86\u53f0\u7403\u8fd9\u4e00\u5a31\u4e50\u9879\u76ee\uff0c\u5e76\u4e14\u5f00\u59cb\u5b66\u4e60\u7ec3\u7403\uff0c\u5927\u5b66\u65f6\u4f9d\u7136\u6ca1\u6709\u653e\u5f03\u8fd9\u4e00\u7231\u597d\uff0c\u5e76\u53c2\u52a0\u5f88\u591a\u6bd4\u8d5b\uff0c\u5f97\u8fc7\u5f88\u591a\u5956\u52b1\uff0c2012\u5e74NCBA\u5927\u5b66\u751f\u5168\u56fd\u4e9a\u519b\uff0c2013\u5e74\u6cb3\u5317\u4e2d\u5f0f\u516b\u7403\u5927\u5b66\u751f\u51a0\u519b\uff0c2014\u5e74\u7b2c\u4e8c\u5c4a\u4e2d\u5f0f\u516b\u7403\u5927\u5b66\u751f\u5b63\u519b\u3002\u6211\u559c\u7231\u53f0\u7403\uff0c\u66f4\u559c\u7231\u4e0e\u559c\u7231\u53f0\u7403\u7684\u670b\u53cb\u4eec\u5207\u78cb\u7403\u6280\uff0c\u6211\u5728\u661f\u7403\u6c47\u5bab\u9704\u5e97\u671f\u5f85\u70ed\u8877\u4e8e\u53f0\u7403\u8fd0\u52a8\u7684\u670b\u53cb\u4eec\u7684\u5149\u4e34", 
+        "favoriteplayers": "\u7f57\u5c3c", 
+        "height": 182, 
+        "dress": "\u7b80\u5355", 
+        "drinks": "\u767d\u5f00\u6c34", 
+        "birthplace": "\u6cb3\u5317", 
+        "uuid": "702869cd-1a14-413f-86b7-67bd5f8b4106", 
+        "scent": "\u6de1\u5473", 
+        "constellation": "\u6c34\u74f6\u5ea7", 
+        "measurements": "80/70/70", 
+        "state": 1, 
+        "interest": "\u53f0\u7403 \u5531\u6b4c", 
+        "haircolor": "blank", 
+        "occupation": "\u53f0\u7403\u52a9\u6559", 
+        "bestperformance": "\u4e09\u8fde\u70b8", 
+        "food": "\u5bb6\u5e38\u996d", 
+        "pageview": 0, 
+        "birthday": "1992-02-23", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u8d75\u78ca\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u8d75\u78ca", 
+        "language": 1, 
+        "gender": 2, 
+        "experience": 7, 
+        "pubichair": "", 
+        "order": 101
+    }
+},
+{
+    "pk": 26, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u5f00\u6717", 
+        "selfintroduce": "\u6211\u53eb\u5468\u6d0b\uff0c\u5927\u5bb6\u90fd\u53eb\u6211\u6d0b\u6d0b\uff0c\u5de5\u4f5c\u4e0a\u6211\u6bd4\u8f83\u8ba4\u771f\u8d1f\u8d23\uff0c\u7ec6\u5fc3\u4e3b\u52a8\uff0c\u6709\u8f83\u5f3a\u7684\u5b66\u4e60\u80fd\u529b\u548c\u5904\u7406\u95ee\u9898\u7684\u80fd\u529b\uff0c\u5728\u751f\u6d3b\u4e0a\uff0c\u6211\u7684\u6027\u683c\u6bd4\u8f83\u5f00\u6717\u6d3b\u6cfc\uff0c\u4eba\u9645\u5173\u7cfb\u4e5f\u6bd4\u8f83\u597d\uff0c\u559c\u6b22\u4ea4\u670b\u53cb\uff0c\u559c\u6b22\u8ddf\u670b\u53cb\u5728\u4e00\u8d77\u8c08\u5929\u8bf4\u5730", 
+        "favoriteplayers": "\u5965\u6c99\u5229\u6587", 
+        "height": 172, 
+        "dress": "\u591c\u5e97\u98ce", 
+        "drinks": "\u661f\u5df4\u514b", 
+        "birthplace": "\u5b89\u5fbd", 
+        "uuid": "f1b49802-0498-4b88-92b6-64724e77e8ec", 
+        "scent": "\u6de1\u6de1\u767e\u5408\u9999", 
+        "constellation": "\u5de8\u87f9\u5ea7", 
+        "measurements": "90/81/96", 
+        "state": 1, 
+        "interest": "\u53f0\u7403 \u7bee\u7403 \u8db3\u7403", 
+        "haircolor": "blank", 
+        "occupation": "\u53f0\u7403\u52a9\u6559", 
+        "bestperformance": "\u4e00\u6746\u6e05\u53f0\uff0c\u5076\u5c14", 
+        "food": "\u6bd4\u8f83\u559c\u6b22\u7d20\u98df", 
+        "pageview": 0, 
+        "birthday": "1991-05-12", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u5468\u6d0b\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u5468\u6d0b", 
+        "language": 1, 
+        "gender": 2, 
+        "experience": 2, 
+        "pubichair": "", 
+        "order": 101
+    }
+},
+{
+    "pk": 27, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u6d3b\u6cfc", 
+        "selfintroduce": "\u6bd5\u4e1a\u4e8e\u9ed1\u9f99\u6c5f\u5927\u5b66\u5b66\u524d\u6559\u80b2\u4e13\u4e1a\uff0c\u5bf9\u53f0\u7403\u6709\u7740\u5145\u5206\u7684\u70ed\u60c5\u4e0e\u80fd\u91cf\uff0c\u6211\u6027\u683c\u5f00\u6717\uff0c\u559c\u6b22\u8df3\u821e\uff0c\u559c\u6b22\u53f0\u7403\uff0c\u6709\u65f6\u95f4\u5c31\u4f1a\u4e0e\u5c0f\u4f19\u4f34\u4e00\u8d77\u5207\u78cb\u7403\u6280\uff0c\u4e92\u76f8\u5b66\u4e60\uff0c\u6bcf\u5929\u90fd\u4f1a\u575a\u6301\u7ec3\u4e60\u57fa\u672c\u529f\uff0c\u6211\u76f8\u4fe1\u575a\u6301\u7ec3\u7403\u4e00\u5b9a\u4f1a\u8131\u9896\u800c\u51fa\u3002", 
+        "favoriteplayers": "\u4ed8\u5c0f\u82b3", 
+        "height": 163, 
+        "dress": "\u6027\u611f", 
+        "drinks": "\u725b\u5976", 
+        "birthplace": "\u9ed1\u9f99\u6c5f", 
+        "uuid": "c5d37e0e-4f4a-4b08-a767-aae82a7780ba", 
+        "scent": "\u751c", 
+        "constellation": "\u5c04\u624b\u5ea7", 
+        "measurements": "87/58/88", 
+        "state": 1, 
+        "interest": "\u53f0\u7403 \u821e\u8e48", 
+        "haircolor": "blank", 
+        "occupation": "\u53f0\u7403\u52a9\u6559", 
+        "bestperformance": "\u4e00\u6746\u6e05\u53f0\uff0c\u5076\u5c14", 
+        "food": "\u8089\u8089\u3001\u6d77\u9c9c", 
+        "pageview": 0, 
+        "birthday": "1991-12-03", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u96ea\u51b0\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u96ea\u51b0", 
+        "language": 1, 
+        "gender": 1, 
+        "experience": 1, 
+        "pubichair": "", 
+        "order": 101
+    }
+},
+{
+    "pk": 28, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u53e4\u7075\u7cbe\u602a", 
+        "selfintroduce": "\u6c34\u74f6\u5ea7\u7684\u6211\u603b\u6709\u65b0\u9c9c\u5947\u602a\u7684\u60f3\u6cd5\uff0c\u603b\u4f1a\u7ed9\u8eab\u8fb9\u7684\u670b\u53cb\u5e26\u6765\u6b22\u4e50\uff0c\u6211\u4e5f\u662f\u4eba\u7fa4\u4e2d\u7684\u5f00\u5fc3\u679c\uff0c\u670b\u53cb\u4e2d\u7684\u5c0f\u9017\u903c\uff0c\u6211\u6027\u683c\u6d3b\u6cfc\u5f00\u6717\uff0c\u672c\u4eba\u5e7d\u9ed8\u611f\u6781\u5f3a\uff0c\u563f\u563f\uff0c\u65f6\u800c\u957f\u53d1\u65f6\u800c\u77ed\u53d1\uff0c\u65f6\u800c\u8fd0\u52a8\u563b\u54c8\u98ce\u65f6\u800c\u5fa1\u59d0\u5927\u5bc6\u8303\uff0c\u6d3b\u6cfc\u597d\u52a8\u7684\u6211\u4e5f\u6709\u5b89\u9759\u6587\u827a\u7684\u4e00\u9762\uff0c\u4e00\u4e2a\u4eba\u7684\u65f6\u5019\u4f1a\u542c\u542c\u97f3\u4e50\uff0c\u770b\u770b\u98ce\u666f\uff0c\u547c\u5438\u4e0b\u65b0\u9c9c\u7a7a\u6c14\uff0c\u7ed9\u81ea\u5df1\u8db3\u591f\u7684\u7a7a\u95f4\u53bb\u653e\u677e\u3002\u591a\u9762\u5316\u7684\u6211\u671f\u5f85\u7ed3\u4ea4\u66f4\u591a\u7684\u65b0\u670b\u53cb\uff0c\u6211\u5728\u661f\u7403\u6c47\u5bab\u9704\u5e97\uff0c\u671f\u5f85\u4e0e\u60a8\u76f8\u9047\uff01", 
+        "favoriteplayers": "\u6f58\u6653\u5a77", 
+        "height": 174, 
+        "dress": "\u6df7\u642d", 
+        "drinks": "\u9178\u5976", 
+        "birthplace": "\u9ed1\u9f99\u6c5f", 
+        "uuid": "b4441099-1896-4cb4-8bf5-bfaa4f6235da", 
+        "scent": "\u6de1\u6de1\u767e\u5408\u9999", 
+        "constellation": "\u6c34\u74f6\u5ea7", 
+        "measurements": "84/60/89", 
+        "state": 1, 
+        "interest": "\u53f0\u7403 \u6e38\u6cf3", 
+        "haircolor": "auburn", 
+        "occupation": "\u53f0\u7403\u52a9\u6559", 
+        "bestperformance": "\u4e00\u6746\u6e05\u53f0\uff0c\u5076\u5c14", 
+        "food": "\u5bb6\u5e38\u83dc", 
+        "pageview": 0, 
+        "birthday": "1991-01-31", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u6625\u65ed\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u6625\u65ed", 
+        "language": 1, 
+        "gender": 1, 
+        "experience": 4, 
+        "pubichair": "", 
+        "order": 101
+    }
+},
+{
+    "pk": 29, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u6d3b\u6cfc \u5916\u5411", 
+        "selfintroduce": "\u6211\u53eb\u94b1\u4e3d\u5a1c\uff0c\u6027\u683c\u6d3b\u6cfc\u5f00\u6717\uff0c\u559c\u6b22\u8ddf\u81ea\u5df1\u7684\u670b\u53cb\u5728\u4e00\u8d77\u80e1\u5403\u6d77\u559d\uff0c\u5230\u5904\u8d70\u8d70\u770b\u770b\uff0c\u559c\u6b22\u5927\u6d77\u548c\u523a\u6fc0\u6027\u7684\u5a31\u4e50\u9879\u76ee\uff0c\u8ddf\u670b\u53cb\u5728\u4e00\u8d77\u6211\u5c31\u662f\u4e00\u4e2a\u5c0f\u75af\u5b50\uff0c\u4f46\u662f\u8ddf\u4e0d\u8ba4\u8bc6\u7684\u4eba\u5728\u4e00\u8d77\u786e\u6781\u5176\u7684\u5b89\u9759\uff0c\u5076\u5c14\u5c31\u3001\u4e5f\u4f1a\u7279\u522b\u559c\u6b22\u81ea\u5df1\u4e00\u4e2a\u4eba\u72ec\u5904\uff0c\u90a3\u91cc\u4e5f\u4e0d\u53bb\uff0c\u5c31\u81ea\u5df1\u4e00\u4e2a\u4eba\u5b89\u5b89\u9759\u9759\u7684\u5b85\u5728\u5bb6\u91cc\uff0c\u542c\u542c\u97f3\u4e50\uff0c\u653e\u677e\u653e\u677e\u3002", 
+        "favoriteplayers": "\u7279\u9c81\u59c6\u666e", 
+        "height": 164, 
+        "dress": "\u4e0d\u5b9a", 
+        "drinks": "\u6c34", 
+        "birthplace": "\u6cb3\u5317", 
+        "uuid": "07626eab-882c-44b0-a532-218c0803c48e", 
+        "scent": "\u6de1\u5473", 
+        "constellation": "\u5de8\u87f9\u5ea7", 
+        "measurements": "90/60/90", 
+        "state": 1, 
+        "interest": "\u6253\u7403\u5531\u6b4c", 
+        "haircolor": "blank", 
+        "occupation": "\u53f0\u7403\u52a9\u6559", 
+        "bestperformance": "\u4e00\u6746\u6e05\u53f0\uff0c\u5076\u5c14", 
+        "food": "\u8fa3\u7684 \u7d20\u7684", 
+        "pageview": 0, 
+        "birthday": "1992-07-04", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u4e3d\u5a1c\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u4e3d\u5a1c", 
+        "language": 1, 
+        "gender": 1, 
+        "experience": 3, 
+        "pubichair": "", 
+        "order": 101
+    }
+},
+{
+    "pk": 30, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u6781\u7aef \u7b80\u5355 \u5b89\u9759", 
+        "selfintroduce": "\u6211\u662f\u5411\u8d1d\u513f\uff0c\u5178\u578b\u6c34\u74f6\u5973\uff0c\u5f00\u6717\u7684\u6211\u4e5f\u662f\u5f88\u6709\u7231\u5fc3\u7684\u54e6\uff0c\u6211\u7279\u522b\u559c\u6b22\u7167\u987e\u5c0f\u5ba0\u7269\uff0c\u4e5f\u8bb8\u8fd9\u79cd\u7231\u5fc3\u5c31\u662f\u4e0e\u751f\u4ff1\u6765\u7684\u5427\uff0c\u6211\u559c\u7231\u53f0\u7403\uff0c\u611f\u89c9\u5728\u5a31\u4e50\u53f0\u7403\u7684\u540c\u65f6\u8fd8\u80fd\u8ba9\u6211\u7cbe\u795e\u653e\u677e\uff0c\u559c\u6b22\u7ed3\u4ea4\u5c0f\u4f19\u4f34\uff0c\u559c\u6b22\u51b7\u5e7d\u9ed8\uff0c\u597d\u5947\u5fc3\u5f3a\uff0c\u5403\u8f6f\u4e0d\u5403\u786c\uff0c\u54c8\u54c8\uff0c\u6211\u5c31\u662f\u8fd9\u4e48\u4e00\u4e2a\u53e4\u602a\u7684\u5c0f\u5973\u5b69\uff0c\u6211\u7684\u539f\u5219\u5c31\u662f\u6ca1\u6709\u539f\u5219\uff0c\u5c31\u662f\u968f\u6027\u5c31\u662f\u4efb\u6027", 
+        "favoriteplayers": "\u8f66\u4f91\u84dd", 
+        "height": 168, 
+        "dress": "\u7b80\u5355", 
+        "drinks": "\u77ff\u6cc9\u6c34", 
+        "birthplace": "\u6cb3\u5317", 
+        "uuid": "aae4fe5f-72da-4550-8b17-0002b3e5f25f", 
+        "scent": "\u6e05\u9999", 
+        "constellation": "\u6c34\u74f6\u5ea7", 
+        "measurements": "93/70/98", 
+        "state": 1, 
+        "interest": "\u53f0\u7403 \u5ba0\u7269", 
+        "haircolor": "auburn", 
+        "occupation": "\u53f0\u7403\u52a9\u6559", 
+        "bestperformance": "\u4e00\u6746\u6e05\u53f0\uff0c\u5076\u5c14", 
+        "food": "\u4efb\u4f55\u597d\u5403\u7684", 
+        "pageview": 0, 
+        "birthday": "1993-02-13", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u8d1d\u513f\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u8d1d\u513f", 
+        "language": 1, 
+        "gender": 1, 
+        "experience": 3, 
+        "pubichair": "", 
+        "order": 101
+    }
+},
+{
+    "pk": 31, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u6d3b\u6cfc\u5f00\u6717\u70ed\u60c5", 
+        "selfintroduce": "\u6211\u662f\u4e00\u4e2a\u70ed\u8877\u4e8e\u53f0\u7403\u7684\u5973\u5b69\uff0c\u751f\u6d3b\u4e2d\u6211\u559c\u6b22\u5927\u5bb6\u805a\u5728\u4e00\u8d77\u5f00\u5fc3\u6b22\u4e50\u7684\u611f\u89c9\uff0c\u6211\u7684\u505a\u4e8b\u98ce\u683c\u4e0d\u4e3b\u52a8\uff0c\u4e0d\u62d2\u7edd\uff0c\u4e0d\u8d1f\u8d23\uff0c\u54c8\u54c8\u54c8 \u53cc\u9c7c\u5ea7\u662f\u5584\u826f\u7684\u4eba\uff0c\u4e0d\u5982\u8bf4\u53cc\u9c7c\u5ea7\u7684\u6211\u4e60\u60ef\u7528\u5584\u826f\u7684\u65b9\u5f0f\uff0c\u5bf9\u4eba\u5bf9\u4e8b\u7b80\u5355\u660e\u4e86\uff0c\u6211\u5c31\u662f\u6211\uff0c\u6211\u5c31\u662f\u5b89\u4ed4\u742a", 
+        "favoriteplayers": "\u91d1\u4f73\u6620 \u83ab\u975e", 
+        "height": 168, 
+        "dress": "\u4f11\u95f2 \u8fd0\u52a8", 
+        "drinks": "\u679c\u6c41", 
+        "birthplace": "\u8fbd\u5b81", 
+        "uuid": "71bdfc5c-9d99-443f-bc94-e66a8d8c26ca", 
+        "scent": "\u9999\u5473", 
+        "constellation": "\u53cc\u9c7c\u5ea7", 
+        "measurements": "90/60/90 ", 
+        "state": 1, 
+        "interest": "\u6253\u7403 \u9a91\u9a6c \u5531\u6b4c", 
+        "haircolor": "auburn", 
+        "occupation": "\u53f0\u7403\u52a9\u6559", 
+        "bestperformance": "\u4e00\u6746\u6e05\u53f0\uff0c\u7ecf\u5e38", 
+        "food": "\u81ea\u5df1\u505a\u7684\u996d\u83dc", 
+        "pageview": 0, 
+        "birthday": "1993-03-08", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u4ed4\u742a\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u4ed4\u742a", 
+        "language": 1, 
+        "gender": 1, 
+        "experience": 3, 
+        "pubichair": "", 
+        "order": 101
+    }
+},
+{
+    "pk": 32, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u6587\u9759", 
+        "selfintroduce": "HELLO!\u5927\u5bb6\u597d\uff0c\u6211\u53eb\u5b89\u59ae\uff0c\u6765\u81ea\u6cb3\u5317\u5f20\u5bb6\u53e3\uff0c\u4eca\u5e7422\u5c81\u54e6\uff0c\u6211\u6027\u683c\u6d3b\u6cfc\u5f00\u6717\uff0c\u4e5f\u53ef\u4ee5\u5b89\u9759\u6e29\u67d4\uff0c\u559c\u6b22\u4ea4\u670b\u53cb\uff0c\u559c\u6b22\u6253\u53f0\u7403\uff0c\u559c\u6b22\u542c\u542c\u97f3\u4e50\uff0c\u5076\u5c14\u4f1a\u53bb\u770b\u770b\u7535\u5f71\uff0c\u5c0f\u9676\u51b6\u4e0b\u60c5\u64cd\uff0c\u563b\u563b\uff0c\u6211\u662f\u5b89\u59ae\uff0c\u6211\u5728\u661f\u7403\u6c47\u5bab\u9704\u5e97", 
+        "favoriteplayers": "\u8f66\u4f91\u84dd", 
+        "height": 165, 
+        "dress": "\u6dd1\u5973", 
+        "drinks": "\u9178\u751c", 
+        "birthplace": "\u6cb3\u5317", 
+        "uuid": "57043670-003e-44bf-88f3-2ca67722d93a", 
+        "scent": "\u65e0\u5473", 
+        "constellation": "\u6c34\u74f6\u5ea7", 
+        "measurements": "86/68/94", 
+        "state": 1, 
+        "interest": "\u6253\u7403 \u753b\u753b", 
+        "haircolor": "brown", 
+        "occupation": "\u53f0\u7403\u52a9\u6559", 
+        "bestperformance": "\u4e00\u6746\u6e05\u53f0\uff0c10\u6b21", 
+        "food": "\u51b0\u6dc7\u6dcb", 
+        "pageview": 0, 
+        "birthday": "1993-10-18", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u5b89\u59ae\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u5b89\u59ae", 
+        "language": 1, 
+        "gender": 1, 
+        "experience": 2, 
+        "pubichair": "", 
+        "order": 101
+    }
+},
+{
+    "pk": 33, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u5f00\u6717", 
+        "selfintroduce": "\u6211\u53eb\u9648\u4f73\u7ef4\uff0c\u5927\u5bb6\u90fd\u559c\u6b22\u53eb\u6211\u4f73\u7ef4\uff0c\u6211\u4e2a\u6027\u6d3b\u6cfc\u5f00\u6717\uff0c\u76f4\u723d\u53c8\u7565\u5e26\u67d4\u60c5\uff0c\u51e0\u5e74\u524d\u7684\u4e00\u6b21\u610f\u5916\u8ba9\u6211\u8ba4\u8bc6\u4e86\u53f0\u7403\uff0c\u63a5\u89e6\u4e86\u53f0\u7403\uff0c\u4e86\u89e3\u4e86\u53f0\u7403\uff0c\u6700\u7ec8\u88ab\u53f0\u7403\u6df1\u6df1\u7684\u5438\u5f15\uff0c\u66fe\u7ecf\u5728\u591a\u6b21\u5927\u578b\u6bd4\u8d5b\u4e2d\u53d6\u5f97\u540d\u6b21\uff0c2010\u5e74\u798f\u5efa\u7701\u9f99\u5ca9\u5e02\u201c\u4f53\u5f69\u201d\u7535\u89c6tv\u676f\u56e2\u4f53\u53ca\u4e2a\u4eba\u8d5b \u7b2c\u4e00\u540d 2011\u5e74\u5f90\u5dde\u5e028090\u676f9\u53f7\u7403\u516c\u5f00\u8d5b \u51a0\u519b 2012\u5e74\u5f90\u5dde\u5e02\u201c\u82f1\u4f26\u676f8\u53f7\u7403\u201d\u516c\u5f00\u8d5b \u51a0\u519b 2013\u5e74\u4e0a\u6d77101\u58d5\u7403\u8054\u8d5b \u51a0\u519b", 
+        "favoriteplayers": "\u8f66\u4f91\u84dd", 
+        "height": 160, 
+        "dress": "\u4f11\u95f2", 
+        "drinks": "\u679c\u6c41", 
+        "birthplace": "\u5e7f\u4e1c", 
+        "uuid": "019bc6b3-8d2a-460d-b41d-1c4ec0ef9fff", 
+        "scent": "\u6de1\u9999", 
+        "constellation": "\u5904\u5973\u5ea7", 
+        "measurements": "89/65/90", 
+        "state": 1, 
+        "interest": "\u53f0\u7403 \u65c5\u6e38", 
+        "haircolor": "blank", 
+        "occupation": "\u53f0\u7403\u52a9\u6559", 
+        "bestperformance": "\u4e94\u8fde\u6e05", 
+        "food": "\u6c34\u679c", 
+        "pageview": 0, 
+        "birthday": "1997-09-12", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u4f73\u7ef4\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u4f73\u7ef4", 
+        "language": 1, 
+        "gender": 1, 
+        "experience": 5, 
+        "pubichair": "", 
+        "order": 101
+    }
+},
+{
+    "pk": 34, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u5f00\u6717\uff0c\u5916\u5411", 
+        "selfintroduce": "HELLO!\u5927\u5bb6\u597d\uff0c\u6211\u53eb\u738b\u742a\uff0c\u6765\u81ea\u5c71\u4e1c\u6d4e\u5357\uff0c\u4eca\u5e7424\u5c81\uff0c\u4ece\u4e8b\u53f0\u7403\u5df2\u7ecf4\u5e74\u4e86\uff0c\u5e0c\u671b\u53ef\u4ee5\u901a\u8fc7\u53f0\u7403\u7ed3\u8bc6\u66f4\u591a\u7684\u670b\u53cb\uff0c\u65e0\u8bba\u662f\u5c0f\u6e05\u65b0\u8fd8\u662f\u5927\u53d4\u6211\u90fd\u5f88\u559c\u6b22\uff0c\u4ee5\u9152\u4f1a\u53cb\u4e5f\u662f\u6211\u72ec\u7279\u7684\u98ce\u683c\uff0c\u5e0c\u671b\u5927\u5bb6\u4f1a\u559c\u6b22\u6211\uff0c\u6211\u5728\u661f\u7403\u6c47\u5bab\u9704\u5e97\u7b49\u4f60\u5594\u3002", 
+        "favoriteplayers": "\u8f66\u4f91\u84dd", 
+        "height": 167, 
+        "dress": "\u6027\u611f\u5fa1\u59d0\u8303", 
+        "drinks": "\u9178\u5976", 
+        "birthplace": "\u5c71\u4e1c", 
+        "uuid": "5aaf0dbe-b810-4f36-a3d5-cfc6ccd59550", 
+        "scent": "\u84dd\u8393\u5473", 
+        "constellation": "\u5929\u874e\u5ea7", 
+        "measurements": "88/70/94", 
+        "state": 1, 
+        "interest": "\u6253\u7403 \u770b\u4e66 \u65c5\u6e38", 
+        "haircolor": "blond", 
+        "occupation": "\u7ecf\u7406\u4eba", 
+        "bestperformance": "2\u6746\u6e05\u53f0", 
+        "food": "\u6c34\u679c", 
+        "pageview": 0, 
+        "birthday": "1989-11-21", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u738b\u7426\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u738b\u7426", 
+        "language": 1, 
+        "gender": 1, 
+        "experience": 2, 
+        "pubichair": "", 
+        "order": 101
+    }
+},
+{
+    "pk": 35, 
+    "model": "billiards.assistant", 
+    "fields": {
+        "figure": "\u5f00\u6717\uff0c\u5916\u5411", 
+        "selfintroduce": "\u6211\u662f\u5c0f\u5c0f\uff0c\u5f88\u5c0f\u7684\u65f6\u5019\u5c31\u5f00\u59cb\u559c\u6b22\u53f0\u7403\uff0c\u4ece\u4e8b\u53f0\u7403\u884c\u4e1a\u4e5f\u5df2\u7ecf4\u5e74\u4e86\u3002\u5e0c\u671b\u53ef\u4ee5\u901a\u8fc7\u53f0\u7403\u7ed3\u8bc6\u66f4\u591a\u5fd7\u540c\u9053\u5408\uff0c\u6709\u7740\u5171\u540c\u5174\u8da3\u7231\u597d\u7684\u670b\u53cb\u3002\u5728\u5c0f\u5c0f\u7684\u53f0\u7403\u684c\u4e0a\uff0c\u6211\u4f1a\u7528\u70ed\u60c5\u7684\u670d\u52a1\uff0c\u4e50\u89c2\u7684\u6001\u5ea6\u966a\u60a8\u4e00\u8d77\u73a9\u800d\u3002\u6211\u5728\u661f\u7403\u6c47\u5bab\u9704\u5e97\u6b22\u8fce\u60a8\u7684\u5149\u4e34\u3002", 
+        "favoriteplayers": "\u4ea8\u5f97\u5229", 
+        "height": 165, 
+        "dress": "\u4f11\u95f2\u88c5", 
+        "drinks": "\u5496\u5561", 
+        "birthplace": "\u5b89\u5fbd", 
+        "uuid": "357ca1b3-79af-4f63-a38c-3fa4be7cbf38", 
+        "scent": "\u9ed1\u52a0\u4ed1", 
+        "constellation": "\u5929\u874e\u5ea7", 
+        "measurements": "70/60/75", 
+        "state": 1, 
+        "interest": "\u6253\u7403 \u5361\u4e01\u8f66 \u7761\u89c9", 
+        "haircolor": "blank", 
+        "occupation": "\u5e97\u957f", 
+        "bestperformance": "1\u6746\u6e05\u53f0\uff0c\u5076\u5c14", 
+        "food": "\u8089\u8089", 
+        "pageview": 0, 
+        "birthday": "1993-11-21", 
+        "nationality": "\u4e2d\u56fd", 
+        "nickname": "\u5c0f\u5c0f\uff08\u9884\u7ea6\u9001\u8bdd\u8d39\uff09", 
+        "name": "\u5c0f\u5c0f", 
+        "language": 1, 
+        "gender": 1, 
+        "experience": 2, 
+        "pubichair": "", 
+        "order": 101
+    }
+},
+{
+    "pk": 5, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "", 
+        "assistant": 3, 
+        "price": 150, 
+        "priceDescription": "\u52a9\u6559\u4ef7\u683c1\u5143\u6bcf\u5c0f\u65f6\uff0c\u4e0d\u5305\u542b\u7403\u53f0\u7684\u8d39\u7528", 
+        "starttime": "19:00:00", 
+        "endtime": "20:00:00", 
+        "day": 0, 
+        "poolroom": 446
+    }
+},
+{
+    "pk": 7, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "", 
+        "assistant": 4, 
+        "price": 1, 
+        "priceDescription": "", 
+        "starttime": "05:00:00", 
+        "endtime": "06:00:00", 
+        "day": 0, 
+        "poolroom": 446
+    }
+},
+{
+    "pk": 8, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "", 
+        "assistant": 5, 
+        "price": 1, 
+        "priceDescription": "", 
+        "starttime": "01:00:00", 
+        "endtime": "02:00:00", 
+        "day": 0, 
+        "poolroom": 446
+    }
+},
+{
+    "pk": 9, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "", 
+        "assistant": 6, 
+        "price": 100, 
+        "priceDescription": "\u4e00\u5c0f\u65f6", 
+        "starttime": "08:00:00", 
+        "endtime": "20:00:00", 
+        "day": 96, 
+        "poolroom": 233
+    }
+},
+{
+    "pk": 10, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 7, 
+        "price": 68, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "15:00:00", 
+        "endtime": "22:00:00", 
+        "day": 127, 
+        "poolroom": 447
+    }
+},
+{
+    "pk": 11, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 0, 
+        "extraService": "", 
+        "assistant": 7, 
+        "price": 28, 
+        "priceDescription": "\u4e24\u5c0f\u65f6\u8d77\u8ba2\uff0c\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "12:00:00", 
+        "endtime": "18:00:00", 
+        "day": 16, 
+        "poolroom": 446
+    }
+},
+{
+    "pk": 12, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 8, 
+        "price": 68, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "14:00:00", 
+        "endtime": "22:00:00", 
+        "day": 127, 
+        "poolroom": 447
+    }
+},
+{
+    "pk": 13, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 11, 
+        "price": 88, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "14:00:00", 
+        "endtime": "22:00:00", 
+        "day": 127, 
+        "poolroom": 78
+    }
+},
+{
+    "pk": 14, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 12, 
+        "price": 78, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "14:00:00", 
+        "endtime": "22:00:00", 
+        "day": 127, 
+        "poolroom": 78
+    }
+},
+{
+    "pk": 15, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 17, 
+        "price": 88, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "15:00:00", 
+        "endtime": "23:00:00", 
+        "day": 127, 
+        "poolroom": 78
+    }
+},
+{
+    "pk": 16, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 20, 
+        "price": 78, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "12:00:00", 
+        "endtime": "20:00:00", 
+        "day": 127, 
+        "poolroom": 78
+    }
+},
+{
+    "pk": 17, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 10, 
+        "price": 78, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "14:00:00", 
+        "endtime": "22:00:00", 
+        "day": 127, 
+        "poolroom": 78
+    }
+},
+{
+    "pk": 18, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 18, 
+        "price": 78, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "14:00:00", 
+        "endtime": "22:00:00", 
+        "day": 127, 
+        "poolroom": 78
+    }
+},
+{
+    "pk": 19, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 13, 
+        "price": 78, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "14:00:00", 
+        "endtime": "22:00:00", 
+        "day": 127, 
+        "poolroom": 78
+    }
+},
+{
+    "pk": 20, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 14, 
+        "price": 88, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "14:00:00", 
+        "endtime": "20:00:00", 
+        "day": 127, 
+        "poolroom": 78
+    }
+},
+{
+    "pk": 21, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 19, 
+        "price": 78, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "14:00:00", 
+        "endtime": "20:00:00", 
+        "day": 127, 
+        "poolroom": 78
+    }
+},
+{
+    "pk": 22, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 9, 
+        "price": 88, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "12:00:00", 
+        "endtime": "20:00:00", 
+        "day": 127, 
+        "poolroom": 78
+    }
+},
+{
+    "pk": 23, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 16, 
+        "price": 78, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "14:00:00", 
+        "endtime": "22:00:00", 
+        "day": 127, 
+        "poolroom": 78
+    }
+},
+{
+    "pk": 24, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 15, 
+        "price": 88, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "13:00:00", 
+        "endtime": "21:00:00", 
+        "day": 127, 
+        "poolroom": 78
+    }
+},
+{
+    "pk": 25, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 26, 
+        "price": 78, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "15:00:00", 
+        "endtime": "23:00:00", 
+        "day": 127, 
+        "poolroom": 279
+    }
+},
+{
+    "pk": 26, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 25, 
+        "price": 68, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "16:00:00", 
+        "endtime": "23:00:00", 
+        "day": 127, 
+        "poolroom": 279
+    }
+},
+{
+    "pk": 27, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 27, 
+        "price": 68, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "15:00:00", 
+        "endtime": "23:00:00", 
+        "day": 127, 
+        "poolroom": 279
+    }
+},
+{
+    "pk": 28, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 29, 
+        "price": 68, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "15:00:00", 
+        "endtime": "23:00:00", 
+        "day": 127, 
+        "poolroom": 279
+    }
+},
+{
+    "pk": 29, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 30, 
+        "price": 68, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "15:00:00", 
+        "endtime": "23:00:00", 
+        "day": 127, 
+        "poolroom": 279
+    }
+},
+{
+    "pk": 30, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 31, 
+        "price": 68, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "15:00:00", 
+        "endtime": "23:00:00", 
+        "day": 127, 
+        "poolroom": 279
+    }
+},
+{
+    "pk": 31, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 32, 
+        "price": 78, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "14:00:00", 
+        "endtime": "23:00:00", 
+        "day": 127, 
+        "poolroom": 279
+    }
+},
+{
+    "pk": 32, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 33, 
+        "price": 68, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "15:00:00", 
+        "endtime": "23:00:00", 
+        "day": 127, 
+        "poolroom": 279
+    }
+},
+{
+    "pk": 33, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 22, 
+        "price": 88, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "15:00:00", 
+        "endtime": "23:00:00", 
+        "day": 127, 
+        "poolroom": 279
+    }
+},
+{
+    "pk": 34, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 34, 
+        "price": 98, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "14:00:00", 
+        "endtime": "22:00:00", 
+        "day": 127, 
+        "poolroom": 279
+    }
+},
+{
+    "pk": 35, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 24, 
+        "price": 68, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "14:00:00", 
+        "endtime": "22:00:00", 
+        "day": 127, 
+        "poolroom": 279
+    }
+},
+{
+    "pk": 36, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 35, 
+        "price": 98, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "14:00:00", 
+        "endtime": "22:00:00", 
+        "day": 127, 
+        "poolroom": 279
+    }
+},
+{
+    "pk": 37, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 23, 
+        "price": 78, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "14:00:00", 
+        "endtime": "22:00:00", 
+        "day": 127, 
+        "poolroom": 279
+    }
+},
+{
+    "pk": 38, 
+    "model": "billiards.assistantoffer", 
+    "fields": {
+        "status": 1, 
+        "extraService": "\u8bf7\u60a8\u5728\u786e\u8ba4\u9884\u7ea6\u7403\u623f\u4fe1\u606f\u540e\u4e0b\u5355\uff1b\u8ba2\u5355\u786e\u8ba4\u540e\uff0c\u9000\u6b3e\u5c06\u6536\u53d610\u5143\u624b\u7eed\u8d39\u3002", 
+        "assistant": 28, 
+        "price": 98, 
+        "priceDescription": "\u6b64\u4ef7\u683c\u4e0d\u5305\u542b\u53f0\u8d39\u3002", 
+        "starttime": "14:00:00", 
+        "endtime": "22:00:00", 
+        "day": 127, 
+        "poolroom": 279
+    }
+},
+{
+    "pk": 5, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 0, 
+        "assistant": 5, 
+        "imagepath": "/resources/assistant/ab2d7e09ee0c58f10eabe443f2f38_test_pic_id_8.jpg", 
+        "description": "\u65b9\u56fe\uff0d8", 
+        "iscover": false
+    }
+},
+{
+    "pk": 6, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 0, 
+        "assistant": 3, 
+        "imagepath": "/resources/assistant/4e5ff6f5c22970ac962c7496b120d4_userid226804time20100127043752.jpg", 
+        "description": "demo2", 
+        "iscover": false
+    }
+},
+{
+    "pk": 7, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 0, 
+        "assistant": 3, 
+        "imagepath": "/resources/assistant/4c4c0ed3fafe44625cb9fde5af9378_test_pic_id_7.jpg", 
+        "description": "\u65b9\u56fe-7", 
+        "iscover": false
+    }
+},
+{
+    "pk": 8, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 3, 
+        "imagepath": "/resources/assistant/4013a81e6156956e64cc1bcf406fe6_test_pic_id_1.jpg", 
+        "description": "\u65b9\u56fe\uff0d1", 
+        "iscover": false
+    }
+},
+{
+    "pk": 9, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 0, 
+        "assistant": 3, 
+        "imagepath": "/resources/assistant/e2e80ecec68a7b4c652563cf8e75_test_pic_id_2.jpg", 
+        "description": "\u6d4b\u8bd5\u76f8\u7247\uff0d2", 
+        "iscover": false
+    }
+},
+{
+    "pk": 10, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 5, 
+        "imagepath": "/resources/assistant/4af3138da028cd9579ec359c258c1090_test_pic_id_7.jpg", 
+        "description": "\u6d4b\u8bd5\u76f8\u7247\uff0d3", 
+        "iscover": true
+    }
+},
+{
+    "pk": 11, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 0, 
+        "assistant": 4, 
+        "imagepath": "/resources/assistant/a07eaff1eb9d73fd52a940de235399a_test_pic_id_6.jpg", 
+        "description": "\u6d4b\u8bd5\u76f8\u7247\uff0d4", 
+        "iscover": false
+    }
+},
+{
+    "pk": 12, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 4, 
+        "imagepath": "/resources/assistant/cec43021c3c794581bcb59fa175702_test_pic_id_4.jpg", 
+        "description": "\u65b9\u56fe\uff0d5", 
+        "iscover": true
+    }
+},
+{
+    "pk": 13, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 6, 
+        "imagepath": "/resources/assistant/cce65f9ae1fccd84a4361d3ee43ca51_test_pic_id_6.jpg", 
+        "description": "\u65b9\u56fe\uff0d6", 
+        "iscover": true
+    }
+},
+{
+    "pk": 14, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 0, 
+        "assistant": 3, 
+        "imagepath": "/resources/assistant/6116ee9d673361edc546905d729d90_test_pic_id_9_480x300.jpg", 
+        "description": "480x300", 
+        "iscover": false
+    }
+},
+{
+    "pk": 15, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 3, 
+        "imagepath": "/resources/assistant/ad1b376cffcd335f9355cba455a9773_test_pic_id_10_4x3.jpg", 
+        "description": "4x3\u56fe\u7247", 
+        "iscover": true
+    }
+},
+{
+    "pk": 17, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 0, 
+        "assistant": 3, 
+        "imagepath": "/resources/assistant/1984748e7efb7d8493845d8a861f7e5_test_gif.gif", 
+        "description": "\u6d4b\u8bd5gif\u6548\u679c", 
+        "iscover": false
+    }
+},
+{
+    "pk": 18, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 7, 
+        "imagepath": "/resources/assistant/2afab5def7214c87c23bd464d20abef_fengmian.jpg", 
+        "description": "\u5c01\u9762", 
+        "iscover": true
+    }
+},
+{
+    "pk": 19, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 7, 
+        "imagepath": "/resources/assistant/6de74ff8c2b8aa37cc7c759d484eb8c6_liujia_1.jpg", 
+        "description": "\u5218\u4f73_1", 
+        "iscover": false
+    }
+},
+{
+    "pk": 20, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 8, 
+        "imagepath": "/resources/assistant/50486abc12de69659e2c31e83aa60_BS4O4886-4x3.jpg", 
+        "description": "dongdong1", 
+        "iscover": true
+    }
+},
+{
+    "pk": 21, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 8, 
+        "imagepath": "/resources/assistant/7f7a5944dca9b93235aa17d88d8744_BS4O4935-4x3.jpg", 
+        "description": "dongdong2", 
+        "iscover": false
+    }
+},
+{
+    "pk": 22, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 8, 
+        "imagepath": "/resources/assistant/964b4c8430b416eed5ffa83a1d28a53_BS4O4896-4x3.jpg", 
+        "description": "dongdong3", 
+        "iscover": false
+    }
+},
+{
+    "pk": 23, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 8, 
+        "imagepath": "/resources/assistant/4b63411ca64aff67cde343ba65d92ca_BS4O4798-4x3.jpg", 
+        "description": "dongdong4", 
+        "iscover": false
+    }
+},
+{
+    "pk": 24, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 8, 
+        "imagepath": "/resources/assistant/3871b79f3bcaf1108da776f29a8ef847_BS4O4835-4x3.jpg", 
+        "description": "dongdong5", 
+        "iscover": false
+    }
+},
+{
+    "pk": 25, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 11, 
+        "imagepath": "/resources/assistant/7c1bae603b13b5b28bd69e67b617977_ruoyu-1-4x3.jpg", 
+        "description": "ruoyu-1", 
+        "iscover": true
+    }
+},
+{
+    "pk": 26, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 11, 
+        "imagepath": "/resources/assistant/9207e5ca757e775d3b89ae52a3ccd6_ruoyu-2-4x3.jpg", 
+        "description": "ruoyu-2", 
+        "iscover": false
+    }
+},
+{
+    "pk": 27, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 11, 
+        "imagepath": "/resources/assistant/3f5c81952b81e36c3e8389777bdb2a58_ruoyu-3-4x3.jpg", 
+        "description": "ruoyu-3", 
+        "iscover": false
+    }
+},
+{
+    "pk": 28, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 12, 
+        "imagepath": "/resources/assistant/2a6f9a118112b7cfa0c8353a4559e45e_shanshan-1-4x3.jpg", 
+        "description": "shanshan-1", 
+        "iscover": true
+    }
+},
+{
+    "pk": 29, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 17, 
+        "imagepath": "/resources/assistant/2a44dff35e16b8607b1fa6aaef77c22e_meixizi-2.JPG", 
+        "description": "meixizi-1", 
+        "iscover": true
+    }
+},
+{
+    "pk": 30, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 17, 
+        "imagepath": "/resources/assistant/97245c715ebce78a47eba730862288d0_meixizi-1.jpg", 
+        "description": "meixizi-2", 
+        "iscover": false
+    }
+},
+{
+    "pk": 31, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 20, 
+        "imagepath": "/resources/assistant/1f3683e2e63dd9226fc79e86eea31ea5_beibei-1.JPG", 
+        "description": "beibei-1", 
+        "iscover": false
+    }
+},
+{
+    "pk": 32, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 20, 
+        "imagepath": "/resources/assistant/bcfab9ae14a3697dbe465c0ad60e2e_beibei-3.JPG", 
+        "description": "beibei-3", 
+        "iscover": true
+    }
+},
+{
+    "pk": 33, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 20, 
+        "imagepath": "/resources/assistant/ce2fb3c7d043c70a71eb3f0d0147f68_beibei-2.JPG", 
+        "description": "beibei-2", 
+        "iscover": false
+    }
+},
+{
+    "pk": 34, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 10, 
+        "imagepath": "/resources/assistant/b5f0b964cef55b5f66e9e45b63399933_huyan-2.jpg", 
+        "description": "huyan-2", 
+        "iscover": true
+    }
+},
+{
+    "pk": 35, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 10, 
+        "imagepath": "/resources/assistant/6dd7fb20875c6373a4b573a2b8af836f_huyan-1.jpg", 
+        "description": "huyan1", 
+        "iscover": false
+    }
+},
+{
+    "pk": 36, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 10, 
+        "imagepath": "/resources/assistant/e6fe859e5ef8d1dafac0d049999b5a3_huyan-3.jpg", 
+        "description": "huyan-3", 
+        "iscover": false
+    }
+},
+{
+    "pk": 37, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 12, 
+        "imagepath": "/resources/assistant/c5a0b1a410f12ba1f19fc5597186428b_shanshan-2.JPG", 
+        "description": "shanshan-2", 
+        "iscover": false
+    }
+},
+{
+    "pk": 38, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 17, 
+        "imagepath": "/resources/assistant/3eb3c8884f5cd5657f8f4434b1f1d_meixizi-3.JPG", 
+        "description": "meixizi-3", 
+        "iscover": false
+    }
+},
+{
+    "pk": 39, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 13, 
+        "imagepath": "/resources/assistant/b0daadbe22f497eac9d3c8cee1bf071_wangshuang-1.JPG", 
+        "description": "wangshuang-1", 
+        "iscover": true
+    }
+},
+{
+    "pk": 40, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 13, 
+        "imagepath": "/resources/assistant/d55e88834b41345d2f9b3e7c2d487ca_wangshuang-2.JPG", 
+        "description": "wangshuang-2", 
+        "iscover": false
+    }
+},
+{
+    "pk": 41, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 18, 
+        "imagepath": "/resources/assistant/67c13a36e787d8db8ea0257e92765257_xuzhengyi-3.JPG", 
+        "description": "xuzhengyi-3", 
+        "iscover": true
+    }
+},
+{
+    "pk": 42, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 18, 
+        "imagepath": "/resources/assistant/a48df5a5c1df51f2976ccacac6daa4ca_xuzhengyi-2.JPG", 
+        "description": "xuzhengyi-2", 
+        "iscover": false
+    }
+},
+{
+    "pk": 43, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 18, 
+        "imagepath": "/resources/assistant/fee744fdf2916858e0ea849cff39c1e_xuzhengyi-1.JPG", 
+        "description": "xuzhengyi-1", 
+        "iscover": false
+    }
+},
+{
+    "pk": 44, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 14, 
+        "imagepath": "/resources/assistant/5f675be11a3c5c2e7d40c0e642ed7d18_yingfei-3.JPG", 
+        "description": "yingfei-3", 
+        "iscover": true
+    }
+},
+{
+    "pk": 45, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 14, 
+        "imagepath": "/resources/assistant/24bfc994401d84385f8ce5e7a45251bd_yingfei-2.JPG", 
+        "description": "yingfei-2", 
+        "iscover": false
+    }
+},
+{
+    "pk": 46, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 14, 
+        "imagepath": "/resources/assistant/a67d92610ab4376e887c5582ad7e52_yingfei-1.JPG", 
+        "description": "yingfei-1", 
+        "iscover": false
+    }
+},
+{
+    "pk": 47, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 12, 
+        "imagepath": "/resources/assistant/27843ab70b685c852b487f8986c034_shanshan-3.JPG", 
+        "description": "shanshan-3", 
+        "iscover": false
+    }
+},
+{
+    "pk": 48, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 12, 
+        "imagepath": "/resources/assistant/c4718393668a252d6f21d11d3d324a6_shanshan-4.JPG", 
+        "description": "shanshan-4", 
+        "iscover": false
+    }
+},
+{
+    "pk": 49, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 9, 
+        "imagepath": "/resources/assistant/f4c3e2ded7bb9e9ba2579aa75f241280_fangqian-2.JPG", 
+        "description": "fangqian-2", 
+        "iscover": true
+    }
+},
+{
+    "pk": 50, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 9, 
+        "imagepath": "/resources/assistant/de53e1e5ea3a9d7a4be5b119aeb89e85_fangqian-1.JPG", 
+        "description": "fangqian-1", 
+        "iscover": false
+    }
+},
+{
+    "pk": 51, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 19, 
+        "imagepath": "/resources/assistant/c691a3909de3a0fdd26f2d438a884b_lizhihui-3.jpg", 
+        "description": "lizhihui-3", 
+        "iscover": true
+    }
+},
+{
+    "pk": 52, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 19, 
+        "imagepath": "/resources/assistant/4132f9fcbf53676a644f721947229869_lizhihui-2.jpg", 
+        "description": "lizhihui-2", 
+        "iscover": false
+    }
+},
+{
+    "pk": 53, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 19, 
+        "imagepath": "/resources/assistant/9b1da88298d6d77c79e27934e9a71d5_lizhihui-1.jpg", 
+        "description": "lizhihui-1", 
+        "iscover": false
+    }
+},
+{
+    "pk": 54, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 15, 
+        "imagepath": "/resources/assistant/f8e447cfb5d80f3124d443a717b24f_yueyue-2.JPG", 
+        "description": "yueyue-2", 
+        "iscover": true
+    }
+},
+{
+    "pk": 55, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 15, 
+        "imagepath": "/resources/assistant/a5a7ddb33d67e7e7fb58f6f7f344e_yueyue-1.JPG", 
+        "description": "yueyue-1", 
+        "iscover": false
+    }
+},
+{
+    "pk": 56, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 15, 
+        "imagepath": "/resources/assistant/938c3c71ea8dd56e9c9173bb80a6c7_yueyue-3.JPG", 
+        "description": "yueyue-3", 
+        "iscover": false
+    }
+},
+{
+    "pk": 57, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 9, 
+        "imagepath": "/resources/assistant/a69927398db4e3151992998dcc361cc_fangqian-3.JPG", 
+        "description": "fangqian-3", 
+        "iscover": false
+    }
+},
+{
+    "pk": 58, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 16, 
+        "imagepath": "/resources/assistant/ea54c9dd603fa0d87673784a712ff03b_zhangli-1.JPG", 
+        "description": "zhangli-1", 
+        "iscover": true
+    }
+},
+{
+    "pk": 59, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 16, 
+        "imagepath": "/resources/assistant/c99bc249efbbc8846f8a41fda7f72c79_zhangli-2.JPG", 
+        "description": "zhangli-2", 
+        "iscover": false
+    }
+},
+{
+    "pk": 60, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 16, 
+        "imagepath": "/resources/assistant/9fc2573e486fd413b57e773b98e8d35b_zhangli-3.JPG", 
+        "description": "zhangli-3", 
+        "iscover": false
+    }
+},
+{
+    "pk": 61, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 26, 
+        "imagepath": "/resources/assistant/51485af292042aae38b7bbeddf95766_zhouyang-3.JPG", 
+        "description": "zhouyang-3", 
+        "iscover": true
+    }
+},
+{
+    "pk": 62, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 26, 
+        "imagepath": "/resources/assistant/6458114f42f7568a8b2e9b0187ffd35_zhouyang-2.JPG", 
+        "description": "zhouyang-2", 
+        "iscover": false
+    }
+},
+{
+    "pk": 63, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 26, 
+        "imagepath": "/resources/assistant/e2a7e5fe32b68a1cf9e86934543350_zhouyang-1.JPG", 
+        "description": "zhouyang-1", 
+        "iscover": false
+    }
+},
+{
+    "pk": 64, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 25, 
+        "imagepath": "/resources/assistant/3d5b9411cadcc2232a8117cda681faa_zhaolei-1.JPG", 
+        "description": "zhaolei-1", 
+        "iscover": true
+    }
+},
+{
+    "pk": 65, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 25, 
+        "imagepath": "/resources/assistant/717d5352fbd43d30bce6fadb2cdba6_zhaolei-2.JPG", 
+        "description": "zhaolei-2", 
+        "iscover": false
+    }
+},
+{
+    "pk": 66, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 25, 
+        "imagepath": "/resources/assistant/8bf6b5a16856157c053193f966bcd2a_zhaolei-3.JPG", 
+        "description": "zhaolei-3", 
+        "iscover": false
+    }
+},
+{
+    "pk": 67, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 32, 
+        "imagepath": "/resources/assistant/e5af7b593d35768b85ade52263ac_anni-2.JPG", 
+        "description": "anni-2", 
+        "iscover": true
+    }
+},
+{
+    "pk": 68, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 32, 
+        "imagepath": "/resources/assistant/a25bc3e2960d068c5f091295f5b84ef_anni-1.JPG", 
+        "description": "anni-1", 
+        "iscover": false
+    }
+},
+{
+    "pk": 69, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 32, 
+        "imagepath": "/resources/assistant/f4c23280ba9d3baf79fdbe1ce6ba139_anni-3.JPG", 
+        "description": "anni-3", 
+        "iscover": false
+    }
+},
+{
+    "pk": 70, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 31, 
+        "imagepath": "/resources/assistant/81ea97170b2e12c4085c6656d56f1cd_anziqi-1.JPG", 
+        "description": "anziqi-1", 
+        "iscover": true
+    }
+},
+{
+    "pk": 71, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 31, 
+        "imagepath": "/resources/assistant/253f62a7496d79c834884ec93b44fc4_anziqi-2.JPG", 
+        "description": "anziqi-2", 
+        "iscover": false
+    }
+},
+{
+    "pk": 73, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 31, 
+        "imagepath": "/resources/assistant/1fcbe6dc4e5fde7d96d15044291e9c6f_anziqi-3.JPG", 
+        "description": "anziqi-3", 
+        "iscover": false
+    }
+},
+{
+    "pk": 74, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 27, 
+        "imagepath": "/resources/assistant/8f6984e8691dcbd6c74dca533ccfcc57_lixuebing-1.JPG", 
+        "description": "lixuebing-1", 
+        "iscover": true
+    }
+},
+{
+    "pk": 75, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 27, 
+        "imagepath": "/resources/assistant/c24e357a21851a9e5be34617576e23_lixuebing-2.JPG", 
+        "description": "lixuebing-2", 
+        "iscover": false
+    }
+},
+{
+    "pk": 76, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 29, 
+        "imagepath": "/resources/assistant/e4b345cbd44bced711dc8f10d4f30f0_qianlina-1.JPG", 
+        "description": "qianlina-1", 
+        "iscover": true
+    }
+},
+{
+    "pk": 77, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 29, 
+        "imagepath": "/resources/assistant/991a5dd0892f4df8881e84d3f87cdf17_qianlina-2.JPG", 
+        "description": "qianlina-2", 
+        "iscover": false
+    }
+},
+{
+    "pk": 78, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 22, 
+        "imagepath": "/resources/assistant/f96f3b3abcbcc180387b19cfc89192a_yanyan-1.JPG", 
+        "description": "yanyan-1", 
+        "iscover": true
+    }
+},
+{
+    "pk": 79, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 22, 
+        "imagepath": "/resources/assistant/49c26e9ebd2dc7c21426e4cc7490d0ac_yanyan-2.JPG", 
+        "description": "yanyan-2", 
+        "iscover": false
+    }
+},
+{
+    "pk": 80, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 22, 
+        "imagepath": "/resources/assistant/a295dc6d2454ae9a333aa624b2b03054_yanyan-3.JPG", 
+        "description": "yanyan-3", 
+        "iscover": false
+    }
+},
+{
+    "pk": 81, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 23, 
+        "imagepath": "/resources/assistant/f86dad437a4632156616c4f8a1576cd_yangting-1.JPG", 
+        "description": "yangting-1", 
+        "iscover": true
+    }
+},
+{
+    "pk": 82, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 23, 
+        "imagepath": "/resources/assistant/65b2e9b514c7bc7abcce2876dcec3b9_yangting-2.png", 
+        "description": "yangting-2", 
+        "iscover": false
+    }
+},
+{
+    "pk": 83, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 23, 
+        "imagepath": "/resources/assistant/a477f1877a214f55ad61eb2aed601791_yangting-3.JPG", 
+        "description": "yangting-3", 
+        "iscover": false
+    }
+},
+{
+    "pk": 84, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 30, 
+        "imagepath": "/resources/assistant/874c6fc8a4bfe2aa8761c8f9ba3d42_xiangbeier-1.JPG", 
+        "description": "xiangbeier-1", 
+        "iscover": true
+    }
+},
+{
+    "pk": 85, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 30, 
+        "imagepath": "/resources/assistant/5f42153fa5ea94a481d774febce79b_xiangbeier-2.JPG", 
+        "description": "xiangbeier-2", 
+        "iscover": false
+    }
+},
+{
+    "pk": 86, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 30, 
+        "imagepath": "/resources/assistant/648220c666f4326f027b77c1cef5490_xiangbeier-3.JPG", 
+        "description": "xiangbeier-3", 
+        "iscover": false
+    }
+},
+{
+    "pk": 87, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 33, 
+        "imagepath": "/resources/assistant/67fed622995c1ae660b2d0e1c7f67f30_chenjiawei-1.JPG", 
+        "description": "chengjiawei-1", 
+        "iscover": true
+    }
+},
+{
+    "pk": 88, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 33, 
+        "imagepath": "/resources/assistant/3045b3739aa63a559b17b7b9030461_chenjiawei-2.JPG", 
+        "description": "chengjiawei-2", 
+        "iscover": false
+    }
+},
+{
+    "pk": 89, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 33, 
+        "imagepath": "/resources/assistant/a0cd46f097b48ddfa7be7471062db10_chenjiawei-3.JPG", 
+        "description": "chengjiawei-3", 
+        "iscover": false
+    }
+},
+{
+    "pk": 90, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 34, 
+        "imagepath": "/resources/assistant/70d43cde436172e385fafb64c47c189_wangqi-1.JPG", 
+        "description": "wangqi-1", 
+        "iscover": true
+    }
+},
+{
+    "pk": 91, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 34, 
+        "imagepath": "/resources/assistant/291dbc5e8debba377c56f5aef53a5dd_wangqi-2.JPG", 
+        "description": "wangqi-2", 
+        "iscover": false
+    }
+},
+{
+    "pk": 92, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 34, 
+        "imagepath": "/resources/assistant/f0d9b865fc841846e11a81429946080_wangqi-3.JPG", 
+        "description": "wangqi-3", 
+        "iscover": false
+    }
+},
+{
+    "pk": 93, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 24, 
+        "imagepath": "/resources/assistant/55728dc316a0395bc972e23936f2936e_zhangxi-1.JPG", 
+        "description": "zhangxi-1", 
+        "iscover": true
+    }
+},
+{
+    "pk": 94, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 24, 
+        "imagepath": "/resources/assistant/21689338e81a05e2f3ea1e73ce4d456_zhangxi-2.JPG", 
+        "description": "zhangxi-2", 
+        "iscover": false
+    }
+},
+{
+    "pk": 95, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 24, 
+        "imagepath": "/resources/assistant/723ccc6ce1eece886b20e18cd5a7813f_zhangxi-3.JPG", 
+        "description": "zhangxi-3", 
+        "iscover": false
+    }
+},
+{
+    "pk": 96, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 35, 
+        "imagepath": "/resources/assistant/c0a684df188ffc90758c61fa8291eabf_xiaoxiao-1.JPG", 
+        "description": "xiaoxiao-1", 
+        "iscover": true
+    }
+},
+{
+    "pk": 97, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 35, 
+        "imagepath": "/resources/assistant/3ac6c9647f9565a515c0863ff6a61_xiaoxiao-3.JPG", 
+        "description": "xiaoxiao-3", 
+        "iscover": false
+    }
+},
+{
+    "pk": 98, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 28, 
+        "imagepath": "/resources/assistant/709bc865e13c44a73b240c3b1f81b96_liuchunxue-1.JPG", 
+        "description": "liuchunxu-1", 
+        "iscover": true
+    }
+},
+{
+    "pk": 99, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 28, 
+        "imagepath": "/resources/assistant/bf375874c29b6d5457d0263486d9c3_liuchunxu-2.JPG", 
+        "description": "liuchunxu-2", 
+        "iscover": false
+    }
+},
+{
+    "pk": 100, 
+    "model": "billiards.assistantimage", 
+    "fields": {
+        "status": 1, 
+        "assistant": 28, 
+        "imagepath": "/resources/assistant/9fc45fc840cbab69e8dde410f8a6e2_liuchunxu-3.JPG", 
+        "description": "liuchunxu-3", 
+        "iscover": false
+    }
+}
+]

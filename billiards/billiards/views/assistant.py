@@ -74,10 +74,12 @@ ASSISTANT_FILTER = Q(state=1)
 ASSISTANT_OFFER_FILTER = Q(status=1)
 ASSISTANT_IMAGE_FILTER = Q(status=1)
 ASSISTANTAPPOINTMENT_FILTER = ~Q(state=8) & ~Q(state=16)
-def assistant_list(request):
+def getAssistantOffers():
     # really tricky
-    assistantsOffers = AssistantOffer.objects.values('assistant').filter(ASSISTANT_OFFER_FILTER).filter(assistant__in=Assistant.objects.filter(ASSISTANT_FILTER))\
-        .annotate(maxprice = Max('price'), minprice = Min('price'), poolroom = Min('poolroom')).order_by('-assistant__order')
+    return AssistantOffer.objects.values('assistant').filter(ASSISTANT_OFFER_FILTER).filter(assistant__in=Assistant.objects.filter(ASSISTANT_FILTER))\
+        .annotate(maxprice = Max('price'), minprice = Min('price'), poolroom = Min('poolroom'), id = Max('id')).order_by('-assistant__order')
+def assistant_list(request):
+    assistantsOffers = getAssistantOffers()
     jsonstr = json.dumps(list(updateOffers(assistantsOffers)), default=json_serial)
     return HttpResponse(jsonstr)
 
