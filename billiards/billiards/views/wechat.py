@@ -307,7 +307,7 @@ class PKWechat(BaseRoBot):
     
     def buildAbsoluteURI(self, relativeURI):
         try:
-            if 'pktaiqiu.com' in self.request.META['HTTP_HOST'] or 'pkbilliard.com' in self.request.META['HTTP_HOST']:
+            if 'pkbilliard.com' in self.request.META['HTTP_HOST'] or 'pkbilliard.com' in self.request.META['HTTP_HOST']:
                 return set_query_parameter(self.request.build_absolute_uri(relativeURI), 'from', self.getFromSoureStr())
         except KeyError:
             pass
@@ -683,7 +683,7 @@ class PKWechat(BaseRoBot):
 
 @csrf_exempt
 def weixin(request):
-    robot = PKWechat("pktaiqiu", request)
+    robot = PKWechat("pkbilliard", request)
     if request.method=='GET':
         return robot.echo(request)
     elif request.method=='POST':
