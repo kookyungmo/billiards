@@ -18,6 +18,7 @@ from django.core.cache import cache
 from billiards.urls import UUID_PATTERN
 import re
 from billiards.commons import KEY_PREFIX
+from billiards.settings import MEDIA_URL
 
 def parse_tree(root):
     msg = {}
@@ -625,6 +626,7 @@ class WechatTest(TestCase):
         self.assertTrue('ArticleCount' in msg)
         self.assertEqual(1, int(msg['ArticleCount']))
         self.assertTrue(ASSISTANT_PATTERN.search(msg['Articles']['item']['Url']))
+        self.assertIn(MEDIA_URL, msg['Articles']['item']['PicUrl'])
         
     def test_assistant_recommendation_location(self):
         data = u"""

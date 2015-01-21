@@ -521,7 +521,7 @@ class PKWechat(BaseRoBot):
                 poolroomname = Poolroom.objects.get(id=offer.poolroom).name
             except:
                 poolroomname = ''
-            return (offer.assistant.nickname, poolroomname, offer.assistant.coverimage, 
+            return (offer.assistant.nickname, poolroomname, "%s%s" %(settings.MEDIA_URL[:-1], offer.assistant.coverimage), 
                     self.buildAbsoluteURI(reverse('assistant_detail', args=(str(offer.assistant.uuid), ))))
         latlngstr = cache.get(KEY_PREFIX %('latlng', message.source))
         reply = self.getSpecialEventItem(message.time)
