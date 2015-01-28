@@ -175,7 +175,26 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 		return offerdays;
 	}
 })
-
+.directive("pkHideOnImgLoaded", function() {
+    function a(a, c, d) {
+        if (null === d || d.attr("src") !== a) {
+            d && (c.show(), d.off("load.hideOnImgLoaded error.hideOnImgLoaded"));
+            var e = b(new Image);
+            return e.on("load.hideOnImgLoaded error.hideOnImgLoaded", function() {
+                c.hide()
+            }), e.attr("src", a), e
+        }
+    }
+    var b = window.jQuery;
+    return {restrict: "A",link: function(b, c, d) {
+            var e = null;
+            e = a(d.pkHideOnImgLoaded, c, e), d.$observe("pkHideOnImgLoaded", function() {
+                a(d.pkHideOnImgLoaded, c, e)
+            }), c.on("$destroy", function() {
+                e && e.off("load.hideOnImgLoaded error.hideOnImgLoaded")
+            })
+        }}
+})
 .controller("ProviderListCtrl", ["$scope", "Restangular", "offerService", function($scope, Restangular, offerService) {
 	var listEscort = Restangular.one('assistant', 'list');
 	listEscort.get().then(function (assistants){
