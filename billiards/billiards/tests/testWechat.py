@@ -19,6 +19,7 @@ from billiards.urls import UUID_PATTERN
 import re
 from billiards.commons import KEY_PREFIX
 from billiards.settings import MEDIA_URL
+from billiards.views.wechat import HELP_TITLE
 
 def parse_tree(root):
     msg = {}
@@ -157,10 +158,13 @@ class WechatTest(TestCase):
         self.assertEqual(u'北京夜时尚护国寺店', msg['Articles']['item'][0]['Title'])
         self.assertTrue(msg['Articles']['item'][0]['PicUrl'].startswith('http://billiardsalbum.bcs.duapp.com/resources/poolroom'))
         
-    def _send_wechat_message(self, data, url = reverse('weixin')):
+    def _send_wechat_message(self, data, url = reverse('weixin'), returnFormat = 'text/xml'):
         response = self.client.post(url, data, "application/xml")
         self.assertEqual(response.status_code, 200)
-        msg = parse_msg(response.content)
+        if returnFormat == 'text/xml':
+            msg = parse_msg(response.content)
+        else:
+            msg = response.content
         return msg
     
     def test_text_match_message(self):
@@ -353,7 +357,7 @@ class WechatTest(TestCase):
         msg = self._send_wechat_message(data)
         self.assertTrue('ArticleCount' in msg)
         self.assertEqual(1, int(msg['ArticleCount']))
-        self.assertTrue(msg['Articles']['item']['Title'].index(u'帮助手册') > 0)
+        self.assertIn(HELP_TITLE, msg['Articles']['item']['Title'])
         
     def test_wechat_bj_university_event(self):
         data = """
@@ -507,7 +511,7 @@ class WechatTest(TestCase):
         <Precision>119.385040</Precision>
         </xml>
         """
-        self._send_wechat_message(data)
+        self._send_wechat_message(data, returnFormat = 'text/plain')
         location_key = 'location_latlng_fromUser'
         self.assertEqual('23.137466,113.352425', cache.get(location_key))
         self.assertEqual('123456789', cache.get('location_time_fromUser'))
@@ -526,7 +530,7 @@ class WechatTest(TestCase):
         <Precision>119.385040</Precision>
         </xml>
         """
-        self._send_wechat_message(data)
+        self._send_wechat_message(data, returnFormat='text/plain')
         data = """
         <xml>
         <ToUserName><![CDATA[toUser]]></ToUserName>
@@ -592,7 +596,7 @@ class WechatTest(TestCase):
         msg = self._send_wechat_message(data)
         self.assertTrue('ArticleCount' in msg)
         self.assertEqual(1, int(msg['ArticleCount']))
-        self.assertTrue(msg['Articles']['item']['Title'].index(u'帮助手册') > 0)
+        self.assertIn(HELP_TITLE, msg['Articles']['item']['Title'])
         
     def test_assistant_orders_request(self):
         data = u"""
@@ -644,3 +648,15 @@ class WechatTest(TestCase):
         self.assertTrue('ArticleCount' in msg)
         self.assertEqual(1, int(msg['ArticleCount']))
         self.assertEqual(u"北京星球汇宫霄台球俱乐部（东大桥宫霄酒店B2）", msg['Articles']['item']['Description'])
+        
+    def test_unsubscription_event(self):
+        data = """
+        <xml><ToUserName>pktaiqiu</ToUserName>
+        <FromUserName>newuser</FromUserName>
+        <CreateTime>123456789</CreateTime>
+        <MsgType>event</MsgType>
+        <Event>unsubscribe</Event>
+        </xml>
+        """
+        msg = self._send_wechat_message(data, returnFormat = 'text/plain')
+        self.assertEqual("", msg)
