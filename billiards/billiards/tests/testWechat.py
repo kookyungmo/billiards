@@ -613,7 +613,8 @@ class WechatTest(TestCase):
         self.assertTrue('ArticleCount' in msg)
         self.assertEqual(1, int(msg['ArticleCount']))
         self.assertEqual(msg['Articles']['item']['Title'], u'即将上线，敬请期待的订单')
-        self.assertTrue('assistant/ebc807f3-4897-4891-a6a6-bc4915e8d10e/orders' in msg['Articles']['item']['Url'])
+        self.assertIn('assistant/ebc807f3-4897-4891-a6a6-bc4915e8d10e/orders', msg['Articles']['item']['Url'])
+        self.assertIn(MEDIA_URL, msg['Articles']['item']['PicUrl'])
         
     def test_assistant_recommendation_without_location(self):
         data = u"""

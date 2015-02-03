@@ -663,7 +663,7 @@ class PKWechat(BaseRoBot):
                 elif message.content == u'我的助教订单' and self.getAssistantInfo(message) != None:
                     au = self.getAssistantInfo(message)
                     reply = []
-                    reply.append((u'%s的订单' %(au.assistant.nickname), u'订单详情', au.assistant.coverimage, 
+                    reply.append((u'%s的订单' %(au.assistant.nickname), u'订单详情', "%s%s" %(settings.MEDIA_URL[:-1], au.assistant.coverimage), 
                                   self.buildAbsoluteURI(reverse('assistant_orders', args=(str(au.assistant.uuid), )))))
                 else:
                     reply += self.getHelpMesg()
