@@ -448,18 +448,37 @@ class PKWechat(BaseRoBot):
         if isinstance(message, TextMessage): 
             content = message.content
         elif isinstance(message, EventMessage):
-            content = message.key        
+            content = message.key
+        
         nativetime = datetime.utcfromtimestamp(float(message.time))
         localtz = pytz.timezone(settings.TIME_ZONE)
         localtime = localtz.localize(nativetime)
-        coupons = Coupon.objects.filter(getCouponCriteria(localtime)).order_by('?')[:3]
+        
+        latlngstr = cache.get(KEY_PREFIX %('latlng', message.source))
+        if latlngstr == None:
+            coupons = Coupon.objects.filter(getCouponCriteria(localtime)).order_by('?')[:3]
+        else:
+            latlngs = latlngstr.split(',')
+            baidu_loc = gcj2bd(float(latlngs[0]),float(latlngs[1]))
+            baidu_loc_lat = unicode(baidu_loc[0])
+            baidu_loc_lng = unicode(baidu_loc[1])
+            poolrooms = Coupon.objects.filter(getCouponCriteria(localtime)).values_list('poolroom', flat=True).distinct()
+            nearby = getNearbyPoolrooms(baidu_loc_lat, baidu_loc_lng, 10, None).filter(id__in=poolrooms)[:3]
+            np_ids = []
+            for np in nearby:
+                np_ids.append(np.id)
+            coupons = Coupon.objects.filter(getCouponCriteria(localtime)).filter(poolroom__in=np_ids)
+            coupons_sorted = list()
+            for pid in np_ids:
+                coupons_sorted.append(coupons.get(poolroom=pid))
+            coupons = coupons_sorted
         if len(coupons) > 0:
             recordUserActivity(message, source, 'coupon', {'content': content}, 
                            {'count': len(coupons), 'coupon': True}, self.target)
             reply += self.getCouponsReply(coupons, True)
         else:
             recordUserActivity(message, source, 'nocoupon', {'content': content}, None, self.target)
-            data = u'暂时没有俱乐部有"优惠"或"团购"。'
+            data = u'附近的俱乐部暂时没有"优惠"或"团购"。'
             reply.append((data, data, SITE_LOGO_URL, ''))
         return reply
     

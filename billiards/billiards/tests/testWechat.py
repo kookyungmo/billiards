@@ -660,3 +660,32 @@ class WechatTest(TestCase):
         """
         msg = self._send_wechat_message(data, returnFormat = 'text/plain')
         self.assertEqual("", msg)
+        
+    def test_text_coupon_message_with_location(self):
+        data = u"""
+        <xml>
+        <ToUserName><![CDATA[toUser]]></ToUserName>
+        <FromUserName><![CDATA[fromUser]]></FromUserName>
+        <CreateTime>1393459100</CreateTime>
+        <MsgType><![CDATA[event]]></MsgType>
+        <Event><![CDATA[LOCATION]]></Event>
+        <Latitude>40.0030810</Latitude>
+        <Longitude>116.4089790</Longitude>
+        <Precision>119.385040</Precision>
+        </xml>
+        """
+        self._send_wechat_message(data, returnFormat = 'text/plain')
+        data = u"""
+        <xml>
+        <ToUserName><![CDATA[toUser]]></ToUserName>
+        <FromUserName><![CDATA[fromUser]]></FromUserName> 
+        <CreateTime>1393459200</CreateTime>
+        <MsgType><![CDATA[text]]></MsgType>
+        <Content><![CDATA[团购]]></Content>
+        <MsgId>1234567890123456</MsgId>
+        </xml>
+        """
+        msg = self._send_wechat_message(data)
+        self.assertTrue('ArticleCount' in msg)
+        self.assertEqual(4, int(msg['ArticleCount']))
+        self.assertIn(u'团购：北京云川台球俱乐部大屯店（36店通用）', msg['Articles']['item'][0]['Title'])
