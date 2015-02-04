@@ -660,7 +660,7 @@ class PKWechat(BaseRoBot):
                     reply = self.queryMember(reply, message, 4)
                 elif message.content in HELP_KEYWORDS:
                     reply += self.getHelpMesg()
-                elif message.content == u'我的助教订单' and self.getAssistantInfo(message) != None:
+                elif message.content == u'订单' and self.getAssistantInfo(message) != None:
                     au = self.getAssistantInfo(message)
                     reply = []
                     reply.append((u'%s的订单' %(au.assistant.nickname), u'订单详情', "%s%s" %(settings.MEDIA_URL[:-1], au.assistant.coverimage), 
