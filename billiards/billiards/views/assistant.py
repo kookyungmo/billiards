@@ -282,7 +282,7 @@ def assistant_orders_by_uuid(request, assistant_uuid):
         try:
             assistant = Assistant.objects.filter(ASSISTANT_FILTER).get(uuid=uuid.UUID(assistant_uuid))
             aUser = AssistantUser.objects.filter(Q(user=request.user)).get(assistant=assistant)
-            if aUser.isEmpty():
+            if aUser is None:
                 raise PermissionDenied("illegal access.") 
             if request.method == 'POST':
                 appoints = AssistantAppointment.objects.filter(Q(assistant=assistant)).filter(

@@ -38,6 +38,7 @@ from billiards.views.poolroom import getNearbyPoolrooms
 from django.contrib.auth.models import User
 from billiards.views.assistant import ASSISTANT_OFFER_FILTER, getAssistantOffers
 
+HELP_TITLE = u'"二月特惠来袭，打球也要有逼格'
 
 def set_video():
     videos = [
@@ -179,10 +180,7 @@ class ImageReply(WeChatReply):
         return ImageReply.TEMPLATE.format(**self._args)
 
 class DummyReply(WeChatReply):
-    TEMPLATE = to_text("""
-    <xml>
-    </xml>
-    """)
+    TEMPLATE = to_text('')
 
     def render(self):
         return DummyReply.TEMPLATE.format(**self._args)
@@ -328,7 +326,7 @@ class PKWechat(BaseRoBot):
                 LOGO_IMG_URL, 'http://mp.weixin.qq.com/s?__biz=MzA5MzY0MTYxMw==&mid=202621318&idx=1&sn=a0987cfafc05158fa0c35a0ba46b5701#rd')]
         
     def getHelpMesg(self):
-        return [(u'"二月特惠来袭，打球也要有逼格', u'"活动一：预约送饮料； 活动二：消费返红包； 活动三：天天领红包；', 'http://bcs.duapp.com/billiardsalbum/2015/02/sales.jpg', 'http://mp.weixin.qq.com/s?__biz=MzA5MzY0MTYxMw==&mid=202723018&idx=1&sn=4c249995b4a57ab00453f959b60f7b8f#rd')]
+        return [(HELP_TITLE, u'"活动一：预约送饮料； 活动二：消费返红包； 活动三：天天领红包；', 'http://bcs.duapp.com/billiardsalbum/2015/02/sales.jpg', 'http://mp.weixin.qq.com/s?__biz=MzA5MzY0MTYxMw==&mid=202723018&idx=1&sn=4c249995b4a57ab00453f959b60f7b8f#rd')]
     
     def help(self):
         def helpmessge(message):
@@ -371,6 +369,7 @@ class PKWechat(BaseRoBot):
     def unsubscribe(self):
         def unsubscribe_handler(message):
             recordUserActivity(message, 'event', message.type, {'event': message.type}, None, self.target)
+            return DummyReply()
         return unsubscribe_handler
     
     def userlocation(self):
@@ -446,18 +445,37 @@ class PKWechat(BaseRoBot):
         if isinstance(message, TextMessage): 
             content = message.content
         elif isinstance(message, EventMessage):
-            content = message.key        
+            content = message.key
+        
         nativetime = datetime.utcfromtimestamp(float(message.time))
         localtz = pytz.timezone(settings.TIME_ZONE)
         localtime = localtz.localize(nativetime)
-        coupons = Coupon.objects.filter(getCouponCriteria(localtime)).order_by('?')[:3]
+        
+        latlngstr = cache.get(KEY_PREFIX %('latlng', message.source))
+        if latlngstr == None:
+            coupons = Coupon.objects.filter(getCouponCriteria(localtime)).order_by('?')[:3]
+        else:
+            latlngs = latlngstr.split(',')
+            baidu_loc = gcj2bd(float(latlngs[0]),float(latlngs[1]))
+            baidu_loc_lat = unicode(baidu_loc[0])
+            baidu_loc_lng = unicode(baidu_loc[1])
+            poolrooms = Coupon.objects.filter(getCouponCriteria(localtime)).values_list('poolroom', flat=True).distinct()
+            nearby = getNearbyPoolrooms(baidu_loc_lat, baidu_loc_lng, 10, None).filter(id__in=poolrooms)[:3]
+            np_ids = []
+            for np in nearby:
+                np_ids.append(np.id)
+            coupons = Coupon.objects.filter(getCouponCriteria(localtime)).filter(poolroom__in=np_ids)
+            coupons_sorted = list()
+            for pid in np_ids:
+                coupons_sorted.append(coupons.get(poolroom=pid))
+            coupons = coupons_sorted
         if len(coupons) > 0:
             recordUserActivity(message, source, 'coupon', {'content': content}, 
                            {'count': len(coupons), 'coupon': True}, self.target)
             reply += self.getCouponsReply(coupons, True)
         else:
             recordUserActivity(message, source, 'nocoupon', {'content': content}, None, self.target)
-            data = u'暂时没有俱乐部有"优惠"或"团购"。'
+            data = u'附近的俱乐部暂时没有"优惠"或"团购"。'
             reply.append((data, data, SITE_LOGO_URL, ''))
         return reply
     
@@ -642,7 +660,7 @@ class PKWechat(BaseRoBot):
                 elif message.content == u'我的助教订单' and self.getAssistantInfo(message) != None:
                     au = self.getAssistantInfo(message)
                     reply = []
-                    reply.append((u'%s的订单' %(au.assistant.nickname), u'订单详情', au.assistant.coverimage, 
+                    reply.append((u'%s的订单' %(au.assistant.nickname), u'订单详情', "%s%s" %(settings.MEDIA_URL[:-1], au.assistant.coverimage), 
                                   self.buildAbsoluteURI(reverse('assistant_orders', args=(str(au.assistant.uuid), )))))
                 else:
                     reply += self.getHelpMesg()
