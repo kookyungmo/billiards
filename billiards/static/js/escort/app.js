@@ -300,8 +300,10 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 				if (AUTH === 1) {
 					var params = {offerDay: $scope.selectedOffer.day.unix(), offerHour: $scope.selectedOfferHour, offerDuring: $scope.offerDuring};
 					baseEscort.one('offer', 'booking').customPOST(params).then(function (rt){
-						if (rt.code == 0)
-							window.location = rt.payurl;
+						if (rt.code == 0) {
+							_AP.pay(rt.payurl);
+//							window.location = rt.payurl;
+						}
 						else {
 							switch(rt.code){
 							case 1:
@@ -376,7 +378,9 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 	};
 	
 	$scope.pay = function(order) {
-		window.location = ORDER_URL.replace(/12345678901234567890123456789012/g, order.transaction.goods.sku);
+		var payurl = ORDER_URL.replace(/12345678901234567890123456789012/g, order.transaction.goods.sku);
+		_AP.pay(payurl);
+//		window.location = payurl;
 	};
 	
 	$scope.orderStateDisplay = function(order) {

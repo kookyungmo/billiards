@@ -87,6 +87,7 @@
 </div>
 {% endblock %} 
 {% block escortfoundationscript %}
+<script src="{% static "js/ap.js" %}"></script>
 <script>
 var ORDER_URL = "{% url 'transaction_alipay_goods' '12345678901234567890123456789012' %}";
 
