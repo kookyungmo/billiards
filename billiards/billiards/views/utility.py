@@ -57,3 +57,8 @@ def pkmap(request, mtype = None, tid = None):
         pass
     return render_to_response(TEMPLATE_ROOT + 'pkmap.html',
                               {'target': targetObj, 'name': name}, context_instance=RequestContext(request))
+    
+def wechat_alipay(request):
+    return render_to_response(TEMPLATE_ROOT + 'alipay/pay.htm',
+                              {},
+                              context_instance=RequestContext(request))

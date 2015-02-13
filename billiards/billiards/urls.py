@@ -90,6 +90,7 @@ urlpatterns += patterns('billiards.views.utility',
     url(r'^survey/redbull', 'survey_redbull', name='survey_redbull_2014_04'),
     url(r'^pkmap/(?P<mtype>\w+)/(?P<tid>\d+|%s)$' %(UUID_PATTERN), 'pkmap', name='pk_map_type_id'),
     url(r'^pkmap$', 'pkmap', name='pk_map'),
+    url(r'^wechat/alipay', 'wechat_alipay', name='wechat_alipay')
 )
 
 urlpatterns += patterns('billiards.views.club',
