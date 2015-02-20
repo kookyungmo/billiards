@@ -198,6 +198,14 @@ LOGGING = {
             'backupCount': 2,
             'formatter': 'standard',
         },
+        'logfile-message': {
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename':  os.path.join(PROJECT_PATH, 'billiards-message.log'),
+            'maxBytes': 50000,
+            'backupCount': 2,
+            'formatter': 'standard',
+        },
         'console':{
             'level':'INFO',
             'class':'logging.StreamHandler',
@@ -226,7 +234,11 @@ LOGGING = {
         'transaction': {
             'handlers': ['logfile'],
             'level': 'WARN',
-        },   
+        },
+        'billiards-bcms': {
+            'handlers': ['logfile-message','console'],
+            'level': 'INFO',
+        }        
     }
 }
 

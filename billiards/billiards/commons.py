@@ -16,7 +16,8 @@ from django.utils.encoding import is_protected_type
 from datetime import datetime
 from bitfield.models import BitField
 from billiards import settings
-from billiards.bcms import mail
+from billiards.bcms import mail, publish
+from django.utils import simplejson
 
 KEY_PREFIX = 'location_%s_%s'
 
@@ -102,7 +103,10 @@ def notification(subject, body):
     notification_mail(subject, body)
 def notification_mail(subject, body):
     mail(settings.NOTIFICATION_EMAIL, subject, body)
-    
+def notification_msg(number, message):
+    msg = {'number': number, 'msg': message}
+    publish(simplejson.dumps(msg))
+                            
 def isWechatBrowser(useragent):
     if "micromessenger" in useragent.lower():
         return True

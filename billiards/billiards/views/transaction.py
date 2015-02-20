@@ -7,7 +7,7 @@ Created on 2014年6月14日
 '''
 from alipay import Alipay, WapAlipay
 from billiards.models import PayAccount, Transaction, Goods,\
-    AssistantAppointment
+    AssistantAppointment, Assistant, AssistantUser
 from datetime import datetime, timedelta
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
@@ -21,8 +21,9 @@ from urlparse import unquote
 from xml.etree import ElementTree
 from django.views.decorators.csrf import csrf_exempt
 import logging
-from billiards.commons import notification
+from billiards.commons import notification, notification_msg
 from django.http.response import HttpResponseBadRequest
+from django.utils import simplejson
 
 logger = logging.getLogger("transaction")
 
@@ -102,7 +103,7 @@ def alipay_wapreturn(request):
                 transaction.state = 2
                 transaction.save()
                 
-                notification(u"手机订单%s支付完成" %(transaction.tradeNum), u"%s - %s元" %(transaction.goods.name, transaction.fee))
+                transactionSuccessNotification(transaction)
         except Transaction.DoesNotExist:
             #TODO handle error case
             pass
@@ -137,7 +138,7 @@ def alipay_wapnotify(request):
                 transaction.state = 2 if notifydata['trade_status'] == 'TRADE_SUCCESS' else 5
                 transaction.save()
                 
-                notification(u"手机订单%s支付完成" %(transaction.tradeNum), u"%s - %s元" %(transaction.goods.name, transaction.fee))
+                transactionSuccessNotification(transaction)
                 return HttpResponse("success.")
             except Transaction.DoesNotExist:
                 #TODO handle error case
@@ -148,6 +149,12 @@ def alipay_wapnotify(request):
         logger.exception("exception occurred when processing alipay wap notification.")
     return HttpResponse("Error.")
 
+def transactionSuccessNotification(transaction, isMobile = True):
+    notification(u"%s订单%s支付完成" %(u'手机' if isMobile else '', transaction.tradeNum), u"%s - %s元" %(transaction.goods.name, transaction.fee))
+    order = AssistantAppointment.objects.get(transaction=transaction)
+    order.state = 2
+    order.save()
+    
 def alipay_return(request):
     account, alipay = getAlipay()
     parameters = {k: v for k, v in request.GET.iteritems()}
@@ -167,7 +174,7 @@ def alipay_return(request):
                         transaction.state = 2
                     transaction.save()
                     
-                    notification(u"订单%s支付完成" %(transaction.tradeNum), u"%s - %s元" %(transaction.goods.name, transaction.fee))
+                    transactionSuccessNotification(transaction, False)
             except Transaction.DoesNotExist:
                 #TODO handle error case
                 pass
@@ -200,7 +207,7 @@ def alipay_notify(request):
                 if transaction.tradeStatus == 'TRADE_FINISHED' or transaction.tradeStatus == 'TRADE_SUCCESS':
                     transaction.paidDate = datetime.strptime(request.GET.get('gmt_payment'), TRANSACTION_TIME_FORMAT).replace(tzinfo=pytz.timezone(TIME_ZONE))
                     transaction.state = 2
-                    notification(u"订单%s支付完成" %(transaction.tradeNum), u"%s - %s元" %(transaction.goods.name, transaction.fee))
+                    transactionSuccessNotification(transaction, False)
                 elif transaction.tradeStatus == 'TRADE_CLOSED':
                     transaction.closedDate = datetime.strptime(request.GET.get('gmt_close'), TRANSACTION_TIME_FORMAT).replace(tzinfo=pytz.timezone(TIME_ZONE))
                     transaction.state = 4
