@@ -29,7 +29,11 @@ from uuidfield.fields import UUIDField
 from decimal import Decimal
 from geosimple.fields import GeohashField
 from geosimple.managers import GeoManager
-from billiards.commons import decodeunicode
+from billiards.commons import decodeunicode, notification_msg
+import time
+from django.utils import simplejson
+
+DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 def getThumbnailPath(path, length, prefix = 'w'):
     fileName, fileExtension = os.path.splitext(path)
@@ -373,7 +377,7 @@ class Match(models.Model):
         verbose_name_plural = '比赛/爱好者活动'
 
     def __unicode__(self):
-        return u'[%s - %s] %s' %(localtime(self.starttime).strftime("%Y-%m-%d %H:%M:%S"), self.get_type_display(), self.poolroom.name)
+        return u'[%s - %s] %s' %(localtime(self.starttime).strftime(DATETIME_FORMAT), self.get_type_display(), self.poolroom.name)
 
     def natural_key(self):
         return {'id': self.id, 'title':self.title, 'poolroom': self.poolroom.natural_key(), 'organizer': self.organizer,
@@ -1155,6 +1159,36 @@ class AssistantAppointment(models.Model):
     def __unicode__(self):
         return u"[%s] %s %s" %(self.get_state_display(), self.user, self.goods.name)
     
+    def __toDict(self):
+        poolroom = Poolroom.objects.get(id=self.poolroom)
+        return {'assistant_name': self.assistant.nickname, 'starttime': self.starttime.strftime(DATETIME_FORMAT), 'endtime': self.endtime.strftime(DATETIME_FORMAT),
+                'duration': self.duration, 'price': int(self.price), 'poolroom_name': poolroom.name, 'poolroom_address': poolroom.address,
+                'payment': int(self.transaction.fee), 'user_nickname': decodeunicode(self.user.nickname), 'user_cellphone': self.user.cellphone,
+                'timestamp': int(time.time())}
+
+    __original_state = None
+
+    def __init__(self, *args, **kwargs):
+        super(AssistantAppointment, self).__init__(*args, **kwargs)
+        self.__original_state = int(self.state)
+        
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
+        if int(self.state) != self.__original_state:
+            orderdict = self.__toDict()
+            if int(self.state) == 32:
+                orderdict['method'] = 'billiards.messages.assistant.orderConfirmationMsg'
+            elif int(self.state) == 2:
+                orderdict['method'] = 'billiards.messages.assistant.orderArrival'
+                au = AssistantUser.objects.get(assistant=self.assistant)
+                notification_msg(au.user.cellphone, simplejson.dumps(orderdict))
+                orderdict['method'] = 'billiards.messages.assistant.orderPaySuccess'
+            elif int(self.state) == 256:
+                orderdict['method'] = 'billiards.messages.assistant.orderComplete'
+            if 'method' in orderdict:
+                notification_msg(self.user.cellphone, simplejson.dumps(orderdict))
+        super(AssistantAppointment, self).save(force_insert, force_update, *args, **kwargs)
+        self.__original_state = int(self.state)
+    
 class AssistantUser(models.Model):
     assistant = models.ForeignKey(Assistant, verbose_name="助教")
     user = models.ForeignKey(User, verbose_name="用户")
@@ -1167,6 +1201,14 @@ class AssistantUser(models.Model):
         
     def __unicode__(self):
         return u"助教(%s) 对应用户 '%s'" %(self.assistant.nickname, self.user)
+
+class BcmsMessage(models.Model):
+    lastMsgId = models.BigIntegerField(verbose_name='最后的消息id')
+    
+    class Meta:
+        db_table = 'bcms'
+        verbose_name = 'Bcms消息'
+        verbose_name_plural = 'Bcms消息'
 
 try:
     from south.modelsinspector import add_introspection_rules

@@ -16,7 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 from mobi.decorators import detect_mobile
 
 from billiards.commons import tojson2, NoObjectJSONSerializer, json_serial,\
-    forceLogin, isWechatBrowser, set_query_parameter
+    forceLogin, isWechatBrowser, set_query_parameter, notification_msg
 from billiards.models import Assistant, AssistantOffer, Poolroom, \
     assistant_fields, AssistantImage, \
     assistantimage_fields, assistantoffer_fields_2, AssistantAppointment, Goods,\
