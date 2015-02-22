@@ -199,7 +199,7 @@ LOGGING = {
         'logfile-message': {
             'level':'DEBUG',
             'class':'logging.handlers.RotatingFileHandler',
-            'filename':  os.path.join(PROJECT_PATH, 'billiards-message.log'),
+            'filename':  '/home/bae/log/billiards-message.log',
             'maxBytes': 50000,
             'backupCount': 2,
             'formatter': 'standard',
