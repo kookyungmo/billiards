@@ -39,6 +39,7 @@ from django.contrib.auth.models import User
 from billiards.views.assistant import ASSISTANT_OFFER_FILTER, getAssistantOffers
 
 HELP_TITLE = u'二月特惠来袭，打球也要有逼格'
+MYORDER_KEYWORD = u'订单'
 
 def set_video():
     videos = [
