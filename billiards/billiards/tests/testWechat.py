@@ -19,7 +19,7 @@ from billiards.urls import UUID_PATTERN
 import re
 from billiards.commons import KEY_PREFIX
 from billiards.settings import MEDIA_URL
-from billiards.views.wechat import HELP_TITLE
+from billiards.views.wechat import HELP_TITLE, MYORDER_KEYWORD
 
 def parse_tree(root):
     msg = {}
@@ -605,10 +605,10 @@ class WechatTest(TestCase):
         <FromUserName><![CDATA[075F3CE411F54B563EDAADC829E86]]></FromUserName> 
         <CreateTime>1391212800</CreateTime>
         <MsgType><![CDATA[text]]></MsgType>
-        <Content><![CDATA[我的助教订单]]></Content>
+        <Content><![CDATA[%s]]></Content>
         <MsgId>1234567890123456</MsgId>
         </xml>
-        """
+        """ %(MYORDER_KEYWORD)
         msg = self._send_wechat_message(data)
         self.assertTrue('ArticleCount' in msg)
         self.assertEqual(1, int(msg['ArticleCount']))
