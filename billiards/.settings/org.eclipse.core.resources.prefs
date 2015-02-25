@@ -10,6 +10,7 @@ encoding//billiards/context_processors.py=utf-8
 encoding//billiards/dbrouter.py=utf-8
 encoding//billiards/id.py=utf-8
 encoding//billiards/location_convertor.py=utf-8
+encoding//billiards/management/commands/displayip.py=utf-8
 encoding//billiards/management/commands/dumptestdata.py=utf-8
 encoding//billiards/management/commands/generatepoolroomuuid.py=utf-8
 encoding//billiards/management/commands/importcoupons.py=utf-8
