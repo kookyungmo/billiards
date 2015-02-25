@@ -32,6 +32,9 @@ from geosimple.managers import GeoManager
 from billiards.commons import decodeunicode, notification_msg
 import time
 from django.utils import simplejson
+import logging
+
+logger = logging.getLogger("billiards")
 
 DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 
@@ -1179,8 +1182,11 @@ class AssistantAppointment(models.Model):
                 orderdict['method'] = 'billiards.messages.assistant.orderConfirmationMsg'
             elif int(self.state) == 2:
                 orderdict['method'] = 'billiards.messages.assistant.orderArrival'
-                au = AssistantUser.objects.get(assistant=self.assistant)
-                notification_msg(au.user.cellphone, simplejson.dumps(orderdict))
+                try:
+                    au = AssistantUser.objects.get(assistant=self.assistant)
+                    notification_msg(au.user.cellphone, simplejson.dumps(orderdict))
+                except AssistantUser.DoesNotExist:
+                    logger.warn(u'Can not find the associated user for assistant \'%s\'.' %(self.assistant))
                 orderdict['method'] = 'billiards.messages.assistant.orderPaySuccess'
             elif int(self.state) == 256:
                 orderdict['method'] = 'billiards.messages.assistant.orderComplete'
