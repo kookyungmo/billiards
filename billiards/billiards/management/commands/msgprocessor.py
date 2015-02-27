@@ -43,7 +43,7 @@ class Command(NoArgsCommand):
                 logger.error("\tFailed to send short message due to %s." %(response))
                 raise MessageException(response)
         else:
-            logger.error("\tFailed to send short message via HS gateway.")
+            logger.error("\tFailed to send short message due to unavailable of HS gateway.")
             raise MessageException(response)
 
     def handle(self, *args, **options):

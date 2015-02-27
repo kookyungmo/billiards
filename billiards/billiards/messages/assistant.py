@@ -7,7 +7,7 @@ Created on 2015年2月21日
 '''
 from datetime import datetime
 from billiards.models import DATETIME_FORMAT
-from django.utils.timezone import localtime
+from django.utils.timezone import localtime, utc
 import pytz
 from billiards.settings import TIME_ZONE
 ORDER_CONFIRMATION=u'【我为台球狂】您的订单已确认，请您准时到场消费。\n\
@@ -61,7 +61,7 @@ def orderPaySuccess(order):
             order['poolroom_name'], order['poolroom_address'], order['payment'])
     
 def orderComplete(order):
-    completetime = localtime(datetime.utcfromtimestamp(order['timestamp']), pytz.timezone(TIME_ZONE))
+    completetime = localtime(datetime.utcfromtimestamp(order['timestamp']).replace(tzinfo=utc), pytz.timezone(TIME_ZONE))
     return ORDER_COMPLETE %(completetime.strftime(DATE_FORMAT).decode('utf-8'), completetime.strftime(TIME2_FORMAT).decode('utf-8'))
 
 def orderArrival(order):

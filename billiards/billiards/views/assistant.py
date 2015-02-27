@@ -8,7 +8,7 @@ from django.core.exceptions import PermissionDenied
 from django.db.models.aggregates import Max, Min
 from django.db.models.query_utils import Q
 from django.http.response import HttpResponse, Http404, HttpResponseRedirect
-from django.shortcuts import render_to_response, get_object_or_404, redirect
+from django.shortcuts import render_to_response, get_object_or_404
 from django.template.context import RequestContext
 from django.utils import simplejson
 from django.utils.timezone import pytz, utc
@@ -16,7 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 from mobi.decorators import detect_mobile
 
 from billiards.commons import tojson2, NoObjectJSONSerializer, json_serial,\
-    forceLogin, isWechatBrowser, set_query_parameter, notification_msg
+    forceLogin, isWechatBrowser, set_query_parameter
 from billiards.models import Assistant, AssistantOffer, Poolroom, \
     assistant_fields, AssistantImage, \
     assistantimage_fields, assistantoffer_fields_2, AssistantAppointment, Goods,\

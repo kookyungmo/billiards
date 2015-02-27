@@ -1164,7 +1164,7 @@ class AssistantAppointment(models.Model):
     
     def __toDict(self):
         poolroom = Poolroom.objects.get(id=self.poolroom)
-        return {'assistant_name': self.assistant.nickname, 'starttime': self.starttime.strftime(DATETIME_FORMAT), 'endtime': self.endtime.strftime(DATETIME_FORMAT),
+        return {'assistant_name': self.assistant.nickname, 'starttime': localtime(self.starttime).strftime(DATETIME_FORMAT), 'endtime': localtime(self.endtime).strftime(DATETIME_FORMAT),
                 'duration': self.duration, 'price': int(self.price), 'poolroom_name': poolroom.name, 'poolroom_address': poolroom.address,
                 'payment': int(self.transaction.fee), 'user_nickname': decodeunicode(self.user.nickname), 'user_cellphone': self.user.cellphone,
                 'timestamp': int(time.time())}
