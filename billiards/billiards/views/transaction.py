@@ -7,7 +7,7 @@ Created on 2014年6月14日
 '''
 from alipay import Alipay, WapAlipay
 from billiards.models import PayAccount, Transaction, Goods,\
-    AssistantAppointment, Assistant, AssistantUser
+    AssistantAppointment
 from datetime import datetime, timedelta
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
@@ -21,9 +21,8 @@ from urlparse import unquote
 from xml.etree import ElementTree
 from django.views.decorators.csrf import csrf_exempt
 import logging
-from billiards.commons import notification, notification_msg
+from billiards.commons import notification
 from django.http.response import HttpResponseBadRequest
-from django.utils import simplejson
 
 logger = logging.getLogger("transaction")
 
