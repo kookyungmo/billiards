@@ -125,11 +125,16 @@ urlpatterns += patterns('billiards.views.trade',
 )
 
 urlpatterns += patterns('billiards.views.transaction',
-     url(r'^transaction/goods/(?P<sku>\w{32})$', 'alipay_goods', name='transaction_alipay_goods'),
-     url(r'^transaction/alipay/return$', 'alipay_return', name='transaction_alipay_return'),
-     url(r'^transaction/alipay/wap/return$', 'alipay_wapreturn', name='transaction_alipay_wapreturn'),
-     url(r'^transaction/alipay/wap/notify$', 'alipay_wapnotify', name='transaction_alipay_wapnotify'),
-     url(r'^transaction/alipay/notify$', 'alipay_notify', name='transaction_alipay_notify'),
+     url(r'^transaction/goods/(?P<sku>\w{32})$', 'pay_goods', name='transaction_pay_goods'),
+)
+
+urlpatterns += patterns('billiards.pay',
+     url(r'^transaction/alipay/return$', 'b_alipay.alipay_return', name='transaction_alipay_return'),
+     url(r'^transaction/alipay/wap/return$', 'b_alipay.alipay_wapreturn', name='transaction_alipay_wapreturn'),
+     url(r'^transaction/alipay/wap/notify$', 'b_alipay.alipay_wapnotify', name='transaction_alipay_wapnotify'),
+     url(r'^transaction/alipay/notify$', 'b_alipay.alipay_notify', name='transaction_alipay_notify'),
+     url(r'^transaction/nowpay/notify$', 'nowpay.pay_notify', name='transaction_nowpay_notify'),
+     url(r'^transaction/nowpay/return$', 'nowpay.pay_return', name='transaction_nowpay_return'),
 )
 
 urlpatterns += patterns('billiards.views.games',

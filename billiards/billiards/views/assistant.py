@@ -22,13 +22,14 @@ from billiards.models import Assistant, AssistantOffer, Poolroom, \
     assistantimage_fields, assistantoffer_fields_2, AssistantAppointment, Goods,\
     assistant_appointment_fields, AssistantLikeStats, AssistantUser
 from billiards.settings import TEMPLATE_ROOT
-from billiards.views.transaction import createTransaction, PAYMENT_TIMEOUT
+from billiards.views.transaction import createTransaction
 from billiards import settings
 import json
 from datetime import timedelta
 from django.core.cache import cache
 from random import randint
 from django.core.urlresolvers import reverse
+from billiards.pay import Pay
 
 def assistant(request):
     return render_to_response(TEMPLATE_ROOT + 'escort/list.html', context_instance=RequestContext(request))
@@ -184,7 +185,7 @@ def assistant_offer_booking_by_uuid(request, assistant_uuid):
 #                        goods, created = Goods.objects.get_or_create(sku=hashvalue, defaults={'name': name, 'description': name, 'price':0.01,  
                                     'type': 2, 'sku': hashvalue})
                         transaction, url = createTransaction(request, goods)
-                        transaction.validUntilDate = datetime.datetime.now() + timedelta(minutes=PAYMENT_TIMEOUT)
+                        transaction.validUntilDate = datetime.datetime.now() + timedelta(minutes=Pay.PAYMENT_TIMEOUT)
                         transaction.save()
                         AssistantAppointment.objects.create(assistant=assistant, user=request.user, poolroom=offer.poolroom, 
                                     goods=goods, transaction=transaction, starttime=offertimerange[0], endtime=offertimerange[1],

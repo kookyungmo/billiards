@@ -301,8 +301,10 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 					var params = {offerDay: $scope.selectedOffer.day.unix(), offerHour: $scope.selectedOfferHour, offerDuring: $scope.offerDuring};
 					baseEscort.one('offer', 'booking').customPOST(params).then(function (rt){
 						if (rt.code == 0) {
-							_AP.pay(rt.payurl);
-//							window.location = rt.payurl;
+							if (isWechat())
+								window.location = rt.payurl;
+							else
+								_AP.pay(rt.payurl);
 						}
 						else {
 							switch(rt.code){
@@ -379,8 +381,10 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 	
 	$scope.pay = function(order) {
 		var payurl = ORDER_URL.replace(/12345678901234567890123456789012/g, order.transaction.goods.sku);
-		_AP.pay(payurl);
-//		window.location = payurl;
+		if (isWechat())
+			window.location = payurl;
+		else
+			_AP.pay(payurl);		
 	};
 	
 	$scope.orderStateDisplay = function(order) {

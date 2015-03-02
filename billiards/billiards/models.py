@@ -820,14 +820,18 @@ class WechatCredential(models.Model):
         verbose_name_plural = '微信开发者凭证'
 
 class PayAccount(models.Model):
+    Alipay = 1
+    Nowpay = 2
+    TYPES = (
+            (Alipay, u'Alipay'),
+            (Nowpay, u'Nowpay'),
+        )
     id = models.AutoField(primary_key=True)
     pid = models.CharField(max_length=16, verbose_name='Partner ID')
     key = models.CharField(max_length=64, verbose_name='Key')
     name = models.CharField(max_length=32, verbose_name='账号名')
     email = models.CharField(max_length=64, verbose_name='帐号邮箱')
-    type = IntegerChoiceTypeField(verbose_name=u'帐号类型', choices=(
-            (1, u'Alipay'),
-        ), default=1)
+    type = IntegerChoiceTypeField(verbose_name=u'帐号类型', choices=TYPES, default=1)
     
     def __unicode__(self):
         return u"%s:%s" %(self.get_type_display(), self.name)

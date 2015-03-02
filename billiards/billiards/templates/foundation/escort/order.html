@@ -89,7 +89,7 @@
 {% block escortfoundationscript %}
 <script src="{% static "js/ap.js" %}"></script>
 <script>
-var ORDER_URL = "{% url 'transaction_alipay_goods' '12345678901234567890123456789012' %}";
+var ORDER_URL = "{% url 'transaction_pay_goods' '12345678901234567890123456789012' %}";
 
 function equalHeight(group) {
     var tallest = 0;
