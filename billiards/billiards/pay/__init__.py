@@ -53,10 +53,10 @@ class Nowpay(Pay):
     def getAccount(self, isMobile = True):
         return PayAccount.objects.get(type=PayAccount.Nowpay)
     
-    def __doSign(self, mydict, execludeKeys, secret):
+    def doSign(self, mydict, execludeKeys, secret):
         toBeSigned = ''
-        for key in sorted(mydict):
-            if key not in execludeKeys:
+        for key, value in sorted(mydict.iteritems()):
+            if key not in execludeKeys and value != '':
                 toBeSigned = '%s%s=%s&' %(toBeSigned, key, mydict[key])
         
         toBeSigned = toBeSigned + md5(secret.encode('utf-8')).hexdigest()
@@ -70,7 +70,7 @@ class Nowpay(Pay):
                 'notifyUrl': request.build_absolute_uri(reverse('transaction_nowpay_notify')), 'frontNotifyUrl': request.build_absolute_uri(reverse('transaction_nowpay_return')),
                 'mhtCharset': 'UTF-8', 'deviceType': '06', 'payChannelType': '13', 'consumerId': transaction.user.username,
                 'consumerName': transaction.user.nickname, 'mhtSignType': 'MD5'}
-        md5Sign = self.__doSign(args, ('funcode', 'deviceType', 'mhtSignType', 'mhtSignature'), account.key)
+        md5Sign = self.doSign(args, ('funcode', 'deviceType', 'mhtSignType', 'mhtSignature'), account.key)
         args['mhtSignature'] = md5Sign
         queryString = '&'.join(['%s=%s' % (key, value) for key, value in args.items()])
         return 'https://api.ipaynow.cn/?%s' %(queryString)

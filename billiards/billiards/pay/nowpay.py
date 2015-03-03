@@ -29,8 +29,8 @@ def pay_return(request):
     account = paymethod.getAccount(True)
     pay = Nowpay()
     parameters = {k: unquote(v) for k, v in request.GET.iteritems()}
-    if parameters['appId'] == account.id and parameters['signature'] ==\
-        pay.__doSign(parameters, ('signType', 'signature')):
+    if parameters['appId'] == account.pid and parameters['signature'] ==\
+        pay.doSign(parameters, ('signType', 'signature'), account.key):
         tradenum = request.GET.get('mhtOrderNo')
         try:
             transaction = Transaction.objects.get(id=getIdFromTradeNum(tradenum))
@@ -41,13 +41,14 @@ def pay_return(request):
                 transaction.save()
                 
                 transactionSuccessNotification(transaction)
+            
+            #might add a page
+            if transaction.goods.type == 2:
+                return redirect('user_assistant_order')
+            return HttpResponse("Payment completed.")
         except Transaction.DoesNotExist:
             #TODO handle error case
             pass
-        # add a page here
-        if transaction.goods.type == 2:
-            return redirect('user_assistant_order')
-        return HttpResponse("Payment completed.")
     return HttpResponse("Error.")
 
 @csrf_exempt
@@ -59,8 +60,8 @@ def pay_notify(request):
         parameters = {k: v for k, v in parse_qs(request.body)}
         logger.info("Received nowpay asynchronized notify at %s with parameters '%s'." %(datetime.now(), 
             '&'.join(['%s=%s' % (key, v) for key,v in parameters.iteritems()])))
-        if parameters['appId'] == account.id and parameters['signature'] ==\
-            pay.__doSign(parameters, ('signType', 'signature')):
+        if parameters['appId'] == account.pid and parameters['signature'] ==\
+            pay.doSign(parameters, ('signType', 'signature'), account.key):
             tradenum = parameters['mhtOrderNo']
             try:
                 transaction = Transaction.objects.get(id=getIdFromTradeNum(tradenum))
