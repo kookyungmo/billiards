@@ -10,6 +10,7 @@ from billiards.pay import Pay
 import alipay
 from billiards.views.transaction import getIdFromTradeNum,\
     transactionSuccessNotification, TRANSACTION_TIME_FORMAT
+from xml.etree import ElementTree
 if six.PY3:
     from urllib.parse import unquote
 else:
@@ -23,7 +24,6 @@ from django.shortcuts import redirect
 from django.http.response import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import logging
-from lxml.etree import ElementTree
 
 logger = logging.getLogger("transaction")
 
