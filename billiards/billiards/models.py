@@ -1168,9 +1168,10 @@ class AssistantAppointment(models.Model):
     
     def __toDict(self):
         poolroom = Poolroom.objects.get(id=self.poolroom)
-        return {'assistant_name': self.assistant.nickname, 'starttime': localtime(self.starttime).strftime(DATETIME_FORMAT), 'endtime': localtime(self.endtime).strftime(DATETIME_FORMAT),
+        return {'assistant_id': str(self.assistant.uuid), 'assistant_name': self.assistant.nickname, 'starttime': localtime(self.starttime).strftime(DATETIME_FORMAT), 'endtime': localtime(self.endtime).strftime(DATETIME_FORMAT),
                 'duration': self.duration, 'price': int(self.price), 'poolroom_name': poolroom.name, 'poolroom_address': poolroom.address,
-                'payment': int(self.transaction.fee), 'user_nickname': decodeunicode(self.user.nickname), 'user_cellphone': self.user.cellphone,
+                'payment': int(self.transaction.fee), 
+                'user_id': self.user.username, 'user_nickname': decodeunicode(self.user.nickname), 'user_cellphone': self.user.cellphone,
                 'timestamp': int(time.time())}
 
     __original_state = None
@@ -1213,7 +1214,14 @@ class AssistantUser(models.Model):
         return u"助教(%s) 对应用户 '%s'" %(self.assistant.nickname, self.user)
 
 class BcmsMessage(models.Model):
+    SHORT_MESSAGE = 1
+    WECHAT_TEMPLATE = 2
+    TARGETS = (
+        (SHORT_MESSAGE, u'short message'),
+        (WECHAT_TEMPLATE, u'wechat template'),
+               )
     lastMsgId = models.BigIntegerField(verbose_name='最后的消息id')
+    target = IntegerChoiceTypeField(verbose_name=u'发送目标', choices=TARGETS, jsonUseValue=True)  
     
     class Meta:
         db_table = 'bcms'

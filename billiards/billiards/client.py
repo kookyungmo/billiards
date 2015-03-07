@@ -473,3 +473,16 @@ class Client(object):
                 "ticket": ticket
             }
         )
+
+    def message_template(self, message):
+        """
+        推送消息模板消息
+        详情请参考 http://mp.weixin.qq.com/wiki/17/304c1885ea66dbedf7dc170d84999a9d.html
+
+        :param data: 你要发送的参数 dict
+        :return: 返回的 JSON 数据包
+        """
+        return self.post(
+            url="https://api.weixin.qq.com/cgi-bin/message/template/send",
+            data=message
+        )
