@@ -42,7 +42,8 @@ def doBCMSRequest(paras):
     paras['sign'] = calcSign(paras)
     data = urlencode(paras)
     req = requests.post(BCMS_REST_URL, data=data, headers=
-                        {'Host': 'bcms.api.duapp.com', 'Accept-Encoding': 'identity','Content-Type': 'application/x-www-form-urlencoded'})
+                        {'Host': 'bcms.api.duapp.com', 'Accept-Encoding': 'identity','Content-Type': 'application/x-www-form-urlencoded'},
+                        timeout=20)
     if req.status_code == requests.codes.ok:
         jobj = req.json()
         logger.debug(jobj)
