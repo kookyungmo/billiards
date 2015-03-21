@@ -132,7 +132,7 @@ def buildURL(relativeURL):
 def orderConfirmationMsg(order, user):
     starttime = datetime.strptime(order['starttime'], DATETIME_FORMAT)
     return MSG_TEMPLATE %(user.username, u'hvCxdrH9TCgxa7ygdJhmWwFcUk9fMLBzblZd4iFYLTs', buildURL(reverse('user_assistant_order')),
-            ORDER_PAY_SUCCESS %(order['assistant_name'], order['price'], order['payment'],
+            ORDER_CONFIRMATION %(order['assistant_name'], order['price'], order['payment'],
                 starttime.strftime(DATE_FORMAT).decode('utf-8'), starttime.strftime(TIME_FORMAT).decode('utf-8'),
                 datetime.strptime(order['endtime'], DATETIME_FORMAT).strftime(TIME_FORMAT).decode('utf-8'), order['duration'],
                 order['poolroom_name'], order['poolroom_address']))
@@ -147,8 +147,8 @@ def orderPaySuccess(order, user):
 def orderComplete(order, user):
     starttime = datetime.strptime(order['starttime'], DATETIME_FORMAT)
     return MSG_TEMPLATE %(user.username, u'gJLPV2PQt6Ql5R58_Gl5_T5spwT7cvmzvQbprfVqHkY', buildURL(reverse('user_assistant_order')),
-            ORDER_PAY_SUCCESS %(order['assistant_name'], starttime.strftime(DATE_FORMAT).decode('utf-8'), starttime.strftime(TIME_FORMAT).decode('utf-8'),
-                datetime.strptime(order['endtime'], DATETIME_FORMAT).strftime(TIME_FORMAT).decode('utf-8'),
+            ORDER_COMPLETE %(order['assistant_name'], starttime.strftime(DATE_FORMAT).decode('utf-8'), starttime.strftime(TIME_FORMAT).decode('utf-8'),
+                datetime.strptime(order['endtime'], DATETIME_FORMAT).strftime(TIME_FORMAT).decode('utf-8'), order['duration'],
                 order['poolroom_name'], order['poolroom_address'],
                 order['payment'],
                 order['price']))
