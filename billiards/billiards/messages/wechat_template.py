@@ -105,7 +105,7 @@ ORDER_COMPLETE=u'''
                        "color":"#173177"
                    },
                    "Good":{
-                       "value":"预约% 时间：%s，%s点-%s点；预约时长：%s小时",
+                       "value":"预约%s 时间：%s，%s点-%s点；预约时长：%s小时",
                        "color":"#173177"
                    },
                    "contentType": {
