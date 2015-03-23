@@ -330,7 +330,7 @@ class PKWechat(BaseRoBot):
                 LOGO_IMG_URL, 'http://mp.weixin.qq.com/s?__biz=MzA5MzY0MTYxMw==&mid=202621318&idx=1&sn=a0987cfafc05158fa0c35a0ba46b5701#rd')]
         
     def getHelpMesg(self):
-        return [(HELP_TITLE, u'活动一：预约送饮料； 活动二：消费返红包； 活动三：天天领红包；', 'http://bcs.duapp.com/billiardsalbum/2015/02/sales.jpg', 'http://mp.weixin.qq.com/s?__biz=MzA5MzY0MTYxMw==&mid=202723018&idx=1&sn=4c249995b4a57ab00453f959b60f7b8f#rd')]
+        return [(HELP_TITLE, u'整个三月，我们免台费', 'http://bcs.duapp.com/billiardsalbum/2015/03/三月易拉宝-500.jpg', 'http://mp.weixin.qq.com/s?__biz=MzA5MzY0MTYxMw==&mid=203589085&idx=1&sn=1fe2584242d6f3086a9cb3bf4f7315a0&scene=4#wechat_redirect')]
     
     def help(self):
         def helpmessge(message):
