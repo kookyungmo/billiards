@@ -206,6 +206,14 @@ LOGGING = {
             'backupCount': 2,
             'formatter': 'standard',
         },
+        'logfile-wechat': {
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename':  os.path.join(PROJECT_PATH, 'wechat.log'),
+            'maxBytes': 50000,
+            'backupCount': 2,
+            'formatter': 'standard',
+        },        
         'console':{
             'level':'INFO',
             'class':'logging.StreamHandler',
@@ -224,7 +232,7 @@ LOGGING = {
             'propagate': False,
         },
         'WeRoBot': {
-            'handlers': ['logfile'],
+            'handlers': ['wechat'],
             'level': 'WARN',
         },
         'billiards': {
