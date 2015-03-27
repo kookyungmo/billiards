@@ -109,9 +109,9 @@ def notification_msg(number, message):
     rt = publish(simplejson.dumps(msg))
     logger = logging.getLogger("billiards-bcms")
     if rt is None or 'error_code' in rt:
-        logger.error('Failed to publish notification \'%s\'.' %(message))
+        logger.error('Failed to publish notification \'%s\' with response \'%s\'.' %(message, rt))
     else:
-        logger.info("Put message '%s' in queue." %(message))
+        logger.info("Put message '%s' in queue with response '%s'." %(message, rt))
                            
 def isWechatBrowser(useragent):
     if "micromessenger" in useragent.lower():
