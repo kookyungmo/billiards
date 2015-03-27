@@ -232,7 +232,7 @@ LOGGING = {
             'propagate': False,
         },
         'WeRoBot': {
-            'handlers': ['wechat'],
+            'handlers': ['logfile-wechat'],
             'level': 'WARN',
         },
         'billiards': {
