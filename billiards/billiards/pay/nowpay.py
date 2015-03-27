@@ -57,6 +57,7 @@ def pay_notify(request):
         paymethod = Pay.getPayMethod(PayAccount.Nowpay)
         account = paymethod.getAccount(True)
         pay = Nowpay()
+        logger.info("Received nowpay asynchronized pure notify '%s'" %(request.body))
         parameters = {k: v for k, v in parse_qs(request.body)}
         logger.info("Received nowpay asynchronized notify at %s with parameters '%s'." %(datetime.now(), 
             '&'.join(['%s=%s' % (key, v) for key,v in parameters.iteritems()])))

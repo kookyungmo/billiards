@@ -52,7 +52,7 @@ def doBCMSRequest(paras):
         try:
             req.raise_for_status()
         except HTTPError, e:
-            logger.info("Failed to make bcms REST API call due to '%s'", str(e))
+            logger.error("Failed to make bcms REST API call due to '%s'", str(e))
             return req.json()
         return None
     
@@ -70,7 +70,7 @@ def publish(message):
     paras = getRequiredParameters()
     paras['method'] = 'publish'
     paras['message'] = message
-    doBCMSRequest(paras)
+    return doBCMSRequest(paras)
     
 def fetch(msgid):
     paras = getRequiredParameters()

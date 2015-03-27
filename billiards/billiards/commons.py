@@ -18,6 +18,7 @@ from bitfield.models import BitField
 from billiards import settings
 from billiards.bcms import mail, publish
 from django.utils import simplejson
+import logging
 
 KEY_PREFIX = 'location_%s_%s'
 
@@ -105,8 +106,13 @@ def notification_mail(subject, body):
     mail(settings.NOTIFICATION_EMAIL, subject, body)
 def notification_msg(number, message):
     msg = {'number': number, 'msg': message}
-    publish(simplejson.dumps(msg))
-                            
+    rt = publish(simplejson.dumps(msg))
+    logger = logging.getLogger("billiards-bcms")
+    if rt is None or 'error_code' in rt:
+        logger.error('Failed to publish notification \'%s\'.' %(message))
+    else:
+        logger.info("Put message '%s' in queue." %(message))
+                           
 def isWechatBrowser(useragent):
     if "micromessenger" in useragent.lower():
         return True

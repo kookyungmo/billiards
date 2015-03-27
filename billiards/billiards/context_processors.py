@@ -27,7 +27,7 @@ def siteconf(request):
             'STATIC_URL': STATIC_URL,
             'SITE_LOGO_URL': SITE_LOGO_URL,
             'FOUNDATION_VER': '5.3.3',
-            'JS_CDN_PREFIX': '//cdnjscn.b0.upaiyun.com',
+            'JS_CDN_PREFIX': 'http://cdnjscn.b0.upaiyun.com',
             'AWESOME_FONT': '4.1.0',
             'UUID_SAMPLE': '12345678-1234-1234-1234-123456789012',
             'pagetitle': u'我为台球狂',
