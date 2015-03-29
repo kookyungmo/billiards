@@ -1,0 +1,56 @@
+<div>
+    <header>
+        <div>
+            <a href="#order/{{order.orderData.id}}"></a>
+            <span class="title">我为台球狂</span>
+        </div>
+    </header>
+    <section class="order-detail">
+        <div>
+            <dl>
+                <dt>订单状态：</dt>
+                <dd>{{order.orderData.status}}</dd>
+            </dl>
+            <dl>
+                <dt>订单时间：</dt>
+                <dd>{{order.orderData.date}}</dd>
+            </dl>
+            <dl>
+                <dt>订单号：</dt>
+                <dd>{{order.orderData.orderNumber}}</dd>
+            </dl>
+            <dl>
+                <dt>消费码：</dt>
+                <dd>{{order.orderData.code}}</dd>
+            </dl>
+            <dl>
+                <dt>预约时间段：</dt>
+                <dd>{{order.orderData.bookTime}}&nbsp;&nbsp;共{{order.orderData.bookDuration}}小时</dd>
+            </dl>
+            <div>{{order.orderData.address}}</div>
+        </div>
+        <div>
+            <a ng-href="{{order.orderData.map}}" class="kozo-btn btn-gray">到这里去</a>
+            <a href="javascript:void(0)" ng-click="telphone()" class="kozo-btn">联系球馆</a>
+        </div>
+        <div class="order-list">
+            <a ng-href="#/detail/{{order.orderData.id}}">
+                <dl>
+                    <dt>
+                        <img ng-src="{{order.orderData.img}}" alt=""> 
+                    </dt>
+                    <dd>
+                        <p>{{order.orderData.name}}</p>
+                        <p>{{order.orderData.address}}</p>
+                        <p>{{order.orderData.bookTime}}</p>
+                        <div>
+                           <span class="mr5">￥{{order.orderData.price}}</span><span ng-class="{'inline-block':order.orderData.discount}">惠</span>
+                        </div>
+                    </dd>
+                </dl>
+            </a>
+        </div>
+        <div ng-include="'template/call.html'"></div>
+        <div class="order-pay" ng-include="'template/pay'+order.orderData.statusId+'.html'"></div>
+    </section>
+</div>

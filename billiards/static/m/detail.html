@@ -1,0 +1,170 @@
+<div>
+	<header>
+        <div>
+            <a href="#list/all"></a>
+            <span class="title">我为台球狂</span>
+        </div>
+    </header>
+    <section class="kozo-fixed order-fixed">
+        <div class="fixed-box">
+            <div class="detail">
+                <div>
+                    <div>
+                        <img ng-src="{{person.img}}" alt="">
+                    </div>
+                    <p>{{person.name}}</p>
+                </div>
+                <ul>
+                    <li><span>人气指数：{{person.hot}}</span><span>22k/m</span></li>
+                    <li>{{person.date}}</li>
+                    <li>
+                        <span>{{person.address}}</span>
+                    </li>
+                </ul>
+                <div class="action-book">
+                    <div ng-class="{'detail-fixed':bookbox}">
+                        <div>
+                            <ul>
+                                <li>助教价格：<span>￥{{person.price}}</span> /小时<span ng-class="{'inline-block':person.billiardsPrice}">（不包含球台费）</span></li>
+                                <li>
+                                    <div ng-click="bookPopup()" class="kozo-book">{{bookVal}}</div>
+                                </li>
+                                <li>总价：<span >￥{{book.total}}</span></li>
+                                <li><button ng-click="bookBtn()" class="kozo-btn" >我要预订</button></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="title mt15 mb10"><p>个人信息</p></div>
+                    <table>
+                        <tr>
+                            <td>昵称</td>
+                            <td>{{person.name}}</td>
+                        </tr>
+                        <tr>
+                            <td>性别</td>
+                            <td>{{person.sex}}</td>
+                        </tr>
+                        <tr>
+                            <td>职业</td>
+                            <td>{{person.job}}</td>
+                        </tr>
+                        <tr>
+                            <td>年龄</td>
+                            <td>{{person.age}}</td>
+                        </tr>
+                        <tr>
+                            <td>身高</td>
+                            <td>{{person.height}}</td>
+                        </tr>
+                        <tr>
+                            <td>三围</td>
+                            <td>{{person.bwh}}</td>
+                        </tr>
+                        <tr>
+                            <td>国籍/籍贯</td>
+                            <td>{{person.country}}</td>
+                        </tr>
+                        <tr>
+                            <td>个性</td>
+                            <td>{{person.character}}</td>
+                        </tr>
+                        <tr>
+                            <td>喜欢的食物</td>
+                            <td>{{person.star}}</td>
+                        </tr>
+                        <tr>
+                            <td>偏好的饮品</td>
+                            <td>{{person.food}}</td>
+                        </tr>
+                        <tr>
+                            <td>头发颜色</td>
+                            <td>{{person.bwh}}</td>
+                        </tr>
+                        <tr>
+                            <td>头发颜色</td>
+                            <td>{{person.hairColor}}</td>
+                        </tr>
+                        <tr>
+                            <td>气味</td>
+                            <td>{{person.odor}}</td>
+                        </tr>
+                        <tr>
+                            <td>球龄</td>
+                            <td>{{person.workTime}}</td>
+                        </tr>
+                        <tr>
+                            <td>清台记录</td>
+                            <td>{{person.grade}}</td>
+                        </tr>
+                        <tr>
+                            <td>喜欢的选手</td>
+                            <td>{{person.idol}}</td>
+                        </tr>
+                        <tr>
+                            <td>兴趣爱好</td>
+                            <td>{{person.hobby}}</td>
+                        </tr>
+                        <tr>
+                            <td>自我介绍</td>
+                            <td>{{person.introduction}}</td>
+                        </tr>
+                    </table>
+                    <div class="title mt15"><p>球馆信息</p></div>
+                    <div class="kozo-list">
+                        <a href="javascript:void(0)">
+                            <dl>
+                                <dt><img ng-src="{{billiardsRoom.img}}" alt=""></dt>
+                                <dd>
+                                    <p>{{billiardsRoom.name}}</p>
+                                    <p>{{billiardsRoom.address}}</p>
+                                    <p>{{billiardsRoom.date}}</p>
+                                    <p><span>{{billiardsRoom.price}}</span>/小时</p>
+                                </dd>
+                            </dl>
+                        </a>
+                        <div>
+                            <a href="javascript:void(0)">到这里去</a>
+                            <a href="javascript:void(0)" ng-click="telphone()">联系球馆</a>
+                        </div>
+                    </div>
+                    <div class="title mt15"><p>预约信息</p></div>
+                    <div class="pt10 pb20">{{orderinfo.info}}</div>
+                    <div class="title mt15"><p>评论<span>（11人）</span></p><p class="message" ng-click="comment()">我要评论</p></div>
+                    <div class="mes-box" ng-class="{show:comentShow}">           
+                        <textarea name="" ng-model="mes.mesContent"></textarea>
+                        <div>
+                            <div>
+                                <p></p>
+                                <ul>
+                                    <li></li>
+                                </ul>
+                            </div>
+                            <div>
+                                <input type="file" class="action-file" ng-model="mes.mesImg">
+                            </div>
+                            <button type="button" ng-click="gomes()">发布</button>
+                        </div>
+                    </div>
+                    <ul class="mes-info">
+                        <li ng-repeat="message in message">
+                            
+                            <dl>
+                                <dt><img ng-src="{{message.img}}" alt=""></dt>
+                                <dd>
+                                    <div>
+                                        <p>{{message.name}}</p>
+                                        <p ng-class="{done:message.done}" ng-click="praise(message)"></p>
+                                    </div>
+                                    <p ng-click="">{{message.date}}</p>
+                                </dd>
+                            </dl>
+                            <div>{{message.content}}</div>
+                        </li>
+                    </ul>
+                </div> 
+            </div>
+        </div>
+    </section>
+    <div ng-include="'template/book.html'"></div>
+    <div ng-include="'template/call.html'"></div>
+</div>

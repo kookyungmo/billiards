@@ -1,0 +1,28 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+<head>
+	<meta charset="UTF-8">
+	<title>我为台球狂</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="format-detection" content="telphone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="stylesheet" href="{% static "css/m/v3.css" %}">
+<script type="text/javascript"
+	src="http://api.map.baidu.com/api?v=2.0&ak=5aaddbae69513573cd7f693bbdcbe12a"></script>    
+    <script src="{% static "js/mobile/vendors/jquery.min.js" %}"></script>
+    <script src="{% static "js/mobile/vendors/hammer.js" %}"></script>
+    <script src="{% static "js/mobile/vendors/angular.min.js" %}"></script>
+    <script src="{% static "js/mobile/vendors/angular-route.min.js" %}"></script>
+    <script src="{% static "js/mobile/vendors/ng-infinite-scroll.js" %}"></script>
+    <script src="{% static "js/mobile/vendors/angular.hammer.min.js" %}"></script>
+    <script src="{% static "js/mobile/vendors/moment.min.js" %}"></script>
+    <script src="{% static "js/mobile/vendors/zh-cn.min.js" %}"></script>
+    <script src="{% static "js/mobile/vendors/lodash.min.js" %}"></script>
+    <script src="{% static "js/mobile/app.js" %}?{{buildid}}"></script>
+</head>
+<body >
+    <div ng-view ng-controller="globalCtrl" ng-class="{hidden:fixed}" style="height:100%"></div>
+</body>
+</html>

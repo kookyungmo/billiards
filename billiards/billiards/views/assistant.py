@@ -32,7 +32,8 @@ from django.core.urlresolvers import reverse
 from billiards.pay import Pay
 
 def assistant(request):
-    return render_to_response(TEMPLATE_ROOT + 'escort/list.html', context_instance=RequestContext(request))
+    return render_to_response('mobile/v3/escort/index.html', context_instance=RequestContext(request))
+#     return render_to_response(TEMPLATE_ROOT + 'escort/list.html', context_instance=RequestContext(request))
     
 class AssistantJSONSerializer(NoObjectJSONSerializer):
     def handle_field(self, obj, field):
@@ -79,6 +80,8 @@ def getAssistantOffers():
     # really tricky
     return AssistantOffer.objects.values('assistant').filter(ASSISTANT_OFFER_FILTER).filter(assistant__in=Assistant.objects.filter(ASSISTANT_FILTER))\
         .annotate(maxprice = Max('price'), minprice = Min('price'), poolroom = Min('poolroom'), id = Max('id')).order_by('-assistant__order')
+
+@csrf_exempt
 def assistant_list(request):
     assistantsOffers = getAssistantOffers()
     jsonstr = json.dumps(list(updateOffers(assistantsOffers)), default=json_serial)
