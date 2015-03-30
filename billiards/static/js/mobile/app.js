@@ -60,6 +60,20 @@ function parseTime(timestr) {
 
 var staticurl = 'static/m/';
 angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
+.service('scopeService', function() {
+     return {
+         safeApply: function ($scope, fn) {
+             var phase = $scope.$root.$$phase;
+             if (phase == '$apply' || phase == '$digest') {
+                 if (fn && typeof fn === 'function') {
+                     fn();
+                 }
+             } else {
+                 $scope.$apply(fn);
+             }
+         },
+     };
+})
 .service('offerService', function(){
 	var dayRange = _.range(3);
 	var buffer = 2;
@@ -179,8 +193,9 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 })
 .factory('Data',function($http, offerService){
 
-	var Data = function(id){
-
+	var Data = function(id, actor){
+		this.actor = actor;
+		
 		this.id = id;
 
 		// 导航数据
@@ -243,6 +258,8 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 							that.listData.push(data);
 	
 						});
+					if (that.actor != null)
+						that.actor();
 	            }
 				that.after += 1;
 				that.busy = false;
@@ -457,9 +474,17 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
         }
     };
 })
-.controller('ListCtrl',function($scope,$rootScope,Data,$routeParams,$location){
+.controller('ListCtrl',function($scope,$rootScope,Data,$routeParams,$location,scopeService){
     
-    $scope.reddit = new Data($routeParams.id);
+    $scope.reddit = new Data($routeParams.id, function(){
+    	fetchBMapLocation(function(mypoint) {
+    		scopeService.safeApply($rootScope, function() {
+    			for (var i = 0; i < $scope.reddit.listData.length; i++) {
+    				$scope.reddit.listData[i].distance = calcDistance(mypoint, $scope.reddit.listData[i].locations)['distanceLabel'];
+    			}
+    		});
+    	});
+    });
     $scope.loadingComplete = $scope.reddit.complete;
     
     var id = $routeParams.id;
@@ -492,13 +517,6 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
         }else{
             filter.active = false;
         }
-	});
-	
-	fetchBMapLocation(function(mypoint) {
-		for (var i = 0; i < $scope.reddit.listData.length; i++) {
-			$scope.reddit.listData[i].distance = calcDistance(mypoint, $scope.reddit.listData[i].locations)['distanceLabel'];
-		}
-		$scope.$apply();
 	});
 
 })
