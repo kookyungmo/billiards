@@ -80,7 +80,12 @@ ASSISTANTAPPOINTMENT_FILTER = ~Q(state=8) & ~Q(state=16)
 def getAssistantOffers(category = 'all', page = None):
     # really tricky
     offers = AssistantOffer.objects.values('assistant').filter(ASSISTANT_OFFER_FILTER).filter(assistant__in=Assistant.objects.filter(ASSISTANT_FILTER))\
-        .annotate(maxprice = Max('price'), minprice = Min('price'), poolroom = Min('poolroom'), id = Max('id')).order_by('-assistant__order')
+        .annotate(maxprice = Max('price'), minprice = Min('price'), poolroom = Min('poolroom'), id = Max('id'))
+    if category == 'hot':
+        offers = offers.order_by('-assistant__pageview', '-assistant__order')
+    else:
+        offers = offers.order_by('-assistant__order')
+        
     if page is not None:
         paginator = Paginator(offers, 10)
         try:
@@ -280,7 +285,7 @@ def getPageView(assistant, delta = 1):
     else:
         if delta != 0:
             pageView += delta
-            if pageView % 100 == 0:
+            if pageView - assistant.pageview >= 100:
                 assistant.pageview = pageView
                 assistant.save()
             cache.set(ASSISTANT_PAGEVIEW %(assistant_uuid), pageView, None)
