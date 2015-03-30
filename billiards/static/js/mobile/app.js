@@ -189,6 +189,7 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 		// 翻页
 		this.busy = false;
 	    this.after = 1;
+	    this.complete = false;
 
 		// 列表页数据 list data
 		this.listData = [];
@@ -213,7 +214,7 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 		nextPage:function(){
             // 列表页数据获取
 			var that = this;
-			if (that.busy)  {
+			if (that.busy || that.complete)  {
 				return;
 			} else {
 				that.busy = true;
@@ -221,29 +222,31 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 			$http.post('assistant/list', 
 				{
 					'category': that.id,
-					'after' : that.after
+					'page' : that.after
 				}).success(function(data){
 				if ( data == undefined ) {
 					alert("获取数据失败");
 				}else{
-			 
-					angular.forEach(data,function(data){
-				    		
-						var obj = offerService.offerPriceLocation(data.offers);
-						data.price = obj['offerprice'];
-						data.locations = obj['locations'];
-						data.poolrooms = offerService.poolroomsDisplay(obj['poolrooms']);
-						data.latestOffer = offerService.formatLatestOffer(
-								offerService.latestOffer(data.offers));
-
-						that.listData.push(data);
-
-					})
-
+					if (data.length == 0)
+						that.complete = true;
+					else
+						angular.forEach(data,function(data){
+					    		
+							var obj = offerService.offerPriceLocation(data.offers);
+							data.price = obj['offerprice'];
+							data.locations = obj['locations'];
+							data.poolrooms = offerService.poolroomsDisplay(obj['poolrooms']);
+							data.latestOffer = offerService.formatLatestOffer(
+									offerService.latestOffer(data.offers));
+							data.recommend = false;
+							data.discount = true;
+							that.listData.push(data);
+	
+						});
 	            }
+				that.after += 1;
+				that.busy = false;
 			}.bind(this));
-			that.after = this.after++;
-		    that.busy = false;
 		},
 		detail:function(callback){
             // 详细页数据获取
@@ -457,7 +460,8 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 .controller('ListCtrl',function($scope,$rootScope,Data,$routeParams,$location){
     
     $scope.reddit = new Data($routeParams.id);
-
+    $scope.loadingComplete = $scope.reddit.complete;
+    
     var id = $routeParams.id;
 	$scope.filter = [
 		{

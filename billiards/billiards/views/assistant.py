@@ -30,6 +30,7 @@ from django.core.cache import cache
 from random import randint
 from django.core.urlresolvers import reverse
 from billiards.pay import Pay
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 def assistant(request):
     return render_to_response('mobile/v3/escort/index.html', context_instance=RequestContext(request))
@@ -76,14 +77,29 @@ ASSISTANT_FILTER = Q(state=1)
 ASSISTANT_OFFER_FILTER = Q(status=1)
 ASSISTANT_IMAGE_FILTER = Q(status=1)
 ASSISTANTAPPOINTMENT_FILTER = ~Q(state=8) & ~Q(state=16)
-def getAssistantOffers():
+def getAssistantOffers(category = 'all', page = None):
     # really tricky
-    return AssistantOffer.objects.values('assistant').filter(ASSISTANT_OFFER_FILTER).filter(assistant__in=Assistant.objects.filter(ASSISTANT_FILTER))\
+    offers = AssistantOffer.objects.values('assistant').filter(ASSISTANT_OFFER_FILTER).filter(assistant__in=Assistant.objects.filter(ASSISTANT_FILTER))\
         .annotate(maxprice = Max('price'), minprice = Min('price'), poolroom = Min('poolroom'), id = Max('id')).order_by('-assistant__order')
+    if page is not None:
+        paginator = Paginator(offers, 10)
+        try:
+            return paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            return paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            return []
+    return offers
 
 @csrf_exempt
 def assistant_list(request):
-    assistantsOffers = getAssistantOffers()
+    try:
+        payload = simplejson.loads(request.body)
+        assistantsOffers = getAssistantOffers(payload['category'], payload['page'])
+    except ValueError:
+        assistantsOffers = getAssistantOffers()
     jsonstr = json.dumps(list(updateOffers(assistantsOffers)), default=json_serial)
     return HttpResponse(jsonstr)
 
