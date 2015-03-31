@@ -19,13 +19,13 @@
             </ul>
             <div>
                 <ul hm-pan="dateHammer" style="top:{{distanceDate}}px" class="action-date">
-                    <li ng-repeat="book in detail.bookDate">{{book.name}}</li>
+                    <li ng-repeat="day in offerdays">{{getDayLabel(day)}}</li>
                 </ul>
                 <ul hm-pan="timeHammer" style="top:{{distanceTime}}px">
-                    <li ng-repeat="book in detail.bookTime">{{book.name}}点</li>
+                    <li ng-repeat="hour in selectedOffer.hours">{{hour+':00'}}点</li>
                 </ul>
                 <ul hm-pan="durationHammer" style="top:{{derationdis}}px">
-                    <li ng-repeat="book in detail.bookDuration">{{book.name}}小时</li>
+                    <li ng-repeat="book in bookingDurations">{{book.name}}小时</li>
                 </ul>
             </div>
         </dd>

@@ -211,9 +211,7 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
         
         // 详细页数据 detail data
 	    this.person = [];
-	    this.billiardsRoom = [];
-	    this.orderinfo = [];
-	    this.message = [];
+	    this.offers = [];
 
 	    // 预约数据
         this.bookDate = [];
@@ -268,24 +266,26 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
             // 详细页数据获取
 			var that = this;
 
-            $http.post('data-file/detail.json',
+            $http.post('assistant/' + that.id,
                 {
                     'id' : that.id
                 }).success(function(data){
                 if (data == undefined ) {
                     alert("获取数据失败");
                 }else{
-
-                    that.person = data.person;
-                    that.billiardsRoom = data.billiardsRoom;
-                    that.orderinfo = data.orderinfo;
-                    that.message = data.message;
-
-                    that.bookDate = data.bookDate;
-                    that.bookTime = data.bookTime;
-                    that.bookDuration = data.bookDuration;
-
-                    callback();
+                	that.person = data[0];
+                	
+                	$http.get('assistant/' + that.id + '/stats').success(function(stats){
+                		if (stats['code'] == 0){
+        	    			that.person.pageview = stats['pageview'];
+        	    			that.person.likes = stats['likes'];
+        	    		}
+                	});
+                	
+                	$http.get('assistant/' + that.id + '/offer').success(function(data){
+                		that.offers = data[0];
+                		callback();
+                	});
                 }
             }.bind(this)); 
 
@@ -519,7 +519,7 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 	});
 
 })
-.controller('DetailCtrl',function($scope,$rootScope,Data,$routeParams,$window){
+.controller('DetailCtrl',function($scope,$rootScope,Data,$routeParams,$window,offerService,scopeService){
 	$scope.detail = new Data($routeParams.id);
 
 	$scope.detail.detail(function(){
@@ -528,9 +528,42 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
         $scope.comentShow = false;
 
         $scope.person = $scope.detail.person;
-        $scope.billiardsRoom = $scope.detail.billiardsRoom;
-        $scope.orderinfo = $scope.detail.orderinfo;
-        $scope.message = $scope.detail.message;
+        
+        var offers = $scope.detail.offers;
+        var pricelocation = offerService.offerPriceLocation(offers);
+		 
+		$scope.locations = pricelocation['locations'];
+		$scope.offerprice = pricelocation['offerprice'];
+		$scope.offerlocation = offerService.poolroomsDisplay(pricelocation['poolrooms']);
+        $scope.latestOffer = offerService.latestOffer(offers);
+        $scope.formatLatestOffer = offerService.formatLatestOffer;
+        
+        $scope.offerdays = function() {
+			var offerdays = offerService.offerDays(offers);
+			if (offerdays.length > 0) {
+				$scope.selectedOffer = offerdays[0];
+				$scope.selectedOfferHour = offerdays[0].hours[0];
+			}
+			return offerdays;
+		}(offers);
+        
+        $scope.getOffer = function() {
+			if ($scope.selectedOffer.offer.length == 1)
+				return $scope.selectedOffer.offer[0];
+			for (var i = 0; i < $scope.selectedOffer.offer.length; i++) {
+				var selected = moment().startOf("hour").hour($scope.selectedOfferHour);
+				var start = setTime($scope.selectedOffer.offer[i].starttime, moment());
+				var end = setTime($scope.selectedOffer.offer[i].endtime, moment());
+				if (selected.diff(start) > 0 && end.diff(selected) > 0)
+					return $scope.selectedOffer.offer[i];
+			}
+		};
+		
+		fetchBMapLocation(function(mypoint) {
+    		scopeService.safeApply($rootScope, function() {
+    			$scope.distance = calcDistance(mypoint, $scope.locations)['distanceLabel'];
+    		});
+    	});
 
         $scope.mes = {
             mesContent:"",
@@ -589,13 +622,49 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
                 $scope.detail.sendMes($scope.mes);
             }
         }
+        
+		$scope.getDayLabel = function(offerday) {
+			var dayofweek = offerday.day.format('D号(ddd)');
+			var prefix = "";
+			switch (parseInt(offerday.idx)) {
+			case 0:
+				prefix = "今天";
+				break;
+			case 1:
+				prefix = "明天";
+				break;
+			case 2:
+				prefix = "后天";
+				break;
+			}
+			return prefix + " " + dayofweek;
+		};
+		
+		$scope.bookingDurations = [
+		                        {   
+		                                "id":"1",
+		                                "name":"1"
+		                        },  
+		                        {   
+		                                "id":"2",
+		                                "name":"2"
+		                        },  
+		                        {   
+		                                "id":"3",
+		                                "name":"3"
+		                        },  
+		                        {   
+		                                "id":"4",
+		                                "name":"4"
+		                        }   
+		                ];
 
         $scope.book = {
             id:$routeParams.id,
-            bookDate:$scope.detail.bookDate[0],
-            bookTime:$scope.detail.bookTime[0],
-            bookDuration: $scope.detail.bookDuration[0],
-            total:$scope.detail.person.price
+            bookDate:$scope.selectedOffer,
+            bookTime:$scope.selectedOffer.hours[0],
+            bookDuration: $scope.bookingDurations[0],
+            total:$scope.getOffer().price
         };
 
         $scope.distanceTime = 54;
@@ -604,9 +673,9 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 
         var touch,startY,startTop,num = 0,remainder,moveNum,
             moveHeight=54,
-            endTime = parseInt($scope.book.bookTime.name) + parseInt($scope.book.bookDuration.name);
+            endTime = parseInt($scope.book.bookTime) + parseInt($scope.book.bookDuration.name);
 
-        $scope.bookVal = $scope.book.bookDate.name +"  "+ $scope.book.bookTime.name +":00 - "+endTime+":00";
+        $scope.bookVal = $scope.getDayLabel($scope.book.bookDate) +"  "+ $scope.book.bookTime +":00 - "+endTime+":00";
 
         $scope.dateHammer = function(event){
             var touch = event.pointers[0],
@@ -619,7 +688,7 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 
             };
 
-            dataLength = $scope.detail.bookDate.length-2;
+            dataLength = $scope.offerdays.length-2;
 
             distance = touch.pageY - startY + startTop;
 
@@ -636,13 +705,12 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 
                 
                 if (remainder > 0) {
-                    $scope.book.bookDate =  $scope.detail.bookDate[remainder-1]
+                	$scope.selectedOffer = $scope.offerdays[remainder-1];
                 }
                 if (remainder <= 0) {
-
-                    $scope.book.bookDate =  $scope.detail.bookDate[Math.abs(remainder)+1];
+                	$scope.selectedOffer = $scope.offerdays[Math.abs(remainder)+1];
                 }
-               
+                $scope.book.bookDate =  $scope.selectedOffer;
                num = 0;
             };
         }
@@ -659,7 +727,7 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
             };
             
 
-            dataLength = $scope.detail.bookTime.length-2;
+            dataLength = $scope.selectedOffer.hours.length-2;
 
             distance = touch.pageY - startY + startTop;
 
@@ -678,11 +746,11 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 
                 
                 if (remainder > 0) {
-                    $scope.book.bookTime =  $scope.detail.bookTime[remainder-1]
+                    $scope.book.bookTime =  $scope.selectedOffer.hours[remainder-1]
                 }
                 if (remainder <= 0) {
 
-                    $scope.book.bookTime =  $scope.detail.bookTime[Math.abs(remainder)+1];
+                    $scope.book.bookTime =  $scope.selectedOffer.hours[Math.abs(remainder)+1];
                 }
                
                num = 0;
@@ -700,7 +768,7 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
             };
             
 
-            dataLength = $scope.detail.bookTime.length-2;
+            dataLength = $scope.bookingDurations.length-2;
 
             distance = touch.pageY - startY + startTop;
 
@@ -719,10 +787,10 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 
                 
                 if (remainder > 0) {
-                    $scope.book.bookDuration =  $scope.detail.bookDuration[remainder-1];
+                    $scope.book.bookDuration =  $scope.bookingDurations[remainder-1];
                 }
                 if (remainder <= 0) {
-                    $scope.book.bookDuration =  $scope.detail.bookDuration[Math.abs(remainder)+1];
+                    $scope.book.bookDuration =  $scope.bookingDurations[Math.abs(remainder)+1];
                 }
 
                num = 0;
@@ -738,14 +806,14 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 
         $scope.ok = function(){
 
-            endTime = parseInt($scope.book.bookTime.name) + parseInt($scope.book.bookDuration.name);
+            endTime = parseInt($scope.book.bookTime) + parseInt($scope.book.bookDuration.name);
 
             if (endTime > 24 ) {
                 endTime = endTime - parseInt(endTime/24) * 24;
             };
 
-            $scope.book.total = $scope.detail.person.price * $scope.book.bookDuration.name;
-            $scope.bookVal = $scope.book.bookDate.name +"  "+ $scope.book.bookTime.name +":00 - "+endTime+":00";
+            $scope.book.total = $scope.getOffer().price * $scope.book.bookDuration.name;
+            $scope.bookVal = $scope.getDayLabel($scope.book.bookDate) +"  "+ $scope.book.bookTime +":00 - "+endTime+":00";
             
             $scope.fixed = false;
             $scope.bookShow = false;

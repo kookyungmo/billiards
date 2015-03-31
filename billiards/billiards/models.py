@@ -120,7 +120,8 @@ class Poolroom(models.Model):
                 'images': images}
 
     def natural_key_simple(self):
-        return {'uuid': str(self.uuid), 'name': self.name, 'lat': float(self.lat_baidu), 'lng': float(self.lng_baidu)}
+        return {'uuid': str(self.uuid), 'name': self.name, 'lat': float(self.lat_baidu), 'lng': float(self.lng_baidu),
+                'address': self.address, 'coverimage': '' if len(self.images) == 0 else self.images[0].imagepath.name, 'tel': self.tel}
         
     objects = GeoManager()
         

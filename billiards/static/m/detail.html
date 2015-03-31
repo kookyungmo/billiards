@@ -10,22 +10,22 @@
             <div class="detail">
                 <div>
                     <div>
-                        <img ng-src="{{person.img}}" alt="">
+                        <img ng-src="http://billiardsalbum.bcs.duapp.com{{person.images[0].imagepath}}" alt="">
                     </div>
-                    <p>{{person.name}}</p>
+                    <p>{{person.nickname}}</p>
                 </div>
                 <ul>
-                    <li><span>人气指数：{{person.hot}}</span><span>22k/m</span></li>
-                    <li>{{person.date}}</li>
+                    <li><span>人气指数：{{person.pageview}}</span><span>{{distance}}</span></li>
+                    <li>{{formatLatestOffer(latestOffer)}}</li>
                     <li>
-                        <span>{{person.address}}</span>
+                        <span>{{offerlocation}}</span>
                     </li>
                 </ul>
                 <div class="action-book">
                     <div ng-class="{'detail-fixed':bookbox}">
                         <div>
                             <ul>
-                                <li>助教价格：<span>￥{{person.price}}</span> /小时<span ng-class="{'inline-block':person.billiardsPrice}">（不包含球台费）</span></li>
+                                <li>助教价格：<span>￥{{getOffer().price}}</span> /小时<span ng-class="{'inline-block':getOffer().price}">（不包含球台费）</span></li>
                                 <li>
                                     <div ng-click="bookPopup()" class="kozo-book">{{bookVal}}</div>
                                 </li>
@@ -38,87 +38,82 @@
                     <table>
                         <tr>
                             <td>昵称</td>
-                            <td>{{person.name}}</td>
+                            <td>{{person.nickname}}</td>
                         </tr>
                         <tr>
                             <td>性别</td>
-                            <td>{{person.sex}}</td>
+                            <td>{{person.gender}}</td>
                         </tr>
                         <tr>
                             <td>职业</td>
-                            <td>{{person.job}}</td>
+                            <td>{{person.occupation}}</td>
                         </tr>
                         <tr>
                             <td>年龄</td>
-                            <td>{{person.age}}</td>
+                            <td>保密</td>
                         </tr>
                         <tr>
                             <td>身高</td>
-                            <td>{{person.height}}</td>
+                            <td>{{person.height}}cm</td>
                         </tr>
                         <tr>
                             <td>三围</td>
-                            <td>{{person.bwh}}</td>
+                            <td>{{person.measurements}}</td>
                         </tr>
                         <tr>
                             <td>国籍/籍贯</td>
-                            <td>{{person.country}}</td>
+                            <td>{{person.nationality}} {{person.birthplace}}</td>
                         </tr>
                         <tr>
                             <td>个性</td>
-                            <td>{{person.character}}</td>
+                            <td>{{person.figure}}</td>
                         </tr>
                         <tr>
                             <td>喜欢的食物</td>
-                            <td>{{person.star}}</td>
-                        </tr>
-                        <tr>
-                            <td>偏好的饮品</td>
                             <td>{{person.food}}</td>
                         </tr>
                         <tr>
-                            <td>头发颜色</td>
-                            <td>{{person.bwh}}</td>
+                            <td>偏好的饮品</td>
+                            <td>{{person.drinks}}</td>
                         </tr>
                         <tr>
                             <td>头发颜色</td>
-                            <td>{{person.hairColor}}</td>
+                            <td>{{person.haircolor}}</td>
                         </tr>
                         <tr>
                             <td>气味</td>
-                            <td>{{person.odor}}</td>
+                            <td>{{person.scent}}</td>
                         </tr>
                         <tr>
                             <td>球龄</td>
-                            <td>{{person.workTime}}</td>
+                            <td>{{person.experience}}年</td>
                         </tr>
                         <tr>
                             <td>清台记录</td>
-                            <td>{{person.grade}}</td>
+                            <td>{{person.bestperformance}}</td>
                         </tr>
                         <tr>
                             <td>喜欢的选手</td>
-                            <td>{{person.idol}}</td>
+                            <td>{{person.favoriteplayers}}</td>
                         </tr>
                         <tr>
                             <td>兴趣爱好</td>
-                            <td>{{person.hobby}}</td>
+                            <td>{{person.interest}}</td>
                         </tr>
                         <tr>
                             <td>自我介绍</td>
-                            <td>{{person.introduction}}</td>
+                            <td>{{person.selfintroduce}}</td>
                         </tr>
                     </table>
                     <div class="title mt15"><p>球馆信息</p></div>
                     <div class="kozo-list">
                         <a href="javascript:void(0)">
                             <dl>
-                                <dt><img ng-src="{{billiardsRoom.img}}" alt=""></dt>
+                                <dt><img ng-src="http://billiardsalbum.bcs.duapp.com{{getOffer().poolroom.coverimage}}" alt=""></dt>
                                 <dd>
-                                    <p>{{billiardsRoom.name}}</p>
-                                    <p>{{billiardsRoom.address}}</p>
-                                    <p>{{billiardsRoom.date}}</p>
-                                    <p><span>{{billiardsRoom.price}}</span>/小时</p>
+                                    <p>{{getOffer().poolroom.name}}</p>
+                                    <p>{{getOffer().poolroom.address}}</p>
+                                    <p><span>{{getOffer().price}}</span>/小时</p>
                                 </dd>
                             </dl>
                         </a>
@@ -128,8 +123,8 @@
                         </div>
                     </div>
                     <div class="title mt15"><p>预约信息</p></div>
-                    <div class="pt10 pb20">{{orderinfo.info}}</div>
-                    <div class="title mt15"><p>评论<span>（11人）</span></p><p class="message" ng-click="comment()">我要评论</p></div>
+                    <div class="pt10 pb20">{{getOffer().priceDescription}}</div>
+<!--                     <div class="title mt15"><p>评论<span>（11人）</span></p><p class="message" ng-click="comment()">我要评论</p></div>
                     <div class="mes-box" ng-class="{show:comentShow}">           
                         <textarea name="" ng-model="mes.mesContent"></textarea>
                         <div>
@@ -160,11 +155,11 @@
                             </dl>
                             <div>{{message.content}}</div>
                         </li>
-                    </ul>
+                    </ul> -->
                 </div> 
             </div>
         </div>
     </section>
-    <div ng-include="'template/book.html'"></div>
-    <div ng-include="'template/call.html'"></div>
+    <div ng-include="'static/m/templates/book.html'"></div>
+    <div ng-include="'static/m/templates/call.html'"></div>
 </div>
