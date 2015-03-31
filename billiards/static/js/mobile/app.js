@@ -253,7 +253,6 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 							data.poolrooms = offerService.poolroomsDisplay(obj['poolrooms']);
 							data.latestOffer = offerService.formatLatestOffer(
 									offerService.latestOffer(data.offers));
-							data.recommend = false;
 							data.discount = true;
 							that.listData.push(data);
 	
@@ -494,11 +493,11 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 			"href":"all",
 			"active":true
 		},
-		{
-			"title":"附近",
-			"href":"nearby",
-			"active":false
-		},
+//		{
+//			"title":"附近",
+//			"href":"nearby",
+//			"active":false
+//		},
 		{
 			"title":"人气",
 			"href":"hot",

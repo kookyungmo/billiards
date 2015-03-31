@@ -83,6 +83,8 @@ def getAssistantOffers(category = 'all', page = None):
         .annotate(maxprice = Max('price'), minprice = Min('price'), poolroom = Min('poolroom'), id = Max('id'))
     if category == 'hot':
         offers = offers.order_by('-assistant__pageview', '-assistant__order')
+    elif category == 'recommend':
+        offers = offers.order_by('-assistant__recommended', '-assistant__order')
     else:
         offers = offers.order_by('-assistant__order')
         
