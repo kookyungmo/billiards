@@ -327,7 +327,7 @@ class PKWechat(BaseRoBot):
                 LOGO_IMG_URL, 'http://mp.weixin.qq.com/s?__biz=MzA5MzY0MTYxMw==&mid=203589085&idx=1&sn=1fe2584242d6f3086a9cb3bf4f7315a0&scene=4#wechat_redirect')]
         
     def getHelpMesg(self):
-        return [(HELP_TITLE, u'美约，四月土豪来买单', 'http://bcs.duapp.com/billiardsalbum/2015/04/weixin4yue.jpg', 'http://mp.weixin.qq.com/s?__biz=MzA5MzY0MTYxMw==&mid=203589085&idx=1&sn=1fe2584242d6f3086a9cb3bf4f7315a0&scene=4#wechat_redirect')]
+        return [(HELP_TITLE, u'美约，四月土豪来买单', 'http://bcs.duapp.com/billiardsalbum/2015/04/weixin4yue.jpg', 'http://mp.weixin.qq.com/s?__biz=MzA5MzY0MTYxMw==&mid=204216423&idx=1&sn=71ecbc76b0eb000512991dfabdc33088#rd')]
     
     def help(self):
         def helpmessge(message):
