@@ -8,7 +8,7 @@ from django.core.exceptions import PermissionDenied
 from django.db.models.aggregates import Max, Min
 from django.db.models.query_utils import Q
 from django.http.response import HttpResponse, Http404, HttpResponseRedirect
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template.context import RequestContext
 from django.utils import simplejson
 from django.utils.timezone import pytz, utc
@@ -33,8 +33,9 @@ from billiards.pay import Pay
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 def assistant(request):
+#    if request.mobile:
     return render_to_response('mobile/v3/escort/index.html', context_instance=RequestContext(request))
-#     return render_to_response(TEMPLATE_ROOT + 'escort/list.html', context_instance=RequestContext(request))
+    return render_to_response(TEMPLATE_ROOT + 'escort/list.html', context_instance=RequestContext(request))
     
 class AssistantJSONSerializer(NoObjectJSONSerializer):
     def handle_field(self, obj, field):
@@ -134,8 +135,11 @@ def user_assistant_order(request):
     return HttpResponseRedirect(url)
 
 @csrf_exempt
+@detect_mobile
 def assistant_by_uuid(request, assistant_uuid):
     if request.method == 'GET':
+#         if request.mobile:
+        return redirect('{}#/detail/{}'.format(reverse('assistant'), assistant_uuid))
         assistant = get_object_or_404(Assistant, uuid=uuid.UUID(assistant_uuid))
         return render_to_response(TEMPLATE_ROOT + 'escort/detail.html', {'as': assistant}, 
                                   context_instance=RequestContext(request))

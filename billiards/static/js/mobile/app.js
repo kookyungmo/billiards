@@ -1,3 +1,28 @@
+function isWechat() {
+	var ua = navigator.userAgent.toLowerCase();
+    if(ua.match(/MicroMessenger/i)=="micromessenger") {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function dologin(url) {
+	dologin2(url, window.location.pathname + window.location.search);
+}
+
+function dologin2(url, returnurl) {
+	window.location.href = setGetParameter(url, 'returnurl', returnurl);
+}
+
+function refreshAuthentication() {
+	if (isWechat())
+		dologin('/user/login/wechat');
+	else
+		//TODO if not in wechat
+		loginFirst();
+}
+
 function formatDistance(distance) {
 	if (distance < 1000) {
 		return Math.floor(distance/100) * 100 + "米";
@@ -290,25 +315,6 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
             }.bind(this)); 
 
 		},
-        detailBook:function(val,callback){
-            //  预约数据提交
-            var that = this;
-            $http.post('data-file/detail.json',
-                {
-                    'id' : that.id,
-                    "bookDate": val.bookDate,
-                    "bookTime": val.bookTime,
-                    "bookDuration":val.bookDuration,
-                    "total":val.total
-                }).success(function(data){
-                if (data == undefined ) {
-                    alert("获取数据失败");
-                }else{
-
-                    alert('提交订单成功');
-                }
-            }.bind(this)); 
-        },
         praise:function(message){
             //  在详细页评论，赞的功能提交
             var that = this;
@@ -519,7 +525,7 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 	});
 
 })
-.controller('DetailCtrl',function($scope,$rootScope,Data,$routeParams,$window,offerService,scopeService){
+.controller('DetailCtrl',function($scope,$rootScope,$http,Data,$routeParams,$window,offerService,scopeService,$sce){
 	$scope.detail = new Data($routeParams.id);
 
 	$scope.detail.detail(function(){
@@ -746,17 +752,20 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 
                 
                 if (remainder > 0) {
-                    $scope.book.bookTime =  $scope.selectedOffer.hours[remainder-1]
+                	$scope.selectedOfferHour =  $scope.selectedOffer.hours[remainder-1]
                 }
                 if (remainder <= 0) {
 
-                    $scope.book.bookTime =  $scope.selectedOffer.hours[Math.abs(remainder)+1];
+                	$scope.selectedOfferHour =  $scope.selectedOffer.hours[Math.abs(remainder)+1];
                 }
+                $scope.book.bookTime = $scope.selectedOfferHour;
                
                num = 0;
 
             };
         }
+        
+        $scope.offerDuring = 1;
         $scope.durationHammer = function(event){
             var touch = event.pointers[0],
                 distance;
@@ -787,11 +796,13 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 
                 
                 if (remainder > 0) {
-                    $scope.book.bookDuration =  $scope.bookingDurations[remainder-1];
+                	$scope.book.bookDuration = $scope.bookingDurations[remainder-1]
+                    
                 }
                 if (remainder <= 0) {
-                    $scope.book.bookDuration =  $scope.bookingDurations[Math.abs(remainder)+1];
+                	$scope.book.bookDuration = $scope.bookingDurations[Math.abs(remainder)+1];
                 }
+                $scope.offerDuring = $scope.book.bookDuration.name;
 
                num = 0;
 
@@ -820,9 +831,43 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
             $scope.callShow = false;
         }
 
-        $scope.bookBtn = function(){
-            $scope.detail.detailBook($scope.book);
-        }
+        $scope.bookBtn = function() {
+        	var params = {offerDay: $scope.selectedOffer.day.unix(), offerHour: $scope.selectedOfferHour, offerDuring: $scope.offerDuring};
+        	$http.post('assistant/' + $scope.detail.id + '/offer/booking', params).success(function(rt){
+        		if (rt.code == 0) {
+        			if (isWechat())
+        				window.location = rt.payurl;
+        			else
+        				_AP.pay(rt.payurl);
+        		}
+        		else {
+        			switch(rt.code){
+        			case 1:
+        				$scope.bookingErrMessage = $sce.trustAsHtml("此时段已被其他用户预订，请选择其他时段");
+        				break;
+        			case 2:
+        				$scope.bookingErrMessage = $sce.trustAsHtml("你已经预订了此时段，去<a href=\"/user/order\">订单中心</a>查看");
+        				break;
+        			case 16:
+        				$scope.bookingErrMessage = null;
+        				//TODO complete user info
+//      				$('#contactInfo').foundation('reveal', 'open');
+        				break;
+        			default:
+        				$scope.bookingErrMessage = $sce.trustAsHtml("服务器错误，请稍后再试");
+        			break;
+        			}
+        		}
+        	}).
+        	error(function(data, status, headers, config) {
+        		// called asynchronously if an error occurs
+        		// or server returns response with an error status.
+        		if (status == 403)
+        			refreshAuthentication();
+        		else
+        			$scope.bookingErrMessage = $sce.trustAsHtml("服务器错误，请稍后再试");
+        	});
+		};
     });
 })
 .controller('OrderCtrl',function($scope,$rootScope,Data,$routeParams){
