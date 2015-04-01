@@ -38,7 +38,7 @@ from billiards.views.poolroom import getNearbyPoolrooms
 from django.contrib.auth.models import User
 from billiards.views.assistant import ASSISTANT_OFFER_FILTER, getAssistantOffers
 
-HELP_TITLE = u'整个三月，我们免台费'
+HELP_TITLE = u'约美了吗？四月土豪来买单'
 MYORDER_KEYWORD = u'订单'
 
 def set_video():
@@ -327,7 +327,7 @@ class PKWechat(BaseRoBot):
                 LOGO_IMG_URL, 'http://mp.weixin.qq.com/s?__biz=MzA5MzY0MTYxMw==&mid=203589085&idx=1&sn=1fe2584242d6f3086a9cb3bf4f7315a0&scene=4#wechat_redirect')]
         
     def getHelpMesg(self):
-        return [(HELP_TITLE, u'整个三月，我们免台费', 'http://bcs.duapp.com/billiardsalbum/2015/03/三月易拉宝-500.jpg', 'http://mp.weixin.qq.com/s?__biz=MzA5MzY0MTYxMw==&mid=203589085&idx=1&sn=1fe2584242d6f3086a9cb3bf4f7315a0&scene=4#wechat_redirect')]
+        return [(HELP_TITLE, u'美约，四月土豪来买单', 'http://bcs.duapp.com/billiardsalbum/2015/04/weixin4yue.jpg', 'http://mp.weixin.qq.com/s?__biz=MzA5MzY0MTYxMw==&mid=203589085&idx=1&sn=1fe2584242d6f3086a9cb3bf4f7315a0&scene=4#wechat_redirect')]
     
     def help(self):
         def helpmessge(message):
