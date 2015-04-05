@@ -31,7 +31,7 @@
                                 </li>
                                 <li>总价：<span >￥{{book.total}}</span></li>
                                 <li><button ng-click="bookBtn()" class="kozo-btn" >我要预订</button></li>
-                                <li ng-show="!!bookingErrMessage"><span ng-bind-html="bookingErrMessage"></span></li>
+                                <li ng-show="!!bookingErrMessage"><errormsg content="bookingErrMessage"></errormsg></li>
                             </ul>
                         </div>
                     </div>

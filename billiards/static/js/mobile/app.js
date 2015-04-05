@@ -442,6 +442,17 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 	}
 	return Data;
 })
+.directive('errormsg', function($compile, $parse) {
+    return {
+      restrict: 'E',
+      link: function(scope, element, attr) {
+        scope.$watch(attr.content, function() {
+          element.html($parse(attr.content)(scope));
+          $compile(element.contents())(scope);
+        }, true);
+      }
+    }
+  })
 .config(function($routeProvider){
 	$routeProvider
 	.when('/list/:id',{
@@ -525,7 +536,7 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 	});
 
 })
-.controller('DetailCtrl',function($scope,$rootScope,$http,Data,$routeParams,$window,offerService,scopeService,$sce){
+.controller('DetailCtrl',function($scope,$rootScope,$http,Data,$routeParams,$window,offerService,scopeService,$location){
 	$scope.detail = new Data($routeParams.id);
 
 	$scope.detail.detail(function(){
@@ -843,10 +854,10 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
         		else {
         			switch(rt.code){
         			case 1:
-        				$scope.bookingErrMessage = $sce.trustAsHtml("此时段已被其他用户预订，请选择其他时段");
+        				$scope.bookingErrMessage = "此时段已被其他用户预订，请选择其他时段";
         				break;
         			case 2:
-        				$scope.bookingErrMessage = $sce.trustAsHtml("你已经预订了此时段，去<a href=\"/user/order\">订单中心</a>查看");
+        				$scope.bookingErrMessage = "你已经预订了此时段，去<a href=\"javascript:void(0)\" ng-click=\"goMyOrder()\">订单中心</a>查看";
         				break;
         			case 16:
         				$scope.bookingErrMessage = null;
@@ -854,7 +865,7 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 //      				$('#contactInfo').foundation('reveal', 'open');
         				break;
         			default:
-        				$scope.bookingErrMessage = $sce.trustAsHtml("服务器错误，请稍后再试");
+        				$scope.bookingErrMessage = "服务器错误，请稍后再试";
         			break;
         			}
         		}
@@ -865,8 +876,12 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
         		if (status == 403)
         			refreshAuthentication();
         		else
-        			$scope.bookingErrMessage = $sce.trustAsHtml("服务器错误，请稍后再试");
+        			$scope.bookingErrMessage = "服务器错误，请稍后再试";
         	});
+		};
+		
+		$scope.goMyOrder = function() {
+			$location.path('/order/all');
 		};
     });
 })
