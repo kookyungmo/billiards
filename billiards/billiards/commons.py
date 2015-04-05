@@ -19,6 +19,7 @@ from billiards import settings
 from billiards.bcms import mail, publish
 from django.utils import simplejson
 import logging
+from django.core.paginator import Page
 
 KEY_PREFIX = 'location_%s_%s'
 
@@ -55,7 +56,7 @@ def tojson(data, fields = None):
 def tojson2(data, serialize, fields = None):
     newdata = data
     if not isinstance(newdata, (QuerySet, ValuesQuerySet)):
-        newdata = [data]
+        newdata = list(data)
     stream = StringIO()
     serialize.serialize(newdata, fields=fields, stream=stream,
             ensure_ascii=False, use_natural_keys=True)

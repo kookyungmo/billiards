@@ -116,6 +116,20 @@ def user_assistant_order(request):
     if request.user.is_authenticated():
         if request.method == 'POST':
             appoints = AssistantAppointment.objects.filter(user=request.user).order_by("-createdDate")
+            try:
+                payload = simplejson.loads(request.body)
+                if payload['page'] is not None:
+                    paginator = Paginator(appoints, 5)
+                    try:
+                        appoints = paginator.page(payload['page'])
+                    except PageNotAnInteger:
+                        # If page is not an integer, deliver first page.
+                        appoints = paginator.page(1)
+                    except EmptyPage:
+                        # If page is out of range (e.g. 9999), deliver last page of results.
+                        appoints = []
+            except (ValueError, KeyError):
+                pass
             for appoint in appoints:
                 if appoint.transaction.state == 2 or appoint.transaction.state == 5:
                     if appoint.state == 1:

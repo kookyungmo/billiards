@@ -8,21 +8,21 @@
     <section class="kozo-fixed order-fixed">
         <div class="fixed-box" infinite-scroll="order.order()" infinite-scroll-disabled='order.busy'>
             <div class="kozo-list order-list">
-                <a ng-repeat="list in order.orderData track by $index" ng-href="#/order_detail/{{list.id}}">
+                <a ng-repeat="list in order.orderData track by $index" ng-href="#/order_detail/{{list.transaction.tradenum}}">
                     <div>
-                        <span>订单时间：{{list.date}}</span>
-                        <span>{{list.status}}</span>
+                        <span>订单时间：{{createTime(list)}}</span></span>
+                        <span>{{orderStateDisplay(list)}}</span>
                     </div>
                     <dl>
                         <dt>
-                            <img ng-src="{{list.img}}" alt=""> 
+                            <img ng-src="{{list.assistant.coverimage}}" alt=""> 
                         </dt>
                         <dd>
-                            <p>{{list.name}}</p>
-                            <p>{{list.address}}</p>
-                            <p>{{list.bookTime}}<span class="c9 ml10">共{{list.bookDuration}}小时</span></p>
+                            <p>{{list.assistant.nickname}}</p>
+                            <p>{{list.poolroom.address}}</p>
+                            <p>{{orderDate(list.starttime)}} {{orderTime(list.starttime)}} - {{orderDate(list.endtime)}} {{orderTime(list.endtime)}}<span class="c9 ml10">共{{list.duration}}小时</span></p>
                             <div>
-                               <span class="mr5">￥{{list.price}}</span><span ng-class="{'inline-block':list.discount}">惠</span>
+                               <span class="mr5">￥{{list.transaction.fee}}</span><span ng-class="{'inline-block':list.discount}">惠</span>
                             </div>
                         </dd>
                     </dl>
@@ -30,5 +30,5 @@
             </div>
         </div>
     </section>
-    <div  ng-class="{navshow:navigation}" class="menu-navigation"><div ng-include="'template/navigation.html'"></div></div>
+    <div  ng-class="{navshow:navigation}" class="menu-navigation"><div ng-include="'static/m/templates/navigation.html'"></div></div>
 </div>

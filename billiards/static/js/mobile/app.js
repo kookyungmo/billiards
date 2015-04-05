@@ -368,25 +368,23 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 				that.busy = true;
 			}
 
-            $http.post('data-file/order.json', 
+            $http.post('user/order', 
                 {
-                	"id":that.id,
-                    'after' : that.after
+                    'page' : that.after
                 }).success(function(data){
                 if (data == undefined ) {
                     alert("获取数据失败");
                 }else{
-
+                	
                     angular.forEach(data,function(data){
 
 						that.orderData.push(data);
 
 					});
-
+                    that.after += 1;
+        		    that.busy = false;
                 }
             }.bind(this));
-            that.after = this.after++;
-		    that.busy = false;
         },
         orderDetail:function(callback){
             // 订单详细页获取
@@ -888,7 +886,39 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 .controller('OrderCtrl',function($scope,$rootScope,Data,$routeParams){
 	
     $scope.order = new Data($routeParams.id);
+    
+    $scope.createTime = function(list) {
+    	return parseTime(list.createdDate).format('YYYY-MM-DD HH:mm');
+    }
 
+    $scope.orderTime = function(timestr) {
+		return parseTime(timestr).format('HH:mm');
+	};
+	
+	$scope.orderDate = function(timestr) {
+		return parseTime(timestr).format('YYYY-MM-DD');
+	};
+	
+	$scope.orderStateDisplay = function(order) {
+		switch (order.state) {
+		case 2:
+			return "订单已支付，等待确认";
+		case 4:
+			return "订单已申请退款";
+		case 8:
+			return "订单已取消";
+		case 32:
+			return "订单已确认，等待消费";
+		case 256:
+			return "订单已消费完成";
+		case 1:
+			if ($scope.canPay(order))
+				return "等待支付";
+			return "订单已过期";
+		default:
+			return "";
+		}		
+	};
 })
 .controller('OrderDetailCtrl',function($scope,$rootScope,Data,$routeParams){
 	
