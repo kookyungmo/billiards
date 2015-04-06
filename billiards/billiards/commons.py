@@ -55,8 +55,10 @@ def tojson(data, fields = None):
 
 def tojson2(data, serialize, fields = None):
     newdata = data
-    if not isinstance(newdata, (QuerySet, ValuesQuerySet)):
-        newdata = list(data)
+    if isinstance(newdata, Page):
+        newdata = list(newdata)
+    elif not isinstance(newdata, (QuerySet, ValuesQuerySet)):
+        newdata = [data]
     stream = StringIO()
     serialize.serialize(newdata, fields=fields, stream=stream,
             ensure_ascii=False, use_natural_keys=True)

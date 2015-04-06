@@ -20,7 +20,7 @@
                         <dd>
                             <p>{{list.assistant.nickname}}</p>
                             <p>{{list.poolroom.address}}</p>
-                            <p>{{orderDate(list.starttime)}} {{orderTime(list.starttime)}} - {{orderDate(list.endtime)}} {{orderTime(list.endtime)}}<span class="c9 ml10">共{{list.duration}}小时</span></p>
+                            <p>{{bookingTime(list)}}<span class="c9 ml10">共{{list.duration}}小时</span></p>
                             <div>
                                <span class="mr5">￥{{list.transaction.fee}}</span><span ng-class="{'inline-block':list.discount}">惠</span>
                             </div>

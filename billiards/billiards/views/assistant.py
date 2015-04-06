@@ -371,3 +371,13 @@ def assistant_order_complete_by_tid(request, assistant_uuid, transaction_id):
             return HttpResponse(simplejson.dumps({'code': -1, 'msg': 'illegal data'}))
 
     raise PermissionDenied("login firstly.")
+
+@csrf_exempt
+def order_detail(request, order_id):
+    if request.user.is_authenticated():
+        try:
+            appoint = AssistantAppointment.objects.get(transaction=int(order_id), user=request.user)
+            return HttpResponse(tojson2(appoint, AssistantJSONSerializer(), assistant_appointment_fields + ('transaction', 'chargeCode', )))
+        except AssistantAppointment.DoesNotExist:
+            raise Http404('illegal request.')
+    raise PermissionDenied('login firstly')

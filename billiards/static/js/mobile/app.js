@@ -83,6 +83,8 @@ function parseTime(timestr) {
 	return moment(timestr, moment.ISO_8601).zone('+0800');
 }
 
+var ORDER_URL = "/transaction/goods/12345678901234567890123456789012";
+
 var staticurl = 'static/m/';
 angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 .service('scopeService', function() {
@@ -389,16 +391,14 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
         orderDetail:function(callback){
             // 订单详细页获取
         	var that = this;
-        	$http.post('data-file/order_detail.json', 
+        	$http.post('assistant/order/' + that.id, 
                 {
-                	'id': that.id,
-                    'after': that.after
                 }).success(function(data){
                 if (data == undefined ) {
                     alert("获取数据失败");
                 }else{
 
-					that.orderData = data;
+					that.orderData = data[0];
 
                     callback();
 
@@ -543,6 +543,10 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
         $scope.comentShow = false;
 
         $scope.person = $scope.detail.person;
+        
+        $scope.poolroomTel = function() {
+        	return $scope.getOffer().poolroom.tel;
+        }
         
         var offers = $scope.detail.offers;
         var pricelocation = offerService.offerPriceLocation(offers);
@@ -887,16 +891,37 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 	
     $scope.order = new Data($routeParams.id);
     
-    $scope.createTime = function(list) {
-    	return parseTime(list.createdDate).format('YYYY-MM-DD HH:mm');
+    $scope.createTime = function(order) {
+    	return parseTime(order.createdDate).format('YYYY-MM-DD HH:mm');
     }
 
-    $scope.orderTime = function(timestr) {
+    var orderTime = function(timestr) {
 		return parseTime(timestr).format('HH:mm');
 	};
 	
-	$scope.orderDate = function(timestr) {
+	var orderDate = function(timestr) {
 		return parseTime(timestr).format('YYYY-MM-DD');
+	};
+	
+	$scope.bookingTime = function(order) {
+		return orderDate(order.starttime) + " " + orderTime(order.starttime) + " - "
+			+ orderDate(order.endtime) + " " + orderTime(order.endtime);
+	};
+	
+	$scope.canPay = function(order) {
+		if (_.has(order, 'transaction')) {
+			if (order.transaction.state == 1 && parseTime(order.starttime).diff(moment()) > 60*60*2)
+				return true;
+			}
+		return false;
+	};
+	
+	$scope.pay = function(order) {
+		var payurl = ORDER_URL.replace(/12345678901234567890123456789012/g, order.transaction.goods.sku);
+		if (isWechat())
+			window.location = payurl;
+		else
+			_AP.pay(payurl);		
 	};
 	
 	$scope.orderStateDisplay = function(order) {
@@ -920,13 +945,38 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 		}		
 	};
 })
-.controller('OrderDetailCtrl',function($scope,$rootScope,Data,$routeParams){
+.controller('OrderDetailCtrl',function($controller,$scope,$rootScope,Data,$routeParams){
+	$controller('OrderCtrl', {$scope: $scope});
+
+	$scope.chargeCode = function(order) {
+		if (_.has(order, 'transaction')) {
+			switch (order.transaction.state) {
+			case 4:
+				return null;
+			case 3:
+				return null;
+			case 2:
+				if (order.state == 2)
+					return null;
+				return order.chargeCode;
+			case 1:
+				return null;
+			default:
+				return order.chargeCode;
+			}
+		}
+		return null;
+	};
 	
-	$scope.order = new Data($routeParams.id);
 	$scope.order.orderDetail(function(){
         $scope.callShow = false;
-        $scope.billiardsRoom = $scope.order.orderData;
-
+        
+        $scope.poolroomTel = function() {
+        	return $scope.order.orderData.poolroom.tel;
+        };
+        
+        $scope.order.orderData.btnText = "再次预约",
+        
         $scope.cansel = function(){
             $scope.fixed = false;
             $scope.callShow = false;
@@ -942,7 +992,7 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
         };
         $scope.orderPay = function(){
 
-            $scope.order.orderPay();
+            $scope.pay($scope.order.orderData);
         };
     });
 
