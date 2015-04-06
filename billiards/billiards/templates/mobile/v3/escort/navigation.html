@@ -1,0 +1,34 @@
+{% load extras %}
+{% url 'login_3rd' 'wechat' as wechat %}
+{% url 'login_3rd' 'qq' as qq %}
+{% url 'login_3rd' 'weibo' as weibo %}
+<div>
+    <dl>
+        <dt>我为台球狂</dt>
+        <dd><a href="{% url 'assistant'%}">首页</a></dd>
+        <dd><a href="{% url 'poolroom_nearby' %}">附近球房</a></dd>
+        <dd><a href="{% url 'assistant'%}">预约教练</a></dd>
+    </dl>
+    <dl>
+    	{% if user.is_authenticated %}
+    	<dt>用户信息</dt>
+    	<dd><a href="javascript:void(0);">{% if user.avatar != 'none' and user.avatar != None %}<img src="{{ user.avatar }}" width="30">{% endif %}&nbsp&nbsp{{ user.nickname|decodeunicode }}</a></dd>
+        <dd><a href="{% url 'user_logout' %}?returnurl=/assistant">登出</a></dd>
+    	{% else %} 
+        <dt>用户登录</dt>
+	        {% if isWechat %}
+	        <dd><a href="javascript:dologin('{{ wechat }}');">微信登录</a></dd>
+	        {% else %}
+	        <dd><a href="javascript:dologin('{{ qq }}');">qq登录</a></dd>
+	        <dd><a href="javascript:dologin('{{ weibo }}');">微博登录</a></dd>
+	        {% endif %}
+        {% endif %}
+    </dl>
+    <dl>
+        <dt>其他信息</dt>
+        <dd><a href="{% url 'about' %}">关于我们</a></dd>
+        <dd><a href="{% url 'join' %}">加入我们</a></dd>
+        <dd><a href="{% url 'contact' %}">联系我们</a></dd>
+        <dd><a href="{% url 'partner' %}">关注俱乐部</a></dd>
+    </dl>
+</div>

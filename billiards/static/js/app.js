@@ -1,5 +1,6 @@
 function setGetParameter(url, paramName, paramValue)
 {
+	paramValue = encodeURIComponent(paramValue);
     if (url.indexOf(paramName + "=") >= 0)
     {
         var prefix = url.substring(0, url.indexOf(paramName));

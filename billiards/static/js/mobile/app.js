@@ -37,6 +37,26 @@ function isWechat() {
     }
 }
 
+function setGetParameter(url, paramName, paramValue)
+{
+	paramValue = encodeURIComponent(paramValue);
+    if (url.indexOf(paramName + "=") >= 0)
+    {
+        var prefix = url.substring(0, url.indexOf(paramName));
+        var suffix = url.substring(url.indexOf(paramName)).substring(url.indexOf("=") + 1);
+        suffix = (suffix.indexOf("&") >= 0) ? suffix.substring(suffix.indexOf("&")) : "";
+        url = prefix + paramName + "=" + paramValue + suffix;
+    }
+    else
+    {
+    if (url.indexOf("?") < 0)
+        url += "?" + paramName + "=" + paramValue;
+    else
+        url += "&" + paramName + "=" + paramValue;
+    }
+    return url;
+}
+
 function dologin(url) {
 	dologin2(url, window.location.pathname + window.location.search);
 }
@@ -49,8 +69,8 @@ function refreshAuthentication() {
 	if (isWechat())
 		dologin('/user/login/wechat');
 	else
-		//TODO if not in wechat
-		loginFirst();
+		window.location.href = setGetParameter('/user/login', 'from', 
+				window.location.pathname + window.location.search + window.location.hash);
 }
 
 function formatDistance(distance) {
@@ -477,9 +497,9 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 		controller:'OrderDetailCtrl',
 		templateUrl:staticurl + 'order_detail.html'
 	})
-	// .otherwise({
-	// 	redirectTo:'/list/all'
-	// });
+	 .otherwise({
+	 	redirectTo:'/list/all'
+	 });
 })
 .config( [
     '$compileProvider',

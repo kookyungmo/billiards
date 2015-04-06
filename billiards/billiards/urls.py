@@ -142,6 +142,7 @@ urlpatterns += patterns('billiards.views.games',
 )
 
 urlpatterns += patterns('billiards.views.assistant',
+    url(r'^assistant/static/(?P<resource_name>\w+).html','static_resouce', name='assistant_static_resouce'),
     url(r'^assistant/list$','assistant_list', name='assistant_list'),
     url(r'^assistant/(?P<assistant_uuid>%s)/offer/booking$' %(UUID_PATTERN),'assistant_offer_booking_by_uuid', name='assistant_offer_book'),
     url(r'^assistant/(?P<assistant_uuid>%s)/offer$' %(UUID_PATTERN),'assistant_offer_by_uuid', name='assistant_offer'),

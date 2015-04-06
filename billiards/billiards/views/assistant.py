@@ -406,3 +406,8 @@ def order_cancel(request, order_id):
         except AssistantAppointment.DoesNotExist:
             raise Http404('illegal request.')
     raise PermissionDenied('login firstly')
+
+def static_resouce(request, resource_name):
+    return render_to_response('mobile/v3/escort/%s.html' %(resource_name), 
+                              {'isWechat': isWechatBrowser(request.META['HTTP_USER_AGENT'])}, 
+                              context_instance=RequestContext(request))
