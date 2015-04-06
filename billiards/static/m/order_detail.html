@@ -27,6 +27,14 @@
                 <dt>预约时间段：</dt>
                 <dd>{{bookingTime(order.orderData)}}&nbsp;&nbsp;共{{order.orderData.duration}}小时</dd>
             </dl>
+            <dl>
+                <dt>订单金额：</dt>
+                <dd>{{order.orderData.price}}元</dd>
+            </dl>
+            <dl>
+                <dt>支付金额：</dt>
+                <dd>{{order.orderData.transaction.fee}}元</dd>
+            </dl>                        
             <div>{{order.orderData.poolroom.address}}</div>
         </div>
         <div>
@@ -44,7 +52,7 @@
                         <p>{{order.orderData.poolroom.address}}</p>
                         <p>{{bookingTime(order.orderData)}}</p>
                         <div>
-                           <span class="mr5">￥{{order.orderData.transaction.fee}}</span><span ng-class="{'inline-block':order.orderData.discount}">惠</span>
+                           <span class="mr5">￥{{order.orderData.price/order.orderData.duration}}/小时</span><span ng-class="{'inline-block':order.orderData.discount}">惠</span>
                         </div>
                     </dd>
                 </dl>

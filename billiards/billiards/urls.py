@@ -152,6 +152,7 @@ urlpatterns += patterns('billiards.views.assistant',
     url(r'^assistant/(?P<assistant_uuid>%s)/order/(?P<transaction_id>\d{1,})$' %(UUID_PATTERN),'assistant_order_complete_by_tid', name='assistant_order_complete'),
     url(r'^assistant/(?P<assistant_uuid>%s)$' %(UUID_PATTERN),'assistant_by_uuid', name='assistant_detail'),
     url(r'^user/order$', 'user_assistant_order', name='user_assistant_order'),
+    url(r'^assistant/order/\w{8}(?P<order_id>\d{8})/cancel', 'order_cancel', name='assistant_order_cancel'),
     url(r'^assistant/order/\w{8}(?P<order_id>\d{8})', 'order_detail', name='assistant_order_detail'),
     url(r'^assistant$','assistant', name='assistant'),
 )

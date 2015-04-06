@@ -1,3 +1,33 @@
+var MobileDevice = {
+    Android: function() {
+        return navigator.userAgent.match(/Android/i);
+    },
+    BlackBerry: function() {
+        return navigator.userAgent.match(/BlackBerry/i);
+    },
+    iOS: function() {
+        return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+    },
+    Opera: function() {
+        return navigator.userAgent.match(/Opera Mini/i);
+    },
+    Windows: function() {
+        return navigator.userAgent.match(/IEMobile/i);
+    },
+    any: function() {
+        return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
+    }
+};
+
+function mapURI(lat, lng) {
+	if (MobileDevice.iOS()) {
+		return "http://maps.apple.com/?q=" + lat + "," + lng;
+	} else if (MobileDevice.Windows()){
+		return "maps:" + lat + "," + lng;
+	} else
+		return "geo:" + lat + "," + lng;
+}
+
 function isWechat() {
 	var ua = navigator.userAgent.toLowerCase();
     if(ua.match(/MicroMessenger/i)=="micromessenger") {
@@ -379,7 +409,7 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
                 }else{
                 	
                     angular.forEach(data,function(data){
-
+                    	data.discount = true;
 						that.orderData.push(data);
 
 					});
@@ -405,38 +435,16 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
                 }
             }.bind(this));
         },
-        orderCansel:function(){
+        orderCansel:function(callback){
             // 订单取消提交
             var that = this;
-            $http.post('data-file/order_detail.json', 
+            $http.post('assistant/order/' + that.id + '/cancel', 
                 {
-                    'id': that.id
                 }).success(function(data){
-                if (data == undefined ) {
-                    alert("获取数据失败");
-                }else{
-
-                    alert("取消支付...")
-
-                }
+                if (data['code'] == 1)
+                	callback();
             }.bind(this));
         },
-        orderPay:function(){
-            // 订单支付提交
-            var that = this;
-            $http.post('data-file/order_detail.json', 
-                {
-                    'id': that.id
-                }).success(function(data){
-                if (data == undefined ) {
-                    alert("获取数据失败");
-                }else{
-
-                    alert("正在支付...")
-
-                }
-            }.bind(this));
-        }
 	}
 	return Data;
 })
@@ -473,6 +481,13 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 	// 	redirectTo:'/list/all'
 	// });
 })
+.config( [
+    '$compileProvider',
+    function( $compileProvider )
+    {   
+        $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|geo|maps|tel):/);
+    }
+])
 .controller('globalCtrl',function($scope,$rootScope,Data){
 
     $scope.fixed = false;
@@ -546,7 +561,10 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
         
         $scope.poolroomTel = function() {
         	return $scope.getOffer().poolroom.tel;
-        }
+        };
+        $scope.maplink = function() {
+        	return mapURI($scope.getOffer().poolroom.lat, $scope.getOffer().poolroom.lng);
+        };
         
         var offers = $scope.detail.offers;
         var pricelocation = offerService.offerPriceLocation(offers);
@@ -945,7 +963,7 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 		}		
 	};
 })
-.controller('OrderDetailCtrl',function($controller,$scope,$rootScope,Data,$routeParams){
+.controller('OrderDetailCtrl',function($controller,$scope,$rootScope,Data,$routeParams,$route){
 	$controller('OrderCtrl', {$scope: $scope});
 
 	$scope.chargeCode = function(order) {
@@ -975,7 +993,9 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
         	return $scope.order.orderData.poolroom.tel;
         };
         
-        $scope.order.orderData.btnText = "再次预约",
+        $scope.order.orderData.btnText = "再次预约";
+        $scope.order.orderData.discount = true;
+        $scope.order.orderData.map = mapURI($scope.order.orderData.poolroom.lat, $scope.order.orderData.poolroom.lng);
         
         $scope.cansel = function(){
             $scope.fixed = false;
@@ -988,7 +1008,9 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 
         $scope.orderCansel = function(){
 
-            $scope.order.orderCansel();
+            $scope.order.orderCansel(function(){
+            	$route.reload();
+            });
         };
         $scope.orderPay = function(){
 
