@@ -127,7 +127,7 @@ def logout(request):
     
     
 def oautherror(request):
-    print "OAuth Error"
+    logger.error('Failed to do oauth with arguments \'%s\'.' %(str(dict(request.GET.iterlists()))))
     return HttpResponseRedirect('/')    #should have some ERROR info here, TBD
     
 def login_3rd_page(request):

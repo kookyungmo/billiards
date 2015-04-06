@@ -521,6 +521,18 @@
                         font-size: 1.125em;
                         text-align: center;
                     }
+                    &.text {
+						color: white;
+						background-color: #4c4c4c;
+	                    font-size: 1.125em;
+						text-align: center;
+					}
+					& > input {
+						font-size: 0.75em;
+						height: 44px;
+						line-height: 44px;
+						width: 60%;
+					}
                 }
                 & > a:nth-child(2){
                     margin: 15px 0;

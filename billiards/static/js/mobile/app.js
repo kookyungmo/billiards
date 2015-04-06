@@ -569,7 +569,7 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 	});
 
 })
-.controller('DetailCtrl',function($scope,$rootScope,$http,Data,$routeParams,$window,offerService,scopeService,$location){
+.controller('DetailCtrl',function($scope,$rootScope,$http,Data,$routeParams,$window,offerService,scopeService,$location,$route){
 	$scope.detail = new Data($routeParams.id);
 
 	$scope.detail.detail(function(){
@@ -882,6 +882,7 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
             $scope.callShow = false;
         }
 
+        $scope.userinfo = {};
         $scope.bookBtn = function() {
         	var params = {offerDay: $scope.selectedOffer.day.unix(), offerHour: $scope.selectedOfferHour, offerDuring: $scope.offerDuring};
         	$http.post('assistant/' + $scope.detail.id + '/offer/booking', params).success(function(rt){
@@ -901,8 +902,20 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
         				break;
         			case 16:
         				$scope.bookingErrMessage = null;
-        				//TODO complete user info
-//      				$('#contactInfo').foundation('reveal', 'open');
+        				$scope.updateInfo = function() {
+        					$http.post('user/completeInfo', 
+        						{tel: $scope.userinfo.cellphone, email: $scope.userinfo.email})
+        						.success(function(data) {
+        							if (data['code'] == 0) {
+        								$scope.cancelUpdateInfo();
+        								$route.reload();
+        							}
+        						});
+        				};
+        				$scope.cancelUpdateInfo = function() {
+        					$scope.completeInfo = false;
+        				};
+        				$scope.completeInfo = true;
         				break;
         			default:
         				$scope.bookingErrMessage = "服务器错误，请稍后再试";
