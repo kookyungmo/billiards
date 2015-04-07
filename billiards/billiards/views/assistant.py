@@ -35,9 +35,10 @@ import logging
 
 logger = logging.getLogger("billiards")
 
+@detect_mobile
 def assistant(request):
-#    if request.mobile:
-    return render_to_response('mobile/v3/escort/index.html', context_instance=RequestContext(request))
+    if request.mobile:
+        return render_to_response('mobile/v3/escort/index.html', context_instance=RequestContext(request))
     return render_to_response(TEMPLATE_ROOT + 'escort/list.html', context_instance=RequestContext(request))
     
 class AssistantJSONSerializer(NoObjectJSONSerializer):
@@ -126,6 +127,7 @@ def updateAppointmentState(appoint):
         appoint.save()
 
 @csrf_exempt
+@detect_mobile
 def user_assistant_order(request):
     if request.user.is_authenticated():
         if request.method == 'POST':
@@ -148,6 +150,8 @@ def user_assistant_order(request):
                 updateAppointmentState(appoint)
             return HttpResponse(tojson2(appoints, AssistantJSONSerializer(), assistant_appointment_fields + ('transaction', 'chargeCode', )))
         else:
+            if request.mobile:
+                return redirect('{}#/order/all'.format(reverse('assistant')))
             return render_to_response(TEMPLATE_ROOT + 'escort/order.html', context_instance=RequestContext(request))
     if isWechatBrowser(request.META['HTTP_USER_AGENT']):
         return forceLogin(request, 'wechat')
@@ -158,9 +162,9 @@ def user_assistant_order(request):
 @detect_mobile
 def assistant_by_uuid(request, assistant_uuid):
     if request.method == 'GET':
-#         if request.mobile:
-        return redirect('{}#/detail/{}'.format(reverse('assistant'), assistant_uuid))
         assistant = get_object_or_404(Assistant, uuid=uuid.UUID(assistant_uuid))
+        if request.mobile:
+            return redirect('{}#/detail/{}'.format(reverse('assistant'), assistant_uuid))        
         return render_to_response(TEMPLATE_ROOT + 'escort/detail.html', {'as': assistant}, 
                                   context_instance=RequestContext(request))
     elif request.method == 'POST':
