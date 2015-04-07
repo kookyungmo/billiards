@@ -1,0 +1,19 @@
+<form name="myForm">
+<div class="kozo-popup telphone" ng-class="{show:completeInfo}">
+    <div>
+        <div>
+            <p>请完善您的联系方式，方便我们更好的为您提供服务。您的联系方式确定一定以及肯定只用于您的助教预订。</p>
+            <p class="text">移动电话号码<input ng-model="userinfo.cellphone" type="number" name="phone" placeholder="移动电话号码" ng-minlength="11" ng-maxlength="11" ng-required="true" ng-pattern="/^1\d{10}$/">
+            <span class="help-block" ng-show="myForm.phone.$error.required">请输入移动电话号码</span>
+            <span class="help-block" ng-show="myForm.phone.$error.pattern">无效的移动电话号码</span>
+            </p>
+            <p class="text">电子邮箱<input name="email" ng-model="userinfo.email" placeholder="email" type="email" ng-required="true">
+            <span class="error" ng-show="myForm.email.$error.required">请输入邮件地址</span>
+			<span class="error" ng-show="myForm.email.$error.email">邮件地址无效</span>
+            </p>
+            <a ng-click="updateInfo()" class="kozo-btn">更新</a>
+            <p ng-click="cancelUpdateInfo()" class="kozo-btn btn-gray">暂不更新</p>
+        </div>
+    </div>
+</div>
+</form>

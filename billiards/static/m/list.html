@@ -1,0 +1,44 @@
+<div>
+	<header>
+		<div>
+            <span class="menu" ng-click="navShow()"></span>
+            <span class="title">我为台球狂</span>
+            <!-- <a href="#" class="search"></a> -->
+        </div>
+        <ul class="filter">
+            <li ng-repeat="filter in filter" ng-class="{on:filter.active}">
+                <a ng-href="#list/{{filter.href}}">{{filter.title}}</a>
+            </li>
+        </ul>
+    </header>
+    <section class="kozo-fixed">
+        <div class="fixed-box" infinite-scroll="reddit.nextPage()" infinite-scroll-disabled='reddit.busy'>
+            <div class="kozo-list" >
+                <a ng-repeat="list in reddit.listData track by $index" ng-href="#/detail/{{list.assistant.uuid}}">
+                    <dl>
+                        <dt>
+                            <div>
+                               <img ng-src="{{list.assistant.coverimage}}" alt=""> 
+                            </div>
+                            <p ng-class="{recommend:{{list.assistant.recommended}}}"></p>
+                        </dt>
+                        <dd>
+                            <p>
+                                <span>{{list.assistant.nickname}}</span>
+                                <span ng-show="!!list.distance">{{list.distance}}k/m</span>
+                            </p>
+                            <p>{{list.poolrooms}}</p>
+                            <p>{{list.latestOffer}}</p>
+                            <div>
+                                <p><span>￥{{list.price}}</span><span class="c9 mr5">/小时</span><span ng-class="{'inline-block':list.discount}">惠</span></p>
+                                <p>人气指数：<span>{{list.pageview}}</span></p>
+                            </div>
+                        </dd>
+                    </dl>
+                </a>
+                <div class="loading" ng-show="loadingComplete"><p>正在加载...</p></div>
+            </div>
+        </div>
+    </section>
+    <div  ng-class="{navshow:navigation}" class="menu-navigation"><div ng-include="'assistant/static/navigation.html'"></div></div>
+</div> 

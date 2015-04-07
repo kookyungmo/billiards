@@ -120,7 +120,8 @@ class Poolroom(models.Model):
                 'images': images}
 
     def natural_key_simple(self):
-        return {'uuid': str(self.uuid), 'name': self.name, 'lat': float(self.lat_baidu), 'lng': float(self.lng_baidu)}
+        return {'uuid': str(self.uuid), 'name': self.name, 'lat': float(self.lat_baidu), 'lng': float(self.lng_baidu),
+                'address': self.address, 'coverimage': '' if len(self.images) == 0 else self.images[0].imagepath.name, 'tel': self.tel}
         
     objects = GeoManager()
         
@@ -991,6 +992,7 @@ class Assistant(models.Model):
         ), default=1, exportUseValue=True)
     
     order = models.IntegerField(verbose_name='助教排序(默认大的在前)', default=100)
+    recommended = models.BooleanField(verbose_name='是否推荐', default=False)
     
     _coverimage = None
     @property
@@ -1021,7 +1023,7 @@ class Assistant(models.Model):
         elif len(self.images()) > 0:
             coverimage = "%s%s" %(settings.MEDIA_URL[:-1], self.images[0].imagepath)
         return {'uuid': str(self.uuid), 'nickname': self.nickname, 'coverimage': coverimage, 'height': self.height,
-                'birthday': self.birthday, 'occupation': self.occupation}
+                'birthday': self.birthday, 'occupation': self.occupation, 'recommended': self.recommended}
         
 UPLOAD_TO_ASSISTANT = UPLOAD_TO + 'assistant/'
 assistantimage_fields = ('imagepath', 'iscover')

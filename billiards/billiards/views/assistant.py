@@ -8,7 +8,7 @@ from django.core.exceptions import PermissionDenied
 from django.db.models.aggregates import Max, Min
 from django.db.models.query_utils import Q
 from django.http.response import HttpResponse, Http404, HttpResponseRedirect
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template.context import RequestContext
 from django.utils import simplejson
 from django.utils.timezone import pytz, utc
@@ -30,8 +30,14 @@ from django.core.cache import cache
 from random import randint
 from django.core.urlresolvers import reverse
 from billiards.pay import Pay
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+import logging
+
+logger = logging.getLogger("billiards")
 
 def assistant(request):
+#    if request.mobile:
+    return render_to_response('mobile/v3/escort/index.html', context_instance=RequestContext(request))
     return render_to_response(TEMPLATE_ROOT + 'escort/list.html', context_instance=RequestContext(request))
     
 class AssistantJSONSerializer(NoObjectJSONSerializer):
@@ -75,30 +81,71 @@ ASSISTANT_FILTER = Q(state=1)
 ASSISTANT_OFFER_FILTER = Q(status=1)
 ASSISTANT_IMAGE_FILTER = Q(status=1)
 ASSISTANTAPPOINTMENT_FILTER = ~Q(state=8) & ~Q(state=16)
-def getAssistantOffers():
+def getAssistantOffers(category = 'all', page = None):
     # really tricky
-    return AssistantOffer.objects.values('assistant').filter(ASSISTANT_OFFER_FILTER).filter(assistant__in=Assistant.objects.filter(ASSISTANT_FILTER))\
-        .annotate(maxprice = Max('price'), minprice = Min('price'), poolroom = Min('poolroom'), id = Max('id')).order_by('-assistant__order')
+    offers = AssistantOffer.objects.values('assistant').filter(ASSISTANT_OFFER_FILTER).filter(assistant__in=Assistant.objects.filter(ASSISTANT_FILTER))\
+        .annotate(maxprice = Max('price'), minprice = Min('price'), poolroom = Min('poolroom'), id = Max('id'))
+    if category == 'hot':
+        offers = offers.order_by('-assistant__pageview', '-assistant__order')
+    elif category == 'recommend':
+        offers = offers.order_by('-assistant__recommended', '-assistant__order')
+    else:
+        offers = offers.order_by('-assistant__order')
+        
+    if page is not None:
+        paginator = Paginator(offers, 10)
+        try:
+            return paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            return paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            return []
+    return offers
+
+@csrf_exempt
 def assistant_list(request):
-    assistantsOffers = getAssistantOffers()
+    try:
+        payload = simplejson.loads(request.body)
+        assistantsOffers = getAssistantOffers(payload['category'], payload['page'])
+    except ValueError:
+        assistantsOffers = getAssistantOffers()
     jsonstr = json.dumps(list(updateOffers(assistantsOffers)), default=json_serial)
     return HttpResponse(jsonstr)
+
+def updateAppointmentState(appoint):
+    if appoint.transaction.state == 2 or appoint.transaction.state == 5:
+        if appoint.state == 1:
+            appoint.state = 2
+            appoint.save()
+    elif appoint.transaction.state != 3 and appoint.transaction.paymentExpired:
+        appoint.transaction.state = 3
+        appoint.transaction.save()
+        appoint.state = 8
+        appoint.save()
 
 @csrf_exempt
 def user_assistant_order(request):
     if request.user.is_authenticated():
         if request.method == 'POST':
             appoints = AssistantAppointment.objects.filter(user=request.user).order_by("-createdDate")
+            try:
+                payload = simplejson.loads(request.body)
+                if payload['page'] is not None:
+                    paginator = Paginator(appoints, 5)
+                    try:
+                        appoints = paginator.page(payload['page'])
+                    except PageNotAnInteger:
+                        # If page is not an integer, deliver first page.
+                        appoints = paginator.page(1)
+                    except EmptyPage:
+                        # If page is out of range (e.g. 9999), deliver last page of results.
+                        appoints = []
+            except (ValueError, KeyError):
+                pass
             for appoint in appoints:
-                if appoint.transaction.state == 2 or appoint.transaction.state == 5:
-                    if appoint.state == 1:
-                        appoint.state = 2
-                        appoint.save()
-                elif appoint.transaction.state != 3 and appoint.transaction.paymentExpired:
-                    appoint.transaction.state = 3
-                    appoint.transaction.save()
-                    appoint.state = 8
-                    appoint.save()
+                updateAppointmentState(appoint)
             return HttpResponse(tojson2(appoints, AssistantJSONSerializer(), assistant_appointment_fields + ('transaction', 'chargeCode', )))
         else:
             return render_to_response(TEMPLATE_ROOT + 'escort/order.html', context_instance=RequestContext(request))
@@ -108,8 +155,11 @@ def user_assistant_order(request):
     return HttpResponseRedirect(url)
 
 @csrf_exempt
+@detect_mobile
 def assistant_by_uuid(request, assistant_uuid):
     if request.method == 'GET':
+#         if request.mobile:
+        return redirect('{}#/detail/{}'.format(reverse('assistant'), assistant_uuid))
         assistant = get_object_or_404(Assistant, uuid=uuid.UUID(assistant_uuid))
         return render_to_response(TEMPLATE_ROOT + 'escort/detail.html', {'as': assistant}, 
                                   context_instance=RequestContext(request))
@@ -261,7 +311,7 @@ def getPageView(assistant, delta = 1):
     else:
         if delta != 0:
             pageView += delta
-            if pageView % 100 == 0:
+            if pageView - assistant.pageview >= 100:
                 assistant.pageview = pageView
                 assistant.save()
             cache.set(ASSISTANT_PAGEVIEW %(assistant_uuid), pageView, None)
@@ -327,3 +377,37 @@ def assistant_order_complete_by_tid(request, assistant_uuid, transaction_id):
             return HttpResponse(simplejson.dumps({'code': -1, 'msg': 'illegal data'}))
 
     raise PermissionDenied("login firstly.")
+
+@csrf_exempt
+def order_detail(request, order_id):
+    if request.user.is_authenticated():
+        try:
+            appoint = AssistantAppointment.objects.get(transaction=int(order_id), user=request.user)
+            updateAppointmentState(appoint)
+            return HttpResponse(tojson2(appoint, AssistantJSONSerializer(), assistant_appointment_fields + ('transaction', 'chargeCode', )))
+        except AssistantAppointment.DoesNotExist:
+            raise Http404('illegal request.')
+    raise PermissionDenied('login firstly')
+
+@csrf_exempt
+def order_cancel(request, order_id):
+    if request.user.is_authenticated():
+        try:
+            appoint = AssistantAppointment.objects.get(transaction=int(order_id), user=request.user)
+            updateAppointmentState(appoint)
+            if appoint.state == 1:
+                appoint.transaction.state = 3
+                appoint.transaction.save()
+                appoint.state = 8
+                appoint.save()
+                return HttpResponse(simplejson.dumps({'code': 1, 'msg': 'order has been cancelled'}))
+            logger.warn("Failed to cancel appointment '%s'(tradenum %s) with state '%s'." %(appoint.id, order_id, appoint.state))
+            return HttpResponse(simplejson.dumps({'code': 0, 'msg': 'order state is not corrected'}))
+        except AssistantAppointment.DoesNotExist:
+            raise Http404('illegal request.')
+    raise PermissionDenied('login firstly')
+
+def static_resouce(request, resource_name):
+    return render_to_response('mobile/v3/escort/%s.html' %(resource_name), 
+                              {'isWechat': isWechatBrowser(request.META['HTTP_USER_AGENT'])}, 
+                              context_instance=RequestContext(request))

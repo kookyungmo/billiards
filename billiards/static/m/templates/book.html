@@ -1,0 +1,33 @@
+<div class="kozo-popup book-list action-book" ng-class="{show:bookShow}">
+    <dl>
+        <dt>
+            <div>
+                <p ng-click="cansel()">取消</p>
+                <p ng-click="ok()">确定</p>
+            </div>
+            <ul>
+                <li>日期</li>
+                <li>时间</li>
+                <li>预约时长</li>
+            </ul>
+        </dt>
+        <dd>
+            <ul>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>
+            <div>
+                <ul hm-pan="dateHammer" style="top:{{distanceDate}}px" class="action-date">
+                    <li ng-repeat="day in offerdays">{{getDayLabel(day)}}</li>
+                </ul>
+                <ul hm-pan="timeHammer" style="top:{{distanceTime}}px">
+                    <li ng-repeat="hour in selectedOffer.hours">{{hour+':00'}}点</li>
+                </ul>
+                <ul hm-pan="durationHammer" style="top:{{derationdis}}px">
+                    <li ng-repeat="book in bookingDurations">{{book.name}}小时</li>
+                </ul>
+            </div>
+        </dd>
+    </dl>
+</div>

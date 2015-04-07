@@ -1,0 +1,34 @@
+<div>
+    <header>
+        <div>
+            <span class="menu" ng-click="navShow()"></span>
+            <span class="title">我为台球狂</span>
+        </div>
+    </header>
+    <section class="kozo-fixed order-fixed">
+        <div class="fixed-box" infinite-scroll="order.order()" infinite-scroll-disabled='order.busy'>
+            <div class="kozo-list order-list">
+                <a ng-repeat="list in order.orderData track by $index" ng-href="#/order_detail/{{list.transaction.tradenum}}">
+                    <div>
+                        <span>订单时间：{{createTime(list)}}</span></span>
+                        <span>{{orderStateDisplay(list)}}</span>
+                    </div>
+                    <dl>
+                        <dt>
+                            <img ng-src="{{list.assistant.coverimage}}" alt=""> 
+                        </dt>
+                        <dd>
+                            <p>{{list.assistant.nickname}}</p>
+                            <p>{{list.poolroom.address}}</p>
+                            <p>{{bookingTime(list)}}<span class="c9 ml10">共{{list.duration}}小时</span></p>
+                            <div>
+                               <span class="mr5">￥{{list.transaction.fee}}</span><span ng-class="{'inline-block':list.discount}">惠</span>
+                            </div>
+                        </dd>
+                    </dl>
+                </a>
+            </div>
+        </div>
+    </section>
+    <div  ng-class="{navshow:navigation}" class="menu-navigation"><div ng-include="'assistant/static/navigation.html'"></div></div>
+</div>

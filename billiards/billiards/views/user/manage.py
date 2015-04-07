@@ -14,7 +14,7 @@ from django.template.context import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
 import json
-from billiards.commons import forceLogin, isWechatBrowser
+from billiards.commons import forceLogin
 from django.utils import simplejson
 from django.core.exceptions import PermissionDenied
 import re
@@ -23,8 +23,6 @@ from rest_framework.response import Response
 from rest_framework_jsonp.renderers import JSONPRenderer
 from rest_framework.decorators import api_view, renderer_classes
 from django.contrib import auth
-from django.http.response import HttpResponseRedirect
-from urlparse import urlparse
 from billiards.views.user.login import login_3rd_page
 
 PHONE_PATTERN = re.compile(r'^1\d{10}$')    
@@ -33,9 +31,9 @@ def completeInfo(request):
     user = request.user
     if user.is_authenticated():
         contactInfo = simplejson.loads(request.body)
-        if contactInfo['tel'].strip() != '' and PHONE_PATTERN.search(contactInfo['tel'].strip()) and validate_email(contactInfo['email']):
-            user.cellphone = contactInfo['tel'].strip()
-            user.email = contactInfo['email'].strip()
+        if str(contactInfo['tel']).strip() != '' and PHONE_PATTERN.search(str(contactInfo['tel']).strip()) and validate_email(contactInfo['email']):
+            user.cellphone = str(contactInfo['tel']).strip()
+            user.email = str(contactInfo['email']).strip()
             user.save()
             return HttpResponse(simplejson.dumps({'code': 0}))
         return HttpResponse(simplejson.dumps({'code': -1}))
