@@ -22,6 +22,7 @@ from billiards.commons import isWechatBrowser, forceLogin
 from django.shortcuts import render_to_response
 from django.http.response import HttpResponse
 from django.template.context import RequestContext
+from django.core.urlresolvers import reverse
 
 # because social site is singleton that has different behavior on different environment
 def getSocialSite(request, site_name):
@@ -37,7 +38,12 @@ def login_3rd(request, site_name):
     if site_name in socialsites._sites_name_list:
         _s = socialsites.get_site_object_by_name(site_name)
         if 'returnurl' in request.GET:
-            _s.REDIRECT_URI = u"%s?returnurl=%s" %(_s.REDIRECT_URI, request.GET['returnurl'])
+            returnurl = urlparse(request.GET['returnurl'])
+            returnpath = returnurl.path
+            returnhash = returnurl.fragment
+            _s.REDIRECT_URI = u"%s?returnurl=%s" %(_s.REDIRECT_URI, returnpath)
+            if returnhash is not None and returnhash != '':
+                _s.REDIRECT_URI += u'&returnhash=%s' %(returnhash)
         url = _s.authorize_url
         return HttpResponseRedirect(url)
     else:
@@ -48,13 +54,15 @@ def callback(request, site_name):
     returnurl = '/'
     if 'returnurl' in request.GET:
         returnurl = request.GET.get('returnurl')
+        if 'returnhash' in request.GET:
+            returnurl += '#' + request.GET.get('returnhash')
     '''
     user store and manage should be replaced by django.contib.auth (TBD)
     '''
     code = request.GET.get('code')
     if not code:
         #error occurred
-        return HttpResponseRedirect('/oautherror')
+        return HttpResponseRedirect(reverse('oautherror'))
     
     socialsites = SocialSites(getSocialSite(request, site_name))
     _s = socialsites.get_site_object_by_name(site_name)
@@ -111,18 +119,20 @@ logger = logging.getLogger("login")
 def logout(request):
     if request.user.is_authenticated():
         auth.logout(request)
-       
-    return HttpResponseRedirect('/')
+    
+    returnurl = '/'
+    if 'returnurl' in request.GET:
+        returnurl = request.GET.get('returnurl')
+    return HttpResponseRedirect(returnurl)
     
     
 def oautherror(request):
-    print "OAuth Error"
+    logger.error('Failed to do oauth with arguments \'%s\'.' %(str(dict(request.GET.iterlists()))))
     return HttpResponseRedirect('/')    #should have some ERROR info here, TBD
     
 def login_3rd_page(request):
     try:
         fromurl = request.GET['from']
-        fromurl = urlparse(fromurl).path
         if not request.user.is_authenticated():
             if isWechatBrowser(request.META['HTTP_USER_AGENT']):
                 return forceLogin(request, 'wechat', fromurl)

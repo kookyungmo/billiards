@@ -316,7 +316,8 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 								break;
 							case 16:
 								$scope.bookingErrMessage = null;
-								$('#contactInfo').foundation('reveal', 'open');
+								//TODO complete info
+//								$('#contactInfo').foundation('reveal', 'open');
 								break;
 							default:
 								$scope.bookingErrMessage = $sce.trustAsHtml("服务器错误，请稍后再试");

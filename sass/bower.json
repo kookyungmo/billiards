@@ -1,0 +1,6 @@
+{
+  "name": "foundation-libsass-template",
+  "dependencies": {
+    "compass": "0.1.1"
+  }
+}
