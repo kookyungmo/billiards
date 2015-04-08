@@ -479,7 +479,7 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
       }
     }
   }])
-.config(function($routeProvider){
+.config(['$routeProvider', function($routeProvider){
 	$routeProvider
 	.when('/list/:id',{
 		controller:'ListCtrl',
@@ -500,7 +500,7 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 	 .otherwise({
 	 	redirectTo:'/list/all'
 	 });
-})
+}])
 .config( [
     '$compileProvider',
     function( $compileProvider )
