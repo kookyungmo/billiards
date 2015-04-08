@@ -268,7 +268,7 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 		return offerdays;
 	}
 })
-.factory('Data',function($http, offerService){
+.factory('Data',['$http', 'offerService', function($http, offerService){
 
 	var Data = function(id, actor){
 		this.actor = actor;
@@ -467,8 +467,8 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
         },
 	}
 	return Data;
-})
-.directive('errormsg', function($compile, $parse) {
+}])
+.directive('errormsg', ['$compile', '$parse', function($compile, $parse) {
     return {
       restrict: 'E',
       link: function(scope, element, attr) {
@@ -478,7 +478,7 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
         }, true);
       }
     }
-  })
+  }])
 .config(function($routeProvider){
 	$routeProvider
 	.when('/list/:id',{
@@ -508,7 +508,7 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
         $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|geo|maps|tel):/);
     }
 ])
-.controller('globalCtrl',function($scope,$rootScope,Data){
+.controller('globalCtrl',['$scope', '$rootScope', 'Data', function($scope,$rootScope,Data){
 
     $scope.fixed = false;
     $scope.navigation = false;
@@ -522,8 +522,9 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
             $scope.navigation = true;
         }
     };
-})
-.controller('ListCtrl',function($scope,$rootScope,Data,$routeParams,$location,scopeService){
+}])
+.controller('ListCtrl',['$scope', '$rootScope', 'Data', '$routeParams', '$location', 'scopeService', 
+                        function($scope,$rootScope,Data,$routeParams,$location,scopeService){
     
     $scope.reddit = new Data($routeParams.id, function(){
     	fetchBMapLocation(function(mypoint) {
@@ -568,8 +569,9 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
         }
 	});
 
-})
-.controller('DetailCtrl',function($scope,$rootScope,$http,Data,$routeParams,$window,offerService,scopeService,$location,$route){
+}])
+.controller('DetailCtrl',['$scope','$rootScope','$http','Data','$routeParams','$window','offerService','scopeService','$location','$route',
+         function($scope,$rootScope,$http,Data,$routeParams,$window,offerService,scopeService,$location,$route){
 	$scope.detail = new Data($routeParams.id);
 
 	$scope.detail.detail(function(){
@@ -937,8 +939,8 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 			$location.path('/order/all');
 		};
     });
-})
-.controller('OrderCtrl',function($scope,$rootScope,Data,$routeParams){
+}])
+.controller('OrderCtrl',['$scope','$rootScope','Data','$routeParams', function($scope,$rootScope,Data,$routeParams){
 	
     $scope.order = new Data($routeParams.id);
     
@@ -995,8 +997,9 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 			return "";
 		}		
 	};
-})
-.controller('OrderDetailCtrl',function($controller,$scope,$rootScope,Data,$routeParams,$route){
+}])
+.controller('OrderDetailCtrl',['$controller','$scope','$rootScope','Data','$routeParams','$route',
+                               function($controller,$scope,$rootScope,Data,$routeParams,$route){
 	$controller('OrderCtrl', {$scope: $scope});
 
 	$scope.chargeCode = function(order) {
@@ -1051,4 +1054,4 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
         };
     });
 
-})
+}]);
