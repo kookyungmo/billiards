@@ -28,8 +28,18 @@ main(){
 	commit=`git log -1 --pretty=format:%h --no-merges`
 	scsscommit=`cd $SHELLHOME/..;git ls-tree HEAD foundation-libsass-template|awk '{print $3}'|cut -c1-7`
 	appjshash=`cd $SHELLHOME;git log -n 1 --pretty=format:%h -- static/js/app.js static/js/jquery.scrollUp.js`
-	escortjshash=`cd $SHELLHOME;git log -n 1 --pretty=format:%h -- static/js/escort/app.js static/js/escort/list.js`
+	escortjshash=`cd $SHELLHOME;git log -n 1 --pretty=format:%h -- static/js/mobile/app.js static/js/escort/app.js static/js/escort/list.js`
 
+	pecho "Compile mobile css"
+	cd $SHELLHOME/../sass/
+	grunt build
+	rc=$?
+	if [[ $rc != 0 ]] ; then
+            perr "Failed to compile css for mobile css."
+	    exit $rc
+	fi
+
+	cd $SHELLHOME
 	pecho "Minifying JS files"
 	npm install node-minify
 	node minify.js
@@ -57,7 +67,7 @@ main(){
 	rm bitfield
 	mv django-bitfield/bitfield .
 	rm -rf django-bitfield/
-	rm static/js/escort/app.js static/js/escort/list.js
+	rm static/js/escort/app.js static/js/escort/list.js static/js/mobile/app.js
 	cp -f static/images/favicon.ico .
 	cp -f billiards/settings.py.template billiards/settings.py
 	pecho "Updating release version..."

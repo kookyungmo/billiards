@@ -31,3 +31,20 @@ new compressor.minify({
 		  }
 	  }
 	});
+
+new compressor.minify({
+  type: 'yui-js',
+  publicFolder: 'static/js/mobile/',
+  fileIn: [
+    'app.js',
+  ],
+  fileOut: 'static/js/mobile/app.min.js',
+  callback: function(err, min) {
+	  if (err != null) {
+		  console.log(err);
+		  process.exit(-1);
+	  }
+  }
+});
+
+
