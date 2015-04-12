@@ -6,33 +6,38 @@ Created on 2013年10月21日
 @author: kane
 '''
 
-from django.db import models
-from django.utils.timezone import localtime, pytz, utc
-from bitfield import BitField
-from django.utils.encoding import force_unicode
-from django.contrib.auth.models import User
-from billiards.storage import ImageStorage
-from billiards.settings import UPLOAD_TO, TIME_ZONE, MEDIA_URL, BAE_IMAGE,\
-    THUMBNAIL_WIDTH, ESCORT_HEIGHT
 import datetime
+from decimal import Decimal
+import logging
 import os
+import string
+import sys
+import time
+
+from bitfield import BitField
+from django.contrib.auth.models import User
+from django.db import models
+from django.db.models.fields import CharField
 from django.db.models.query_utils import Q
 from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
-import sys
-from django.db.models.fields import CharField
-from billiards import settings
-from billiards.id import generator
-from billiards.citydistrict import CITY_DISTRICT
-import string
+from django.utils import simplejson
+from django.utils.encoding import force_unicode
+from django.utils.timezone import localtime, pytz, utc, now
 from uuidfield.fields import UUIDField
-from decimal import Decimal
+
+from billiards import settings
+from billiards.citydistrict import CITY_DISTRICT
+from billiards.commons import decodeunicode
+from billiards.id import generator
+from billiards.settings import UPLOAD_TO, TIME_ZONE, MEDIA_URL, BAE_IMAGE, \
+    THUMBNAIL_WIDTH, ESCORT_HEIGHT
+from billiards.storage import ImageStorage
 from geosimple.fields import GeohashField
 from geosimple.managers import GeoManager
-from billiards.commons import decodeunicode, notification_msg
-import time
-from django.utils import simplejson
-import logging
+from billiards.management.commands.msgprocessor import Command, TIME_FORMAT,\
+    MessageException
+from billiards.management.commands import wechattemplate
 
 logger = logging.getLogger("billiards")
 
@@ -1191,17 +1196,35 @@ class AssistantAppointment(models.Model):
                 orderdict['method'] = 'billiards.messages.assistant.orderArrival'
                 try:
                     au = AssistantUser.objects.get(assistant=self.assistant)
-                    notification_msg(au.user.cellphone, simplejson.dumps(orderdict))
+                    send_notification_msg(au.user.cellphone, simplejson.dumps(orderdict))
                 except AssistantUser.DoesNotExist:
                     logger.warn(u'Can not find the associated user for assistant \'%s\'.' %(self.assistant))
                 orderdict['method'] = 'billiards.messages.assistant.orderPaySuccess'
             elif int(self.state) == 256:
                 orderdict['method'] = 'billiards.messages.assistant.orderComplete'
             if 'method' in orderdict:
-                notification_msg(self.user.cellphone, simplejson.dumps(orderdict))
+                send_notification_msg(self.user.cellphone, simplejson.dumps(orderdict))
         super(AssistantAppointment, self).save(force_insert, force_update, *args, **kwargs)
         self.__original_state = int(self.state)
     
+def send_notification_msg(number, message):
+    msg = {'number': number, 'msg': message}
+    logger = logging.getLogger("billiards-bcms")
+    try:
+        msgCmd = Command()
+        msgCmd.sendMessage(msg)
+    except ValueError, e:
+        logger.error('[%s]Failed to parse message as json due to %s.' %(localtime(now()).strftime(TIME_FORMAT), str(e)))
+        logger.exception(e)
+    except MessageException, e:
+        logger.error("[%s]Failed to send short message '%s' due to %s." %(localtime(now()).strftime(TIME_FORMAT), message, str(e)))
+    try:
+        wechatCmd = wechattemplate.Command()
+        wechatCmd.sendMessage(msg)
+    except ValueError, e:
+        logger.error('[%s]Failed to parse message as json due to %s.' %(localtime(now()).strftime(TIME_FORMAT), str(e)))
+        logger.exception(e)
+        
 class AssistantUser(models.Model):
     assistant = models.ForeignKey(Assistant, verbose_name="助教")
     user = models.ForeignKey(User, verbose_name="用户")

@@ -8,7 +8,6 @@ import logging
 from django.utils.timezone import localtime, now
 from django.utils import simplejson
 from billiards.commons import decodeunicode
-from billiards.models import BcmsMessage, WechatCredential
 from billiards.management.commands.msgprocessor import MsgProcess, TIME_FORMAT
 from django.contrib.auth.models import User
 from billiards.client import Client
@@ -20,17 +19,18 @@ class Command(MsgProcess):
     
     def __init__(self):
         super(Command, self).__init__()
+        from billiards.models import WechatCredential
         cred = WechatCredential.objects.first()
         self.client = Client(cred.appid, cred.secret)
     
     def getBcms(self):
+        from billiards.models import BcmsMessage
         return BcmsMessage.objects.get(target=BcmsMessage.WECHAT_TEMPLATE)
     
     def sendMessage(self, msg):
         logger.info('[%s]Sending message \'%s\' via wechat.' %(localtime(now()).strftime(TIME_FORMAT), decodeunicode(msg['msg'])))
         data = simplejson.loads(msg['msg'])
-#         user = User.objects.get(username=data['user_id'])
-        user = User.objects.get(username='ojTlluAfGLTl_HTX8rI26EsHA5R8')
+        user = User.objects.get(username=data['user_id'])
         if user.site_name.startswith('wechat'):
             messagecontent = self.__call(data['method'], data, user)
             if messagecontent is None:
