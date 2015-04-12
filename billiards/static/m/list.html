@@ -12,7 +12,7 @@
         </ul>
     </header>
     <section class="kozo-fixed">
-        <div class="fixed-box" infinite-scroll="reddit.nextPage()" infinite-scroll-disabled='reddit.busy'>
+        <div class="fixed-box" infinite-scroll="reddit.nextPage()" infinite-scroll-disabled='reddit.busy' ng-class="{hidden:fixed}">
             <div class="kozo-list" >
                 <a ng-repeat="list in reddit.listData track by $index" ng-href="#/detail/{{list.assistant.uuid}}">
                     <dl>

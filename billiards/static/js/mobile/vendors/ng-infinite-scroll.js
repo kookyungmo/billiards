@@ -10,6 +10,8 @@ mod.directive('infiniteScroll', [
         var checkWhenEnabled, handler, scrollDistance, scrollEnabled;
         $window = angular.element('.fixed-box');
         elem = angular.element('.kozo-list');
+        elemLoad = angular.element('.loading');
+
         scrollDistance = 0;
         if (attrs.infiniteScrollDistance != null) {
           scope.$watch(attrs.infiniteScrollDistance, function(value) {
@@ -31,8 +33,13 @@ mod.directive('infiniteScroll', [
           var elementBottom, remaining, shouldScroll, windowBottom;
           windowBottom = $window.height() + $window.scrollTop();
           elementBottom = elem.height();
-          
-          // console.log(windowBottom,elementBottom)
+
+          if ( elementBottom > $window.height() ) {
+              elemLoad.addClass('show');
+          }else{
+              elemLoad.removeClass('show');
+          }
+          // console.log(elementBottom,$window.height())
 
           remaining = elementBottom - windowBottom;
           shouldScroll = remaining <= $window.height() * scrollDistance;
