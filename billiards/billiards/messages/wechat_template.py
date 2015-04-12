@@ -33,7 +33,7 @@ ORDER_PAY_SUCCESS=u'''
                        "color":"#173177"
                    },
                    "orderProductName": {
-                       "value":"预约时间：%s，%s点-%s点；预约球房：%s；球房地址：%s",
+                       "value":"预约助教：%s，预约时间：%s，%s点-%s点；预约球房：%s；球房地址：%s",
                        "color":"#173177"
                    },
                    "remark":{
@@ -140,7 +140,7 @@ def orderConfirmationMsg(order, user):
 def orderPaySuccess(order, user):
     starttime = datetime.strptime(order['starttime'], DATETIME_FORMAT)
     return MSG_TEMPLATE %(user.username, u'YFDD2KzlnMkotFsPPgE7krZ-C1fWGuSSK0Ao0NNqkKE', buildURL(reverse('user_assistant_order')),
-            ORDER_PAY_SUCCESS %(order['payment'], starttime.strftime(DATE_FORMAT).decode('utf-8'), starttime.strftime(TIME_FORMAT).decode('utf-8'),
+            ORDER_PAY_SUCCESS %(order['payment'], order['assistant_name'], starttime.strftime(DATE_FORMAT).decode('utf-8'), starttime.strftime(TIME_FORMAT).decode('utf-8'),
                 datetime.strptime(order['endtime'], DATETIME_FORMAT).strftime(TIME_FORMAT).decode('utf-8'),
                 order['poolroom_name'], order['poolroom_address']))
     

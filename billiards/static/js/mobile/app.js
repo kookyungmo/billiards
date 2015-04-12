@@ -631,12 +631,12 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
         };
 
         var winScrollTop,
-            elementBottom,
-            elem = angular.element('.action-book');
+        	elem = angular.element('.action-book'),
+        	elementBottom = elem.offset().top + 200;
+        
+        angular.element('.fixed-box').bind('scroll',function(){
 
-        angular.element($window).bind('scroll',function($window){
-
-            winScrollTop = $(window).scrollTop();
+        	winScrollTop = angular.element('.fixed-box').scrollTop();
             elementBottom = elem.offset().top + 166;
 
             if (winScrollTop > elementBottom) {

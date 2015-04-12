@@ -10,7 +10,6 @@ import logging
 from django.utils.timezone import localtime, now
 from django.utils import simplejson
 from billiards.commons import decodeunicode
-from billiards.models import BcmsMessage
 import requests
 import abc
 
@@ -102,6 +101,7 @@ class Command(MsgProcess):
             raise MessageException(response)
         
     def getBcms(self):
+        from billiards.models import BcmsMessage
         return BcmsMessage.objects.get(target=BcmsMessage.SHORT_MESSAGE)
     
     def sendMessage(self, msg):
