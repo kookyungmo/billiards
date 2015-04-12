@@ -136,11 +136,33 @@ function parseTime(timestr) {
 var ORDER_URL = "/transaction/goods/12345678901234567890123456789012";
 
 var staticurl = 'static/m/';
-angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll','angulartics', 'angulartics.google.analytics'])
-.config([$analyticsProvider, function ($analyticsProvider) {
-	$analyticsProvider.firstPageview(true); /* Records pages that don't use $state or $route */
-    $analyticsProvider.withAutoBase(true);  /* Records full path */
-}])
+angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll','angular-google-analytics'])
+.config(['AnalyticsProvider', function(AnalyticsProvider) {
+        // initial configuration
+        AnalyticsProvider.setAccount('UA-46301495-1');
+
+        // track all routes (or not)
+        AnalyticsProvider.trackPages(true);
+
+        // track all url query params (default is false)
+        AnalyticsProvider.trackUrlParams(true);
+
+        // Optional set domain (Use 'none' for testing on localhost)
+        AnalyticsProvider.setDomainName('none');
+
+        // Use display features plugin
+        AnalyticsProvider.useDisplayFeatures(true);
+
+        // Use analytics.js instead of ga.js
+        AnalyticsProvider.useAnalytics(true);
+
+        // Ignore first page view... helpful when using hashes and whenever your bounce rate looks obscenely low.
+        AnalyticsProvider.ignoreFirstPageLoad(true);
+    }])
+.run(['Analytics', function(Analytics) {
+      // In case you are relying on automatic page tracking, you need to inject Analytics
+      // at least once in your application (for example in the main run() block)
+    }])
 .service('scopeService', function() {
      return {
          safeApply: function ($scope, fn) {
