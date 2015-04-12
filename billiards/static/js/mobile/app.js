@@ -136,7 +136,11 @@ function parseTime(timestr) {
 var ORDER_URL = "/transaction/goods/12345678901234567890123456789012";
 
 var staticurl = 'static/m/';
-angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
+angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll','angulartics', 'angulartics.google.analytics'])
+.config(function ($analyticsProvider) {
+	$analyticsProvider.firstPageview(true); /* Records pages that don't use $state or $route */
+    $analyticsProvider.withAutoBase(true);  /* Records full path */
+})
 .service('scopeService', function() {
      return {
          safeApply: function ($scope, fn) {

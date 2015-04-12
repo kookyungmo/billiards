@@ -30,7 +30,7 @@
                                     <div ng-click="bookPopup()" class="kozo-book">{{bookVal}}</div>
                                 </li>
                                 <li>总价：<span >￥{{book.total}}</span></li>
-                                <li><button ng-click="bookBtn()" class="kozo-btn" >我要预订</button></li>
+                                <li><button ng-click="bookBtn()" class="kozo-btn" analytics-on="click" analytics-event="booking">我要预订</button></li>
                                 <li ng-show="!!bookingErrMessage"><errormsg content="bookingErrMessage"></errormsg></li>
                             </ul>
                         </div>
