@@ -53,6 +53,7 @@ def doBCMSRequest(paras):
             req.raise_for_status()
         except HTTPError, e:
             logger.error("Failed to make bcms REST API call due to '%s'", str(e))
+            logger.exception(e)
             return req.json()
         return None
     

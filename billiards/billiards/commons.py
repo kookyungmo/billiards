@@ -104,7 +104,7 @@ def json_serial(obj):
         return serial
     
 def notification(subject, body):
-    notification_mail(subject, body)
+    pass
 def notification_mail(subject, body):
     mail(settings.NOTIFICATION_EMAIL, subject, body)
 def notification_msg(number, message):
