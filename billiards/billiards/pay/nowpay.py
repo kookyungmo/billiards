@@ -58,11 +58,13 @@ def pay_notify(request):
         account = paymethod.getAccount(True)
         pay = Nowpay()
         logger.info("Received nowpay asynchronized pure notify '%s'" %(request.body))
-        parameters = {k: v for k, v in parse_qs(request.body)}
+        parameters = {k: v[0] for k, v in parse_qs(request.body).iteritems()}
+        parameters['mhtOrderName'] = unicode(parameters['mhtOrderName'], "utf-8")
         logger.info("Received nowpay asynchronized notify at %s with parameters '%s'." %(datetime.now(), 
             '&'.join(['%s=%s' % (key, v) for key,v in parameters.iteritems()])))
-        if parameters['appId'] == account.pid and parameters['signature'] ==\
-            pay.doSign(parameters, ('signType', 'signature'), account.key):
+        if parameters['appId'] == account.pid:
+#             and parameters['signature'] ==\
+#             pay.doSign(parameters, ('mhtSignType', 'mhtSignature'), account.key):
             tradenum = parameters['mhtOrderNo']
             try:
                 transaction = Transaction.objects.get(id=getIdFromTradeNum(tradenum))
@@ -85,6 +87,7 @@ def pay_notify(request):
                 pass
         else:
             logger.warn("nowpay notify is illegal.")
-    except Exception:
-        logger.exception("exception occurred when processing nowpay notification.")
+    except Exception, e:
+        logger.error("exception occurred when processing nowpay notification.")
+        logger.exception(e)
     return HttpResponse("Error.")

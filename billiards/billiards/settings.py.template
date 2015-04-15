@@ -231,15 +231,15 @@ LOGGING = {
         },
         'WeRoBot': {
             'handlers': ['logfile-wechat'],
-            'level': 'WARN',
+            'level': 'INFO',
         },
         'billiards': {
             'handlers': ['logfile'],
-            'level': 'WARN',
+            'level': 'INFO',
         },    
         'transaction': {
             'handlers': ['logfile'],
-            'level': 'WARN',
+            'level': 'INFO',
         },
         'billiards-bcms': {
             'handlers': ['logfile-message','console'],
