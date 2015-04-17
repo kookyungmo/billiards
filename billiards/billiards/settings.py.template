@@ -253,21 +253,21 @@ LOGGING = {
 SOCIALOAUTH_SITES = (
     ('weibo', 'socialoauth.sites.weibo.Weibo', '新浪微博',
               {
-                'redirect_uri': '$hostname/user/oauth/weibo',
+                'redirect_uri': 'http://www.pkbilliard.com/user/oauth/weibo',
                 'client_id': '252540088',
                 'client_secret': 'a4b49b83375ccc9b8e8811bb2045a21b',
               }
     ),
     ('qq', 'socialoauth.sites.qq.QQ', 'QQ',
               {
-                'redirect_uri': '$hostname/user/oauth/qq',
+                'redirect_uri': 'http://www.pkbilliard.com/user/oauth/qq',
                 'client_id': '101185171',
                 'client_secret': '8a1c3cc6cfc0d2e3d42fe2ffe31d481b',
               }
     ),  
     ('wechat', 'socialoauth.sites.wechat.Wechat', '微信',
               {
-                'redirect_uri': '$hostname/user/oauth/wechat',
+                'redirect_uri': 'http://www.pkbilliard.com/user/oauth/wechat',
                 'client_id': 'wx639fcbf303386e07',
                 'client_secret': 'd26b2ab613d35420ef1a8c395135d3eb',
                 'SCOPE': 'snsapi_userinfo',
@@ -275,7 +275,7 @@ SOCIALOAUTH_SITES = (
     ), 
     ('changyan', '', u'畅言',
                 {
-                 'redirect_uri': '$hostname/user/oauth/changyan',
+                 'redirect_uri': 'http://www.pkbilliard.com/user/oauth/changyan',
                  'client_id': 'cyrxYk4s5',
                  'client_secret': 'd8dc52269a50b29c855db1539cf23d78',
                  })
