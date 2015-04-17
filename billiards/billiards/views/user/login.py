@@ -6,32 +6,30 @@ Created on 2013年12月11日
 @author: baron
 '''
 
-from django.http import HttpResponseRedirect, Http404
-from billiards.settings import SOCIALOAUTH_SITES, TEMPLATE_ROOT
-from django.contrib.auth.models import User
-from django.contrib import auth
-from time import mktime, localtime
-from datetime import datetime
-from billiards.models import PoolroomUser
 import copy
+from datetime import datetime
+import logging
+from time import mktime, localtime
+from urlparse import urlparse
+
+from django.contrib import auth
+from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect, Http404
+from django.http.response import HttpResponse
+from django.shortcuts import render_to_response
+from django.template.context import RequestContext
+
+from billiards.commons import isWechatBrowser, forceLogin
+from billiards.models import PoolroomUser
+from billiards.settings import SOCIALOAUTH_SITES, TEMPLATE_ROOT
 from socialoauth import SocialSites
 from socialoauth.exception import SocialAPIError
-import logging
-from urlparse import urlparse
-from billiards.commons import isWechatBrowser, forceLogin
-from django.shortcuts import render_to_response
-from django.http.response import HttpResponse
-from django.template.context import RequestContext
-from django.core.urlresolvers import reverse
+
 
 # because social site is singleton that has different behavior on different environment
 def getSocialSite(request, site_name):
-    hostname = u"%s://%s" %("https" if request.is_secure() else "http", request.get_host())
-    sites = copy.deepcopy(SOCIALOAUTH_SITES)
-    for item in sites:
-        origurl = item[3]['redirect_uri']
-        item[3]['redirect_uri'] = origurl.replace('$hostname', hostname)
-    return sites
+    return SOCIALOAUTH_SITES
 
 def login_3rd(request, site_name):
     socialsites = SocialSites(getSocialSite(request, site_name))
