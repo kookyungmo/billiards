@@ -24,14 +24,14 @@
                         </dt>
                         <dd>
                             <p>
-                                <span>{{list.assistant.nickname}}</span>
-                                <span ng-show="!!list.distance">{{list.distance}}k/m</span>
+                                <span>{{list.assistant.nickname}}</span><span>0元台费</span>
+                                <span ng-show="!!list.distance">{{list.distance}}</span>
                             </p>
                             <p>{{list.poolrooms}}</p>
                             <p>{{list.latestOffer}}</p>
                             <div>
                                 <p><span>￥{{list.price}}</span><span class="c9 mr5">/小时</span><span ng-class="{'inline-block':list.discount}">惠</span></p>
-                                <p>人气指数：<span>{{list.pageview}}</span></p>
+                                <p>人气：<span>{{list.pageview}}</span></p>
                             </div>
                         </dd>
                     </dl>
