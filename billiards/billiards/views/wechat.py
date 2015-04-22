@@ -324,7 +324,7 @@ class PKWechat(BaseRoBot):
     def getWelcomeMsg(self):
         return [(u'欢迎您关注我为台球狂官方微信', 
                  u'获取更多身边俱乐部信息，请访问：http://%s，与我们更多互动，发送您的位置信息给我们，为您推荐身边的台球俱乐部。发送 ？，帮助，获取帮助手册。' %(SITE_DOMAIN),
-                LOGO_IMG_URL, 'http://bcs.duapp.com/billiardsalbum/2015/04/weixin4yue.jpg', 'http://mp.weixin.qq.com/s?__biz=MzA5MzY0MTYxMw==&mid=204216423&idx=1&sn=71ecbc76b0eb000512991dfabdc33088#rd')]
+                LOGO_IMG_URL, 'http://bcs.duapp.com/billiardsalbum/2015/04/weixin4yue.jpg', 'http://eqxiu.com/s/CV3BCp3n')]
         
     def getHelpMesg(self):
         return [(HELP_TITLE, u'美约，四月土豪来买单', 'http://bcs.duapp.com/billiardsalbum/2015/04/weixin4yue.jpg', 'http://mp.weixin.qq.com/s?__biz=MzA5MzY0MTYxMw==&mid=204216423&idx=1&sn=71ecbc76b0eb000512991dfabdc33088#rd')]
