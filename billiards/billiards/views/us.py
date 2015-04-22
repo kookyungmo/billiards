@@ -8,6 +8,9 @@ def about(request):
 def join(request):
     return render_to_response(TEMPLATE_ROOT + 'about/join.html', context_instance=RequestContext(request))
 
+def pictureservice(request):
+    return render_to_response(TEMPLATE_ROOT + 'about/pictureservice.html', context_instance=RequestContext(request))
+
 def contact(request):
     return render_to_response(TEMPLATE_ROOT + 'about/contact.html', context_instance=RequestContext(request))
 

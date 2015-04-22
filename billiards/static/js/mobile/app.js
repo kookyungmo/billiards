@@ -1006,19 +1006,19 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll','angular-googl
 	$scope.orderStateDisplay = function(order) {
 		switch (order.state) {
 		case 2:
-			return "订单已支付，等待确认";
+			return "等待确认";
 		case 4:
-			return "订单已申请退款";
+			return "申请退款";
 		case 8:
-			return "订单已取消";
+			return "订单取消";
 		case 32:
-			return "订单已确认，等待消费";
+			return "等待消费";
 		case 256:
-			return "订单已消费完成";
+			return "消费完成";
 		case 1:
 			if ($scope.canPay(order))
 				return "等待支付";
-			return "订单已过期";
+			return "订单过期";
 		default:
 			return "";
 		}		

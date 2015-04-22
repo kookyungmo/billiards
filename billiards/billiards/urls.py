@@ -61,6 +61,7 @@ urlpatterns += patterns('billiards.views.us',
     url(r'^partner$','partner',name='partner'),
     url(r'^$', 'home', name='home'),
     url(r'^home1$', 'home1', name='home1'),
+    url(r'^pictureservice$','pictureservice', name='pictureservice'),
 )
 
 urlpatterns += patterns('billiards.views.lottery',
