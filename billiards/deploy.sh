@@ -28,7 +28,7 @@ main(){
 	commit=`git log -1 --pretty=format:%h --no-merges`
 	scsscommit=`cd $SHELLHOME/..;git ls-tree HEAD foundation-libsass-template|awk '{print $3}'|cut -c1-7`
 	appjshash=`cd $SHELLHOME;git log -n 1 --pretty=format:%h -- static/js/app.js static/js/jquery.scrollUp.js`
-	escortjshash=`cd $SHELLHOME;git log -n 1 --pretty=format:%h -- static/js/mobile/app.js static/js/escort/app.js static/js/escort/list.js`
+	escortjshash=`cd $SHELLHOME;git log -n 1 --pretty=format:%h -- static/js/mobile/app.js static/js/escort/app.js static/js/escort/list.js ../sass`
 
 	pecho "Compile mobile css"
 	cd $SHELLHOME/../sass/
