@@ -31,7 +31,7 @@ class Command(MsgProcess):
         logger.info('[%s]Sending message \'%s\' via wechat.' %(localtime(now()).strftime(TIME_FORMAT), decodeunicode(msg['msg'])))
         data = simplejson.loads(msg['msg'])
         user = User.objects.get(username=data['user_id'])
-        if user.site_name.startswith('wechat'):
+        if user.site_name.startswith('wechat') or data['method'].endswith('orderArrival'):
             messagecontent = self.__call(data['method'], data, user)
             if messagecontent is None:
                 logger.info('%s is not a wechat user, ignore this message' %(data['user_id']))
