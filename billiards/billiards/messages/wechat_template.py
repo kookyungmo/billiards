@@ -5,12 +5,16 @@ Created on 2015年3月4日
 
 @author: kane
 '''
-from django.core.urlresolvers import reverse
-from billiards.settings import SITE_DOMAIN
 from datetime import datetime
-from billiards.models import DATETIME_FORMAT, Assistant, AssistantUser
+import uuid
+
+from django.core.urlresolvers import reverse
+from django.utils.timezone import localtime, now
+
 from billiards.messages.assistant import DATE_FORMAT, TIME_FORMAT
-from django.utils.timezone import localtime
+from billiards.models import DATETIME_FORMAT, Assistant, AssistantUser
+from billiards.settings import SITE_DOMAIN
+
 
 MSG_TEMPLATE=u'''
             {
@@ -156,11 +160,11 @@ def orderComplete(order, user):
 def orderArrival(order, user):
     starttime = datetime.strptime(order['starttime'], DATETIME_FORMAT)
     try:
-        assistant = Assistant.objects.get(uuid=order['assistant_id'])
+        assistant = Assistant.objects.get(uuid=uuid.UUID(order['assistant_id']))
         au = AssistantUser.objects.get(assistant=assistant)
         if au.user.site_name.startswith('wechat'):
-            return MSG_TEMPLATE %(au.user.username, u'EiXPxXqBWkNTHqJYu3uTNoXvToSmp7PzvihPySGT4tU', buildURL(reverse('assistant_orders', args=(order['assistant_id']))),
-            ORDER_ARRIVAL %(localtime(datetime.utcnow()).strftime(DATETIME_FORMAT).decode('utf-8'), 
+            return MSG_TEMPLATE %(au.user.username, u'EiXPxXqBWkNTHqJYu3uTNoXvToSmp7PzvihPySGT4tU', buildURL(reverse('assistant_orders', args=(order['assistant_id'],))),
+            ORDER_ARRIVAL %(localtime(now()).strftime(DATETIME_FORMAT).decode('utf-8'), 
                 starttime.strftime(DATE_FORMAT).decode('utf-8'), starttime.strftime(TIME_FORMAT).decode('utf-8'), 
                 datetime.strptime(order['endtime'], DATETIME_FORMAT).strftime(TIME_FORMAT).decode('utf-8'), order['payment'],
                 order['user_nickname'], order['user_cellphone'],
