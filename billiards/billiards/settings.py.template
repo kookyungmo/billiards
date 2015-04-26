@@ -84,7 +84,7 @@ USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = 'http://billiardsalbum.bcs.duapp.com/'
+MEDIA_ROOT = 'http://bj.bcebos.com/billiardsalbum/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -284,10 +284,11 @@ SOCIALOAUTH_SITES = (
 TEMPLATE_ROOT = 'foundation/'
 
 BCS_BUCKET = {
-              'AK': 'CD24fab6adfe297cb08515f7e6064c0b',
-              'SK': '9b1dee3fef41c498fbb54c58a804eed2',
+              'AK': 'lzLVWuWXTWRpmUq78cD5CEwE',
+              'SK': 'GjLz74wHP1QUIubKPlI5BvGYPTHxb14X',
               'BUCKET_NAME': 'billiardsalbum',
               'BCS_SITE': 'http://bcs.duapp.com/',
+              'END_POINT': 'bj.bcebos.com',
               }
 
 BAE_IMAGE = {

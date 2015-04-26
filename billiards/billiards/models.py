@@ -38,6 +38,7 @@ from geosimple.managers import GeoManager
 from billiards.management.commands.msgprocessor import Command, TIME_FORMAT,\
     MessageException
 from billiards.management.commands import wechattemplate
+import traceback
 
 logger = logging.getLogger("billiards")
 
@@ -215,7 +216,7 @@ def delete_image(instance, **kwargs):
             instance.imagepath.storage.delete(PoolroomImage.getThumbnailPath(instance.imagepath.name, width))
         except Exception:
             pass
-            
+        
 class ChoiceTypeField(models.CharField):
     ''' use value of key when serializing as json
     '''
@@ -1063,29 +1064,32 @@ class AssistantImage(models.Model):
         self.__imagepath = self.imagepath
     
     def save(self):
-        super(AssistantImage, self).save()
-        
-        if self.imagepath != self.__imagepath:
-            # avoid import issue in local env
-            # https://github.com/BaiduAppEngine/bae-python-sdk/issues/1
-            try:
-                from bae_image.image import BaeImage
-                img = BaeImage(BAE_IMAGE['key'], BAE_IMAGE['secret'], BAE_IMAGE['host'])
-                albumstorage = ImageStorage()
-                path = str(self.imagepath)
-                import base64
-                for height in ESCORT_HEIGHT:
-                    img.clearOperations()
-                    img.setSource(MEDIA_URL + path)
-                    img.setZooming(BaeImage.ZOOMING_TYPE_HEIGHT, height)
-                    ret = img.process()
-                    body = ret['response_params']['image_data']
-                
-                    newpath = getThumbnailPath(path, height, 'h')
-                    albumstorage.saveToBucket(newpath, base64.b64decode(body))
-            except ImportError:
-                pass
-        self.__imagepath = self.imagepath
+        try:
+            super(AssistantImage, self).save()
+            
+            if self.imagepath != self.__imagepath:
+                # avoid import issue in local env
+                # https://github.com/BaiduAppEngine/bae-python-sdk/issues/1
+                try:
+                    from bae_image.image import BaeImage
+                    img = BaeImage(BAE_IMAGE['key'], BAE_IMAGE['secret'], BAE_IMAGE['host'])
+                    albumstorage = ImageStorage()
+                    path = str(self.imagepath)
+                    import base64
+                    for height in ESCORT_HEIGHT:
+                        img.clearOperations()
+                        img.setSource(MEDIA_URL + path)
+                        img.setZooming(BaeImage.ZOOMING_TYPE_HEIGHT, height)
+                        ret = img.process()
+                        body = ret['response_params']['image_data']
+                    
+                        newpath = getThumbnailPath(path, height, 'h')
+                        albumstorage.saveToBucket(newpath, base64.b64decode(body))
+                except ImportError:
+                    pass
+            self.__imagepath = self.imagepath
+        except Exception, e:
+            print traceback.format_exc() 
         
 class AssistantLikeStats(models.Model):
     assistant = models.ForeignKey(Assistant, verbose_name='助教')
@@ -1252,6 +1256,18 @@ class BcmsMessage(models.Model):
         db_table = 'bcms'
         verbose_name = 'Bcms消息'
         verbose_name_plural = 'Bcms消息'
+
+@receiver(pre_delete, sender=AssistantImage)
+def delete_assistant_image(instance, **kwargs):
+    try:
+        instance.imagepath.storage.delete(instance.imagepath.name)
+    except Exception:
+        pass
+    for height in ESCORT_HEIGHT:
+        try:
+            instance.imagepath.storage.delete(getThumbnailPath(instance.imagepath.name, height, 'h'))
+        except Exception:
+            pass
 
 try:
     from south.modelsinspector import add_introspection_rules

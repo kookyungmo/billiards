@@ -6,14 +6,22 @@ Created on 2014年01月4日
 @author: baron
 '''
 
-from django.core.files.storage import FileSystemStorage
+import base64
+import hashlib
+import os
+import unicodedata
+
 from django.core.exceptions import SuspiciousOperation
+from django.core.files.base import ContentFile
+from django.core.files.storage import FileSystemStorage
+
+from baidubce.auth.bce_credentials import BceCredentials
+from baidubce.bce_client_configuration import BceClientConfiguration
+from baidubce.services.bos.bos_client import BosClient
 from billiards import settings
 from billiards.settings import BCS_BUCKET
 from billiards.support import pybcs
-import unicodedata
-import os
-from django.core.files.base import ContentFile
+
 
 # set bucket
 AK = BCS_BUCKET['AK']
@@ -138,7 +146,41 @@ class BcsStorage(FileSystemStorage):
             raise ValueError("This file is not accessible via a URL.")
         return self.base_url+name
         
-class ImageStorage(BcsStorage):
+        
+class BOSStorage(BcsStorage):
+    bucket_name = BCS_BUCKET['BUCKET_NAME']
+    """
+    这是一个支持BOS和本地django的FileStorage基类
+    修改存储文件的路径和基本url
+    """
+    def __init__(self, location=settings.MEDIA_URL, base_url=settings.MEDIA_URL):
+        super(BOSStorage, self).__init__(location, base_url)
+        config = BceClientConfiguration(credentials=BceCredentials(BCS_BUCKET['AK'], BCS_BUCKET['SK']), endpoint=BCS_BUCKET['END_POINT'])
+        self.bos_client = BosClient(config)
+        # check if bucket exists
+        if not self.bos_client.does_bucket_exist(self.bucket_name):
+            self.bos_client.create_bucket(self.bucket_name)
+            
+    def saveToBucket(self, name, content):
+        data = None
+        if hasattr(content, '_get_file'):  # admin entry
+            data = content._get_file().read()
+        elif isinstance(content, (ContentFile)) :   # view entry（ContentFile）
+            data = content.read()
+        else:
+            data = content
+        md5 = hashlib.md5()
+        md5.update(data)
+        md5value = base64.standard_b64encode(md5.digest())
+        self.bos_client.put_object(self.bucket_name, name, data, len(data), md5value)
+        
+    def delete(self,name):
+        """
+        Delete a file from bos.
+        """
+        self.bos_client.delete_object(self.bucket_name, name)
+                
+class ImageStorage(BOSStorage):
     """
     Implementation of a Storage for ImageField.
     """
@@ -150,7 +192,7 @@ class ImageStorage(BcsStorage):
     def filetypes(self):
         return ['jpg','jpeg','png','gif']
 
-class FileStorage(BcsStorage):
+class FileStorage(BOSStorage):
     @property
     def maxsize(self):
         return 10*1024*1024 # max size 10M
