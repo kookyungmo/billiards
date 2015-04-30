@@ -453,11 +453,79 @@ angular.module("escortApp", ["ngRoute", "restangular"])
 			return "";
 		}
 	};
+	$scope.requireASAction = function(order) {
+		if (order.state == 2 && parseTime(order.starttime).diff(moment(), 'minutes', true) > 30)
+			return true;
+		return false;
+	};
+	$scope.acceptOrder = function(order) {
+		$scope.basicRestful.one('order', order.transaction).customPOST({}, "accept", {}).then(function(result){
+			switch (result.code){
+			case 0:
+				order.state = 32;
+			case 1:
+				order.asActionCodeError = null;
+				break;
+			default:
+				order.asActionCodeError = $sce.trustAsHtml("<small>订单状态不正确，无法接受此订单。</small>");
+				break;
+			}
+			for (var i = 0; i < $scope.orders.length; i++) {
+				if($scope.orders[i].transaction == order.transaction) {
+					$scope.orders[i] = order;
+					break;
+				}
+			}
+		}, function(error) {
+			if (error.status == 403) {
+				order.asActionCodeError = $sce.trustAsHtml("<small>请重现登录后再提交。</small>");
+			} else {
+				order.asActionCodeError = $sce.trustAsHtml("<small>服务器错误，稍后再试。</small>");
+			}
+			for (var i = 0; i < $scope.orders.length; i++) {
+				if($scope.orders[i].transaction == order.transaction) {
+					$scope.orders[i] = order;
+					break;
+				}
+			}
+		});		
+	};
+	$scope.rejectOrder = function(order) {
+		$scope.basicRestful.one('order', order.transaction).customPOST({}, "reject", {}).then(function(result){
+			switch (result.code){
+			case 0:
+				order.state = 4;
+			case 1:
+				order.asActionCodeError = null;
+				break;
+			default:
+				order.asActionCodeError = $sce.trustAsHtml("<small>订单状态不正确，无法拒绝此订单。</small>");
+				break;
+			}
+			for (var i = 0; i < $scope.orders.length; i++) {
+				if($scope.orders[i].transaction == order.transaction) {
+					$scope.orders[i] = order;
+					break;
+				}
+			}
+		}, function(error) {
+			if (error.status == 403) {
+				order.asActionCodeError = $sce.trustAsHtml("<small>请重现登录后再提交。</small>");
+			} else {
+				order.asActionCodeError = $sce.trustAsHtml("<small>服务器错误，稍后再试。</small>");
+			}
+			for (var i = 0; i < $scope.orders.length; i++) {
+				if($scope.orders[i].transaction == order.transaction) {
+					$scope.orders[i] = order;
+					break;
+				}
+			}
+		});		
+	};	
 	$scope.requireChargeCode = function(order) {
 		if (order.state == 32 && parseTime(order.starttime).diff(moment()) < 0)
 			return true;
-		else
-			return false;
+		return false;
 	};
 	$scope.chargeOrder = function(order) {
 		$scope.basicRestful.one('order', order.transaction).customPOST({code: order.chargecode}).then(function(result){

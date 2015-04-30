@@ -411,6 +411,56 @@ def order_cancel(request, order_id):
             raise Http404('illegal request.')
     raise PermissionDenied('login firstly')
 
+@csrf_exempt
+def assistant_order_accept_by_tid(request, assistant_uuid, transaction_id):
+    if request.user.is_authenticated():
+        try:
+            assistant = Assistant.objects.filter(ASSISTANT_FILTER).get(uuid=uuid.UUID(assistant_uuid))
+            AssistantUser.objects.filter(Q(user=request.user)).get(assistant=assistant)
+            appoint = AssistantAppointment.objects.get(assistant=assistant, transaction=transaction_id)
+            if appoint.state == 2:
+                if appoint.transaction.state == 2 or appoint.transaction.state == 5:
+                    appoint.state = 32
+                    appoint.save()
+                    return HttpResponse(simplejson.dumps({'code': 0, 'msg': 'Accepted.'}))
+                return HttpResponse(simplejson.dumps({'code': -2, 'msg': 'Illegal order state.'}))
+            elif appoint.state == 32:
+                return HttpResponse(simplejson.dumps({'code': 1, 'msg': 'Already accepted.'}))
+            else:
+                return HttpResponse(simplejson.dumps({'code': -3, 'msg': 'Illegal request.'}))
+        except Assistant.DoesNotExist:
+            raise Http404("illegal access.")
+        except AssistantUser.DoesNotExist:
+            raise PermissionDenied("illegal access.")
+        except ValueError:
+            return HttpResponse(simplejson.dumps({'code': -1, 'msg': 'illegal data'}))        
+    raise PermissionDenied("login firstly.")
+
+@csrf_exempt
+def assistant_order_reject_by_tid(request, assistant_uuid, transaction_id):
+    if request.user.is_authenticated():
+        try:
+            assistant = Assistant.objects.filter(ASSISTANT_FILTER).get(uuid=uuid.UUID(assistant_uuid))
+            AssistantUser.objects.filter(Q(user=request.user)).get(assistant=assistant)
+            appoint = AssistantAppointment.objects.get(assistant=assistant, transaction=transaction_id)
+            if appoint.state == 2:
+                if appoint.transaction.state == 2 or appoint.transaction.state == 5:
+                    appoint.state = 4
+                    appoint.save()
+                    return HttpResponse(simplejson.dumps({'code': 0, 'msg': 'Rejected.'}))
+                return HttpResponse(simplejson.dumps({'code': -2, 'msg': 'Illegal order state.'}))
+            elif appoint.state == 4:
+                return HttpResponse(simplejson.dumps({'code': 1, 'msg': 'Already rejected.'}))
+            else:
+                return HttpResponse(simplejson.dumps({'code': -3, 'msg': 'Illegal request.'}))
+        except Assistant.DoesNotExist:
+            raise Http404("illegal access.")
+        except AssistantUser.DoesNotExist:
+            raise PermissionDenied("illegal access.")
+        except ValueError:
+            return HttpResponse(simplejson.dumps({'code': -1, 'msg': 'illegal data'}))        
+    raise PermissionDenied("login firstly.")
+
 def static_resouce(request, resource_name):
     return render_to_response('mobile/v3/escort/%s.html' %(resource_name), 
                               {'isWechat': isWechatBrowser(request.META['HTTP_USER_AGENT'])}, 
