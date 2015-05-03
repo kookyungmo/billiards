@@ -68,7 +68,7 @@ class Nowpay(Pay):
                 'mhtOrderType': '01', 'mhtCurrencyType': '156', 'mhtOrderAmt': int(transaction.fee)*100, 'mhtOrderDetail': transaction.subject[:200],
                 'mhtOrderTimeOut': str(self.PAYMENT_TIMEOUT * 60), 'mhtOrderStartTime': transaction.createdDate.strftime('%Y%m%d%H%M%S'),
                 'notifyUrl': request.build_absolute_uri(reverse('transaction_nowpay_notify')), 'frontNotifyUrl': request.build_absolute_uri(reverse('transaction_nowpay_return')),
-                'mhtCharset': 'UTF-8', 'deviceType': '06', 'payChannelType': '', 'consumerId': transaction.user.username,
+                'mhtCharset': 'UTF-8', 'deviceType': '06', 'payChannelType': '13', 'consumerId': transaction.user.username,
                 'consumerName': transaction.user.nickname, 'mhtSignType': 'MD5'}
         md5Sign = self.doSign(args, ('funcode', 'deviceType', 'mhtSignType', 'mhtSignature'), account.key)
         args['mhtSignature'] = md5Sign
