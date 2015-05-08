@@ -301,6 +301,22 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 
 	}
 	Data.prototype = {
+		welcome:function(callback){
+            var that = this;
+
+            $http.get('data-file/welcome.json',
+                {
+                    'id' : that.id
+                }).success(function(data){
+                if (data == undefined ) {
+                    alert("获取数据失败");
+                }else{
+
+                    that.welcome = data
+                    callback();
+                }
+            }.bind(this));
+        },
 		nextPage:function(){
             // 列表页数据获取
 			var that = this;
@@ -560,6 +576,23 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 			"active":false
 		}
 	];
+
+	$scope.reddit.welcome(function(){
+        $scope.welSrc = $scope.reddit.welcome.src;
+        $scope.welImgHref = $scope.reddit.welcome.imgHref;
+        var t1,count = 5;
+        t1 = setInterval(function(){
+            if (count > 0) {
+                $('.welcome').find('span').html(count);
+                count = count - 1;
+            }else{
+                clearInterval(t1);
+                $('.welcome').animate({'opacity':'0'},'slow',function(){
+                    $('.welcome').hide();
+                })
+            }
+        },1000)
+    })	
 
 	angular.forEach($scope.filter,function(filter){
         if (filter.href == id ) {

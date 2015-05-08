@@ -874,3 +874,31 @@
     background-size:28px 28px;
     padding-left: 50px;
 }
+
+.welcome{
+    display: block;
+    width:100%;
+    position:fixed;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1100;
+    & > div{
+        max-width: $max-width;
+        height: 100%;
+        margin: 0 auto;
+        background-position:0 0;
+        background-size:cover;
+        & p{
+            position: absolute;
+            margin: 0 auto;
+            z-index: 999;
+            width: 100%;
+            height: 24px;
+            bottom: 25%;
+            text-align: center;
+            left: 0;
+            color:  white;
+        }
+    }
+}
