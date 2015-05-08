@@ -301,22 +301,6 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 
 	}
 	Data.prototype = {
-		welcome:function(callback){
-            var that = this;
-
-            $http.get('data-file/welcome.json',
-                {
-                    'id' : that.id
-                }).success(function(data){
-                if (data == undefined ) {
-                    alert("获取数据失败");
-                }else{
-
-                    that.welcome = data
-                    callback();
-                }
-            }.bind(this));
-        },
 		nextPage:function(){
             // 列表页数据获取
 			var that = this;
