@@ -10,7 +10,7 @@ from billiards.models import DATETIME_FORMAT
 from django.utils.timezone import localtime, utc
 import pytz
 from billiards.settings import TIME_ZONE
-ORDER_CONFIRMATION=u'【我为台球狂】您的订单已确认，请您准时到场消费。\n\
+ORDER_CONFIRMATION=u'您的订单已确认，请您准时到场消费。\n\
 预约助教：%s\n\
 预约时间：%s，%s点-%s点；\n\
 预约时长：%s小时\n\
@@ -20,29 +20,29 @@ ORDER_CONFIRMATION=u'【我为台球狂】您的订单已确认，请您准时�
 消费金额：%s元；\n\
 消费时，请将您的消费码告知助教。\n\
 感谢您使用教练预约平台。\n\
-请在【我为台球狂】微信公众平台—我的订单，查看预约详情。'
+请在我为台球狂微信公众平台—订单，查看预约详情。'
 
-ORDER_PAY_SUCCESS=u'【我为台球狂】我们已经收到您的订单，等待助教确认。\n\
+ORDER_PAY_SUCCESS=u'我们已经收到您的订单，等待助教确认。\n\
 预约时间：%s，%s点-%s点；\n\
 预约球房：%s；\n\
 球房地址：%s\n\
 消费金额：%s元；\n\
 感谢您使用教练预约平台。\n\
-请在【我为台球狂】微信公众平台—我的订单查看预约详情。'
+请在我为台球狂微信公众平台—订单查看预约详情。'
 
-ORDER_COMPLETE=u'【我为台球狂】您的订单已消费。\n\
+ORDER_COMPLETE=u'您的订单已消费。\n\
 消费时间：%s，%s\n\
 感谢您使用教练预约平台。\n\
-请在【我为台球狂】微信公众平台—我的订单查看预约详情。'
+请在我为台球狂微信公众平台—订单查看预约详情。'
 
-ORDER_ARRIVAL=u'【我为台球狂】有您的一个预约订单，回复“OK”确认接单；回复“NO”拒绝接单。\n\
+ORDER_ARRIVAL=u'有您的一个预约订单，回复“OK”确认接单；回复“NO”拒绝接单。\n\
 预约助教：%s\n\
 预约时间：%s，%s点-%s点；\n\
 预约球房：%s；\n\
 消费金额：%s元；\n\
 客户微信昵称：%s\n\
 客户联系电话：%s\n\
-消费时，请向客户索要消费码，并发送给【我为台球狂】微信公众平台。'
+消费时，请向客户索要消费码，并发送给我为台球狂微信公众平台。'
 
 DATE_FORMAT = u'%Y年%m月%d日'.encode('utf-8')
 TIME_FORMAT = u'%H'.encode('utf-8')
