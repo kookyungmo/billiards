@@ -16,6 +16,22 @@
             </li>
         </ul>
     </header>
+<script>
+        $('document').ready(function(){
+            var t1,count = 5;
+            t1 = setInterval(function(){
+                if (count > 0) {
+                    count = count - 1;
+                    $('.welcome').find('span').html(count);
+                }else{
+                    clearInterval(t1);
+                    $('.welcome').animate({'opacity':'0'},'slow',function(){
+                        $('.welcome').hide();
+                    })
+                }
+            },1000)
+        })
+</script>
     <section class="kozo-fixed">
         <div class="fixed-box" infinite-scroll="reddit.nextPage()" infinite-scroll-disabled='reddit.busy' ng-class="{hidden:fixed}">
             <div class="kozo-list" >

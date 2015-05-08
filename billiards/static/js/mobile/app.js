@@ -561,22 +561,6 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 		}
 	];
 
-	$scope.reddit.welcome(function(){
-        $scope.welSrc = $scope.reddit.welcome.src;
-        $scope.welImgHref = $scope.reddit.welcome.imgHref;
-        var t1,count = 5;
-        t1 = setInterval(function(){
-            if (count > 0) {
-                $('.welcome').find('span').html(count);
-                count = count - 1;
-            }else{
-                clearInterval(t1);
-                $('.welcome').animate({'opacity':'0'},'slow',function(){
-                    $('.welcome').hide();
-                })
-            }
-        },1000)
-    })	
 
 	angular.forEach($scope.filter,function(filter){
         if (filter.href == id ) {
