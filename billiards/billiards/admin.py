@@ -176,6 +176,9 @@ class AssistantAppointmentAdmin(admin.ModelAdmin):
         # Nobody is allowed to delete
         return False         
     
+class AssistantUserAdmin(admin.ModelAdmin):
+    raw_id_fields = ('assistant', 'user')
+    
 admin.site.register(Poolroom, PoolroomAdmin)
 admin.site.register(PoolroomEquipment)
 admin.site.register(Match, MatchAdmin)
@@ -197,4 +200,4 @@ admin.site.register(Assistant, ModelWithFlagsAdmin)
 admin.site.register(AssistantOffer, ModelWithFlagsAdmin)
 admin.site.register(AssistantAppointment, AssistantAppointmentAdmin)
 admin.site.register(AssistantImage, ImageAdmin)
-admin.site.register(AssistantUser)
+admin.site.register(AssistantUser, AssistantUserAdmin)
