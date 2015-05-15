@@ -900,5 +900,20 @@
             left: 0;
             color:  white;
         }
+     	& >div{
+	    color: white;
+	    width: 100%;
+	    position: absolute;
+	    bottom: 10%;
+	    left: 0;
+	    text-align: right;
+	    height: 44px;
+	    line-height: 44px;
+	    overflow: hidden;
+	    background-color: rgba(0,0,0,0.6);
+	    & span{
+		font-family: simsun;
+		}
+		}
     }
 }
