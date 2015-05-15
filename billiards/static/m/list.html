@@ -1,7 +1,6 @@
 <div>
-       <a ng-href="http://www.pkbilliard.com/assistant" class="welcome">
+       <a ng-href="http://www.pkbilliard.com/assistant/9dbadedd-1c5d-41bb-8baf-67e57edbd74f" class="welcome">
         <div style="background-image:url(http://bj.bcebos.com/billiardsalbum/2015/05/ad-redbull.jpg)">
-            <p>等待<span></span>秒跳转</p>
 	 <div>查看详情<span class="ml10 mr10">&gt;&gt;</span></div>
         </div>
        </a>
@@ -19,14 +18,11 @@
     </header>
 <script>
         $('document').ready(function(){
-	    if ($routeParams.id == 'all') {
-            $scope.welSrc = $scope.reddit.welcome.src;
-            $scope.welImgHref = $scope.reddit.welcome.imgHref;
             var t1,count = 3;
             t1 = setInterval(function(){
                 if (count > 0) {
-		    $('.welcome').find('p span').html(count);
                     count = count - 1;
+		    $('.welcome').find('span').html(count);
                 }else{
                     clearInterval(t1);
                     $('.welcome').animate({'opacity':'0'},'slow',function(){
