@@ -1,6 +1,6 @@
 <div>
-       <a ng-href="http://www.pkbilliard.com/assistant/9dbadedd-1c5d-41bb-8baf-67e57edbd74f" class="welcome">
-        <div style="background-image:url(http://bj.bcebos.com/billiardsalbum/2015/05/ad-redbull.jpg)">
+       <a ng-href="{{welImgHref}}" class="welcome">
+        <div style="background-image:url({{welSrc}})">
 	 <div>查看详情<span class="ml10 mr10">&gt;&gt;</span></div>
         </div>
        </a>
@@ -16,7 +16,7 @@
             </li>
         </ul>
     </header>
-<script>
+<!-- <script>
         $('document').ready(function(){
             var t1,count = 3;
             t1 = setInterval(function(){
@@ -31,7 +31,7 @@
                 }
             },1000)
         })
-</script>
+</script> -->
     <section class="kozo-fixed">
         <div class="fixed-box" infinite-scroll="reddit.nextPage()" infinite-scroll-disabled='reddit.busy' ng-class="{hidden:fixed}">
             <div class="kozo-list" >
