@@ -579,13 +579,13 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
 	];
 
 	$scope.reddit.welcome(function(){
-	if ($routeParams.id == 'all') {
+	//if ($routeParams.id == 'all') {
         $scope.welSrc = $scope.reddit.welcome.src;
         $scope.welImgHref = $scope.reddit.welcome.imgHref;
         var t1,count = 3;
         t1 = setInterval(function(){
             if (count > 0) {
-                $('.welcome').find('p span').html(count);
+                $('.welcome').find('span').html(count);
                 count = count - 1;
             }else{
                 clearInterval(t1);
@@ -594,7 +594,7 @@ angular.module('app',['ngRoute','hmTouchEvents','infinite-scroll'])
                 })
             }
         },1000)
-      };
+      // };
     })
 
 	angular.forEach($scope.filter,function(filter){
