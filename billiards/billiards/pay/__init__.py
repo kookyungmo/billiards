@@ -8,6 +8,8 @@ from billiards.commons import getClass
 from hashlib import md5
 import alipay
 
+from dateutil.relativedelta import relativedelta
+
 logger = logging.getLogger("transaction")
 
 class Pay(object):
@@ -66,7 +68,7 @@ class Nowpay(Pay):
     def getPayUrl(self, request, account, isMobile, transaction):
         args = {'funcode': 'WP001', 'appId': account.pid, 'mhtOrderNo': transaction.tradeNum, 'mhtOrderName': transaction.subject[:40],
                 'mhtOrderType': '01', 'mhtCurrencyType': '156', 'mhtOrderAmt': int(transaction.fee)*100, 'mhtOrderDetail': transaction.subject[:200],
-                'mhtOrderTimeOut': str(self.PAYMENT_TIMEOUT * 60), 'mhtOrderStartTime': transaction.createdDate.strftime('%Y%m%d%H%M%S'),
+                'mhtOrderTimeOut': str(self.PAYMENT_TIMEOUT * 60), 'mhtOrderStartTime': (transaction.createdDate+ relativedelta(hours=8)).strftime('%Y%m%d%H%M%S'),
                 'notifyUrl': request.build_absolute_uri(reverse('transaction_nowpay_notify')), 'frontNotifyUrl': request.build_absolute_uri(reverse('transaction_nowpay_return')),
                 'mhtCharset': 'UTF-8', 'deviceType': '06', 'payChannelType': '13', 'consumerId': transaction.user.username,
                 'consumerName': transaction.user.nickname, 'mhtSignType': 'MD5'}
