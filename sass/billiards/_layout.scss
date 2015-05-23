@@ -876,12 +876,14 @@
 }
 
 .welcome{
+    display:block;
     width:100%;
     position:fixed;
     height: 100%;
     top: 0;
     left: 0;
     z-index: 1100;
+    display:none;
     & > div{
         max-width: $max-width;
         height: 100%;
