@@ -829,9 +829,11 @@ class WechatCredential(models.Model):
 class PayAccount(models.Model):
     Alipay = 1
     Nowpay = 2
+    Wcpay = 3
     TYPES = (
             (Alipay, u'Alipay'),
             (Nowpay, u'Nowpay'),
+            (Wcpay, u'Wcpay'),
         )
     id = models.AutoField(primary_key=True)
     pid = models.CharField(max_length=16, verbose_name='Partner ID')
