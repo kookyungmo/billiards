@@ -215,7 +215,7 @@
     & > div:nth-child(3){
         padding:0 10px;
         & > div:first-child{
-            height: 176px;
+            height: 220px;
             padding-bottom:5px;
             overflow: hidden;
             & > div{
@@ -426,8 +426,8 @@
                     margin-top: 0 !important;
                 }
                 & > li:last-child{
-                    float: right;
-                    width: 30%;
+                /*  float: right;
+                    width: 30%; */
                     margin-top: 0 !important;
                     & > button{
                         height: 42px;
